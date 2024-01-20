@@ -18,15 +18,27 @@ kotlin {
 
   sourceSets {
     androidMain.dependencies {
-      implementation(libs.compose.ui.tooling.preview)
       implementation(libs.androidx.activity.compose)
+      implementation(libs.compose.ui.tooling.preview)
+
+      implementation(libs.decompose.compose.jetpack)
     }
+
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.foundation)
       implementation(compose.material3)
       implementation(compose.ui)
       @OptIn(ExperimentalComposeLibrary::class) implementation(compose.components.resources)
+
+      api(libs.decompose)
+      api(libs.essenty)
+
+      implementation(libs.koin.core)
+
+      implementation(libs.kotlinx.coroutines.core)
+      implementation(libs.kotlinx.datetime)
+      implementation(libs.kotlinx.serialization.json)
     }
   }
 }
@@ -46,11 +58,15 @@ android {
     versionCode = 1
     versionName = "1.0"
   }
+
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+
   buildTypes { getByName("release") { isMinifyEnabled = false } }
+
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
+
   dependencies { debugImplementation(libs.compose.ui.tooling) }
 }
