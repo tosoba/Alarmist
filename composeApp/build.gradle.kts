@@ -32,8 +32,8 @@ kotlin {
       implementation(compose.ui)
       @OptIn(ExperimentalComposeLibrary::class) implementation(compose.components.resources)
 
-      api(libs.decompose)
-      api(libs.essenty)
+      implementation(libs.decompose)
+      implementation(libs.essenty)
 
       implementation(libs.koin.core)
 
