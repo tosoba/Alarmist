@@ -14,6 +14,7 @@ import com.trm.alarmist.feature.group.GroupContent
 @Composable
 fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   val childStack by component.childStack.subscribeAsState()
+
   Children(
       modifier = modifier,
       stack = childStack,

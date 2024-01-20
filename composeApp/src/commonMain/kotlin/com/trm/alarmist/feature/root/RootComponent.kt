@@ -56,11 +56,11 @@ class DefaultRootComponent(
       componentContext: ComponentContext
   ): RootComponent.Child =
       when (config) {
-        is ChildConfig.Alarm -> {
-          RootComponent.Child.Alarm(DefaultAlarmComponent(config.mode, componentContext))
-        }
         ChildConfig.Alarms -> {
           RootComponent.Child.Alarms(DefaultAlarmsComponent(componentContext))
+        }
+        is ChildConfig.Alarm -> {
+          RootComponent.Child.Alarm(DefaultAlarmComponent(config.mode, componentContext))
         }
         is ChildConfig.Group -> {
           RootComponent.Child.Group(DefaultGroupComponent(config.mode, componentContext))
