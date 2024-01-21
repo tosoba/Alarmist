@@ -6,17 +6,32 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
 import com.trm.alarmist.feature.alarms.AlarmsComponent
 import com.trm.alarmist.feature.alarms.DefaultAlarmsComponent
+import com.trm.alarmist.feature.clock.ClockComponent
+import com.trm.alarmist.feature.clock.DefaultClockComponent
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
+import com.trm.alarmist.feature.stopwatch.DefaultStopwatchComponent
+import com.trm.alarmist.feature.stopwatch.StopwatchComponent
+import com.trm.alarmist.feature.timer.DefaultTimerComponent
+import com.trm.alarmist.feature.timer.TimerComponent
 import kotlinx.serialization.Serializable
 
 interface RootComponent {
   val childStack: Value<ChildStack<*, Child>>
+
+  fun onAlarmsDrawerItemClick()
+
+  fun onClockDrawerItemClick()
+
+  fun onTimerDrawerItemClick()
+
+  fun onStopwatchDrawerItemClick()
 
   fun onAddAlarmClick()
 
@@ -34,6 +49,12 @@ interface RootComponent {
     class Alarm(val component: AlarmComponent) : Child
 
     class Group(val component: GroupComponent) : Child
+
+    class Clock(val component: ClockComponent) : Child
+
+    class Timer(val component: TimerComponent) : Child
+
+    class Stopwatch(val component: StopwatchComponent) : Child
   }
 }
 
@@ -75,10 +96,31 @@ class DefaultRootComponent(
           DefaultGroupComponent(componentContext = componentContext, mode = config.mode)
         )
       }
+      ChildConfig.Clock -> {
+        RootComponent.Child.Clock(DefaultClockComponent(componentContext))
+      }
+      ChildConfig.Timer -> {
+        RootComponent.Child.Timer(DefaultTimerComponent(componentContext))
+      }
+      ChildConfig.Stopwatch -> {
+        RootComponent.Child.Stopwatch(DefaultStopwatchComponent(componentContext))
+      }
     }
 
-  override fun onBackClick() {
-    navigation.pop()
+  override fun onAlarmsDrawerItemClick() {
+    navigation.replaceAll(ChildConfig.Alarms)
+  }
+
+  override fun onClockDrawerItemClick() {
+    navigation.replaceAll(ChildConfig.Clock)
+  }
+
+  override fun onTimerDrawerItemClick() {
+    navigation.replaceAll(ChildConfig.Timer)
+  }
+
+  override fun onStopwatchDrawerItemClick() {
+    navigation.replaceAll(ChildConfig.Stopwatch)
   }
 
   override fun onAddAlarmClick() {
@@ -97,6 +139,10 @@ class DefaultRootComponent(
     navigation.push(ChildConfig.Group(GroupComponent.Mode.Edit))
   }
 
+  override fun onBackClick() {
+    navigation.pop()
+  }
+
   @Serializable
   private sealed interface ChildConfig {
     @Serializable data object Alarms : ChildConfig
@@ -104,5 +150,11 @@ class DefaultRootComponent(
     @Serializable data class Alarm(val mode: AlarmComponent.Mode) : ChildConfig
 
     @Serializable data class Group(val mode: GroupComponent.Mode) : ChildConfig
+
+    @Serializable data object Clock : ChildConfig
+
+    @Serializable data object Timer : ChildConfig
+
+    @Serializable data object Stopwatch : ChildConfig
   }
 }

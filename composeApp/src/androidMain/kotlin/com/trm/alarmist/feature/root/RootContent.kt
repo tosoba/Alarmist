@@ -30,8 +30,11 @@ import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
+import com.trm.alarmist.feature.clock.ClockContent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.group.GroupContent
+import com.trm.alarmist.feature.stopwatch.StopwatchContent
+import com.trm.alarmist.feature.timer.TimerContent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,23 +66,35 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         )
         NavigationDrawerItem(
           label = { Text(text = "Alarms") },
-          selected = true,
-          onClick = { closeDrawer() }
+          selected = childStack.active.instance is RootComponent.Child.Alarms,
+          onClick = {
+            closeDrawer()
+            component.onAlarmsDrawerItemClick()
+          }
         )
         NavigationDrawerItem(
           label = { Text(text = "Clock") },
-          selected = false,
-          onClick = { closeDrawer() }
+          selected = childStack.active.instance is RootComponent.Child.Clock,
+          onClick = {
+            closeDrawer()
+            component.onClockDrawerItemClick()
+          }
         )
         NavigationDrawerItem(
           label = { Text(text = "Timer") },
-          selected = false,
-          onClick = { closeDrawer() }
+          selected = childStack.active.instance is RootComponent.Child.Timer,
+          onClick = {
+            closeDrawer()
+            component.onTimerDrawerItemClick()
+          }
         )
         NavigationDrawerItem(
           label = { Text(text = "Stopwatch") },
-          selected = false,
-          onClick = { closeDrawer() }
+          selected = childStack.active.instance is RootComponent.Child.Stopwatch,
+          onClick = {
+            closeDrawer()
+            component.onStopwatchDrawerItemClick()
+          }
         )
       }
     }
@@ -105,6 +120,15 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
                     GroupComponent.Mode.Edit -> "Edit group"
                   }
                 }
+                is RootComponent.Child.Clock -> {
+                  "Clock"
+                }
+                is RootComponent.Child.Timer -> {
+                  "Timer"
+                }
+                is RootComponent.Child.Stopwatch -> {
+                  "Stopwatch"
+                }
               }
           )
         },
@@ -112,13 +136,19 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           IconButton(
             onClick = {
               when (childStack.active.instance) {
-                is RootComponent.Child.Alarms -> openDrawer()
+                is RootComponent.Child.Alarms,
+                is RootComponent.Child.Clock,
+                is RootComponent.Child.Timer,
+                is RootComponent.Child.Stopwatch -> openDrawer()
                 else -> component.onBackClick()
               }
             }
           ) {
             when (childStack.active.instance) {
-              is RootComponent.Child.Alarms -> {
+              is RootComponent.Child.Alarms,
+              is RootComponent.Child.Clock,
+              is RootComponent.Child.Timer,
+              is RootComponent.Child.Stopwatch -> {
                 Icon(
                   imageVector = Icons.Default.Menu,
                   contentDescription = "Menu",
@@ -149,6 +179,15 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           }
           is RootComponent.Child.Group -> {
             GroupContent(modifier = Modifier.fillMaxSize(), component = child.component)
+          }
+          is RootComponent.Child.Clock -> {
+            ClockContent(modifier = Modifier.fillMaxSize(), component = child.component)
+          }
+          is RootComponent.Child.Stopwatch -> {
+            StopwatchContent(modifier = Modifier.fillMaxSize(), component = child.component)
+          }
+          is RootComponent.Child.Timer -> {
+            TimerContent(modifier = Modifier.fillMaxSize(), component = child.component)
           }
         }
       }
