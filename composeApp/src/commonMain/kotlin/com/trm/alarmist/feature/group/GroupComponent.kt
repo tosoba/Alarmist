@@ -11,6 +11,6 @@ interface GroupComponent {
 }
 
 class DefaultGroupComponent(
-    val mode: GroupComponent.Mode,
-    componentContext: ComponentContext,
+  componentContext: ComponentContext,
+  val mode: GroupComponent.Mode,
 ) : GroupComponent, ComponentContext by componentContext

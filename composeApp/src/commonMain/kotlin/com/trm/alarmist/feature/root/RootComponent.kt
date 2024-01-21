@@ -38,34 +38,44 @@ interface RootComponent {
 }
 
 class DefaultRootComponent(
-    componentContext: ComponentContext,
+  componentContext: ComponentContext,
 ) : RootComponent, ComponentContext by componentContext {
   private val navigation = StackNavigation<ChildConfig>()
 
   override val childStack: Value<ChildStack<*, RootComponent.Child>> =
-      childStack(
-          source = navigation,
-          serializer = ChildConfig.serializer(),
-          initialConfiguration = ChildConfig.Alarms,
-          handleBackButton = true,
-          childFactory = ::createChild,
-      )
+    childStack(
+      source = navigation,
+      serializer = ChildConfig.serializer(),
+      initialConfiguration = ChildConfig.Alarms,
+      handleBackButton = true,
+      childFactory = ::createChild,
+    )
 
   private fun createChild(
-      config: ChildConfig,
-      componentContext: ComponentContext
+    config: ChildConfig,
+    componentContext: ComponentContext
   ): RootComponent.Child =
-      when (config) {
-        ChildConfig.Alarms -> {
-          RootComponent.Child.Alarms(DefaultAlarmsComponent(componentContext))
-        }
-        is ChildConfig.Alarm -> {
-          RootComponent.Child.Alarm(DefaultAlarmComponent(config.mode, componentContext))
-        }
-        is ChildConfig.Group -> {
-          RootComponent.Child.Group(DefaultGroupComponent(config.mode, componentContext))
-        }
+    when (config) {
+      ChildConfig.Alarms -> {
+        RootComponent.Child.Alarms(
+          DefaultAlarmsComponent(
+            componentContext = componentContext,
+            onAddAlarmClick = ::onAddAlarmClick,
+            onAddGroupClick = ::onAddGroupClick
+          )
+        )
       }
+      is ChildConfig.Alarm -> {
+        RootComponent.Child.Alarm(
+          DefaultAlarmComponent(componentContext = componentContext, mode = config.mode)
+        )
+      }
+      is ChildConfig.Group -> {
+        RootComponent.Child.Group(
+          DefaultGroupComponent(componentContext = componentContext, mode = config.mode)
+        )
+      }
+    }
 
   override fun onBackClick() {
     navigation.pop()

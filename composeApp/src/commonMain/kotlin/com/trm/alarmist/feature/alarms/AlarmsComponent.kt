@@ -22,6 +22,8 @@ interface AlarmsComponent {
 
   fun onPageSelected(index: Int)
 
+  fun onAddClick()
+
   sealed interface Page {
     class AlarmsList(val component: AlarmListComponent) : Page
 
@@ -33,41 +35,68 @@ interface AlarmsComponent {
 
 @OptIn(ExperimentalDecomposeApi::class)
 class DefaultAlarmsComponent(
-    componentContext: ComponentContext,
+  componentContext: ComponentContext,
+  private val onAddAlarmClick: () -> Unit,
+  private val onAddGroupClick: () -> Unit,
 ) : AlarmsComponent, ComponentContext by componentContext {
   private val navigation = PagesNavigation<PageConfig>()
 
   override val pages: Value<ChildPages<*, AlarmsComponent.Page>> =
-      childPages(
-          source = navigation,
-          serializer = PageConfig.serializer(),
-          initialPages = {
-            Pages(
-                items =
-                    listOf(
-                        PageConfig.AlarmsList,
-                        PageConfig.UpcomingAlarms,
-                        PageConfig.AlarmGroups,
-                    ),
-                selectedIndex = 0,
-            )
-          },
-      ) { config, componentContext ->
-        when (config) {
-          PageConfig.AlarmGroups -> {
-            AlarmsComponent.Page.AlarmGroups(DefaultAlarmGroupsComponent(componentContext))
-          }
-          PageConfig.AlarmsList -> {
-            AlarmsComponent.Page.AlarmsList(DefaultAlarmListComponent(componentContext))
-          }
-          PageConfig.UpcomingAlarms -> {
-            AlarmsComponent.Page.UpcomingAlarms(DefaultUpcomingAlarmsComponent(componentContext))
-          }
-        }
+    childPages(
+      source = navigation,
+      serializer = PageConfig.serializer(),
+      initialPages = {
+        Pages(
+          items =
+            listOf(
+              PageConfig.AlarmsList,
+              PageConfig.UpcomingAlarms,
+              PageConfig.AlarmGroups,
+            ),
+          selectedIndex = 0,
+        )
+      },
+      childFactory = ::createPage
+    )
+
+  private fun createPage(
+    config: PageConfig,
+    componentContext: ComponentContext
+  ): AlarmsComponent.Page =
+    when (config) {
+      PageConfig.AlarmsList -> {
+        AlarmsComponent.Page.AlarmsList(
+          DefaultAlarmListComponent(
+            componentContext = componentContext
+          )
+        )
       }
+      PageConfig.UpcomingAlarms -> {
+        AlarmsComponent.Page.UpcomingAlarms(
+          DefaultUpcomingAlarmsComponent(
+            componentContext = componentContext
+          )
+        )
+      }
+      PageConfig.AlarmGroups -> {
+        AlarmsComponent.Page.AlarmGroups(
+          DefaultAlarmGroupsComponent(
+            componentContext = componentContext
+          )
+        )
+      }
+    }
 
   override fun onPageSelected(index: Int) {
     navigation.select(index = index)
+  }
+
+  override fun onAddClick() {
+    if (pages.value.selectedIndex == 2) {
+      onAddGroupClick()
+    } else {
+      onAddAlarmClick()
+    }
   }
 
   @Serializable

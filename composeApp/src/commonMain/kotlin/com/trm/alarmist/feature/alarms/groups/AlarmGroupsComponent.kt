@@ -5,5 +5,5 @@ import com.arkivanov.decompose.ComponentContext
 interface AlarmGroupsComponent
 
 class DefaultAlarmGroupsComponent(
-    componentContext: ComponentContext,
+  componentContext: ComponentContext,
 ) : AlarmGroupsComponent, ComponentContext by componentContext

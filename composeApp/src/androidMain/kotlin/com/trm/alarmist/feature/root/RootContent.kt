@@ -16,9 +16,9 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   val childStack by component.childStack.subscribeAsState()
 
   Children(
-      modifier = modifier,
-      stack = childStack,
-      animation = stackAnimation(),
+    modifier = modifier,
+    stack = childStack,
+    animation = stackAnimation(),
   ) {
     when (val child = it.instance) {
       is RootComponent.Child.Alarm -> {

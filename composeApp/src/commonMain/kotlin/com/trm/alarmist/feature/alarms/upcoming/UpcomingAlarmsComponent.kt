@@ -5,5 +5,5 @@ import com.arkivanov.decompose.ComponentContext
 interface UpcomingAlarmsComponent
 
 class DefaultUpcomingAlarmsComponent(
-    componentContext: ComponentContext,
+  componentContext: ComponentContext,
 ) : UpcomingAlarmsComponent, ComponentContext by componentContext

@@ -11,6 +11,6 @@ interface AlarmComponent {
 }
 
 class DefaultAlarmComponent(
-    private val mode: AlarmComponent.Mode,
-    componentContext: ComponentContext,
+  componentContext: ComponentContext,
+  private val mode: AlarmComponent.Mode,
 ) : AlarmComponent, ComponentContext by componentContext
