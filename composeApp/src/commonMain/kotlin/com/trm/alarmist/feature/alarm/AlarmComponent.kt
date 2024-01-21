@@ -3,6 +3,8 @@ package com.trm.alarmist.feature.alarm
 import com.arkivanov.decompose.ComponentContext
 
 interface AlarmComponent {
+  val mode: Mode
+
   sealed interface Mode {
     data object Add : Mode
 
@@ -12,5 +14,5 @@ interface AlarmComponent {
 
 class DefaultAlarmComponent(
   componentContext: ComponentContext,
-  private val mode: AlarmComponent.Mode,
+  override val mode: AlarmComponent.Mode,
 ) : AlarmComponent, ComponentContext by componentContext
