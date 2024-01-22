@@ -8,14 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +20,7 @@ import com.arkivanov.decompose.extensions.compose.jetpack.pages.PagesScrollAnima
 import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
 import com.trm.alarmist.feature.alarms.groups.AlarmGroupsContent
 import com.trm.alarmist.feature.alarms.list.AlarmListContent
+import com.trm.alarmist.feature.alarms.ui.AlarmsNavigationBar
 import com.trm.alarmist.feature.alarms.upcoming.UpcomingAlarmsContent
 
 @OptIn(ExperimentalDecomposeApi::class, ExperimentalFoundationApi::class)
@@ -55,51 +50,15 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
 
       FloatingActionButton(
         modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-        onClick = component::onAddClick
+        onClick = component::onAddClick,
       ) {
-        Icon(
-          imageVector = Icons.Default.Add,
-          contentDescription = "Add",
-        )
+        Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
       }
     }
 
-    NavigationBar(modifier = Modifier.fillMaxWidth()) {
-      NavigationBarItem(
-        selected = pagesState.value.selectedIndex == 0,
-        onClick = { component.onPageSelected(0) },
-        icon = {
-          Icon(
-            imageVector = Icons.Default.List,
-            contentDescription = "All",
-          )
-        },
-        label = { Text("All") }
-      )
-
-      NavigationBarItem(
-        selected = pagesState.value.selectedIndex == 1,
-        onClick = { component.onPageSelected(1) },
-        icon = {
-          Icon(
-            imageVector = Icons.Default.Notifications,
-            contentDescription = "Upcoming",
-          )
-        },
-        label = { Text("Upcoming") }
-      )
-
-      NavigationBarItem(
-        selected = pagesState.value.selectedIndex == 2,
-        onClick = { component.onPageSelected(2) },
-        icon = {
-          Icon(
-            imageVector = Icons.Default.Menu,
-            contentDescription = "Groups",
-          )
-        },
-        label = { Text("Groups") }
-      )
-    }
+    AlarmsNavigationBar(
+      selectedIndex = pagesState.value.selectedIndex,
+      onPageSelected = component::onPageSelected,
+    )
   }
 }
