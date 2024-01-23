@@ -9,34 +9,29 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.arkivanov.decompose.router.stack.ChildStack
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.root.RootComponent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RootAppBar(
-  childStack: ChildStack<*, RootComponent.Child>,
-  onBackClick: () -> Unit,
-  onMenuClick: () -> Unit,
-) {
+fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenuClick: () -> Unit) {
   CenterAlignedTopAppBar(
     title = {
       Text(
         text =
-          when (val active = childStack.active.instance) {
+          when (activeChild) {
             is RootComponent.Child.Alarms -> {
               "Alarms"
             }
             is RootComponent.Child.Alarm -> {
-              when (active.component.mode) {
+              when (activeChild.component.mode) {
                 AlarmComponent.Mode.Add -> "New alarm"
                 AlarmComponent.Mode.Edit -> "Edit alarm"
               }
             }
             is RootComponent.Child.Group -> {
-              when (active.component.mode) {
+              when (activeChild.component.mode) {
                 GroupComponent.Mode.Add -> "New group"
                 GroupComponent.Mode.Edit -> "Edit group"
               }
@@ -56,7 +51,7 @@ fun RootAppBar(
     navigationIcon = {
       IconButton(
         onClick = {
-          when (childStack.active.instance) {
+          when (activeChild) {
             is RootComponent.Child.Alarms,
             is RootComponent.Child.Clock,
             is RootComponent.Child.Timer,
@@ -65,7 +60,7 @@ fun RootAppBar(
           }
         }
       ) {
-        when (childStack.active.instance) {
+        when (activeChild) {
           is RootComponent.Child.Alarms,
           is RootComponent.Child.Clock,
           is RootComponent.Child.Timer,

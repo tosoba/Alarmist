@@ -92,7 +92,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   ) {
     Column(modifier = modifier) {
       RootAppBar(
-        childStack = childStack,
+        activeChild = childStack.active.instance,
         onBackClick = component::onBackClick,
         onMenuClick = ::openDrawer,
       )
