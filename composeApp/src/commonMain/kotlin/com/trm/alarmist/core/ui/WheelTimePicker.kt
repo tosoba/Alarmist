@@ -60,17 +60,19 @@ fun WheelTimePicker(
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTime: (snappedTime: LocalTime) -> Unit = {},
 ) {
+  require(rowCount % 2 == 1 && rowCount < 24)
+
   DefaultWheelTimePicker(
-    modifier,
-    startTime,
-    minTime,
-    maxTime,
-    timeFormat,
-    size,
-    rowCount,
-    textStyle,
-    textColor,
-    selectorProperties,
+    modifier = modifier,
+    startTime = startTime,
+    minTime = minTime,
+    maxTime = maxTime,
+    timeFormat = timeFormat,
+    size = size,
+    rowCount = rowCount,
+    textStyle = textStyle,
+    textColor = textColor,
+    selectorProperties = selectorProperties,
     onSnappedTime = { snappedTime, _ ->
       onSnappedTime(snappedTime.snappedLocalTime)
       snappedTime.snappedIndex
