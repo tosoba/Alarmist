@@ -2,7 +2,6 @@ package com.trm.alarmist.core.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -56,6 +54,7 @@ fun WheelTimePicker(
   size: DpSize = DpSize(128.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
+  centerTextStyle: TextStyle = textStyle,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTime: (snappedTime: LocalTime) -> Unit = {},
@@ -71,6 +70,7 @@ fun WheelTimePicker(
     size = size,
     rowCount = rowCount,
     textStyle = textStyle,
+    centerTextStyle = centerTextStyle,
     textColor = textColor,
     selectorProperties = selectorProperties,
     onSnappedTime = { snappedTime, _ ->
@@ -90,6 +90,7 @@ private fun DefaultWheelTimePicker(
   size: DpSize = DpSize(128.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
+  centerTextStyle: TextStyle = textStyle,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
@@ -136,6 +137,7 @@ private fun DefaultWheelTimePicker(
           else amPmHours.map { it.text },
         rowCount = rowCount,
         style = textStyle,
+        centerStyle = centerTextStyle,
         color = textColor,
         startIndex =
           if (timeFormat == TimeFormat.HOUR_24) {
@@ -193,6 +195,7 @@ private fun DefaultWheelTimePicker(
         texts = minutes.map { it.text },
         rowCount = rowCount,
         style = textStyle,
+        centerStyle = centerTextStyle,
         color = textColor,
         startIndex = minutes.find { it.value == startTime.minute }?.index ?: 0,
         selectorProperties = WheelPickerDefaults.selectorProperties(enabled = false),
@@ -242,6 +245,7 @@ private fun DefaultWheelTimePicker(
           texts = amPms.map { it.text },
           rowCount = rowCount,
           style = textStyle,
+          centerStyle = centerTextStyle,
           color = textColor,
           startIndex = amPms.find { it.value == amPmValueFromTime(startTime) }?.index ?: 0,
           selectorProperties = WheelPickerDefaults.selectorProperties(enabled = false),
@@ -378,6 +382,7 @@ private sealed class SnappedTime(val snappedLocalTime: LocalTime, val snappedInd
   data class Minute(val localTime: LocalTime, val index: Int) : SnappedTime(localTime, index)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun WheelTextPicker(
   modifier: Modifier = Modifier,
@@ -386,43 +391,19 @@ private fun WheelTextPicker(
   texts: List<String>,
   rowCount: Int,
   style: TextStyle = MaterialTheme.typography.titleMedium,
+  centerStyle: TextStyle = style,
   color: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
-  WheelPicker(
-    modifier = modifier,
-    startIndex = startIndex,
-    size = size,
-    count = texts.size,
-    rowCount = rowCount,
-    selectorProperties = selectorProperties,
-    onScrollFinished = onScrollFinished
-  ) { index ->
-    Text(text = texts[index], style = style, color = color, maxLines = 1)
-  }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun WheelPicker(
-  modifier: Modifier = Modifier,
-  startIndex: Int = 0,
-  count: Int,
-  rowCount: Int,
-  size: DpSize = DpSize(128.dp, 128.dp),
-  selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onScrollFinished: (snappedIndex: Int) -> Int? = { null },
-  content: @Composable LazyItemScope.(index: Int) -> Unit,
-) {
   val lazyListState = rememberLazyListState(startIndex)
   val snappingLayout = remember(lazyListState) { SnapLayoutInfoProvider(lazyListState) }
-  val flingBehavior: SnapFlingBehavior = rememberSnapFlingBehavior(snappingLayout)
+  val flingBehavior = rememberSnapFlingBehavior(snappingLayout)
 
   val isScrollInProgress = lazyListState.isScrollInProgress
-  LaunchedEffect(isScrollInProgress, count) {
+  LaunchedEffect(isScrollInProgress, texts.size) {
     if (!isScrollInProgress) {
-      onScrollFinished(minOf(lazyListState.layoutInfo.centerIndex(), count - 1))
+      onScrollFinished(minOf(lazyListState.layoutInfo.centerIndex(), texts.size - 1))
     }
   }
 
@@ -436,13 +417,14 @@ private fun WheelPicker(
       ) {}
     }
 
+    val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
     LazyColumn(
       modifier = Modifier.height(size.height).width(size.width),
       state = lazyListState,
       contentPadding = PaddingValues(vertical = size.height / rowCount * ((rowCount - 1) / 2)),
       flingBehavior = flingBehavior
     ) {
-      items(count) { index ->
+      items(texts.size) { index ->
         val rotationX =
           calculateAnimatedRotationX(
             lazyListState = lazyListState,
@@ -457,7 +439,12 @@ private fun WheelPicker(
               .graphicsLayer { this.rotationX = rotationX },
           contentAlignment = Alignment.Center
         ) {
-          content(index)
+          Text(
+            text = texts[index],
+            style = if (index == layoutInfo.centerIndex()) centerStyle else style,
+            color = color,
+            maxLines = 1
+          )
         }
       }
     }
@@ -503,10 +490,8 @@ private class DefaultSelectorProperties(
 
 @Composable
 private fun calculateAnimatedAlpha(lazyListState: LazyListState, index: Int): Float {
-  val layoutInfo: LazyListLayoutInfo =
-    remember { derivedStateOf { lazyListState.layoutInfo } }.value
-  val centerIndex = layoutInfo.centerIndex()
-  val indexDelta = abs(centerIndex - index)
+  val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
+  val indexDelta = layoutInfo.deltaToCenterIndex(index)
   var alpha = 1f
   repeat(indexDelta) { alpha /= 2f }
   return alpha
@@ -517,16 +502,16 @@ private fun calculateAnimatedRotationX(
   lazyListState: LazyListState,
   index: Int,
   rowCount: Int,
-  maxRotationDegrees: Float = 60f
+  maxRotationDegrees: Float = 90f
 ): Float {
-  val layoutInfo: LazyListLayoutInfo =
-    remember { derivedStateOf { lazyListState.layoutInfo } }.value
-  val centerIndex = layoutInfo.centerIndex()
-  val indexDelta = abs(centerIndex - index)
+  val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
+  val indexDelta = layoutInfo.deltaToCenterIndex(index)
   var rotationXDegrees = 0f
   repeat(indexDelta) { rotationXDegrees += maxRotationDegrees / rowCount }
   return rotationXDegrees
 }
+
+private fun LazyListLayoutInfo.deltaToCenterIndex(index: Int): Int = abs(centerIndex() - index)
 
 private fun LazyListLayoutInfo.centerIndex(): Int {
   val viewportCenter = (viewportStartOffset + viewportEndOffset) / 2
