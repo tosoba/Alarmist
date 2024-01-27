@@ -12,6 +12,6 @@ import kotlinx.datetime.LocalTime
 @Composable
 fun AlarmContent(modifier: Modifier = Modifier, component: AlarmComponent) {
   Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-    WheelTimePicker(startTime = LocalTime(now().nextFullHour(), 0))
+    WheelTimePicker(startTime = LocalTime(now().nextFullHour(), 0)) { println(it.toString()) }
   }
 }

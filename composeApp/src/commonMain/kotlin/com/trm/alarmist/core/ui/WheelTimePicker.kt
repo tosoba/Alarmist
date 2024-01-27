@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.max
 import com.trm.alarmist.core.common.util.min
 import com.trm.alarmist.core.common.util.now
+import kotlin.math.abs
 import kotlinx.datetime.LocalTime
 
 @Composable
@@ -85,7 +87,6 @@ internal fun DefaultWheelTimePicker(
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
 ) {
-
   var snappedTime by remember {
     mutableStateOf(LocalTime(hour = startTime.hour, minute = startTime.minute))
   }
@@ -312,7 +313,6 @@ private data class Hour(val text: String, val value: Int, val index: Int)
 private data class AmPmHour(val text: String, val value: Int, val index: Int)
 
 internal fun localTimeToAmPmHour(localTime: LocalTime): Int {
-
   if (isBetween(localTime, LocalTime(0, 0), LocalTime(0, 59))) {
     return localTime.hour + 12
   }
@@ -332,13 +332,11 @@ internal fun localTimeToAmPmHour(localTime: LocalTime): Int {
   return localTime.hour
 }
 
-private fun isBetween(localTime: LocalTime, startTime: LocalTime, endTime: LocalTime): Boolean {
-  return localTime in startTime..endTime
-}
+private fun isBetween(localTime: LocalTime, startTime: LocalTime, endTime: LocalTime): Boolean =
+  localTime in startTime..endTime
 
-private fun amPmHourToHour24(amPmHour: Int, amPmMinute: Int, amPmValue: AmPmValue): Int {
-
-  return when (amPmValue) {
+private fun amPmHourToHour24(amPmHour: Int, amPmMinute: Int, amPmValue: AmPmValue): Int =
+  when (amPmValue) {
     AmPmValue.AM -> {
       if (amPmHour == 12 && amPmMinute <= 59) {
         0
@@ -354,7 +352,6 @@ private fun amPmHourToHour24(amPmHour: Int, amPmMinute: Int, amPmValue: AmPmValu
       }
     }
   }
-}
 
 private data class Minute(val text: String, val value: Int, val index: Int)
 
@@ -365,9 +362,8 @@ internal enum class AmPmValue {
   PM
 }
 
-private fun amPmValueFromTime(time: LocalTime): AmPmValue {
-  return if (time.hour > 11) AmPmValue.PM else AmPmValue.AM
-}
+private fun amPmValueFromTime(time: LocalTime): AmPmValue =
+  if (time.hour > 11) AmPmValue.PM else AmPmValue.AM
 
 internal sealed class SnappedTime(val snappedLocalTime: LocalTime, val snappedIndex: Int) {
   data class Hour(val localTime: LocalTime, val index: Int) : SnappedTime(localTime, index)
@@ -417,14 +413,19 @@ internal fun WheelPicker(
   val flingBehavior: SnapFlingBehavior = rememberSnapFlingBehavior(snappingLayout)
 
   val isScrollInProgress = lazyListState.isScrollInProgress
-
-  //  LaunchedEffect(isScrollInProgress, count) {
-  //    if (!isScrollInProgress) {
-  //      onScrollFinished(calculateSnappedItemIndex(snapperLayoutInfo) ?: startIndex)?.let {
-  //        lazyListState.scrollToItem(it)
-  //      }
-  //    }
-  //  }
+  LaunchedEffect(isScrollInProgress, count) {
+    if (!isScrollInProgress) {
+      val layoutInfo = lazyListState.layoutInfo
+      val visibleItems = layoutInfo.visibleItemsInfo
+      val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+      onScrollFinished(
+        minOf(
+          visibleItems.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index ?: 0,
+          count - 1
+        )
+      )
+    }
+  }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
@@ -471,17 +472,6 @@ internal fun WheelPicker(
   }
 }
 
-// private fun calculateSnappedItemIndex(snapperLayoutInfo: SnapperLayoutInfo): Int? {
-//  var currentItemIndex = snapperLayoutInfo.currentItem?.index
-//
-//  if(snapperLayoutInfo.currentItem?.offset != 0) {
-//    if(currentItemIndex != null) {
-//      currentItemIndex ++
-//    }
-//  }
-//  return currentItemIndex
-// }
-
 object WheelPickerDefaults {
   @Composable
   fun selectorProperties(
@@ -510,25 +500,13 @@ internal class DefaultSelectorProperties(
   private val color: Color,
   private val border: BorderStroke?
 ) : SelectorProperties {
-  @Composable
-  override fun enabled(): State<Boolean> {
-    return rememberUpdatedState(enabled)
-  }
+  @Composable override fun enabled(): State<Boolean> = rememberUpdatedState(enabled)
 
-  @Composable
-  override fun shape(): State<Shape> {
-    return rememberUpdatedState(shape)
-  }
+  @Composable override fun shape(): State<Shape> = rememberUpdatedState(shape)
 
-  @Composable
-  override fun color(): State<Color> {
-    return rememberUpdatedState(color)
-  }
+  @Composable override fun color(): State<Color> = rememberUpdatedState(color)
 
-  @Composable
-  override fun border(): State<BorderStroke?> {
-    return rememberUpdatedState(border)
-  }
+  @Composable override fun border(): State<BorderStroke?> = rememberUpdatedState(border)
 }
 
 // @Composable
