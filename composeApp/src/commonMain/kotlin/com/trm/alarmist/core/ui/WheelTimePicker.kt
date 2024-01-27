@@ -420,15 +420,7 @@ private fun WheelPicker(
   val isScrollInProgress = lazyListState.isScrollInProgress
   LaunchedEffect(isScrollInProgress, count) {
     if (!isScrollInProgress) {
-      val layoutInfo = lazyListState.layoutInfo
-      val visibleItems = layoutInfo.visibleItemsInfo
-      val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
-      onScrollFinished(
-        minOf(
-          visibleItems.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index ?: 0,
-          count - 1
-        )
-      )
+      onScrollFinished(minOf(lazyListState.layoutInfo.centerIndex(), count - 1))
     }
   }
 
