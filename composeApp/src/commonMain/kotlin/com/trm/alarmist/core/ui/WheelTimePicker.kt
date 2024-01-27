@@ -79,7 +79,7 @@ fun WheelTimePicker(
 }
 
 @Composable
-internal fun DefaultWheelTimePicker(
+private fun DefaultWheelTimePicker(
   modifier: Modifier = Modifier,
   startTime: LocalTime = LocalTime.now(),
   minTime: LocalTime = LocalTime.min(),
@@ -317,7 +317,7 @@ private data class Hour(val text: String, val value: Int, val index: Int)
 
 private data class AmPmHour(val text: String, val value: Int, val index: Int)
 
-internal fun localTimeToAmPmHour(localTime: LocalTime): Int {
+private fun localTimeToAmPmHour(localTime: LocalTime): Int {
   if (isBetween(localTime, LocalTime(0, 0), LocalTime(0, 59))) {
     return localTime.hour + 12
   }
@@ -362,7 +362,7 @@ private data class Minute(val text: String, val value: Int, val index: Int)
 
 private data class AmPm(val text: String, val value: AmPmValue, val index: Int?)
 
-internal enum class AmPmValue {
+private enum class AmPmValue {
   AM,
   PM
 }
@@ -370,14 +370,14 @@ internal enum class AmPmValue {
 private fun amPmValueFromTime(time: LocalTime): AmPmValue =
   if (time.hour > 11) AmPmValue.PM else AmPmValue.AM
 
-internal sealed class SnappedTime(val snappedLocalTime: LocalTime, val snappedIndex: Int) {
+private sealed class SnappedTime(val snappedLocalTime: LocalTime, val snappedIndex: Int) {
   data class Hour(val localTime: LocalTime, val index: Int) : SnappedTime(localTime, index)
 
   data class Minute(val localTime: LocalTime, val index: Int) : SnappedTime(localTime, index)
 }
 
 @Composable
-fun WheelTextPicker(
+private fun WheelTextPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   size: DpSize = DpSize(128.dp, 128.dp),
@@ -403,7 +403,7 @@ fun WheelTextPicker(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun WheelPicker(
+private fun WheelPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   count: Int,
@@ -492,7 +492,7 @@ interface SelectorProperties {
 }
 
 @Immutable
-internal class DefaultSelectorProperties(
+private class DefaultSelectorProperties(
   private val enabled: Boolean,
   private val shape: Shape,
   private val color: Color,
