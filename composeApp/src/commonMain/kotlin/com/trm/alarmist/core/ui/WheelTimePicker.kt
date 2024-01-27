@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +32,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
@@ -452,15 +455,10 @@ internal fun WheelPicker(
         //            rowCount = rowCount
         //          )
         Box(
-          modifier = Modifier.height(size.height / rowCount).width(size.width)
-          //              .alpha(
-          //                calculateAnimatedAlpha(
-          //                  lazyListState = lazyListState,
-          //                  snapperLayoutInfo = snapperLayoutInfo,
-          //                  index = index,
-          //                  rowCount = rowCount
-          //                )
-          //              )
+          modifier =
+            Modifier.height(size.height / rowCount)
+              .width(size.width)
+              .alpha(calculateAnimatedAlpha(lazyListState = lazyListState, index = index))
           //              .graphicsLayer { this.rotationX = rotationX },
           ,
           contentAlignment = Alignment.Center
@@ -509,25 +507,19 @@ internal class DefaultSelectorProperties(
   @Composable override fun border(): State<BorderStroke?> = rememberUpdatedState(border)
 }
 
-// @Composable
-// private fun calculateAnimatedAlpha(
-//  lazyListState: LazyListState,
-//  snapperLayoutInfo: SnapperLayoutInfo,
-//  index: Int,
-//  rowCount: Int
-// ): Float {
-//
-//  val distanceToIndexSnap = snapperLayoutInfo.distanceToIndexSnap(index).absoluteValue
-//  val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
-//  val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
-//  val singleViewPortHeight = viewPortHeight / rowCount
-//
-//  return if(distanceToIndexSnap in 0..singleViewPortHeight.toInt()) {
-//    1.2f - (distanceToIndexSnap / singleViewPortHeight)
-//  } else {
-//    0.2f
-//  }
-// }
+@Composable
+private fun calculateAnimatedAlpha(lazyListState: LazyListState, index: Int): Float {
+  val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
+  val visibleItems = layoutInfo.visibleItemsInfo
+  val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+  val centerIndex =
+    visibleItems.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index ?: 0
+  val indexDelta = abs(centerIndex - index)
+  var alpha = 1f
+  repeat(indexDelta) { alpha /= 2f }
+  return alpha
+}
+
 //
 // @Composable
 // private fun calculateAnimatedRotationX(
