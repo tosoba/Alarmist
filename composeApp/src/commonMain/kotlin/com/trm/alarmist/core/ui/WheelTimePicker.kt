@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -447,20 +449,18 @@ internal fun WheelPicker(
       flingBehavior = flingBehavior
     ) {
       items(count) { index ->
-        //        val rotationX =
-        //          calculateAnimatedRotationX(
-        //            lazyListState = lazyListState,
-        //            snapperLayoutInfo = snapperLayoutInfo,
-        //            index = index,
-        //            rowCount = rowCount
-        //          )
+        val rotationX =
+          calculateAnimatedRotationX(
+            lazyListState = lazyListState,
+            index = index,
+            rowCount = rowCount
+          )
         Box(
           modifier =
             Modifier.height(size.height / rowCount)
               .width(size.width)
               .alpha(calculateAnimatedAlpha(lazyListState = lazyListState, index = index))
-          //              .graphicsLayer { this.rotationX = rotationX },
-          ,
+              .graphicsLayer { this.rotationX = rotationX },
           contentAlignment = Alignment.Center
         ) {
           content(index)
@@ -509,35 +509,33 @@ internal class DefaultSelectorProperties(
 
 @Composable
 private fun calculateAnimatedAlpha(lazyListState: LazyListState, index: Int): Float {
-  val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
-  val visibleItems = layoutInfo.visibleItemsInfo
-  val viewportCenter = (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
-  val centerIndex =
-    visibleItems.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index ?: 0
+  val layoutInfo: LazyListLayoutInfo =
+    remember { derivedStateOf { lazyListState.layoutInfo } }.value
+  val centerIndex = layoutInfo.centerIndex()
   val indexDelta = abs(centerIndex - index)
   var alpha = 1f
   repeat(indexDelta) { alpha /= 2f }
   return alpha
 }
 
-//
-// @Composable
-// private fun calculateAnimatedRotationX(
-//  lazyListState: LazyListState,
-//  snapperLayoutInfo: SnapperLayoutInfo,
-//  index: Int,
-//  rowCount: Int
-// ): Float {
-//
-//  val distanceToIndexSnap = snapperLayoutInfo.distanceToIndexSnap(index)
-//  val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
-//  val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
-//  val singleViewPortHeight = viewPortHeight / rowCount
-//  val animatedRotationX = -20f * (distanceToIndexSnap / singleViewPortHeight)
-//
-//  return if (animatedRotationX.isNaN()) {
-//    0f
-//  } else {
-//    animatedRotationX
-//  }
-// }
+@Composable
+private fun calculateAnimatedRotationX(
+  lazyListState: LazyListState,
+  index: Int,
+  rowCount: Int,
+  maxRotationDegrees: Float = 60f
+): Float {
+  val layoutInfo: LazyListLayoutInfo =
+    remember { derivedStateOf { lazyListState.layoutInfo } }.value
+  val centerIndex = layoutInfo.centerIndex()
+  val indexDelta = abs(centerIndex - index)
+  var rotationXDegrees = 0f
+  repeat(indexDelta) { rotationXDegrees += maxRotationDegrees / rowCount }
+  return rotationXDegrees
+}
+
+private fun LazyListLayoutInfo.centerIndex(): Int {
+  val viewportCenter = (viewportStartOffset + viewportEndOffset) / 2
+  return visibleItemsInfo.minByOrNull { abs((it.offset + it.size / 2) - viewportCenter) }?.index
+    ?: 0
+}
