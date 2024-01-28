@@ -15,4 +15,4 @@ interface AlarmComponent {
 class DefaultAlarmComponent(
   componentContext: ComponentContext,
   override val mode: AlarmComponent.Mode,
-) : AlarmComponent, ComponentContext by componentContext
+) : AlarmComponent, ComponentContext by componentContext {}
