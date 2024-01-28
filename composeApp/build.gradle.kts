@@ -78,3 +78,7 @@ android {
 
   dependencies { debugImplementation(libs.compose.ui.tooling) }
 }
+
+sqldelight {
+  databases { create("AlarmistDb") { packageName.set("com.trm.alarmist.db") } }
+}

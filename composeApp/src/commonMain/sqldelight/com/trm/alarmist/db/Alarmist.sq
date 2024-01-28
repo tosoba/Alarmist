@@ -1,0 +1,12 @@
+import kotlinx.datetime.LocalDateTime;
+
+CREATE TABLE alarm(
+	id TEXT NOT NULL PRIMARY KEY,
+	name TEXT,
+	fireAt TEXT AS LocalDateTime NOT NULL
+);
+
+CREATE TABLE alarmGroup(
+	id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL
+);
