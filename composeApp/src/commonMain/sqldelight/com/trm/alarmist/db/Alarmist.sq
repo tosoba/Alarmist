@@ -1,12 +1,18 @@
 import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE alarm(
-	id TEXT NOT NULL PRIMARY KEY,
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	name TEXT,
 	fireAt TEXT AS LocalDateTime NOT NULL
 );
 
 CREATE TABLE alarmGroup(
-	id TEXT NOT NULL PRIMARY KEY,
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
 );
+
+insertAlarm:
+INSERT INTO alarm VALUES (?,?,?);
+
+selectAllAlarms:
+SELECT * FROM alarm ORDER BY fireAt;
