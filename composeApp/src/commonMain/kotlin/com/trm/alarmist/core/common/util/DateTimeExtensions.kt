@@ -15,22 +15,13 @@ fun now(): Instant = Clock.System.now()
 fun Instant.nextFullHour(): Int =
   plus(1, DateTimeUnit.HOUR).toLocalDateTime(TimeZone.currentSystemDefault()).hour
 
-fun LocalDateTime.Companion.now(): LocalDateTime {
-  return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-}
+fun LocalDateTime.Companion.now(): LocalDateTime =
+  Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
-fun LocalDate.Companion.now(): LocalDate {
-  return LocalDateTime.now().date
-}
+fun LocalDate.Companion.now(): LocalDate = LocalDateTime.now().date
 
-fun LocalTime.Companion.now(): LocalTime {
-  return LocalDateTime.now().time
-}
+fun LocalTime.Companion.now(): LocalTime = LocalDateTime.now().time
 
-fun LocalTime.Companion.min(): LocalTime {
-  return LocalTime(0, 0)
-}
+fun LocalTime.Companion.min(): LocalTime = LocalTime(0, 0)
 
-fun LocalTime.Companion.max(): LocalTime {
-  return LocalTime(23, 59, 59, 999999999)
-}
+fun LocalTime.Companion.max(): LocalTime = LocalTime(23, 59, 59, 999999999)
