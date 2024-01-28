@@ -5,6 +5,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.kotlinx.serialization)
+  alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -23,6 +24,8 @@ kotlin {
       implementation(libs.compose.ui.tooling.preview)
 
       implementation(libs.decompose.compose.jetpack)
+
+      implementation(libs.sqldelight.android.driver)
     }
 
     commonMain.dependencies {
@@ -40,7 +43,11 @@ kotlin {
       implementation(libs.kotlinx.coroutines.core)
       implementation(libs.kotlinx.datetime)
       implementation(libs.kotlinx.serialization.json)
+
+      implementation(libs.sqldelight.coroutines.extensions)
     }
+
+    iosMain.dependencies { implementation(libs.sqldelight.native.driver) }
   }
 }
 

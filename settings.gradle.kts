@@ -1,21 +1,22 @@
 rootProject.name = "alarmist"
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
-    repositories {
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        google()
-        gradlePluginPortal()
-        mavenCentral()
-    }
+  repositories {
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    google()
+    gradlePluginPortal()
+    mavenCentral()
+  }
 }
 
 dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    }
+  repositories {
+    google()
+    mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+  }
 }
 
 include(":composeApp")
