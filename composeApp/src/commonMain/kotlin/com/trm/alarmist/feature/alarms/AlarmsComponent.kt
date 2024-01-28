@@ -66,23 +66,17 @@ class DefaultAlarmsComponent(
     when (config) {
       PageConfig.AlarmsList -> {
         AlarmsComponent.Page.AlarmsList(
-          DefaultAlarmListComponent(
-            componentContext = componentContext
-          )
+          DefaultAlarmListComponent(componentContext = componentContext)
         )
       }
       PageConfig.UpcomingAlarms -> {
         AlarmsComponent.Page.UpcomingAlarms(
-          DefaultUpcomingAlarmsComponent(
-            componentContext = componentContext
-          )
+          DefaultUpcomingAlarmsComponent(componentContext = componentContext)
         )
       }
       PageConfig.AlarmGroups -> {
         AlarmsComponent.Page.AlarmGroups(
-          DefaultAlarmGroupsComponent(
-            componentContext = componentContext
-          )
+          DefaultAlarmGroupsComponent(componentContext = componentContext)
         )
       }
     }
