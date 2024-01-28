@@ -25,6 +25,9 @@ kotlin {
 
       implementation(libs.decompose.compose.jetpack)
 
+      implementation(libs.koin.android)
+      implementation(libs.koin.core)
+
       implementation(libs.sqldelight.android.driver)
     }
 
