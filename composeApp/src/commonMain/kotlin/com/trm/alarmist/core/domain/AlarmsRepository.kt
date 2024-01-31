@@ -1,7 +1,7 @@
 package com.trm.alarmist.core.domain
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 interface AlarmsRepository {
-  fun scheduleAlarm(time: LocalDateTime, name: String? = null)
+  suspend fun addOneShotAlarm(fireAt: LocalTime, name: String? = null)
 }

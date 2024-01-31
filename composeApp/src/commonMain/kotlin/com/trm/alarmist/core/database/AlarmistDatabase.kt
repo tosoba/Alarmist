@@ -23,7 +23,7 @@ class AlarmistDatabase(
 
   private val queries: AlarmistQueries = database.alarmistQueries
 
-  suspend fun insertAlarm(name: String, fireAt: LocalDateTime) {
+  suspend fun insertAlarm(name: String?, fireAt: LocalDateTime) {
     withContext(dispatcher) { queries.insertAlarm(id = null, name = name, fireAt = fireAt) }
   }
 
