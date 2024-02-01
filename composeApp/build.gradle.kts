@@ -21,9 +21,14 @@ kotlin {
   sourceSets {
     androidMain.dependencies {
       implementation(libs.androidx.activity.compose)
+      implementation(libs.androidx.savedstate.savedstate)
+      implementation(libs.androidx.lifecycle.lifecycleRuntime)
+      
       implementation(libs.compose.ui.tooling.preview)
 
       implementation(libs.decompose.compose.jetpack)
+
+      implementation(libs.essenty.statekeeper.android)
 
       implementation(libs.koin.android)
       implementation(libs.koin.core)
@@ -39,7 +44,8 @@ kotlin {
       @OptIn(ExperimentalComposeLibrary::class) implementation(compose.components.resources)
 
       implementation(libs.decompose)
-      implementation(libs.essenty)
+      implementation(libs.essenty.lifecycle)
+      implementation(libs.essenty.statekeeper)
 
       implementation(libs.koin.core)
 
@@ -82,6 +88,4 @@ android {
   dependencies { debugImplementation(libs.compose.ui.tooling) }
 }
 
-sqldelight {
-  databases { create("AlarmistDb") { packageName.set("com.trm.alarmist.db") } }
-}
+sqldelight { databases { create("AlarmistDb") { packageName.set("com.trm.alarmist.db") } } }

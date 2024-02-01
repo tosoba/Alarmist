@@ -104,7 +104,12 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       ) {
         when (val child = it.instance) {
           is RootComponent.Child.Alarm -> {
-            AlarmContent(modifier = Modifier.fillMaxSize(), component = child.component)
+            AlarmContent(
+              modifier = Modifier.fillMaxSize(),
+              state = child.component.feature.state,
+              onFireAtChange = child.component.feature::onFireAtChange,
+              onConfirmClick = child.component.feature::onConfirmClick,
+            )
           }
           is RootComponent.Child.Alarms -> {
             AlarmsContent(modifier = Modifier.fillMaxSize(), component = child.component)

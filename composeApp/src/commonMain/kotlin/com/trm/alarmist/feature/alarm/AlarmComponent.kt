@@ -2,10 +2,12 @@ package com.trm.alarmist.feature.alarm
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.getOrCreate
-import kotlinx.datetime.LocalTime
+import com.arkivanov.essenty.statekeeper.SerializableContainer
 
 interface AlarmComponent {
   val mode: Mode
+
+  val feature: AlarmFeature
 
   sealed interface Mode {
     data object Add : Mode
@@ -18,11 +20,24 @@ class DefaultAlarmComponent(
   componentContext: ComponentContext,
   override val mode: AlarmComponent.Mode,
 ) : AlarmComponent, ComponentContext by componentContext {
-  private val feature = instanceKeeper.getOrCreate(::AlarmFeature)
+  override val feature =
+    instanceKeeper.getOrCreate {
+      AlarmFeature(
+        savedState =
+          stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer()),
+        mode = mode,
+      )
+    }
 
-  // TODO: keep fireAt time as state here with proper saving into bundle
+  init {
+    stateKeeper.register(
+      key = SAVED_STATE_KEY,
+      strategy = SerializableContainer.serializer(),
+      supplier = feature::saveState,
+    )
+  }
 
-  fun addAlarm(fireAt: LocalTime) {
-    feature.addAlarm(fireAt, null) // TODO: name
+  companion object {
+    private const val SAVED_STATE_KEY = "ALARM_STATE"
   }
 }
