@@ -26,7 +26,7 @@ kotlin {
       
       implementation(libs.compose.ui.tooling.preview)
 
-      implementation(libs.decompose.compose.jetpack)
+      implementation(libs.decompose.extensions.android)
 
       implementation(libs.essenty.statekeeper.android)
 
@@ -44,6 +44,7 @@ kotlin {
       @OptIn(ExperimentalComposeLibrary::class) implementation(compose.components.resources)
 
       implementation(libs.decompose)
+      implementation(libs.decompose.extensions.compose)
       implementation(libs.essenty.lifecycle)
       implementation(libs.essenty.statekeeper)
 

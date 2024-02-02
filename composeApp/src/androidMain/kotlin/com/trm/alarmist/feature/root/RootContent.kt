@@ -17,9 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetpack.stack.animation.stackAnimation
-import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.clock.ClockContent
@@ -100,7 +101,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       Children(
         modifier = Modifier.fillMaxWidth().weight(1f),
         stack = childStack,
-        animation = stackAnimation(),
+        animation = stackAnimation(fade()),
       ) {
         when (val child = it.instance) {
           is RootComponent.Child.Alarm -> {

@@ -15,9 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.jetpack.pages.Pages
-import com.arkivanov.decompose.extensions.compose.jetpack.pages.PagesScrollAnimation
-import com.arkivanov.decompose.extensions.compose.jetpack.subscribeAsState
+import com.arkivanov.decompose.extensions.compose.pages.Pages
+import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.trm.alarmist.feature.alarms.groups.AlarmGroupsContent
 import com.trm.alarmist.feature.alarms.list.AlarmListContent
 import com.trm.alarmist.feature.alarms.ui.AlarmsNavigationBar

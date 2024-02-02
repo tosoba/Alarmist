@@ -9,17 +9,17 @@ androidx-espresso-core = "3.5.1"
 androidx-test-junit = "1.1.5"
 androidxLifecycle = "2.6.2"
 androidxSavedstate = "1.2.1"
-compose = "1.5.4"
+compose = "1.6.0"
 compose-compiler = "1.5.6"
 compose-plugin = "1.5.11"
-decompose = "2.2.2"
+decompose = "3.0.0-alpha05"
 essenty = "2.0.0-alpha04"
 junit = "4.13.2"
 koin = "3.5.0"
 kotlin = "1.9.21"
 kotlinx-coroutines = "1.7.3"
 kotlinx-datetime = "0.5.0"
-kotlinx-serialization = "1.5.1"
+kotlinx-serialization = "1.6.2"
 sqlDelight = "2.0.1"
 
 [libraries]
@@ -37,8 +37,8 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = 
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
-decompose-compose-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
-decompose-compose-jetpack = { module = "com.arkivanov.decompose:extensions-compose-jetpack", version.ref = "decompose" }
+decompose-extensions-android = { module = "com.arkivanov.decompose:extensions-android", version.ref = "decompose" }
+decompose-extensions-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 essenty-statekeeper = { module = "com.arkivanov.essenty:state-keeper", version.ref = "essenty" }
 essenty-statekeeper-android = { module = "com.arkivanov.essenty:state-keeper-android", version.ref = "essenty" }

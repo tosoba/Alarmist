@@ -3,6 +3,7 @@ package com.trm.alarmist.feature.alarm
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FloatingActionButton
@@ -39,7 +40,10 @@ fun AlarmContent(
       )
     }
 
-    FloatingActionButton(modifier = Modifier.align(Alignment.BottomEnd), onClick = onConfirmClick) {
+    FloatingActionButton(
+      modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+      onClick = onConfirmClick,
+    ) {
       Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
     }
   }
