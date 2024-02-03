@@ -8,7 +8,6 @@ import com.arkivanov.decompose.router.pages.PagesNavigation
 import com.arkivanov.decompose.router.pages.childPages
 import com.arkivanov.decompose.router.pages.select
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.trm.alarmist.feature.alarms.groups.AlarmGroupsComponent
 import com.trm.alarmist.feature.alarms.groups.DefaultAlarmGroupsComponent
 import com.trm.alarmist.feature.alarms.list.AlarmListComponent
@@ -40,8 +39,6 @@ class DefaultAlarmsComponent(
   private val onAddAlarmClick: () -> Unit,
   private val onAddGroupClick: () -> Unit,
 ) : AlarmsComponent, ComponentContext by componentContext {
-  private val feature = instanceKeeper.getOrCreate(::AlarmsFeature)
-
   private val navigation = PagesNavigation<PageConfig>()
 
   override val pages: Value<ChildPages<*, AlarmsComponent.Page>> =

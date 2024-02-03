@@ -8,8 +8,10 @@ import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode) :
-  CoroutineFeature(), KoinComponent {
+class AlarmFeature(
+  savedState: SerializableContainer?,
+  mode: AlarmComponent.Mode,
+) : CoroutineFeature(), KoinComponent {
   var state: AlarmState = savedState?.consume(strategy = AlarmState.serializer()) ?: AlarmState()
     private set
 

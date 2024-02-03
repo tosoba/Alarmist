@@ -3,6 +3,8 @@ package com.trm.alarmist.core.data
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.database.AlarmistDatabase
 import com.trm.alarmist.core.domain.AlarmsRepository
+import com.trm.alarmist.db.Alarm
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -25,4 +27,6 @@ class AlarmsLocalRepository(private val db: AlarmistDatabase) : AlarmsRepository
         ),
     )
   }
+
+  override fun getAllAlarms(): Flow<List<Alarm>> = db.selectAllAlarms()
 }
