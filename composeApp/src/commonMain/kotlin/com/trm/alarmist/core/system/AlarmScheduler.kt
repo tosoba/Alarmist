@@ -1,0 +1,7 @@
+package com.trm.alarmist.core.system
+
+import kotlinx.datetime.LocalDateTime
+
+interface AlarmScheduler {
+  fun scheduleAlarm(id: Long, fireAt: LocalDateTime)
+}

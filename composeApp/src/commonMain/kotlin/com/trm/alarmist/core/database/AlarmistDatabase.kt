@@ -12,13 +12,13 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDateTime
 
 class AlarmistDatabase(
-  databaseDriverFactory: DriverFactory,
-  private val dispatcher: CoroutineDispatcher
+  databaseDriverFactory: SqlDriverFactory,
+  private val dispatcher: CoroutineDispatcher,
 ) {
   private val database: AlarmistDb =
     AlarmistDb(
       driver = databaseDriverFactory.createDriver(),
-      alarmAdapter = Alarm.Adapter(LocalDateTimeAdapter)
+      alarmAdapter = Alarm.Adapter(LocalDateTimeAdapter),
     )
 
   private val queries: AlarmistQueries = database.alarmistQueries

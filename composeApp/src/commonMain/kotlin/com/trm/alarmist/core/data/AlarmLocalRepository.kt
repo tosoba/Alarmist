@@ -2,7 +2,8 @@ package com.trm.alarmist.core.data
 
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.database.AlarmistDatabase
-import com.trm.alarmist.core.domain.AlarmsRepository
+import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.system.AlarmScheduler
 import com.trm.alarmist.db.Alarm
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DateTimeUnit
@@ -11,7 +12,10 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.plus
 
-class AlarmsLocalRepository(private val db: AlarmistDatabase) : AlarmsRepository {
+class AlarmLocalRepository(
+  private val db: AlarmistDatabase,
+  private val scheduler: AlarmScheduler,
+) : AlarmRepository {
   override suspend fun addOneShotAlarm(fireAt: LocalTime, name: String?) {
     db.insertAlarm(
       name = name,

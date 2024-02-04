@@ -2,7 +2,7 @@ package com.trm.alarmist.feature.alarm
 
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
-import com.trm.alarmist.core.domain.AlarmsRepository
+import com.trm.alarmist.core.domain.AlarmRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
@@ -14,7 +14,7 @@ class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode
   var state: AlarmState = savedState?.consume(strategy = AlarmState.serializer()) ?: AlarmState()
     private set
 
-  private val repository: AlarmsRepository by inject()
+  private val repository: AlarmRepository by inject()
 
   fun onConfirmClick(): Job =
     coroutineScope.launch { repository.addOneShotAlarm(state.fireAt, state.name) }

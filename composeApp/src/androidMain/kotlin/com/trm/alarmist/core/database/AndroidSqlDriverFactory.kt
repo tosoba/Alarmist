@@ -5,6 +5,6 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.trm.alarmist.db.AlarmistDb
 
-actual class DriverFactory(private val context: Context) {
+actual class SqlDriverFactory(private val context: Context) {
   actual fun createDriver(): SqlDriver = AndroidSqliteDriver(AlarmistDb.Schema, context, DB_NAME)
 }
