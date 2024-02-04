@@ -58,9 +58,8 @@ interface RootComponent {
   }
 }
 
-class DefaultRootComponent(
-  componentContext: ComponentContext,
-) : RootComponent, ComponentContext by componentContext {
+class DefaultRootComponent(componentContext: ComponentContext) :
+  RootComponent, ComponentContext by componentContext {
   private val navigation = StackNavigation<ChildConfig>()
 
   override val childStack: Value<ChildStack<*, RootComponent.Child>> =
@@ -74,7 +73,7 @@ class DefaultRootComponent(
 
   private fun createChild(
     config: ChildConfig,
-    componentContext: ComponentContext
+    componentContext: ComponentContext,
   ): RootComponent.Child =
     when (config) {
       ChildConfig.Alarms -> {
@@ -82,13 +81,17 @@ class DefaultRootComponent(
           DefaultAlarmsComponent(
             componentContext = componentContext,
             onAddAlarmClick = ::onAddAlarmClick,
-            onAddGroupClick = ::onAddGroupClick
+            onAddGroupClick = ::onAddGroupClick,
           )
         )
       }
       is ChildConfig.Alarm -> {
         RootComponent.Child.Alarm(
-          DefaultAlarmComponent(componentContext = componentContext, mode = config.mode)
+          DefaultAlarmComponent(
+            componentContext = componentContext,
+            mode = config.mode,
+            pop = ::onBackClick,
+          )
         )
       }
       is ChildConfig.Group -> {

@@ -9,6 +9,8 @@ interface AlarmComponent {
 
   val feature: AlarmFeature
 
+  fun onConfirmClick()
+
   sealed interface Mode {
     data object Add : Mode
 
@@ -19,6 +21,7 @@ interface AlarmComponent {
 class DefaultAlarmComponent(
   componentContext: ComponentContext,
   override val mode: AlarmComponent.Mode,
+  private val pop: () -> Unit,
 ) : AlarmComponent, ComponentContext by componentContext {
   override val feature =
     instanceKeeper.getOrCreate {
@@ -35,6 +38,10 @@ class DefaultAlarmComponent(
       strategy = SerializableContainer.serializer(),
       supplier = feature::saveState,
     )
+  }
+
+  override fun onConfirmClick() {
+    feature.onConfirmClick().invokeOnCompletion { pop() }
   }
 
   companion object {

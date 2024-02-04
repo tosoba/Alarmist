@@ -109,7 +109,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               modifier = Modifier.fillMaxSize(),
               state = child.component.feature.state,
               onFireAtChange = child.component.feature::onFireAtChange,
-              onConfirmClick = child.component.feature::onConfirmClick,
+              onConfirmClick = child.component::onConfirmClick,
             )
           }
           is RootComponent.Child.Alarms -> {
