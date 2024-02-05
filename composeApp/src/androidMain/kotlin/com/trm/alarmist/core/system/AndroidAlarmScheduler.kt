@@ -9,7 +9,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
-  private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+  private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
   override fun scheduleAlarm(id: Long, fireAt: LocalDateTime) {
     // TODO: any runtime permission checks depending on android version

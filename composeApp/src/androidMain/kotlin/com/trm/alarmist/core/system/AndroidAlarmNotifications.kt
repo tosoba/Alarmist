@@ -9,7 +9,7 @@ import androidx.core.app.NotificationCompat
 import com.trm.alarmist.R
 
 fun Context.notifyAlarmFired() {
-  val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+  val notificationManager = getSystemService(NotificationManager::class.java)
   notificationManager.notify(
     1,
     NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
@@ -22,7 +22,7 @@ fun Context.notifyAlarmFired() {
 
 fun Application.createAlarmNotificationChannel() {
   if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-  val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+  val notificationManager = getSystemService(NotificationManager::class.java)
   notificationManager.createNotificationChannel(
     NotificationChannel(
       ALARM_NOTIFICATION_CHANNEL_ID,
