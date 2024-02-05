@@ -23,9 +23,13 @@ class AlarmistDatabase(
 
   private val queries: AlarmistQueries = database.alarmistQueries
 
-  suspend fun insertAlarm(name: String?, fireAt: LocalDateTime) {
-    withContext(dispatcher) { queries.insertAlarm(id = null, name = name, fireAt = fireAt) }
-  }
+  suspend fun insertAlarm(name: String?, fireAt: LocalDateTime): Long =
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        queries.insertAlarm(id = null, name = name, fireAt = fireAt)
+        queries.selectLastInsertedRowId().executeAsOne()
+      }
+    }
 
   fun selectAllAlarms(): Flow<List<Alarm>> =
     queries.selectAllAlarms().asFlow().mapToList(dispatcher)

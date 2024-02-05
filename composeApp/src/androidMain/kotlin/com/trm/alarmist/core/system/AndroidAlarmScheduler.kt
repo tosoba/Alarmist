@@ -12,7 +12,6 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
   private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
   override fun scheduleAlarm(id: Long, fireAt: LocalDateTime) {
-    // TODO: any runtime permission checks depending on android version
     alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
       fireAt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),

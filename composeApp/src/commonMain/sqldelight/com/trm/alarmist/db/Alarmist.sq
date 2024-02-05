@@ -16,3 +16,9 @@ INSERT INTO alarm VALUES (?,?,?);
 
 selectAllAlarms:
 SELECT * FROM alarm ORDER BY fireAt;
+
+selectLastInsertedRowId:
+SELECT last_insert_rowid();
+
+selectChanges:
+SELECT changes();
