@@ -40,9 +40,14 @@ fun AlarmContent(
       )
     }
 
+    val permissionsHandler =
+      alarmPermissionsHandler(
+        onDenied = { println("Permission $it is denied.") }, // TODO:
+        onGranted = onConfirmClick
+      )
     FloatingActionButton(
       modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-      onClick = onConfirmClick,
+      onClick = permissionsHandler,
     ) {
       Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
     }
