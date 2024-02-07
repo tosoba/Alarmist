@@ -10,15 +10,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
 @Composable
-actual fun alarmPermissionsHandler(
-  onDenied: (String) -> Unit,
-  onGranted: () -> Unit,
-): () -> Unit {
-  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+actual fun alarmPermissionsHandler(onDenied: (String) -> Unit, onGranted: () -> Unit): () -> Unit =
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     val launcher =
       rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-          // TODO: check exact alarms
           onGranted()
         } else {
           onDenied(Manifest.permission.POST_NOTIFICATIONS)
@@ -30,15 +26,11 @@ actual fun alarmPermissionsHandler(
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
           PackageManager.PERMISSION_GRANTED
       ) {
-        // TODO: check exact alarms
         onGranted()
       } else {
         launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
       }
     }
   } else {
-    {
-      //TODO: check exact alarms only
-    }
+    onGranted
   }
-}
