@@ -4,6 +4,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 actual fun alarmPermissionsHandler(
-  onDenied: (String) -> Unit,
-  onGranted: () -> Unit
+  onDenied: (shouldShowRationale: Boolean) -> Unit,
+  onGranted: () -> Unit,
 ): () -> Unit = {}
