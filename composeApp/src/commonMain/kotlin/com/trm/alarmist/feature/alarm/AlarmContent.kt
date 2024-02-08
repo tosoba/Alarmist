@@ -5,7 +5,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -13,6 +15,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -49,6 +52,33 @@ fun AlarmContent(
         centerTextStyle = textStyle.copy(fontWeight = FontWeight.Bold),
         onSnappedTime = onFireAtChange,
       )
+
+      AlarmModeRadioButton(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        selected = true,
+        label = "One shot",
+        onClick = {}
+      )
+      AlarmModeRadioButton(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        selected = false,
+        label = "Day of week",
+        onClick = {}
+      ) // TODO: show a day of week selection with an option to pause the alarm below (if paused
+        // there should be option to remove/edit a pause)
+      // when attempting to save without selecting a day of week - form should scroll to this item
+      // and show an error text in red suggesting to either choose day of week or switch to one shot
+      // and save (with a TextButton on the right)
+      AlarmModeRadioButton(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        selected = false,
+        label = "Scheduled",
+        onClick = {}
+      ) // TODO: if already scheduled show a text with info about schedule with an option to edit on
+        // the right
+      // when attempting to save without scheduling any dates - form should scroll to this item and
+      // show an error text in red suggesting to either choose a date or switch to one shot and save
+      // (with a TextButton on the right)
     }
 
     var permissionDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -86,6 +116,19 @@ fun AlarmContent(
     ) {
       Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
     }
+  }
+}
+
+@Composable
+private fun AlarmModeRadioButton(
+  modifier: Modifier = Modifier,
+  selected: Boolean,
+  label: String,
+  onClick: () -> Unit
+) {
+  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    RadioButton(selected = selected, onClick = onClick)
+    Text(text = label)
   }
 }
 
