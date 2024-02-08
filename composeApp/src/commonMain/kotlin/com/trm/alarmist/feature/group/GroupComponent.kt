@@ -1,14 +1,16 @@
 package com.trm.alarmist.feature.group
 
 import com.arkivanov.decompose.ComponentContext
+import kotlinx.serialization.Serializable
 
 interface GroupComponent {
   val mode: Mode
 
+  @Serializable
   sealed interface Mode {
-    data object Add : Mode
+    @Serializable data object Add : Mode
 
-    data object Edit : Mode
+    @Serializable data object Edit : Mode
   }
 }
 

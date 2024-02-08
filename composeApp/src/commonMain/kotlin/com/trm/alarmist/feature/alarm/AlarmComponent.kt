@@ -3,6 +3,7 @@ package com.trm.alarmist.feature.alarm
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
+import kotlinx.serialization.Serializable
 
 interface AlarmComponent {
   val mode: Mode
@@ -11,10 +12,11 @@ interface AlarmComponent {
 
   fun onConfirmClick()
 
+  @Serializable
   sealed interface Mode {
-    data object Add : Mode
+    @Serializable data object Add : Mode
 
-    data object Edit : Mode
+    @Serializable data object Edit : Mode
   }
 }
 
