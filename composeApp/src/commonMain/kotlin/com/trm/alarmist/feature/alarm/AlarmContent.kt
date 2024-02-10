@@ -1,11 +1,18 @@
 package com.trm.alarmist.feature.alarm
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,10 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -24,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +41,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,12 +51,14 @@ import com.trm.alarmist.core.ui.WheelTimePicker
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
   state: AlarmState,
   onFireAtChange: (LocalTime) -> Unit,
   onDayOfWeekClick: (DayOfWeek) -> Unit,
+  onToggleCalendarExpandedClick: () -> Unit,
   onConfirmClick: () -> Unit,
 ) {
   Box(modifier = modifier) {
@@ -76,23 +89,30 @@ fun AlarmContent(
 
       ElevatedCard(
         modifier =
-          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+          Modifier.fillMaxWidth()
+            .animateContentSize()
+            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
       ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-          Text("Scheduled on:")
+        Column {
+          Text(modifier = Modifier.padding(horizontal = 8.dp), text = "Scheduled on:")
           // TODO: add some extra description about when exactly alarm is going to fire that will
           // change as user tweaks scheduled on settings
 
           DaysOfWeekRow(
             modifier =
-              Modifier.fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .horizontalScroll(rememberScrollState()),
+              Modifier.fillMaxWidth().padding(8.dp).horizontalScroll(rememberScrollState()),
             selectedDaysOfWeek = state.selectedDaysOfWeek,
             onDayOfWeekClick = onDayOfWeekClick,
           )
 
-          // TODO: calendar button (or expandable calendar view)
+          ExpandableCalendar(
+            headerModifier =
+              Modifier.fillMaxWidth()
+                .clickable(onClick = onToggleCalendarExpandedClick)
+                .padding(vertical = 8.dp),
+            calendarModifier = Modifier.fillMaxWidth(),
+            isExpanded = state.isCalendarExpanded,
+          )
         }
       }
 
@@ -102,7 +122,8 @@ fun AlarmContent(
       ) {
         Column(modifier = Modifier.padding(8.dp)) {
           Text("Settings:")
-          // TODO: sound/volume/vibrate options + maybe group choice?
+          // TODO: sound/volume/vibrate options/snooze duration/delete button in edit mode (marked
+          // in red) + maybe group choice?
         }
       }
     }
@@ -142,6 +163,46 @@ fun AlarmContent(
     ) {
       Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
     }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ColumnScope.ExpandableCalendar(
+  headerModifier: Modifier = Modifier,
+  calendarModifier: Modifier = Modifier,
+  isExpanded: Boolean,
+) {
+  Row(
+    modifier = headerModifier,
+    horizontalArrangement = Arrangement.SpaceBetween,
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Text(modifier = Modifier.padding(horizontal = 8.dp), text = "Calendar:")
+    val expandedTransition =
+      updateTransition(
+        targetState = isExpanded,
+        label = "updateTransition-ExpandableCalendar-isExpanded",
+      )
+    val expandImageRotation by
+      expandedTransition.animateFloat(label = "animateFloat-ExpandableCalendar-rotation") { state ->
+        if (state) 180f else 0f
+      }
+    Image(
+      modifier = Modifier.rotate(expandImageRotation),
+      imageVector = Icons.Default.ArrowDropDown,
+      contentDescription = null,
+    )
+  }
+
+  AnimatedVisibility(modifier = calendarModifier, visible = isExpanded) {
+    DatePicker(
+      modifier = Modifier.fillMaxSize(),
+      state = rememberDatePickerState(),
+      title = null,
+      headline = null,
+      showModeToggle = false,
+    )
   }
 }
 

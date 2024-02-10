@@ -11,4 +11,5 @@ data class AlarmState(
   val fireAt: LocalTime = LocalTime(now().nextFullHour(), 0),
   val name: String? = null,
   val selectedDaysOfWeek: Set<DayOfWeek> = emptySet(),
+  val isCalendarExpanded: Boolean = false,
 )

@@ -40,6 +40,10 @@ class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode
       )
   }
 
+  fun onToggleCalendarExpandedClick() {
+    state = state.copy(isCalendarExpanded = !state.isCalendarExpanded)
+  }
+
   fun saveState(): SerializableContainer =
     SerializableContainer(value = state, strategy = AlarmState.serializer())
 }
