@@ -9,13 +9,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,44 +43,57 @@ fun AlarmContent(
   onConfirmClick: () -> Unit,
 ) {
   Box(modifier = modifier) {
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-      val textStyle = MaterialTheme.typography.headlineMedium
-      val textHeightDp = with(LocalDensity.current) { textStyle.fontSize.toDp() } + 10.dp
-      WheelTimePicker(
-        startTime = state.fireAt,
-        rowCount = 5,
-        size = DpSize(textHeightDp, textHeightDp) * 5,
-        textStyle = textStyle,
-        centerTextStyle = textStyle.copy(fontWeight = FontWeight.Bold),
-        onSnappedTime = onFireAtChange,
-      )
+    Column(
+      modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      ElevatedCard(
+        modifier =
+          Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+      ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+          Text(text = "Fire at time:")
 
-      AlarmModeRadioButton(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-        selected = true,
-        label = "One shot",
-        onClick = {}
-      )
-      AlarmModeRadioButton(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-        selected = false,
-        label = "Day of week",
-        onClick = {}
-      ) // TODO: show a day of week selection with an option to pause the alarm below (if paused
-        // there should be option to remove/edit a pause)
-      // when attempting to save without selecting a day of week - form should scroll to this item
-      // and show an error text in red suggesting to either choose day of week or switch to one shot
-      // and save (with a TextButton on the right)
-      AlarmModeRadioButton(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-        selected = false,
-        label = "Scheduled",
-        onClick = {}
-      ) // TODO: if already scheduled show a text with info about schedule with an option to edit on
-        // the right
-      // when attempting to save without scheduling any dates - form should scroll to this item and
-      // show an error text in red suggesting to either choose a date or switch to one shot and save
-      // (with a TextButton on the right)
+          val textStyle = MaterialTheme.typography.headlineMedium
+          val textHeightDp = with(LocalDensity.current) { textStyle.fontSize.toDp() } + 10.dp
+          WheelTimePicker(
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            startTime = state.fireAt,
+            rowCount = 5,
+            size = DpSize(textHeightDp, textHeightDp) * 5,
+            textStyle = textStyle,
+            centerTextStyle = textStyle.copy(fontWeight = FontWeight.Bold),
+            onSnappedTime = onFireAtChange,
+          )
+        }
+      }
+
+      ElevatedCard(
+        modifier =
+          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+      ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+          Text("Scheduled on:")
+          // TODO: add some extra description about when exactly alarm is going to fire that will
+          // change as user tweaks scheduled on settings
+
+          Row(modifier = Modifier.fillMaxWidth()) {
+            // TODO: day of week chips/buttons
+          }
+
+          // TODO: calendar button (or expandable calendar view)
+        }
+      }
+
+      ElevatedCard(
+        modifier =
+          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+      ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+          Text("Settings:")
+          // TODO: sound/volume/vibrate options + maybe group choice?
+        }
+      }
     }
 
     var permissionDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -116,19 +131,6 @@ fun AlarmContent(
     ) {
       Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
     }
-  }
-}
-
-@Composable
-private fun AlarmModeRadioButton(
-  modifier: Modifier = Modifier,
-  selected: Boolean,
-  label: String,
-  onClick: () -> Unit
-) {
-  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-    RadioButton(selected = selected, onClick = onClick)
-    Text(text = label)
   }
 }
 

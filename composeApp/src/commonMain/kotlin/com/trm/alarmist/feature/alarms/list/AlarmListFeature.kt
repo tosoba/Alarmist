@@ -19,7 +19,7 @@ class AlarmListFeature : CoroutineFeature(), KoinComponent {
   init {
     repository
       .getAllAlarms()
-      .onEach { _alarms.value = it.map { alarm -> AlarmListItem(alarm.fireAt.time, alarm.name) } }
+      .onEach { _alarms.value = it.map { alarm -> AlarmListItem(alarm.fireAt, alarm.name) } }
       .launchIn(coroutineScope)
   }
 }

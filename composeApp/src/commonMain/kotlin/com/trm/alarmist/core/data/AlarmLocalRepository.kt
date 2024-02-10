@@ -17,18 +17,20 @@ class AlarmLocalRepository(
   private val scheduler: AlarmScheduler,
 ) : AlarmRepository {
   override suspend fun addOneShotAlarm(fireAt: LocalTime, name: String?) {
-    val fireAtDateTime =
-      LocalDateTime(
-        date =
-          if (fireAt < LocalTime.now()) {
-            LocalDate.now().plus(1, DateTimeUnit.DAY)
-          } else {
-            LocalDate.now()
-          },
-        time = fireAt,
-      )
-    val id = db.insertAlarm(name = name, fireAt = fireAtDateTime)
-    scheduler.scheduleAlarm(id, fireAtDateTime)
+    val id = db.insertAlarm(name = name, fireAt = fireAt)
+    scheduler.scheduleAlarm(
+      id = id,
+      fireAt =
+        LocalDateTime(
+          date =
+            if (fireAt < LocalTime.now()) {
+              LocalDate.now().plus(1, DateTimeUnit.DAY)
+            } else {
+              LocalDate.now()
+            },
+          time = fireAt,
+        ),
+    )
   }
 
   override fun getAllAlarms(): Flow<List<Alarm>> = db.selectAllAlarms()
