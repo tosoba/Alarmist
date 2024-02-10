@@ -3,6 +3,7 @@ package com.trm.alarmist.feature.alarm
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.ui.WheelTimePicker
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 
 @Composable
@@ -40,6 +45,7 @@ fun AlarmContent(
   modifier: Modifier = Modifier,
   state: AlarmState,
   onFireAtChange: (LocalTime) -> Unit,
+  onDayOfWeekClick: (DayOfWeek) -> Unit,
   onConfirmClick: () -> Unit,
 ) {
   Box(modifier = modifier) {
@@ -77,9 +83,14 @@ fun AlarmContent(
           // TODO: add some extra description about when exactly alarm is going to fire that will
           // change as user tweaks scheduled on settings
 
-          Row(modifier = Modifier.fillMaxWidth()) {
-            // TODO: day of week chips/buttons
-          }
+          DaysOfWeekRow(
+            modifier =
+              Modifier.fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .horizontalScroll(rememberScrollState()),
+            selectedDaysOfWeek = state.selectedDaysOfWeek,
+            onDayOfWeekClick = onDayOfWeekClick,
+          )
 
           // TODO: calendar button (or expandable calendar view)
         }
@@ -130,6 +141,50 @@ fun AlarmContent(
       onClick = permissionsHandler,
     ) {
       Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
+    }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DaysOfWeekRow(
+  modifier: Modifier = Modifier,
+  selectedDaysOfWeek: Collection<DayOfWeek> = emptyList(),
+  onDayOfWeekClick: (DayOfWeek) -> Unit = {},
+) {
+  Row(modifier = modifier) {
+    DayOfWeek.entries.forEach { dayOfWeek ->
+      val isSelected = selectedDaysOfWeek.contains(dayOfWeek)
+      Card(
+        modifier = Modifier.padding(horizontal = 8.dp),
+        onClick = { onDayOfWeekClick(dayOfWeek) },
+        elevation =
+          if (isSelected) {
+            CardDefaults.cardElevation(
+              defaultElevation = 0.dp,
+              pressedElevation = 0.dp,
+              focusedElevation = 0.dp,
+            )
+          } else {
+            CardDefaults.cardElevation(
+              defaultElevation = 1.dp,
+              pressedElevation = 1.dp,
+              focusedElevation = 1.dp,
+            )
+          },
+        colors =
+          if (isSelected) {
+            CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+          } else {
+            CardDefaults.cardColors()
+          },
+      ) {
+        Text(
+          modifier = Modifier.padding(8.dp),
+          text = dayOfWeek.name.take(2),
+          fontWeight = if (isSelected) FontWeight.SemiBold else null,
+        )
+      }
     }
   }
 }

@@ -109,6 +109,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               modifier = Modifier.fillMaxSize(),
               state = child.component.feature.state,
               onFireAtChange = child.component.feature::onFireAtChange,
+              onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
               onConfirmClick = child.component::onConfirmClick,
             )
           }
