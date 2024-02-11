@@ -43,6 +43,7 @@ kotlin {
       implementation(compose.material3)
       implementation(compose.ui)
       @OptIn(ExperimentalComposeLibrary::class) implementation(compose.components.resources)
+      implementation(libs.epicCalendar)
 
       implementation(libs.decompose)
       implementation(libs.essenty.lifecycle)

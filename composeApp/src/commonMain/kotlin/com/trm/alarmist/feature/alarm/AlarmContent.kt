@@ -7,6 +7,7 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +18,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -25,7 +28,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -33,21 +35,33 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.ui.WheelTimePicker
+import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
+import epicarchitect.calendar.compose.basis.contains
+import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
+import epicarchitect.calendar.compose.datepicker.EpicDatePicker
+import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerConfig
+import epicarchitect.calendar.compose.datepicker.state.EpicDatePickerState
+import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
+import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
+import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 
@@ -166,7 +180,6 @@ fun AlarmContent(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ColumnScope.ExpandableCalendar(
   headerModifier: Modifier = Modifier,
@@ -195,13 +208,50 @@ private fun ColumnScope.ExpandableCalendar(
     )
   }
 
+  val basisConfig = rememberMutableBasisEpicCalendarConfig()
+  val state =
+    rememberEpicDatePickerState(
+      config =
+        rememberEpicDatePickerConfig(
+          pagerConfig = rememberEpicCalendarPagerConfig(basisConfig = basisConfig),
+          selectionContentColor = MaterialTheme.colorScheme.onPrimary,
+          selectionContainerColor = MaterialTheme.colorScheme.primary,
+        )
+    )
   AnimatedVisibility(modifier = calendarModifier, visible = isExpanded) {
-    DatePicker(
-      modifier = Modifier.fillMaxSize(),
-      state = rememberDatePickerState(),
-      title = null,
-      headline = null,
-      showModeToggle = false,
+    EpicDatePicker(
+      state = state,
+      dayOfMonthContent = { date ->
+        val basisState = LocalBasisEpicCalendarState.current!!
+        val pickerState = LocalEpicDatePickerState.current!!
+        val selectedDays = pickerState.selectedDates
+        val selectionMode = pickerState.selectionMode
+
+        val isSelected =
+          remember(selectionMode, selectedDays, date) {
+            when (selectionMode) {
+              is EpicDatePickerState.SelectionMode.Range -> {
+                if (selectedDays.isEmpty()) false
+                else date in selectedDays.min()..selectedDays.max()
+              }
+              is EpicDatePickerState.SelectionMode.Single -> date in selectedDays
+            }
+          }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+          Text(
+            modifier = Modifier.alpha(if (date in basisState.currentMonth) 1.0f else 0.5f),
+            text = date.dayOfMonth.toString(),
+            textAlign = TextAlign.Center,
+            color =
+              if (isSelected) pickerState.config.selectionContentColor
+              else pickerState.config.pagerConfig.basisConfig.contentColor,
+          )
+          if (date in basisState.currentMonth) {
+            Box(Modifier.size(5.dp).clip(CircleShape).background(Color.Red))
+          }
+        }
+      },
     )
   }
 }
