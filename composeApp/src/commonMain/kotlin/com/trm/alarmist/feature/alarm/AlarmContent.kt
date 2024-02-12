@@ -65,7 +65,6 @@ import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConf
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
