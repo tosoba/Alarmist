@@ -53,17 +53,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.ui.WheelTimePicker
+import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.contains
 import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
 import epicarchitect.calendar.compose.datepicker.EpicDatePicker
 import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerConfig
-import epicarchitect.calendar.compose.datepicker.state.EpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
 import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.Month
 
 @Composable
 fun AlarmContent(
@@ -207,35 +208,27 @@ private fun ColumnScope.ExpandableCalendar(
     )
   }
 
-  val basisConfig = rememberMutableBasisEpicCalendarConfig()
-  val state =
-    rememberEpicDatePickerState(
-      config =
-        rememberEpicDatePickerConfig(
-          pagerConfig = rememberEpicCalendarPagerConfig(basisConfig = basisConfig),
-          selectionContentColor = MaterialTheme.colorScheme.onPrimary,
-          selectionContainerColor = MaterialTheme.colorScheme.primary,
-        )
-    )
   AnimatedVisibility(modifier = calendarModifier, visible = isExpanded) {
     EpicDatePicker(
-      state = state,
+      state =
+        rememberEpicDatePickerState(
+          config =
+            rememberEpicDatePickerConfig(
+              pagerConfig =
+                rememberEpicCalendarPagerConfig(
+                  basisConfig = rememberMutableBasisEpicCalendarConfig()
+                ),
+              selectionContentColor = MaterialTheme.colorScheme.onPrimary,
+              selectionContainerColor = MaterialTheme.colorScheme.primary,
+            ),
+          monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
+        ),
       dayOfMonthContent = { date ->
         val basisState = LocalBasisEpicCalendarState.current!!
         val pickerState = LocalEpicDatePickerState.current!!
-        val selectedDays = pickerState.selectedDates
-        val selectionMode = pickerState.selectionMode
 
-        val isSelected =
-          remember(selectionMode, selectedDays, date) {
-            when (selectionMode) {
-              is EpicDatePickerState.SelectionMode.Range -> {
-                if (selectedDays.isEmpty()) false
-                else date in selectedDays.min()..selectedDays.max()
-              }
-              is EpicDatePickerState.SelectionMode.Single -> date in selectedDays
-            }
-          }
+        val selectedDays = pickerState.selectedDates
+        val isSelected = remember(selectedDays, date) { date in selectedDays }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
           Text(
