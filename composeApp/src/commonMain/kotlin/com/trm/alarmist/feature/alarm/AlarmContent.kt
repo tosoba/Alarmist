@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,6 +35,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,10 +67,12 @@ import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerCo
 import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
 import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
+import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
@@ -208,9 +215,11 @@ private fun ColumnScope.ExpandableCalendar(
     )
   }
 
+  val scope = rememberCoroutineScope()
+
   AnimatedVisibility(modifier = calendarModifier, visible = isExpanded) {
-    EpicDatePicker(
-      state =
+    Column {
+      val state =
         rememberEpicDatePickerState(
           config =
             rememberEpicDatePickerConfig(
@@ -222,29 +231,51 @@ private fun ColumnScope.ExpandableCalendar(
               selectionContainerColor = MaterialTheme.colorScheme.primary,
             ),
           monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
-        ),
-      dayOfMonthContent = { date ->
-        val basisState = LocalBasisEpicCalendarState.current!!
-        val pickerState = LocalEpicDatePickerState.current!!
+        )
 
-        val selectedDays = pickerState.selectedDates
-        val isSelected = remember(selectedDays, date) { date in selectedDays }
+      Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Spacer(Modifier.weight(1f))
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-          Text(
-            modifier = Modifier.alpha(if (date in basisState.currentMonth) 1.0f else 0.5f),
-            text = date.dayOfMonth.toString(),
-            textAlign = TextAlign.Center,
-            color =
-              if (isSelected) pickerState.config.selectionContentColor
-              else pickerState.config.pagerConfig.basisConfig.contentColor,
-          )
-          if (date in basisState.currentMonth) {
-            Box(Modifier.size(5.dp).clip(CircleShape).background(Color.Red))
-          }
+        IconButton(
+          enabled = state.pagerState.currentMonth > state.pagerState.monthRange.start,
+          onClick = { scope.launch { state.pagerState.scrollMonths(-1) } },
+        ) {
+          Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Previous month")
         }
-      },
-    )
+
+        IconButton(
+          enabled = state.pagerState.currentMonth < state.pagerState.monthRange.endInclusive,
+          onClick = { scope.launch { state.pagerState.scrollMonths(1) } },
+        ) {
+          Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Next month")
+        }
+      }
+
+      EpicDatePicker(
+        state = state,
+        dayOfMonthContent = { date ->
+          val basisState = LocalBasisEpicCalendarState.current!!
+          val pickerState = LocalEpicDatePickerState.current!!
+
+          val selectedDays = pickerState.selectedDates
+          val isSelected = remember(selectedDays, date) { date in selectedDays }
+
+          Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+              modifier = Modifier.alpha(if (date in basisState.currentMonth) 1.0f else 0.5f),
+              text = date.dayOfMonth.toString(),
+              textAlign = TextAlign.Center,
+              color =
+                if (isSelected) pickerState.config.selectionContentColor
+                else pickerState.config.pagerConfig.basisConfig.contentColor,
+            )
+            if (date in basisState.currentMonth) {
+              Box(Modifier.size(5.dp).clip(CircleShape).background(Color.Red))
+            }
+          }
+        },
+      )
+    }
   }
 }
 
