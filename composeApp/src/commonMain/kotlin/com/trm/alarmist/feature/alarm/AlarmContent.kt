@@ -53,7 +53,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -72,7 +74,6 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
@@ -234,6 +235,12 @@ private fun ColumnScope.ExpandableCalendar(
         )
 
       Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(
+          modifier = Modifier.padding(start = 16.dp),
+          text =
+            "${state.pagerState.currentMonth.month.name.lowercase().capitalize(Locale.current)} ${state.pagerState.currentMonth.year}",
+        ) // TODO: copy over year selection expandable menu from material DatePicker
+
         Spacer(Modifier.weight(1f))
 
         IconButton(
