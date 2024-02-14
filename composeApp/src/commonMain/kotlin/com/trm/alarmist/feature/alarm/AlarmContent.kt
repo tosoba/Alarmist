@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -58,7 +59,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.toRect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.capitalize
@@ -68,6 +68,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.ui.WheelTimePicker
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
@@ -80,6 +81,7 @@ import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerSta
 import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 
@@ -132,7 +134,7 @@ fun AlarmContent(
           DaysOfWeekRow(
             modifier =
               Modifier.fillMaxWidth().padding(8.dp).horizontalScroll(rememberScrollState()),
-            selectedDaysOfWeek = state.selectedDaysOfWeek,
+            selectedDaysOfWeek = state.scheduledOnDaysOfWeek,
             onDayOfWeekClick = onDayOfWeekClick,
           )
 
@@ -142,7 +144,11 @@ fun AlarmContent(
                 .clickable(onClick = onToggleCalendarExpandedClick)
                 .padding(vertical = 8.dp),
             calendarModifier = Modifier.fillMaxWidth(),
+            fireAt = state.fireAt,
             isExpanded = state.isCalendarExpanded,
+            scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
+            scheduledOnDates = state.scheduledOnDates,
+            pausedOnDates = state.pausedOnDates,
           )
         }
       }
@@ -204,7 +210,11 @@ fun AlarmContent(
 private fun ColumnScope.ExpandableCalendar(
   headerModifier: Modifier = Modifier,
   calendarModifier: Modifier = Modifier,
-  isExpanded: Boolean,
+  fireAt: LocalTime = LocalTime.now(),
+  isExpanded: Boolean = false,
+  scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
+  scheduledOnDates: Set<LocalDate> = emptySet(),
+  pausedOnDates: Set<LocalDate> = emptySet(),
 ) {
   Row(
     modifier = headerModifier,
@@ -288,14 +298,27 @@ private fun ColumnScope.ExpandableCalendar(
                 if (isSelected) pickerState.config.selectionContentColor
                 else pickerState.config.pagerConfig.basisConfig.contentColor,
             )
-            if (date in basisState.currentMonth) {
-              Box(Modifier.size(5.dp).clip(CircleShape).background(Color.Red))
+
+            if (date > LocalDate.now() || (date == LocalDate.now() && fireAt > LocalTime.now())) {
+              if (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) {
+                Box(
+                  Modifier.size(7.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
+                )
+              } else if (date in pausedOnDates) {
+                Box(
+                  Modifier.size(7.dp)
+                    .clip(CircleShape)
+                    .border(width = 1.dp, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                )
+              }
             }
           }
         },
       )
 
-      val bringIntoViewRequester = remember { BringIntoViewRequester() }
+      val bringIntoViewRequester = remember(::BringIntoViewRequester)
       var layoutRect: Rect? by remember { mutableStateOf(null) }
 
       LaunchedEffect(state.selectedDates) {

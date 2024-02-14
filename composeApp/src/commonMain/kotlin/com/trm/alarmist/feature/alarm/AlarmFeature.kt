@@ -31,11 +31,11 @@ class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode
   fun onDayOfWeekClick(dayOfWeek: DayOfWeek) {
     state =
       state.copy(
-        selectedDaysOfWeek =
-          if (state.selectedDaysOfWeek.contains(dayOfWeek)) {
-            state.selectedDaysOfWeek - dayOfWeek
+        scheduledOnDaysOfWeek =
+          if (state.scheduledOnDaysOfWeek.contains(dayOfWeek)) {
+            state.scheduledOnDaysOfWeek - dayOfWeek
           } else {
-            state.selectedDaysOfWeek + dayOfWeek
+            state.scheduledOnDaysOfWeek + dayOfWeek
           }
       )
   }
