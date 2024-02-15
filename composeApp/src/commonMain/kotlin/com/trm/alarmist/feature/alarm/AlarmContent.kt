@@ -291,7 +291,14 @@ private fun ColumnScope.ExpandableCalendar(
 
           Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-              modifier = Modifier.alpha(if (date in basisState.currentMonth) 1.0f else 0.5f),
+              modifier =
+                Modifier.alpha(
+                  when {
+                    date < LocalDate.now() -> 0.5f
+                    date in basisState.currentMonth -> 1.0f
+                    else -> 0.5f
+                  }
+                ),
               text = date.dayOfMonth.toString(),
               textAlign = TextAlign.Center,
               color =
@@ -327,7 +334,11 @@ private fun ColumnScope.ExpandableCalendar(
         }
       }
 
-      if (state.selectedDates.isNotEmpty()) {
+      if (
+        state.selectedDates.firstOrNull()?.let { date ->
+          date > LocalDate.now() || (date == LocalDate.now() && fireAt > LocalTime.now())
+        } == true
+      ) {
         val selectedDateAlarmsLayoutExtraHeightPx = with(LocalDensity.current) { 72.dp.toPx() }
         Column(
           modifier =
