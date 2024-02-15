@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +34,8 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -42,6 +45,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -352,10 +356,64 @@ private fun ColumnScope.ExpandableCalendar(
                     .toRect()
               }
         ) {
-          TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) { Text("Schedule alarm") }
+          when {
+            state.selectedDates.firstOrNull()?.dayOfWeek in scheduledOnDaysOfWeek -> {
+              CalendarAlarmOnOffSwitch(
+                modifier = Modifier.fillMaxWidth(),
+                isPaused = state.selectedDates.firstOrNull() in pausedOnDates,
+                onCheckedChange = {},
+              )
+              TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                Text(
+                  "Delete on all ${state.selectedDates.firstOrNull()?.dayOfWeek?.name?.lowercase()}s"
+                )
+              }
+            }
+            state.selectedDates.firstOrNull() in scheduledOnDates -> {
+              CalendarAlarmOnOffSwitch(
+                modifier = Modifier.fillMaxWidth(),
+                isPaused = state.selectedDates.firstOrNull() in pausedOnDates,
+                onCheckedChange = {},
+              )
+              TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) { Text("Delete") }
+            }
+            else -> {
+              TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                Text("Schedule alarm")
+              }
+            }
+          }
         }
       }
     }
+  }
+}
+
+@Composable
+private fun CalendarAlarmOnOffSwitch(
+  modifier: Modifier = Modifier,
+  isPaused: Boolean = false,
+  onCheckedChange: (Boolean) -> Unit = {},
+) {
+  Row(
+    modifier = modifier,
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween,
+  ) {
+    Text(
+      modifier = Modifier.padding(end = 8.dp),
+      text = "Scheduled${if (isPaused) " - paused" else ""}",
+    )
+    Switch(
+      checked = !isPaused,
+      onCheckedChange = onCheckedChange,
+      thumbContent = {
+        Icon(
+          imageVector = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+          contentDescription = null,
+        )
+      },
+    )
   }
 }
 
