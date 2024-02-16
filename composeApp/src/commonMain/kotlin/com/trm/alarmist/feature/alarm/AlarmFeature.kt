@@ -52,6 +52,26 @@ class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode
     state = state.copy(offOnDates = if (isOn) state.offOnDates - date else state.offOnDates + date)
   }
 
+  fun onDeleteOnAllDaysWeekClick(dayOfWeek: DayOfWeek) {
+    state =
+      state.copy(
+        scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek - dayOfWeek,
+        offOnDates = state.offOnDates.filterNot { it.dayOfWeek == dayOfWeek }.toSet(),
+      )
+  }
+
+  fun onDeleteOnDateClick(date: LocalDate) {
+    state =
+      state.copy(
+        scheduledOnDates = state.scheduledOnDates - date,
+        offOnDates = state.offOnDates - date,
+      )
+  }
+
+  fun onScheduleOnDateClick(date: LocalDate) {
+    state = state.copy(scheduledOnDates = state.scheduledOnDates + date)
+  }
+
   fun saveState(): SerializableContainer =
     SerializableContainer(value = state, strategy = AlarmState.serializer())
 }

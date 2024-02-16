@@ -91,11 +91,14 @@ import kotlinx.datetime.Month
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
-  state: AlarmState,
-  onFireAtChange: (LocalTime) -> Unit,
-  onDayOfWeekClick: (DayOfWeek) -> Unit,
-  onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit,
-  onConfirmClick: () -> Unit,
+  state: AlarmState = AlarmState(),
+  onFireAtChange: (LocalTime) -> Unit = {},
+  onDayOfWeekClick: (DayOfWeek) -> Unit = {},
+  onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
+  onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
+  onDeleteOnDateClick: (LocalDate) -> Unit = {},
+  onScheduleOnDateClick: (LocalDate) -> Unit = {},
+  onConfirmClick: () -> Unit = {},
 ) {
   Box(modifier = modifier) {
     Column(
@@ -154,6 +157,9 @@ fun AlarmContent(
             scheduledOnDates = state.scheduledOnDates,
             offOnDates = state.offOnDates,
             onDateOnOffSwitchCheckedChange = onDateOnOffSwitchCheckedChange,
+            onDeleteOnAllDaysWeekClick = onDeleteOnAllDaysWeekClick,
+            onDeleteOnDateClick = onDeleteOnDateClick,
+            onScheduleOnDateClick = onScheduleOnDateClick,
           )
         }
       }
@@ -221,6 +227,9 @@ private fun ColumnScope.ExpandableCalendar(
   scheduledOnDates: Set<LocalDate> = emptySet(),
   offOnDates: Set<LocalDate> = emptySet(),
   onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
+  onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
+  onDeleteOnDateClick: (LocalDate) -> Unit = {},
+  onScheduleOnDateClick: (LocalDate) -> Unit = {},
 ) {
   Row(
     modifier = headerModifier,
@@ -372,16 +381,27 @@ private fun ColumnScope.ExpandableCalendar(
             when {
               selectedDate.dayOfWeek in scheduledOnDaysOfWeek -> {
                 DateOnOffSwitch(selectedDate)
-                TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                TextButton(
+                  modifier = Modifier.fillMaxWidth(),
+                  onClick = { onDeleteOnAllDaysWeekClick(selectedDate.dayOfWeek) },
+                ) {
                   Text("Delete on all ${selectedDate.dayOfWeek.name.lowercase()}s")
                 }
               }
               selectedDate in scheduledOnDates -> {
                 DateOnOffSwitch(selectedDate)
-                TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) { Text("Delete") }
+                TextButton(
+                  modifier = Modifier.fillMaxWidth(),
+                  onClick = { onDeleteOnDateClick(selectedDate) },
+                ) {
+                  Text("Delete")
+                }
               }
               else -> {
-                TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                TextButton(
+                  modifier = Modifier.fillMaxWidth(),
+                  onClick = { onScheduleOnDateClick(selectedDate) },
+                ) {
                   Text("Schedule alarm")
                 }
               }
