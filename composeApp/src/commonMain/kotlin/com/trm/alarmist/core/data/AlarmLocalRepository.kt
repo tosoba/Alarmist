@@ -7,6 +7,7 @@ import com.trm.alarmist.core.system.AlarmScheduler
 import com.trm.alarmist.db.Alarm
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -16,8 +17,23 @@ class AlarmLocalRepository(
   private val db: AlarmistDatabase,
   private val scheduler: AlarmScheduler,
 ) : AlarmRepository {
-  override suspend fun addOneShotAlarm(fireAt: LocalTime, name: String?) {
-    val id = db.insertAlarm(name = name, fireAt = fireAt)
+  override suspend fun addAlarm(
+    fireAt: LocalTime,
+    name: String?,
+    isOn: Boolean,
+    scheduledOnDaysOfWeek: Collection<DayOfWeek>,
+    scheduledOnDates: Collection<LocalDate>,
+    offOnDates: Collection<LocalDate>,
+  ) {
+    val id =
+      db.insertAlarm(
+        fireAt = fireAt,
+        name = name,
+        isOn = isOn,
+        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+        scheduledOnDates = scheduledOnDates,
+        offOnDates = offOnDates,
+      )
     scheduler.scheduleAlarm(
       id = id,
       fireAt =

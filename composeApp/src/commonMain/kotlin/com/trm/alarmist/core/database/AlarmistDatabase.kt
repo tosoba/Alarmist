@@ -9,6 +9,8 @@ import com.trm.alarmist.db.AlarmistQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 class AlarmistDatabase(
@@ -23,18 +25,27 @@ class AlarmistDatabase(
 
   private val queries: AlarmistQueries = database.alarmistQueries
 
-  suspend fun insertAlarm(name: String?, fireAt: LocalTime): Long =
+  suspend fun insertAlarm(
+    fireAt: LocalTime,
+    name: String?,
+    isOn: Boolean,
+    scheduledOnDaysOfWeek: Collection<DayOfWeek>,
+    scheduledOnDates: Collection<LocalDate>,
+    offOnDates: Collection<LocalDate>,
+  ): Long =
     withContext(dispatcher) {
       queries.transactionWithResult {
         queries.insertAlarm(
           id = null,
           groupId = null,
-          name = name,
           fireAt = fireAt,
-          off = 0L,
-          scheduledOnDaysOfWeek = null,
-          scheduledOnDates = null,
-          pausedOnDates = null,
+          name = name,
+          isOn = if (isOn) 1L else 0L,
+          scheduledOnDaysOfWeek =
+            scheduledOnDaysOfWeek.joinToString(separator = ",", transform = DayOfWeek::name),
+          scheduledOnDates =
+            scheduledOnDates.joinToString(separator = ",", transform = LocalDate::toString),
+          offOnDates = offOnDates.joinToString(separator = ",", transform = LocalDate::toString),
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }

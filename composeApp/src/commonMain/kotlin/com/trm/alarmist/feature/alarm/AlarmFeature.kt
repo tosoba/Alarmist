@@ -23,7 +23,16 @@ class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode
   private val repository: AlarmRepository by inject()
 
   fun onConfirmClick(): Job =
-    coroutineScope.launch { repository.addOneShotAlarm(state.fireAt, state.name) }
+    coroutineScope.launch {
+      repository.addAlarm(
+        fireAt = state.fireAt,
+        name = state.name,
+        isOn = true,
+        scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
+        scheduledOnDates = state.scheduledOnDates,
+        offOnDates = state.offOnDates,
+      )
+    }
 
   fun onFireAtChange(fireAt: LocalTime) {
     state = state.copy(fireAt = fireAt)
