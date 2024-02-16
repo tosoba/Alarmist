@@ -3,14 +3,17 @@ package com.trm.alarmist.core.data
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.database.AlarmistDatabase
 import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.model.AlarmListItem
 import com.trm.alarmist.core.system.AlarmScheduler
 import com.trm.alarmist.db.Alarm
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
 
 class AlarmLocalRepository(
@@ -49,5 +52,64 @@ class AlarmLocalRepository(
     )
   }
 
-  override fun getAllAlarms(): Flow<List<Alarm>> = db.selectAllAlarms()
+  override fun getAllAlarms(): Flow<List<AlarmListItem>> =
+    db.selectAllAlarms().map { alarms ->
+      alarms.map {
+        AlarmListItem(
+          fireAt = it.fireAt,
+          name = it.name,
+          isOn = it.isOn == 1L,
+          nextScheduledOn = it.nextScheduledOn(),
+        )
+      }
+    }
+
+  private fun Alarm.nextScheduledOn(): LocalDateTime? {
+    if (isOn == 0L) return null
+
+    val today = LocalDateTime.now()
+    val parsedOffOnDays = offOnDates?.split(",")?.map(LocalDate.Companion::parse)
+
+    val nextScheduledOnDayOfWeek =
+      scheduledOnDaysOfWeek
+        ?.split(",")
+        ?.map { DayOfWeek(isoDayNumber = it.toInt()) }
+        ?.toSet()
+        ?.let { parsedDaysOfWeek ->
+          // TODO: this does not account for offOnDates
+          if (fireAt > today.time) {
+              (0..6)
+            } else {
+              (1..7)
+            }
+            .map { today.date.plus(it, DateTimeUnit.DAY) }
+            .filter { it.dayOfWeek in parsedDaysOfWeek }
+        }
+        ?.min()
+
+    val nextScheduledOnDate =
+      scheduledOnDates
+        ?.split(",")
+        ?.map(LocalDate.Companion::parse)
+        ?.run { if (parsedOffOnDays.isNullOrEmpty()) this else filter { it !in parsedOffOnDays } }
+        ?.min()
+
+    return when {
+      nextScheduledOnDayOfWeek != null && nextScheduledOnDate != null -> {
+        minOf(nextScheduledOnDayOfWeek, nextScheduledOnDate)
+      }
+      nextScheduledOnDayOfWeek != null -> {
+        nextScheduledOnDayOfWeek
+      }
+      nextScheduledOnDate != null -> {
+        nextScheduledOnDate
+      }
+      fireAt < today.time -> {
+        LocalDate.now().plus(1, DateTimeUnit.DAY)
+      }
+      else -> {
+        LocalDate.now()
+      }
+    }.atTime(fireAt)
+  }
 }

@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.domain
 
+import com.trm.alarmist.core.domain.model.AlarmListItem
 import com.trm.alarmist.db.Alarm
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DayOfWeek
@@ -16,5 +17,5 @@ interface AlarmRepository {
     offOnDates: Collection<LocalDate>,
   )
 
-  fun getAllAlarms(): Flow<List<Alarm>>
+  fun getAllAlarms(): Flow<List<AlarmListItem>>
 }

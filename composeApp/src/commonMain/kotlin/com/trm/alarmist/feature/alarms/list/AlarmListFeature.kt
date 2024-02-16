@@ -4,6 +4,7 @@ import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.AnyStateFlow
 import com.trm.alarmist.core.common.util.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.model.AlarmListItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -17,9 +18,6 @@ class AlarmListFeature : CoroutineFeature(), KoinComponent {
   val alarms: AnyStateFlow<List<AlarmListItem>> = _alarms.wrapToAny()
 
   init {
-    repository
-      .getAllAlarms()
-      .onEach { _alarms.value = it.map { alarm -> AlarmListItem(alarm.fireAt, alarm.name) } }
-      .launchIn(coroutineScope)
+    repository.getAllAlarms().onEach { _alarms.value = it }.launchIn(coroutineScope)
   }
 }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.isoDayNumber
 
 class AlarmistDatabase(
   databaseDriverFactory: SqlDriverFactory,
@@ -42,10 +43,17 @@ class AlarmistDatabase(
           name = name,
           isOn = if (isOn) 1L else 0L,
           scheduledOnDaysOfWeek =
-            scheduledOnDaysOfWeek.joinToString(separator = ",", transform = DayOfWeek::name),
+            scheduledOnDaysOfWeek
+              .takeIf(Collection<DayOfWeek>::isNotEmpty)
+              ?.joinToString(separator = ",", transform = { it.isoDayNumber.toString() }),
           scheduledOnDates =
-            scheduledOnDates.joinToString(separator = ",", transform = LocalDate::toString),
-          offOnDates = offOnDates.joinToString(separator = ",", transform = LocalDate::toString),
+            scheduledOnDates
+              .takeIf(Collection<LocalDate>::isNotEmpty)
+              ?.joinToString(separator = ",", transform = LocalDate::toString),
+          offOnDates =
+            offOnDates
+              .takeIf(Collection<LocalDate>::isNotEmpty)
+              ?.joinToString(separator = ",", transform = LocalDate::toString),
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
