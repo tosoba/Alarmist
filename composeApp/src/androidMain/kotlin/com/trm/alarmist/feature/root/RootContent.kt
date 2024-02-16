@@ -110,8 +110,6 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               state = child.component.feature.state,
               onFireAtChange = child.component.feature::onFireAtChange,
               onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
-              onToggleCalendarExpandedClick =
-                child.component.feature::onToggleCalendarExpandedClick,
               onConfirmClick = child.component::onConfirmClick,
             )
           }

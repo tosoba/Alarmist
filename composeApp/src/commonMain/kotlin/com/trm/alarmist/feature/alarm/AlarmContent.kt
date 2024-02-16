@@ -95,7 +95,6 @@ fun AlarmContent(
   state: AlarmState,
   onFireAtChange: (LocalTime) -> Unit,
   onDayOfWeekClick: (DayOfWeek) -> Unit,
-  onToggleCalendarExpandedClick: () -> Unit,
   onConfirmClick: () -> Unit,
 ) {
   Box(modifier = modifier) {
@@ -142,14 +141,15 @@ fun AlarmContent(
             onDayOfWeekClick = onDayOfWeekClick,
           )
 
+          var isCalendarExpanded by remember { mutableStateOf(false) }
           ExpandableCalendar(
             headerModifier =
               Modifier.fillMaxWidth()
-                .clickable(onClick = onToggleCalendarExpandedClick)
+                .clickable { isCalendarExpanded = !isCalendarExpanded }
                 .padding(vertical = 8.dp),
             calendarModifier = Modifier.fillMaxWidth(),
             fireAt = state.fireAt,
-            isExpanded = state.isCalendarExpanded,
+            isExpanded = isCalendarExpanded,
             scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
             scheduledOnDates = state.scheduledOnDates,
             pausedOnDates = state.pausedOnDates,

@@ -14,5 +14,4 @@ data class AlarmState(
   val scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
   val scheduledOnDates: Set<LocalDate> = emptySet(),
   val pausedOnDates: Set<LocalDate> = emptySet(),
-  val isCalendarExpanded: Boolean = false,
 )
