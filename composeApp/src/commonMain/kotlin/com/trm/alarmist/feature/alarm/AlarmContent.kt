@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -95,6 +94,7 @@ fun AlarmContent(
   state: AlarmState,
   onFireAtChange: (LocalTime) -> Unit,
   onDayOfWeekClick: (DayOfWeek) -> Unit,
+  onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit,
   onConfirmClick: () -> Unit,
 ) {
   Box(modifier = modifier) {
@@ -152,7 +152,8 @@ fun AlarmContent(
             isExpanded = isCalendarExpanded,
             scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
             scheduledOnDates = state.scheduledOnDates,
-            pausedOnDates = state.pausedOnDates,
+            offOnDates = state.offOnDates,
+            onDateOnOffSwitchCheckedChange = onDateOnOffSwitchCheckedChange,
           )
         }
       }
@@ -218,7 +219,8 @@ private fun ColumnScope.ExpandableCalendar(
   isExpanded: Boolean = false,
   scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
   scheduledOnDates: Set<LocalDate> = emptySet(),
-  pausedOnDates: Set<LocalDate> = emptySet(),
+  offOnDates: Set<LocalDate> = emptySet(),
+  onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
 ) {
   Row(
     modifier = headerModifier,
@@ -311,17 +313,17 @@ private fun ColumnScope.ExpandableCalendar(
             )
 
             if (date > LocalDate.now() || (date == LocalDate.now() && fireAt > LocalTime.now())) {
-              if (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) {
-                Box(
-                  Modifier.size(7.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
-                )
-              } else if (date in pausedOnDates) {
+              if (date in offOnDates) {
                 Box(
                   Modifier.size(7.dp)
                     .clip(CircleShape)
                     .border(width = 1.dp, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                )
+              } else if (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) {
+                Box(
+                  Modifier.size(7.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
                 )
               }
             }
@@ -338,61 +340,62 @@ private fun ColumnScope.ExpandableCalendar(
         }
       }
 
-      if (
-        state.selectedDates.firstOrNull()?.let { date ->
-          date > LocalDate.now() || (date == LocalDate.now() && fireAt > LocalTime.now())
-        } == true
-      ) {
-        val selectedDateAlarmsLayoutExtraHeightPx = with(LocalDensity.current) { 72.dp.toPx() }
-        Column(
-          modifier =
-            Modifier.padding(horizontal = 16.dp)
-              .bringIntoViewRequester(bringIntoViewRequester)
-              .onGloballyPositioned {
-                layoutRect =
-                  it.size
-                    .toSize()
-                    .run { copy(height = height + selectedDateAlarmsLayoutExtraHeightPx) }
-                    .toRect()
+      @Composable
+      fun DateOnOffSwitch(date: LocalDate) {
+        CalendarDateAlarmOnOffSwitch(
+          modifier = Modifier.fillMaxWidth(),
+          isOn = date !in offOnDates,
+          onCheckedChange = { isChecked -> onDateOnOffSwitchCheckedChange(isChecked, date) },
+        )
+      }
+
+      state.selectedDates
+        .firstOrNull()
+        ?.takeIf { selectedDate ->
+          selectedDate > LocalDate.now() ||
+            (selectedDate == LocalDate.now() && fireAt > LocalTime.now())
+        }
+        ?.let { selectedDate ->
+          val selectedDateAlarmsLayoutExtraHeightPx = with(LocalDensity.current) { 72.dp.toPx() }
+          Column(
+            modifier =
+              Modifier.padding(horizontal = 16.dp)
+                .bringIntoViewRequester(bringIntoViewRequester)
+                .onGloballyPositioned {
+                  layoutRect =
+                    it.size
+                      .toSize()
+                      .run { copy(height = height + selectedDateAlarmsLayoutExtraHeightPx) }
+                      .toRect()
+                }
+          ) {
+            when {
+              selectedDate.dayOfWeek in scheduledOnDaysOfWeek -> {
+                DateOnOffSwitch(selectedDate)
+                TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                  Text("Delete on all ${selectedDate.dayOfWeek.name.lowercase()}s")
+                }
               }
-        ) {
-          when {
-            state.selectedDates.firstOrNull()?.dayOfWeek in scheduledOnDaysOfWeek -> {
-              CalendarAlarmOnOffSwitch(
-                modifier = Modifier.fillMaxWidth(),
-                isPaused = state.selectedDates.firstOrNull() in pausedOnDates,
-                onCheckedChange = {},
-              )
-              TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) {
-                Text(
-                  "Delete on all ${state.selectedDates.firstOrNull()?.dayOfWeek?.name?.lowercase()}s"
-                )
+              selectedDate in scheduledOnDates -> {
+                DateOnOffSwitch(selectedDate)
+                TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) { Text("Delete") }
               }
-            }
-            state.selectedDates.firstOrNull() in scheduledOnDates -> {
-              CalendarAlarmOnOffSwitch(
-                modifier = Modifier.fillMaxWidth(),
-                isPaused = state.selectedDates.firstOrNull() in pausedOnDates,
-                onCheckedChange = {},
-              )
-              TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) { Text("Delete") }
-            }
-            else -> {
-              TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) {
-                Text("Schedule alarm")
+              else -> {
+                TextButton(modifier = Modifier.fillMaxWidth(), onClick = {}) {
+                  Text("Schedule alarm")
+                }
               }
             }
           }
         }
-      }
     }
   }
 }
 
 @Composable
-private fun CalendarAlarmOnOffSwitch(
+private fun CalendarDateAlarmOnOffSwitch(
   modifier: Modifier = Modifier,
-  isPaused: Boolean = false,
+  isOn: Boolean = false,
   onCheckedChange: (Boolean) -> Unit = {},
 ) {
   Row(
@@ -400,16 +403,13 @@ private fun CalendarAlarmOnOffSwitch(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
   ) {
-    Text(
-      modifier = Modifier.padding(end = 8.dp),
-      text = "Scheduled${if (isPaused) " - paused" else ""}",
-    )
+    Text(modifier = Modifier.padding(end = 8.dp), text = "Scheduled${if (!isOn) " - off" else ""}")
     Switch(
-      checked = !isPaused,
+      checked = isOn,
       onCheckedChange = onCheckedChange,
       thumbContent = {
         Icon(
-          imageVector = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+          imageVector = if (isOn) Icons.Default.Pause else Icons.Default.PlayArrow,
           contentDescription = null,
         )
       },

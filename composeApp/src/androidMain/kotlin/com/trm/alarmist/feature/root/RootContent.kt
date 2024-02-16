@@ -110,6 +110,8 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               state = child.component.feature.state,
               onFireAtChange = child.component.feature::onFireAtChange,
               onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
+              onDateOnOffSwitchCheckedChange =
+                child.component.feature::onDateOnOffSwitchCheckedChange,
               onConfirmClick = child.component::onConfirmClick,
             )
           }

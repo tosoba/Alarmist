@@ -9,6 +9,7 @@ import com.trm.alarmist.core.domain.AlarmRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -36,8 +37,19 @@ class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode
             state.scheduledOnDaysOfWeek - dayOfWeek
           } else {
             state.scheduledOnDaysOfWeek + dayOfWeek
-          }
+          },
+        scheduledOnDates =
+          if (state.scheduledOnDaysOfWeek.contains(dayOfWeek)) {
+            state.scheduledOnDates
+          } else {
+            state.scheduledOnDates.filterNot { it.dayOfWeek == dayOfWeek }.toSet()
+          },
+        offOnDates = state.offOnDates.filterNot { it.dayOfWeek == dayOfWeek }.toSet(),
       )
+  }
+
+  fun onDateOnOffSwitchCheckedChange(isOn: Boolean, date: LocalDate) {
+    state = state.copy(offOnDates = if (isOn) state.offOnDates - date else state.offOnDates + date)
   }
 
   fun saveState(): SerializableContainer =
