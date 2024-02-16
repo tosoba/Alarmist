@@ -398,13 +398,12 @@ private fun CalendarDateAlarmOnOffSwitch(
   isOn: Boolean = false,
   onCheckedChange: (Boolean) -> Unit = {},
 ) {
-  Row(
-    modifier = modifier,
-    verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.SpaceBetween,
-  ) {
-    Text(modifier = Modifier.padding(end = 8.dp), text = "Scheduled${if (!isOn) " - off" else ""}")
+  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    Text(modifier = Modifier.padding(end = 8.dp), text = "Scheduled")
+    Spacer(modifier = Modifier.weight(1f))
+    Text(if (isOn) "On" else "Off")
     Switch(
+      modifier = Modifier.padding(start = 8.dp),
       checked = isOn,
       onCheckedChange = onCheckedChange,
       thumbContent = {
