@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.formatCountdown
-import com.trm.alarmist.core.domain.model.AlarmListItem
+import com.trm.alarmist.core.domain.model.AlarmListModel
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.coroutines.delay
@@ -59,9 +59,9 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
 @Composable
 private fun AlarmListItem(
   modifier: Modifier = Modifier,
-  item: AlarmListItem,
-  onItemClick: (AlarmListItem) -> Unit = {},
-  onToggleOnOff: (AlarmListItem) -> Unit = {},
+  item: AlarmListModel,
+  onItemClick: (AlarmListModel) -> Unit = {},
+  onToggleOnOff: (AlarmListModel) -> Unit = {},
 ) {
   Card(modifier = modifier, onClick = { onItemClick(item) }) {
     Spacer(modifier = Modifier.height(8.dp))

@@ -36,28 +36,42 @@ class AlarmistDatabase(
   ): Long =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.insertAlarm(
+        queries.insertOrReplaceAlarm(
           id = null,
           groupId = null,
           fireAtTime = fireAtTime,
           name = name,
           isOn = if (isOn) 1L else 0L,
-          scheduledOnDaysOfWeek =
-            scheduledOnDaysOfWeek
-              .takeIf(Collection<DayOfWeek>::isNotEmpty)
-              ?.joinToString(separator = ",", transform = { it.isoDayNumber.toString() }),
-          scheduledOnDates =
-            scheduledOnDates
-              .takeIf(Collection<LocalDate>::isNotEmpty)
-              ?.joinToString(separator = ",", transform = LocalDate::toString),
-          offOnDates =
-            offOnDates
-              .takeIf(Collection<LocalDate>::isNotEmpty)
-              ?.joinToString(separator = ",", transform = LocalDate::toString),
+          scheduledOnDaysOfWeek = daysOfWeekToDbString(scheduledOnDaysOfWeek),
+          scheduledOnDates = datesToDbString(scheduledOnDates),
+          offOnDates = datesToDbString(offOnDates),
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
     }
+
+  suspend fun replaceAlarm(
+    id: Long,
+    fireAtTime: LocalTime,
+    name: String?,
+    isOn: Boolean,
+    scheduledOnDaysOfWeek: Collection<DayOfWeek>,
+    scheduledOnDates: Collection<LocalDate>,
+    offOnDates: Collection<LocalDate>,
+  ) {
+    withContext(dispatcher) {
+      queries.insertOrReplaceAlarm(
+        id = id,
+        groupId = null,
+        fireAtTime = fireAtTime,
+        name = name,
+        isOn = if (isOn) 1L else 0L,
+        scheduledOnDaysOfWeek = daysOfWeekToDbString(scheduledOnDaysOfWeek),
+        scheduledOnDates = datesToDbString(scheduledOnDates),
+        offOnDates = datesToDbString(offOnDates),
+      )
+    }
+  }
 
   fun selectAllAlarms(): Flow<List<Alarm>> =
     queries.selectAllAlarms().asFlow().mapToList(dispatcher)
@@ -69,4 +83,17 @@ class AlarmistDatabase(
         queries.selectAlarmById(id).executeAsOne()
       }
     }
+
+  suspend fun selectAlarmById(id: Long): Alarm =
+    withContext(dispatcher) { queries.selectAlarmById(id).executeAsOne() }
+
+  private fun daysOfWeekToDbString(daysOfWeek: Collection<DayOfWeek>): String? =
+    daysOfWeek
+      .takeIf(Collection<DayOfWeek>::isNotEmpty)
+      ?.joinToString(separator = ",", transform = { it.isoDayNumber.toString() })
+
+  private fun datesToDbString(dates: Collection<LocalDate>): String? =
+    dates
+      .takeIf(Collection<LocalDate>::isNotEmpty)
+      ?.joinToString(separator = ",", transform = LocalDate::toString)
 }

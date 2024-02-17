@@ -1,5 +1,7 @@
 package com.trm.alarmist.core.common.util
 
+import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.db.Alarm
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -7,6 +9,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.atTime
+import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
 
 fun calculateNextFireOnDateTime(
@@ -70,6 +73,27 @@ fun Alarm.nextFireOnDateTime(): LocalDateTime? =
       offOnDates = parsedOffOnDates(),
     )
   }
+
+fun Alarm.toListModel(): AlarmListModel =
+  AlarmListModel(
+    id = id,
+    fireAtTime = fireAtTime,
+    name = name,
+    isOn = isOn == ALARM_ON,
+    nextFireOnDateTime = nextFireOnDateTime(),
+  )
+
+fun Alarm.toModel() =
+  AlarmModel(
+    id = id,
+    groupId = groupId,
+    fireAtTime = fireAtTime,
+    name = name,
+    isOn = isOn == ALARM_ON,
+    scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek(),
+    scheduledOnDates = parsedScheduledOnDates(),
+    offOnDates = parsedOffOnDates(),
+  )
 
 private fun Alarm?.parsedScheduledOnDaysOfWeek(): List<DayOfWeek> =
   this?.scheduledOnDaysOfWeek?.split(",")?.map { DayOfWeek(isoDayNumber = it.toInt()) }.orEmpty()

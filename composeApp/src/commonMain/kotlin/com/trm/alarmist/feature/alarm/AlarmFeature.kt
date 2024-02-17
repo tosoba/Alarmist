@@ -14,24 +14,45 @@ import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode) :
+class AlarmFeature(savedState: SerializableContainer?, private val mode: AlarmComponent.Mode) :
   CoroutineFeature(), KoinComponent {
   var state: AlarmState by
-    mutableStateOf(savedState?.consume(strategy = AlarmState.serializer()) ?: AlarmState())
+    mutableStateOf(
+      savedState?.consume(strategy = AlarmState.serializer())
+        ?: when (mode) {
+          AlarmComponent.Mode.Add -> AlarmState()
+          is AlarmComponent.Mode.Edit -> AlarmState() // TODO: get alarm from repo
+        }
+    )
     private set
 
   private val repository: AlarmRepository by inject()
 
   fun onConfirmClick(): Job =
     coroutineScope.launch {
-      repository.addAlarm(
-        fireAtTime = state.fireAtTime,
-        name = state.name,
-        isOn = true,
-        scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
-        scheduledOnDates = state.scheduledOnDates,
-        offOnDates = state.offOnDates,
-      )
+      when (mode) {
+        AlarmComponent.Mode.Add -> {
+          repository.addAlarm(
+            fireAtTime = state.fireAtTime,
+            name = state.name,
+            isOn = true,
+            scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
+            scheduledOnDates = state.scheduledOnDates,
+            offOnDates = state.offOnDates,
+          )
+        }
+        is AlarmComponent.Mode.Edit -> {
+          repository.editAlarm(
+            id = mode.id,
+            fireAtTime = state.fireAtTime,
+            name = state.name,
+            isOn = true,
+            scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
+            scheduledOnDates = state.scheduledOnDates,
+            offOnDates = state.offOnDates,
+          )
+        }
+      }
     }
 
   fun onFireAtChange(fireAtTime: LocalTime) {

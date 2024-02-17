@@ -27,7 +27,7 @@ fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenu
             is RootComponent.Child.Alarm -> {
               when (activeChild.component.mode) {
                 AlarmComponent.Mode.Add -> "New alarm"
-                AlarmComponent.Mode.Edit -> "Edit alarm"
+                is AlarmComponent.Mode.Edit -> "Edit alarm"
               }
             }
             is RootComponent.Child.Group -> {

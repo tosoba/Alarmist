@@ -35,7 +35,7 @@ interface RootComponent {
 
   fun onAddAlarmClick()
 
-  fun onEditAlarmClick()
+  fun onEditAlarmClick(id: Long)
 
   fun onAddGroupClick()
 
@@ -130,8 +130,8 @@ class DefaultRootComponent(componentContext: ComponentContext) :
     navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Add))
   }
 
-  override fun onEditAlarmClick() {
-    navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Edit))
+  override fun onEditAlarmClick(id: Long) {
+    navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Edit(id)))
   }
 
   override fun onAddGroupClick() {

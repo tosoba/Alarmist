@@ -16,8 +16,8 @@ CREATE TABLE alarmGroup(
     name TEXT NOT NULL
 );
 
-insertAlarm:
-INSERT INTO alarm VALUES (?,?,?,?,?,?,?,?);
+insertOrReplaceAlarm:
+INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?);
 
 selectAllAlarms:
 SELECT * FROM alarm ORDER BY fireAtTime;
