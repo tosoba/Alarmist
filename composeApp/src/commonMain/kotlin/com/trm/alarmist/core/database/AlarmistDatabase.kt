@@ -61,4 +61,12 @@ class AlarmistDatabase(
 
   fun selectAllAlarms(): Flow<List<Alarm>> =
     queries.selectAllAlarms().asFlow().mapToList(dispatcher)
+
+  suspend fun updateToggleAlarmOnOff(id: Long): Alarm =
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        queries.updateToggleAlarmOnOffById(id)
+        queries.selectAlarmById(id).executeAsOne()
+      }
+    }
 }

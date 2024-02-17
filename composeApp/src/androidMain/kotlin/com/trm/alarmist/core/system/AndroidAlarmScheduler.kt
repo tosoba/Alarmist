@@ -11,10 +11,10 @@ import kotlinx.datetime.toInstant
 class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
   private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-  override fun scheduleAlarm(id: Long, fireAt: LocalDateTime) {
+  override fun scheduleAlarm(id: Long, fireOnDateTime: LocalDateTime) {
     alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
-      fireAt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
+      fireOnDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
       alarmPendingIntent(id),
     )
   }

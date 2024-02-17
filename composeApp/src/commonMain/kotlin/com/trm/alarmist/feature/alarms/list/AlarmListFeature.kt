@@ -8,6 +8,7 @@ import com.trm.alarmist.core.domain.model.AlarmListItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -19,5 +20,9 @@ class AlarmListFeature : CoroutineFeature(), KoinComponent {
 
   init {
     repository.getAllAlarms().onEach { _alarms.value = it }.launchIn(coroutineScope)
+  }
+
+  fun onToggleAlarmOnOff(alarm: AlarmListItem) {
+    coroutineScope.launch { repository.toggleAlarmOnOff(alarm.id) }
   }
 }

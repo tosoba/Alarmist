@@ -18,4 +18,6 @@ interface AlarmRepository {
   )
 
   fun getAllAlarms(): Flow<List<AlarmListItem>>
+
+  suspend fun toggleAlarmOnOff(id: Long)
 }

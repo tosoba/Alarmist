@@ -1,6 +1,5 @@
 package com.trm.alarmist.feature.alarms.list
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,7 +45,12 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
   ) {
     items(alarms) {
-      AlarmListItem(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), item = it)
+      AlarmListItem(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        item = it,
+        onItemClick = {},
+        onToggleOnOff = component::onToggleAlarmOnOff,
+      )
     }
   }
 }
@@ -57,7 +61,7 @@ private fun AlarmListItem(
   modifier: Modifier = Modifier,
   item: AlarmListItem,
   onItemClick: (AlarmListItem) -> Unit = {},
-  onSwitchOnOffChange: (Boolean, AlarmListItem) -> Unit = { _, _ -> },
+  onToggleOnOff: (AlarmListItem) -> Unit = {},
 ) {
   Card(modifier = modifier, onClick = { onItemClick(item) }) {
     Spacer(modifier = Modifier.height(8.dp))
@@ -68,10 +72,10 @@ private fun AlarmListItem(
 
     Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically,
     ) {
       Text(text = item.fireAt.toString(), style = MaterialTheme.typography.headlineLarge)
+      Spacer(modifier = Modifier.weight(1f))
       Icon(imageVector = Icons.Default.Edit, contentDescription = null)
     }
 
@@ -79,10 +83,9 @@ private fun AlarmListItem(
 
     Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      item.nextScheduledOn?.let {
+      item.nextFireOnDateTime?.let {
         Countdown(
           targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         ) { remainingMillis ->
@@ -92,9 +95,11 @@ private fun AlarmListItem(
         }
       }
 
+      Spacer(modifier = Modifier.weight(1f))
+
       Switch(
         checked = item.isOn,
-        onCheckedChange = { isChecked -> onSwitchOnOffChange(isChecked, item) },
+        onCheckedChange = { _ -> onToggleOnOff(item) },
         thumbContent = {
           Icon(
             imageVector = if (item.isOn) Icons.Default.Pause else Icons.Default.PlayArrow,

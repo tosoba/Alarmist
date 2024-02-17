@@ -22,8 +22,19 @@ INSERT INTO alarm VALUES (?,?,?,?,?,?,?,?);
 selectAllAlarms:
 SELECT * FROM alarm ORDER BY fireAt;
 
+selectAlarmById:
+SELECT * FROM alarm WHERE id = ?;
+
 selectLastInsertedRowId:
 SELECT last_insert_rowid();
 
-selectChanges:
+selectLastUpdatedRowId:
 SELECT changes();
+
+updateToggleAlarmOnOffById:
+UPDATE alarm
+SET isOn = CASE
+    WHEN isOn = 1 THEN 0
+    ELSE 1
+END
+WHERE id = ?;
