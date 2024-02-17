@@ -13,6 +13,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.trm.alarmist.feature.alarm.AlarmContent
+import com.trm.alarmist.feature.alarm.AlarmState
 import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.clock.ClockContent
 import com.trm.alarmist.feature.group.GroupContent
@@ -105,9 +107,10 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       ) {
         when (val child = it.instance) {
           is RootComponent.Child.Alarm -> {
+            val state by child.component.feature.state.collectAsState(AlarmState())
             AlarmContent(
               modifier = Modifier.fillMaxSize(),
-              state = child.component.feature.state,
+              state = state,
               onFireAtChange = child.component.feature::onFireAtChange,
               onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
               onDateOnOffSwitchCheckedChange =

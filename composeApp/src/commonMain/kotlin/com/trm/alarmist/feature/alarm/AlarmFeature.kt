@@ -1,12 +1,13 @@
 package com.trm.alarmist.feature.alarm
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
+import com.trm.alarmist.core.common.util.AnyStateFlow
+import com.trm.alarmist.core.common.util.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -14,94 +15,100 @@ import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class AlarmFeature(savedState: SerializableContainer?, private val mode: AlarmComponent.Mode) :
-  CoroutineFeature(), KoinComponent {
-  var state: AlarmState by
-    mutableStateOf(
-      savedState?.consume(strategy = AlarmState.serializer())
-        ?: when (mode) {
-          AlarmComponent.Mode.Add -> AlarmState()
-          is AlarmComponent.Mode.Edit -> AlarmState() // TODO: get alarm from repo
-        }
-    )
-    private set
-
+class AlarmFeature(
+  savedStateContainer: SerializableContainer?,
+  private val mode: AlarmComponent.Mode,
+) : CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
+
+  private val _state = MutableStateFlow(AlarmState())
+  val state: AnyStateFlow<AlarmState> = _state.wrapToAny()
+
+  init {
+    val savedState = savedStateContainer?.consume(strategy = AlarmState.serializer())
+    if (savedState != null) {
+      _state.value = savedState
+    } else if (mode is AlarmComponent.Mode.Edit) {
+      coroutineScope.launch { _state.value = AlarmState(repository.getAlarmById(mode.id)) }
+    }
+  }
 
   fun onConfirmClick(): Job =
     coroutineScope.launch {
-      when (mode) {
-        AlarmComponent.Mode.Add -> {
-          repository.addAlarm(
-            fireAtTime = state.fireAtTime,
-            name = state.name,
-            isOn = true,
-            scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
-            scheduledOnDates = state.scheduledOnDates,
-            offOnDates = state.offOnDates,
-          )
-        }
-        is AlarmComponent.Mode.Edit -> {
-          repository.editAlarm(
-            id = mode.id,
-            fireAtTime = state.fireAtTime,
-            name = state.name,
-            isOn = true,
-            scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
-            scheduledOnDates = state.scheduledOnDates,
-            offOnDates = state.offOnDates,
-          )
+      with(_state.value) {
+        when (mode) {
+          AlarmComponent.Mode.Add -> {
+            repository.addAlarm(
+              fireAtTime = fireAtTime,
+              name = name,
+              isOn = true,
+              scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+              scheduledOnDates = scheduledOnDates,
+              offOnDates = offOnDates,
+            )
+          }
+          is AlarmComponent.Mode.Edit -> {
+            repository.editAlarm(
+              id = mode.id,
+              fireAtTime = fireAtTime,
+              name = name,
+              isOn = true,
+              scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+              scheduledOnDates = scheduledOnDates,
+              offOnDates = offOnDates,
+            )
+          }
         }
       }
     }
 
   fun onFireAtChange(fireAtTime: LocalTime) {
-    state = state.copy(fireAtTime = fireAtTime)
+    _state.update { it.copy(fireAtTime = fireAtTime) }
   }
 
   fun onDayOfWeekClick(dayOfWeek: DayOfWeek) {
-    state =
-      state.copy(
+    _state.update {
+      it.copy(
         scheduledOnDaysOfWeek =
-          if (state.scheduledOnDaysOfWeek.contains(dayOfWeek)) {
-            state.scheduledOnDaysOfWeek - dayOfWeek
+          if (it.scheduledOnDaysOfWeek.contains(dayOfWeek)) {
+            it.scheduledOnDaysOfWeek - dayOfWeek
           } else {
-            state.scheduledOnDaysOfWeek + dayOfWeek
+            it.scheduledOnDaysOfWeek + dayOfWeek
           },
         scheduledOnDates =
-          if (state.scheduledOnDaysOfWeek.contains(dayOfWeek)) {
-            state.scheduledOnDates
+          if (it.scheduledOnDaysOfWeek.contains(dayOfWeek)) {
+            it.scheduledOnDates
           } else {
-            state.scheduledOnDates.filterNot { it.dayOfWeek == dayOfWeek }.toSet()
+            it.scheduledOnDates.filterNot { date -> date.dayOfWeek == dayOfWeek }.toSet()
           },
-        offOnDates = state.offOnDates.filterNot { it.dayOfWeek == dayOfWeek }.toSet(),
+        offOnDates = it.offOnDates.filterNot { date -> date.dayOfWeek == dayOfWeek }.toSet(),
       )
+    }
   }
 
   fun onDateOnOffSwitchCheckedChange(isOn: Boolean, date: LocalDate) {
-    state = state.copy(offOnDates = if (isOn) state.offOnDates - date else state.offOnDates + date)
+    _state.update { it.copy(offOnDates = if (isOn) it.offOnDates - date else it.offOnDates + date) }
   }
 
   fun onDeleteOnAllDaysWeekClick(dayOfWeek: DayOfWeek) {
-    state =
-      state.copy(
-        scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek - dayOfWeek,
-        offOnDates = state.offOnDates.filterNot { it.dayOfWeek == dayOfWeek }.toSet(),
+    _state.update {
+      it.copy(
+        scheduledOnDaysOfWeek = it.scheduledOnDaysOfWeek - dayOfWeek,
+        offOnDates = it.offOnDates.filterNot { date -> date.dayOfWeek == dayOfWeek }.toSet(),
       )
+    }
   }
 
   fun onDeleteOnDateClick(date: LocalDate) {
-    state =
-      state.copy(
-        scheduledOnDates = state.scheduledOnDates - date,
-        offOnDates = state.offOnDates - date,
-      )
+    _state.update {
+      it.copy(scheduledOnDates = it.scheduledOnDates - date, offOnDates = it.offOnDates - date)
+    }
   }
 
   fun onScheduleOnDateClick(date: LocalDate) {
-    state = state.copy(scheduledOnDates = state.scheduledOnDates + date)
+    _state.update { it.copy(scheduledOnDates = it.scheduledOnDates + date) }
   }
 
   fun saveState(): SerializableContainer =
-    SerializableContainer(value = state, strategy = AlarmState.serializer())
+    SerializableContainer(value = _state.value, strategy = AlarmState.serializer())
 }

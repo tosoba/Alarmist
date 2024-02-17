@@ -3,7 +3,6 @@ package com.trm.alarmist.feature.alarm
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
-import com.trm.alarmist.core.domain.model.AlarmModel
 import kotlinx.serialization.Serializable
 
 interface AlarmComponent {
@@ -29,7 +28,7 @@ class DefaultAlarmComponent(
   override val feature =
     instanceKeeper.getOrCreate {
       AlarmFeature(
-        savedState =
+        savedStateContainer =
           stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer()),
         mode = mode,
       )

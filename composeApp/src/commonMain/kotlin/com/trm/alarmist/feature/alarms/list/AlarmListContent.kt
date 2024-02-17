@@ -48,7 +48,7 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
       AlarmListItem(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         item = it,
-        onItemClick = {},
+        onItemClick = component::onAlarmClick,
         onToggleOnOff = component::onToggleAlarmOnOff,
       )
     }

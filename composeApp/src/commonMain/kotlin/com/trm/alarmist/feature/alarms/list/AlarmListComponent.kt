@@ -13,14 +13,16 @@ interface AlarmListComponent {
   fun onToggleAlarmOnOff(alarm: AlarmListModel)
 }
 
-class DefaultAlarmListComponent(componentContext: ComponentContext) :
-  AlarmListComponent, ComponentContext by componentContext {
+class DefaultAlarmListComponent(
+  componentContext: ComponentContext,
+  private val onEditAlarmClick: (Long) -> Unit,
+) : AlarmListComponent, ComponentContext by componentContext {
   private val feature = instanceKeeper.getOrCreate(::AlarmListFeature)
 
   override val alarms: AnyStateFlow<List<AlarmListModel>> = feature.alarms
 
   override fun onAlarmClick(alarm: AlarmListModel) {
-    // TODO:
+    onEditAlarmClick(alarm.id)
   }
 
   override fun onToggleAlarmOnOff(alarm: AlarmListModel) {
