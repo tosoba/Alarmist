@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.common.util
 
+import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -25,3 +26,15 @@ fun LocalTime.Companion.now(): LocalTime = LocalDateTime.now().time
 fun LocalTime.Companion.min(): LocalTime = LocalTime(0, 0)
 
 fun LocalTime.Companion.max(): LocalTime = LocalTime(23, 59, 59, 999999999)
+
+fun Duration.formatCountdown(): String {
+  fun Int.withZeroPrefix() = if (this < 10) "0$this" else this.toString()
+
+  return if (inWholeDays > 1L) {
+    "$inWholeDays days"
+  } else {
+    toComponents { hours, minutes, seconds, _ ->
+      "$hours:${minutes.withZeroPrefix()}:${seconds.withZeroPrefix()}"
+    }
+  }
+}
