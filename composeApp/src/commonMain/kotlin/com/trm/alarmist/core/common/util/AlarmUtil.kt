@@ -10,7 +10,7 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
 
 fun calculateNextFireOnDateTime(
-  fireAt: LocalTime,
+  fireAtTime: LocalTime,
   scheduledOnDaysOfWeek: Collection<DayOfWeek>,
   scheduledOnDates: Collection<LocalDate>,
   offOnDates: Collection<LocalDate>,
@@ -19,9 +19,9 @@ fun calculateNextFireOnDateTime(
 
   if (scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()) {
     return when {
-      fireAt < now.time -> LocalDate.now().plus(1, DateTimeUnit.DAY)
+      fireAtTime < now.time -> LocalDate.now().plus(1, DateTimeUnit.DAY)
       else -> LocalDate.now()
-    }.atTime(fireAt)
+    }.atTime(fireAtTime)
   }
 
   fun DayOfWeek.nextScheduledOnDate(): LocalDate {
@@ -29,7 +29,7 @@ fun calculateNextFireOnDateTime(
     while (currentDate.dayOfWeek != this) {
       currentDate = currentDate.plus(1, DateTimeUnit.DAY)
     }
-    while (currentDate.atTime(fireAt) < now || currentDate in offOnDates) {
+    while (currentDate.atTime(fireAtTime) < now || currentDate in offOnDates) {
       currentDate = currentDate.plus(1, DateTimeUnit.WEEK)
     }
     return currentDate
@@ -53,7 +53,7 @@ fun calculateNextFireOnDateTime(
     else -> {
       null
     }
-  }?.atTime(fireAt)
+  }?.atTime(fireAtTime)
 }
 
 const val ALARM_OFF = 0L
@@ -64,7 +64,7 @@ fun Alarm.nextFireOnDateTime(): LocalDateTime? =
     null
   } else {
     calculateNextFireOnDateTime(
-      fireAt = fireAt,
+      fireAtTime = fireAtTime,
       scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek(),
       scheduledOnDates = parsedScheduledOnDates(),
       offOnDates = parsedOffOnDates(),

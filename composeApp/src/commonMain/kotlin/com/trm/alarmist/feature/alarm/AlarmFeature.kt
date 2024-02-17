@@ -25,7 +25,7 @@ class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode
   fun onConfirmClick(): Job =
     coroutineScope.launch {
       repository.addAlarm(
-        fireAt = state.fireAt,
+        fireAtTime = state.fireAtTime,
         name = state.name,
         isOn = true,
         scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
@@ -34,8 +34,8 @@ class AlarmFeature(savedState: SerializableContainer?, mode: AlarmComponent.Mode
       )
     }
 
-  fun onFireAtChange(fireAt: LocalTime) {
-    state = state.copy(fireAt = fireAt)
+  fun onFireAtChange(fireAtTime: LocalTime) {
+    state = state.copy(fireAtTime = fireAtTime)
   }
 
   fun onDayOfWeekClick(dayOfWeek: DayOfWeek) {

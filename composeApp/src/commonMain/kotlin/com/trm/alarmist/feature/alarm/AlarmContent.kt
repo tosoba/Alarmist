@@ -116,7 +116,7 @@ fun AlarmContent(
           val textHeightDp = with(LocalDensity.current) { textStyle.fontSize.toDp() } + 10.dp
           WheelTimePicker(
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-            startTime = state.fireAt,
+            startTime = state.fireAtTime,
             rowCount = 5,
             size = DpSize(textHeightDp, textHeightDp) * 5,
             textStyle = textStyle,
@@ -151,7 +151,7 @@ fun AlarmContent(
                 .clickable { isCalendarExpanded = !isCalendarExpanded }
                 .padding(vertical = 8.dp),
             calendarModifier = Modifier.fillMaxWidth(),
-            fireAt = state.fireAt,
+            fireAtTime = state.fireAtTime,
             isExpanded = isCalendarExpanded,
             scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
             scheduledOnDates = state.scheduledOnDates,
@@ -221,7 +221,7 @@ fun AlarmContent(
 private fun ColumnScope.ExpandableCalendar(
   headerModifier: Modifier = Modifier,
   calendarModifier: Modifier = Modifier,
-  fireAt: LocalTime = LocalTime.now(),
+  fireAtTime: LocalTime = LocalTime.now(),
   isExpanded: Boolean = false,
   scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
   scheduledOnDates: Set<LocalDate> = emptySet(),
@@ -321,7 +321,9 @@ private fun ColumnScope.ExpandableCalendar(
                 else pickerState.config.pagerConfig.basisConfig.contentColor,
             )
 
-            if (date > LocalDate.now() || (date == LocalDate.now() && fireAt > LocalTime.now())) {
+            if (
+              date > LocalDate.now() || (date == LocalDate.now() && fireAtTime > LocalTime.now())
+            ) {
               if (date in offOnDates) {
                 Box(
                   Modifier.size(7.dp)
@@ -362,7 +364,7 @@ private fun ColumnScope.ExpandableCalendar(
         .firstOrNull()
         ?.takeIf { selectedDate ->
           selectedDate > LocalDate.now() ||
-            (selectedDate == LocalDate.now() && fireAt > LocalTime.now())
+            (selectedDate == LocalDate.now() && fireAtTime > LocalTime.now())
         }
         ?.let { selectedDate ->
           val selectedDateAlarmsLayoutExtraHeightPx = with(LocalDensity.current) { 72.dp.toPx() }

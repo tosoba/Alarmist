@@ -5,7 +5,7 @@ import kotlinx.datetime.LocalTime
 
 data class AlarmListItem(
   val id: Long,
-  val fireAt: LocalTime,
+  val fireAtTime: LocalTime,
   val name: String?,
   val isOn: Boolean,
   val nextFireOnDateTime: LocalDateTime?,

@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Immutable
 data class AlarmState(
-  val fireAt: LocalTime = LocalTime(now().nextFullHour(), 0),
+  val fireAtTime: LocalTime = LocalTime(now().nextFullHour(), 0),
   val name: String? = null,
   val scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
   val scheduledOnDates: Set<LocalDate> = emptySet(),

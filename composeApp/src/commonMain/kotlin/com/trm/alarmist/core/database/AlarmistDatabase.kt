@@ -27,7 +27,7 @@ class AlarmistDatabase(
   private val queries: AlarmistQueries = database.alarmistQueries
 
   suspend fun insertAlarm(
-    fireAt: LocalTime,
+    fireAtTime: LocalTime,
     name: String?,
     isOn: Boolean,
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
@@ -39,7 +39,7 @@ class AlarmistDatabase(
         queries.insertAlarm(
           id = null,
           groupId = null,
-          fireAt = fireAt,
+          fireAtTime = fireAtTime,
           name = name,
           isOn = if (isOn) 1L else 0L,
           scheduledOnDaysOfWeek =

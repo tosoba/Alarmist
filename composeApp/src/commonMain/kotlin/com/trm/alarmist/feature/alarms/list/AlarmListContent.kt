@@ -74,7 +74,7 @@ private fun AlarmListItem(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      Text(text = item.fireAt.toString(), style = MaterialTheme.typography.headlineLarge)
+      Text(text = item.fireAtTime.toString(), style = MaterialTheme.typography.headlineLarge)
       Spacer(modifier = Modifier.weight(1f))
       Icon(imageVector = Icons.Default.Edit, contentDescription = null)
     }

@@ -9,7 +9,7 @@ import kotlinx.datetime.LocalTime
 
 interface AlarmRepository {
   suspend fun addAlarm(
-    fireAt: LocalTime,
+    fireAtTime: LocalTime,
     name: String? = null,
     isOn: Boolean,
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,

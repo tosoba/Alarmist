@@ -3,7 +3,7 @@ import kotlinx.datetime.LocalTime;
 CREATE TABLE alarm(
 	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	groupId INTEGER,
-	fireAt TEXT AS LocalTime NOT NULL,
+	fireAtTime TEXT AS LocalTime NOT NULL,
 	name TEXT,
 	isOn INTEGER NOT NULL DEFAULT 1, -- global/alarm-wide on/off flag
 	scheduledOnDaysOfWeek TEXT,
@@ -20,7 +20,7 @@ insertAlarm:
 INSERT INTO alarm VALUES (?,?,?,?,?,?,?,?);
 
 selectAllAlarms:
-SELECT * FROM alarm ORDER BY fireAt;
+SELECT * FROM alarm ORDER BY fireAtTime;
 
 selectAlarmById:
 SELECT * FROM alarm WHERE id = ?;

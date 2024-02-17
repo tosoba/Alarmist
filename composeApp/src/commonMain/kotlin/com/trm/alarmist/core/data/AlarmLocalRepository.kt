@@ -18,7 +18,7 @@ class AlarmLocalRepository(
   private val scheduler: AlarmScheduler,
 ) : AlarmRepository {
   override suspend fun addAlarm(
-    fireAt: LocalTime,
+    fireAtTime: LocalTime,
     name: String?,
     isOn: Boolean,
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
@@ -27,7 +27,7 @@ class AlarmLocalRepository(
   ) {
     val id =
       db.insertAlarm(
-        fireAt = fireAt,
+        fireAtTime = fireAtTime,
         name = name,
         isOn = isOn,
         scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
@@ -38,7 +38,7 @@ class AlarmLocalRepository(
       .takeIf { it }
       ?.let {
         calculateNextFireOnDateTime(
-          fireAt = fireAt,
+          fireAtTime = fireAtTime,
           scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
           scheduledOnDates = scheduledOnDates,
           offOnDates = offOnDates,
@@ -52,7 +52,7 @@ class AlarmLocalRepository(
       alarms.map {
         AlarmListItem(
           id = it.id,
-          fireAt = it.fireAt,
+          fireAtTime = it.fireAtTime,
           name = it.name,
           isOn = it.isOn == ALARM_ON,
           nextFireOnDateTime = it.nextFireOnDateTime(),
