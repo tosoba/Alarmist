@@ -67,31 +67,32 @@ class AlarmLocalRepository(
   private fun Alarm.nextScheduledOn(): LocalDateTime? {
     if (isOn == 0L) return null
 
-    val today = LocalDateTime.now()
-    val parsedOffOnDays = offOnDates?.split(",")?.map(LocalDate.Companion::parse)
+    val now = LocalDateTime.now()
+    val parsedOffOnDays = offOnDates?.split(",")?.map(LocalDate.Companion::parse).orEmpty()
+
+    fun DayOfWeek.nextScheduledDate(): LocalDate {
+      var currentDate = now.date
+      while (currentDate.dayOfWeek != this) {
+        currentDate = currentDate.plus(1, DateTimeUnit.DAY)
+      }
+      while (currentDate.atTime(fireAt) < now || currentDate in parsedOffOnDays) {
+        currentDate = currentDate.plus(1, DateTimeUnit.WEEK)
+      }
+      return currentDate
+    }
 
     val nextScheduledOnDayOfWeek =
       scheduledOnDaysOfWeek
         ?.split(",")
         ?.map { DayOfWeek(isoDayNumber = it.toInt()) }
         ?.toSet()
-        ?.let { parsedDaysOfWeek ->
-          // TODO: this does not account for offOnDates
-          if (fireAt > today.time) {
-              (0..6)
-            } else {
-              (1..7)
-            }
-            .map { today.date.plus(it, DateTimeUnit.DAY) }
-            .filter { it.dayOfWeek in parsedDaysOfWeek }
-        }
-        ?.min()
+        ?.minOfOrNull(DayOfWeek::nextScheduledDate)
 
     val nextScheduledOnDate =
       scheduledOnDates
         ?.split(",")
         ?.map(LocalDate.Companion::parse)
-        ?.run { if (parsedOffOnDays.isNullOrEmpty()) this else filter { it !in parsedOffOnDays } }
+        ?.run { if (parsedOffOnDays.isEmpty()) this else filter { it !in parsedOffOnDays } }
         ?.min()
 
     return when {
@@ -104,7 +105,7 @@ class AlarmLocalRepository(
       nextScheduledOnDate != null -> {
         nextScheduledOnDate
       }
-      fireAt < today.time -> {
+      fireAt < now.time -> {
         LocalDate.now().plus(1, DateTimeUnit.DAY)
       }
       else -> {
