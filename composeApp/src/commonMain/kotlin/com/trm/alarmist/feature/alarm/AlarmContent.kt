@@ -1,6 +1,7 @@
 package com.trm.alarmist.feature.alarm
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -101,81 +103,92 @@ fun AlarmContent(
   onConfirmClick: () -> Unit = {},
 ) {
   Box(modifier = modifier) {
-    Column(
-      modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      ElevatedCard(
-        modifier =
-          Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-      ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-          Text(text = "Fire at time:")
-
-          val textStyle = MaterialTheme.typography.headlineMedium
-          val textHeightDp = with(LocalDensity.current) { textStyle.fontSize.toDp() } + 10.dp
-          WheelTimePicker(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-            startTime = state.fireAtTime,
-            rowCount = 5,
-            size = DpSize(textHeightDp, textHeightDp) * 5,
-            textStyle = textStyle,
-            centerTextStyle = textStyle.copy(fontWeight = FontWeight.Bold),
-            onSnappedTime = onFireAtChange,
-          )
-        }
-      }
-
-      ElevatedCard(
-        modifier =
-          Modifier.fillMaxWidth()
-            .animateContentSize()
-            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-      ) {
-        Column {
-          Text(modifier = Modifier.padding(horizontal = 8.dp), text = "Scheduled on:")
-          // TODO: add some extra description about when exactly alarm is going to fire that will
-          // change as user tweaks scheduled on settings
-
-          DaysOfWeekRow(
+    Crossfade(targetState = state.fireAtTime) { fireAtTime ->
+      if (fireAtTime != null) {
+        Column(
+          modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+          horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+          ElevatedCard(
             modifier =
-              Modifier.fillMaxWidth().padding(8.dp).horizontalScroll(rememberScrollState()),
-            selectedDaysOfWeek = state.scheduledOnDaysOfWeek,
-            onDayOfWeekClick = onDayOfWeekClick,
-          )
-
-          var isCalendarExpanded by remember { mutableStateOf(false) }
-          ExpandableCalendar(
-            headerModifier =
               Modifier.fillMaxWidth()
-                .clickable { isCalendarExpanded = !isCalendarExpanded }
-                .padding(vertical = 8.dp),
-            calendarModifier = Modifier.fillMaxWidth(),
-            fireAtTime = state.fireAtTime,
-            isExpanded = isCalendarExpanded,
-            scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
-            scheduledOnDates = state.scheduledOnDates,
-            offOnDates = state.offOnDates,
-            onDateOnOffSwitchCheckedChange = onDateOnOffSwitchCheckedChange,
-            onDeleteOnAllDaysWeekClick = onDeleteOnAllDaysWeekClick,
-            onDeleteOnDateClick = onDeleteOnDateClick,
-            onScheduleOnDateClick = onScheduleOnDateClick,
-          )
+                .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+          ) {
+            Column(modifier = Modifier.padding(8.dp)) {
+              Text(text = "Fire at time:")
+
+              val textStyle = MaterialTheme.typography.headlineMedium
+              val textHeightDp = with(LocalDensity.current) { textStyle.fontSize.toDp() } + 10.dp
+              WheelTimePicker(
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                startTime = fireAtTime,
+                rowCount = 5,
+                size = DpSize(textHeightDp, textHeightDp) * 5,
+                textStyle = textStyle,
+                centerTextStyle = textStyle.copy(fontWeight = FontWeight.Bold),
+                onSnappedTime = onFireAtChange,
+              )
+            }
+          }
+
+          ElevatedCard(
+            modifier =
+              Modifier.fillMaxWidth()
+                .animateContentSize()
+                .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+          ) {
+            Column {
+              Text(modifier = Modifier.padding(horizontal = 8.dp), text = "Scheduled on:")
+              // TODO: add some extra description about when exactly alarm is going to fire that
+              // will change as user tweaks scheduled on settings
+
+              DaysOfWeekRow(
+                modifier =
+                  Modifier.fillMaxWidth().padding(8.dp).horizontalScroll(rememberScrollState()),
+                selectedDaysOfWeek = state.scheduledOnDaysOfWeek,
+                onDayOfWeekClick = onDayOfWeekClick,
+              )
+
+              var isCalendarExpanded by remember { mutableStateOf(false) }
+              ExpandableCalendar(
+                headerModifier =
+                  Modifier.fillMaxWidth()
+                    .clickable { isCalendarExpanded = !isCalendarExpanded }
+                    .padding(vertical = 8.dp),
+                calendarModifier = Modifier.fillMaxWidth(),
+                fireAtTime = fireAtTime,
+                isExpanded = isCalendarExpanded,
+                scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
+                scheduledOnDates = state.scheduledOnDates,
+                offOnDates = state.offOnDates,
+                onDateOnOffSwitchCheckedChange = onDateOnOffSwitchCheckedChange,
+                onDeleteOnAllDaysWeekClick = onDeleteOnAllDaysWeekClick,
+                onDeleteOnDateClick = onDeleteOnDateClick,
+                onScheduleOnDateClick = onScheduleOnDateClick,
+              )
+            }
+          }
+
+          ElevatedCard(
+            modifier =
+              Modifier.fillMaxWidth()
+                .padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+          ) {
+            Column(modifier = Modifier.padding(8.dp)) {
+              Text("Settings:")
+              // TODO: sound/volume/vibrate options/snooze duration/delete button in edit mode
+              // (marked
+              // in red) + maybe group choice?
+            }
+          }
+
+          Spacer(modifier = Modifier.height(72.dp))
+        }
+      } else {
+        Box(modifier = Modifier.fillMaxSize()) {
+          CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
       }
-
-      ElevatedCard(
-        modifier =
-          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
-      ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-          Text("Settings:")
-          // TODO: sound/volume/vibrate options/snooze duration/delete button in edit mode (marked
-          // in red) + maybe group choice?
-        }
-      }
-
-      Spacer(modifier = Modifier.height(72.dp))
     }
 
     var permissionDialogVisible by rememberSaveable { mutableStateOf(false) }

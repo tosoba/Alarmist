@@ -76,7 +76,7 @@ fun WheelTimePicker(
     onSnappedTime = { snappedTime, _ ->
       onSnappedTime(snappedTime.snappedLocalTime)
       snappedTime.snappedIndex
-    }
+    },
   )
 }
 
@@ -95,9 +95,10 @@ private fun DefaultWheelTimePicker(
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
 ) {
-  var snappedTime by remember {
-    mutableStateOf(LocalTime(hour = startTime.hour, minute = startTime.minute))
-  }
+  var snappedTime by
+    remember(startTime) {
+      mutableStateOf(LocalTime(hour = startTime.hour, minute = startTime.minute))
+    }
 
   val hours = (0..23).map { Hour(text = it.toString().padStart(2, '0'), value = it, index = it) }
   val amPmHours = (1..12).map { AmPmHour(text = it.toString(), value = it, index = it - 1) }
@@ -108,7 +109,7 @@ private fun DefaultWheelTimePicker(
   val amPms =
     listOf(
       AmPm(text = "AM", value = AmPmValue.AM, index = 0),
-      AmPm(text = "PM", value = AmPmValue.PM, index = 1)
+      AmPm(text = "PM", value = AmPmValue.PM, index = 1),
     )
 
   var snappedAmPm by remember {
@@ -121,7 +122,7 @@ private fun DefaultWheelTimePicker(
         modifier = Modifier.size(size.width, size.height / rowCount),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
-        border = selectorProperties.border().value
+        border = selectorProperties.border().value,
       ) {}
     }
     Row {
@@ -130,7 +131,7 @@ private fun DefaultWheelTimePicker(
         size =
           DpSize(
             width = size.width / if (timeFormat == TimeFormat.HOUR_24) 2 else 3,
-            height = size.height
+            height = size.height,
           ),
         texts =
           if (timeFormat == TimeFormat.HOUR_24) hours.map { it.text }
@@ -152,7 +153,7 @@ private fun DefaultWheelTimePicker(
               amPmHourToHour24(
                 amPmHours.find { it.index == snappedIndex }?.value ?: 0,
                 snappedTime.minute,
-                snappedAmPm.value
+                snappedAmPm.value,
               )
             }
 
@@ -183,14 +184,14 @@ private fun DefaultWheelTimePicker(
           } else {
             amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
           }
-        }
+        },
       )
       // Minute
       WheelTextPicker(
         size =
           DpSize(
             width = size.width / if (timeFormat == TimeFormat.HOUR_24) 2 else 3,
-            height = size.height
+            height = size.height,
           ),
         texts = minutes.map { it.text },
         rowCount = rowCount,
@@ -209,7 +210,7 @@ private fun DefaultWheelTimePicker(
               amPmHourToHour24(
                 amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.value ?: 0,
                 snappedTime.minute,
-                snappedAmPm.value
+                snappedAmPm.value,
               )
             }
 
@@ -226,7 +227,7 @@ private fun DefaultWheelTimePicker(
               newIndex?.let {
                 onSnappedTime(
                     SnappedTime.Minute(localTime = snappedTime, index = newIndex),
-                    timeFormat
+                    timeFormat,
                   )
                   ?.let {
                     return@WheelTextPicker it
@@ -236,7 +237,7 @@ private fun DefaultWheelTimePicker(
           }
 
           return@WheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
-        }
+        },
       )
       // AM_PM
       if (timeFormat == TimeFormat.AM_PM) {
@@ -267,7 +268,7 @@ private fun DefaultWheelTimePicker(
               amPmHourToHour24(
                 amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.value ?: 0,
                 snappedTime.minute,
-                snappedAmPm.value
+                snappedAmPm.value,
               )
 
             newMinute?.let {
@@ -282,13 +283,13 @@ private fun DefaultWheelTimePicker(
               newIndex?.let {
                 onSnappedTime(
                   SnappedTime.Hour(localTime = snappedTime, index = newIndex),
-                  timeFormat
+                  timeFormat,
                 )
               }
             }
 
             return@WheelTextPicker snappedIndex
-          }
+          },
         )
       }
     }
@@ -299,7 +300,7 @@ private fun DefaultWheelTimePicker(
               if (timeFormat == TimeFormat.HOUR_24) {
                 size.width
               } else size.width * 2 / 3,
-            height = size.height / 3
+            height = size.height / 3,
           )
           .align(
             alignment =
@@ -307,7 +308,7 @@ private fun DefaultWheelTimePicker(
                 Alignment.Center
               } else Alignment.CenterStart
           ),
-      contentAlignment = Alignment.Center
+      contentAlignment = Alignment.Center,
     ) {
       Text(text = ":", style = textStyle, color = textColor)
     }
@@ -413,7 +414,7 @@ private fun WheelTextPicker(
         modifier = Modifier.size(size.width, size.height / rowCount),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
-        border = selectorProperties.border().value
+        border = selectorProperties.border().value,
       ) {}
     }
 
@@ -422,14 +423,14 @@ private fun WheelTextPicker(
       modifier = Modifier.height(size.height).width(size.width),
       state = lazyListState,
       contentPadding = PaddingValues(vertical = size.height / rowCount * ((rowCount - 1) / 2)),
-      flingBehavior = flingBehavior
+      flingBehavior = flingBehavior,
     ) {
       items(texts.size) { index ->
         val rotationX =
           calculateAnimatedRotationX(
             lazyListState = lazyListState,
             index = index,
-            rowCount = rowCount
+            rowCount = rowCount,
           )
         Box(
           modifier =
@@ -437,13 +438,13 @@ private fun WheelTextPicker(
               .width(size.width)
               .alpha(calculateAnimatedAlpha(lazyListState = lazyListState, index = index))
               .graphicsLayer { this.rotationX = rotationX },
-          contentAlignment = Alignment.Center
+          contentAlignment = Alignment.Center,
         ) {
           Text(
             text = texts[index],
             style = if (index == layoutInfo.centerIndex()) centerStyle else style,
             color = color,
-            maxLines = 1
+            maxLines = 1,
           )
         }
       }
@@ -477,7 +478,7 @@ private class DefaultSelectorProperties(
   private val enabled: Boolean,
   private val shape: Shape,
   private val color: Color,
-  private val border: BorderStroke?
+  private val border: BorderStroke?,
 ) : SelectorProperties {
   @Composable override fun enabled(): State<Boolean> = rememberUpdatedState(enabled)
 
@@ -502,7 +503,7 @@ private fun calculateAnimatedRotationX(
   lazyListState: LazyListState,
   index: Int,
   rowCount: Int,
-  maxRotationDegrees: Float = 90f
+  maxRotationDegrees: Float = 90f,
 ): Float {
   val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
   val indexDelta = layoutInfo.deltaToCenterIndex(index)

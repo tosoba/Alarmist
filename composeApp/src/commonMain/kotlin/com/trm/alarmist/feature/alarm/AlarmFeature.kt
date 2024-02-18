@@ -21,7 +21,13 @@ class AlarmFeature(
 ) : CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
 
-  private val _state = MutableStateFlow(AlarmState())
+  private val _state =
+    MutableStateFlow(
+      when (mode) {
+        AlarmComponent.Mode.Add -> AlarmState()
+        is AlarmComponent.Mode.Edit -> AlarmState(fireAtTime = null)
+      }
+    )
   val state: AnyStateFlow<AlarmState> = _state.wrapToAny()
 
   init {
@@ -39,7 +45,7 @@ class AlarmFeature(
         when (mode) {
           AlarmComponent.Mode.Add -> {
             repository.addAlarm(
-              fireAtTime = fireAtTime,
+              fireAtTime = requireNotNull(fireAtTime),
               name = name,
               isOn = true,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
@@ -50,7 +56,7 @@ class AlarmFeature(
           is AlarmComponent.Mode.Edit -> {
             repository.editAlarm(
               id = mode.id,
-              fireAtTime = fireAtTime,
+              fireAtTime = requireNotNull(fireAtTime),
               name = name,
               isOn = true,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,

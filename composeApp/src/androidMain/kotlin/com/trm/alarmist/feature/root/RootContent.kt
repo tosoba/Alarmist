@@ -23,7 +23,6 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.trm.alarmist.feature.alarm.AlarmContent
-import com.trm.alarmist.feature.alarm.AlarmState
 import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.clock.ClockContent
 import com.trm.alarmist.feature.group.GroupContent
@@ -107,7 +106,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       ) {
         when (val child = it.instance) {
           is RootComponent.Child.Alarm -> {
-            val state by child.component.feature.state.collectAsState(AlarmState())
+            val state by child.component.feature.state.collectAsState()
             AlarmContent(
               modifier = Modifier.fillMaxSize(),
               state = state,
