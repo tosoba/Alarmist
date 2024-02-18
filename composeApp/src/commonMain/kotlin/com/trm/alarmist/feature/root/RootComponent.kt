@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
 import com.trm.alarmist.feature.alarms.AlarmsComponent
@@ -20,6 +21,7 @@ import com.trm.alarmist.feature.stopwatch.DefaultStopwatchComponent
 import com.trm.alarmist.feature.stopwatch.StopwatchComponent
 import com.trm.alarmist.feature.timer.DefaultTimerComponent
 import com.trm.alarmist.feature.timer.TimerComponent
+import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
 
 interface RootComponent {
@@ -35,7 +37,7 @@ interface RootComponent {
 
   fun onAddAlarmClick()
 
-  fun onEditAlarmClick(id: Long)
+  fun onEditAlarmClick(alarm: AlarmListModel)
 
   fun onAddGroupClick()
 
@@ -131,8 +133,8 @@ class DefaultRootComponent(componentContext: ComponentContext) :
     navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Add))
   }
 
-  override fun onEditAlarmClick(id: Long) {
-    navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Edit(id)))
+  override fun onEditAlarmClick(alarm: AlarmListModel) {
+    navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Edit(alarm)))
   }
 
   override fun onAddGroupClick() {

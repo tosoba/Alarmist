@@ -25,7 +25,7 @@ class AlarmFeature(
     MutableStateFlow(
       when (mode) {
         AlarmComponent.Mode.Add -> AlarmState()
-        is AlarmComponent.Mode.Edit -> AlarmState(fireAtTime = null)
+        is AlarmComponent.Mode.Edit -> AlarmState(mode.alarm)
       }
     )
   val state: AnyStateFlow<AlarmState> = _state.wrapToAny()
@@ -35,7 +35,7 @@ class AlarmFeature(
     if (savedState != null) {
       _state.value = savedState
     } else if (mode is AlarmComponent.Mode.Edit) {
-      coroutineScope.launch { _state.value = AlarmState(repository.getAlarmById(mode.id)) }
+      coroutineScope.launch { _state.value = AlarmState(repository.getAlarmById(mode.alarm.id)) }
     }
   }
 
@@ -45,7 +45,7 @@ class AlarmFeature(
         when (mode) {
           AlarmComponent.Mode.Add -> {
             repository.addAlarm(
-              fireAtTime = requireNotNull(fireAtTime),
+              fireAtTime = fireAtTime,
               name = name,
               isOn = true,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
@@ -55,8 +55,8 @@ class AlarmFeature(
           }
           is AlarmComponent.Mode.Edit -> {
             repository.editAlarm(
-              id = mode.id,
-              fireAtTime = requireNotNull(fireAtTime),
+              id = mode.alarm.id,
+              fireAtTime = fireAtTime,
               name = name,
               isOn = true,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,

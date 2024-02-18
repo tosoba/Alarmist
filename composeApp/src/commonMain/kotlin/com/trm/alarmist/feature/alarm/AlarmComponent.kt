@@ -3,6 +3,7 @@ package com.trm.alarmist.feature.alarm
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
+import com.trm.alarmist.core.domain.model.AlarmListModel
 import kotlinx.serialization.Serializable
 
 interface AlarmComponent {
@@ -16,7 +17,7 @@ interface AlarmComponent {
   sealed interface Mode {
     @Serializable data object Add : Mode
 
-    @Serializable data class Edit(val id: Long) : Mode
+    @Serializable data class Edit(val alarm: AlarmListModel) : Mode
   }
 }
 

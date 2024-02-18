@@ -2,7 +2,9 @@ package com.trm.alarmist.core.domain.model
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class AlarmListModel(
   val id: Long,
   val fireAtTime: LocalTime,
