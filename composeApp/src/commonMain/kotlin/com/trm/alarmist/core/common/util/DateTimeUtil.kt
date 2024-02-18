@@ -30,11 +30,17 @@ fun LocalTime.Companion.max(): LocalTime = LocalTime(23, 59, 59, 999999999)
 fun Duration.formatCountdown(): String {
   fun Int.withZeroPrefix() = if (this < 10) "0$this" else this.toString()
 
-  return if (inWholeDays > 1L) {
-    "$inWholeDays days"
-  } else {
-    toComponents { hours, minutes, seconds, _ ->
-      "$hours:${minutes.withZeroPrefix()}:${seconds.withZeroPrefix()}"
+  return when {
+    inWholeDays > 1L -> {
+      "$inWholeDays days"
+    }
+    inWholeDays == 1L -> {
+      "1 day"
+    }
+    else -> {
+      toComponents { hours, minutes, seconds, _ ->
+        "$hours:${minutes.withZeroPrefix()}:${seconds.withZeroPrefix()}"
+      }
     }
   }
 }
