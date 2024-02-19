@@ -84,16 +84,14 @@ class AlarmLocalRepository(
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
   ) {
-    isOn
-      .takeIf { it }
-      ?.let {
-        calculateNextFireOnDateTime(
-          fireAtTime = fireAtTime,
-          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
-          scheduledOnDates = scheduledOnDates,
-          offOnDates = offOnDates,
-        )
-      }
+    if (!isOn) return
+
+    calculateNextFireOnDateTime(
+        fireAtTime = fireAtTime,
+        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+        scheduledOnDates = scheduledOnDates,
+        offOnDates = offOnDates,
+      )
       ?.let { scheduler.scheduleAlarm(id = id, fireOnDateTime = it) }
   }
 
