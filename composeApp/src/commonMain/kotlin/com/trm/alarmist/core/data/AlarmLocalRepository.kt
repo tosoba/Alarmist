@@ -38,7 +38,7 @@ class AlarmLocalRepository(
         scheduledOnDates = scheduledOnDates,
         offOnDates = offOnDates,
       )
-    scheduleAlarmIfOn(
+    updateAlarmSchedule(
       isOn = isOn,
       id = id,
       fireAtTime = fireAtTime,
@@ -57,7 +57,7 @@ class AlarmLocalRepository(
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
   ) {
-    db.replaceAlarm(
+    db.updateAlarm(
       id = id,
       fireAtTime = fireAtTime,
       name = name,
@@ -66,7 +66,7 @@ class AlarmLocalRepository(
       scheduledOnDates = scheduledOnDates,
       offOnDates = offOnDates,
     )
-    scheduleAlarmIfOn(
+    updateAlarmSchedule(
       isOn = isOn,
       id = id,
       fireAtTime = fireAtTime,
@@ -76,7 +76,7 @@ class AlarmLocalRepository(
     )
   }
 
-  private fun scheduleAlarmIfOn(
+  private fun updateAlarmSchedule(
     isOn: Boolean,
     id: Long,
     fireAtTime: LocalTime,
@@ -84,15 +84,17 @@ class AlarmLocalRepository(
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
   ) {
-    if (!isOn) return
-
-    calculateNextFireOnDateTime(
-        fireAtTime = fireAtTime,
-        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
-        scheduledOnDates = scheduledOnDates,
-        offOnDates = offOnDates,
-      )
-      ?.let { scheduler.scheduleAlarm(id = id, fireOnDateTime = it) }
+    if (isOn) {
+      calculateNextFireOnDateTime(
+          fireAtTime = fireAtTime,
+          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+          scheduledOnDates = scheduledOnDates,
+          offOnDates = offOnDates,
+        )
+        ?.let { scheduler.scheduleAlarm(id = id, fireOnDateTime = it) }
+    } else {
+      scheduler.cancelAlarm(id)
+    }
   }
 
   override fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>> =
@@ -102,9 +104,12 @@ class AlarmLocalRepository(
 
   override suspend fun toggleAlarmOnOff(id: Long) {
     val toggledAlarm = db.updateToggleAlarmOnOff(id)
-    toggledAlarm
-      .takeIf { it.isOn == ALARM_ON }
-      ?.nextFireOnDateTime()
-      ?.let { scheduler.scheduleAlarm(id = id, fireOnDateTime = it) }
+    if (toggledAlarm.isOn == ALARM_ON) {
+      toggledAlarm.nextFireOnDateTime()?.let {
+        scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
+      }
+    } else {
+      scheduler.cancelAlarm(id)
+    }
   }
 }

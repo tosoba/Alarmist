@@ -36,7 +36,7 @@ class AlarmistDatabase(
   ): Long =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.insertOrReplaceAlarm(
+        queries.insertAlarm(
           id = null,
           groupId = null,
           fireAtTime = fireAtTime,
@@ -50,7 +50,7 @@ class AlarmistDatabase(
       }
     }
 
-  suspend fun replaceAlarm(
+  suspend fun updateAlarm(
     id: Long,
     fireAtTime: LocalTime,
     name: String?,
@@ -60,7 +60,7 @@ class AlarmistDatabase(
     offOnDates: Collection<LocalDate>,
   ) {
     withContext(dispatcher) {
-      queries.insertOrReplaceAlarm(
+      queries.updateAlarm(
         id = id,
         groupId = null,
         fireAtTime = fireAtTime,

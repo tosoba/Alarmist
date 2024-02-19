@@ -16,8 +16,13 @@ CREATE TABLE alarmGroup(
     name TEXT NOT NULL
 );
 
-insertOrReplaceAlarm:
+insertAlarm:
 INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?);
+
+updateAlarm:
+UPDATE alarm
+SET groupId = ?, fireAtTime = ?, name = ?, isOn = ?, scheduledOnDaysOfWeek = ?, scheduledOnDates = ?, offOnDates = ?
+WHERE id = ?;
 
 selectAllAlarms:
 SELECT * FROM alarm ORDER BY fireAtTime;

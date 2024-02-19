@@ -4,4 +4,6 @@ import kotlinx.datetime.LocalDateTime
 
 interface AlarmScheduler {
   fun scheduleAlarm(id: Long, fireOnDateTime: LocalDateTime)
+
+  fun cancelAlarm(id: Long)
 }

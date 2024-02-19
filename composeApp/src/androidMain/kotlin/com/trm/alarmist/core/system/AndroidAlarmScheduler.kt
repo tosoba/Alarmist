@@ -19,6 +19,10 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     )
   }
 
+  override fun cancelAlarm(id: Long) {
+    alarmManager.cancel(alarmPendingIntent(id))
+  }
+
   private fun alarmPendingIntent(id: Long): PendingIntent =
     PendingIntent.getBroadcast(
       context,
