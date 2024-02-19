@@ -44,6 +44,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -92,6 +93,7 @@ import kotlinx.datetime.Month
 fun AlarmContent(
   modifier: Modifier = Modifier,
   state: AlarmState = AlarmState(),
+  onNameChange: (String) -> Unit = {},
   onFireAtChange: (LocalTime) -> Unit = {},
   onDayOfWeekClick: (DayOfWeek) -> Unit = {},
   onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
@@ -105,6 +107,14 @@ fun AlarmContent(
       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+      OutlinedTextField(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        value = state.name.orEmpty(),
+        onValueChange = onNameChange,
+        label = { Text("Name") },
+        singleLine = true,
+      )
+
       ElevatedCard(
         modifier =
           Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)

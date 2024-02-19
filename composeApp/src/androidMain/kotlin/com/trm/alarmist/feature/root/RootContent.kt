@@ -110,6 +110,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             AlarmContent(
               modifier = Modifier.fillMaxSize(),
               state = state,
+              onNameChange = child.component.feature::onNameChange,
               onFireAtChange = child.component.feature::onFireAtChange,
               onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
               onDateOnOffSwitchCheckedChange =

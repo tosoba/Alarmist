@@ -68,6 +68,10 @@ class AlarmFeature(
       }
     }
 
+  fun onNameChange(name: String) {
+    _state.update { it.copy(name = name.ifBlank { null }) }
+  }
+
   fun onFireAtChange(fireAtTime: LocalTime) {
     _state.update { it.copy(fireAtTime = fireAtTime) }
   }
