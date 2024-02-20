@@ -65,6 +65,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
@@ -74,6 +75,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.ui.WheelTimePicker
+import com.trm.alarmist.core.ui.keyboardAsState
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.contains
@@ -107,6 +109,9 @@ fun AlarmContent(
       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+      val isKeyboardOpen by keyboardAsState()
+      val focusManager = LocalFocusManager.current
+      LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
       OutlinedTextField(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         value = state.name.orEmpty(),
