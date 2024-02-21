@@ -14,8 +14,6 @@ class AlarmBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   private val updateAlarmOnDismissedUseCase: UpdateAlarmOnDismissedUseCase by inject()
 
   override fun onReceive(context: Context?, intent: Intent?) {
-    // TODO: update alarm dismiss notification to alarm fired - check if notify with the same id
-    // updates notification
     when (intent?.action) {
       ACTION_ALARM_FIRED -> {
         val alarmId = getAlarmId(intent)
