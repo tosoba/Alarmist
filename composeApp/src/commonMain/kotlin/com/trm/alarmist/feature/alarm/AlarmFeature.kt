@@ -5,6 +5,8 @@ import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.AnyStateFlow
 import com.trm.alarmist.core.common.util.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
+import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,6 +22,8 @@ class AlarmFeature(
   private val mode: AlarmComponent.Mode,
 ) : CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
+  private val addAlarmUseCase: AddAlarmUseCase by inject()
+  private val editAlarmUseCase: EditAlarmUseCase by inject()
 
   private val _state =
     MutableStateFlow(
@@ -44,7 +48,7 @@ class AlarmFeature(
       with(_state.value) {
         when (mode) {
           AlarmComponent.Mode.Add -> {
-            repository.addAlarm(
+            addAlarmUseCase(
               fireAtTime = fireAtTime,
               name = name,
               isOn = true,
@@ -54,7 +58,7 @@ class AlarmFeature(
             )
           }
           is AlarmComponent.Mode.Edit -> {
-            repository.editAlarm(
+            editAlarmUseCase(
               id = mode.alarm.id,
               fireAtTime = fireAtTime,
               name = name,

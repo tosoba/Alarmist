@@ -1,11 +1,16 @@
 package com.trm.alarmist.core.database.di
 
-import com.trm.alarmist.core.database.AlarmistDatabase
 import com.trm.alarmist.core.database.SqlDriverFactory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import com.trm.alarmist.core.database.adapter.LocalTimeAdapter
+import com.trm.alarmist.db.Alarm
+import com.trm.alarmist.db.AlarmistDb
 import org.koin.dsl.module
 
 actual val databaseModule = module {
-  single { AlarmistDatabase(SqlDriverFactory(), Dispatchers.IO) }
+  single {
+    AlarmistDb(
+      driver = SqlDriverFactory().createDriver(),
+      alarmAdapter = Alarm.Adapter(LocalTimeAdapter),
+    )
+  }
 }

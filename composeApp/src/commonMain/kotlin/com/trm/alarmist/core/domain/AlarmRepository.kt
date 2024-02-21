@@ -15,7 +15,7 @@ interface AlarmRepository {
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
-  )
+  ): Long
 
   suspend fun editAlarm(
     id: Long,
@@ -31,5 +31,9 @@ interface AlarmRepository {
 
   fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>>
 
-  suspend fun toggleAlarmOnOff(id: Long)
+  suspend fun toggleAlarmOnOff(id: Long): AlarmModel
+
+  suspend fun updateAlarmOnFired(id: Long): AlarmModel
+
+  suspend fun updateAlarmOnDismissed(id: Long): AlarmModel
 }

@@ -32,7 +32,6 @@ kotlin {
       implementation(libs.essenty.statekeeper.android)
 
       implementation(libs.koin.android)
-      implementation(libs.koin.core)
 
       implementation(libs.sqldelight.android.driver)
     }
@@ -50,7 +49,7 @@ kotlin {
       implementation(libs.essenty.lifecycle)
       implementation(libs.essenty.statekeeper)
 
-      implementation(libs.koin.core)
+      api(libs.koin.core)
 
       implementation(libs.kotlinx.coroutines.core)
       implementation(libs.kotlinx.datetime)
