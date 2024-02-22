@@ -130,6 +130,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               modifier = Modifier.fillMaxSize(),
               state = state,
               onNameChange = child.component.feature::onNameChange,
+              onColorChange = child.component.feature::onColorChange,
               onConfirmClick = child.component.feature::onConfirmClick,
             )
           }

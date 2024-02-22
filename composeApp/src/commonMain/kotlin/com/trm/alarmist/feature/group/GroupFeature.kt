@@ -1,5 +1,7 @@
 package com.trm.alarmist.feature.group
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.AnyStateFlow
@@ -20,6 +22,10 @@ class GroupFeature(
 
   fun onNameChange(name: String) {
     _state.update { it.copy(name = name.ifBlank { "" }) }
+  }
+
+  fun onColorChange(color: Color) {
+    _state.update { it.copy(color = color.toArgb()) }
   }
 
   fun saveState(): SerializableContainer =

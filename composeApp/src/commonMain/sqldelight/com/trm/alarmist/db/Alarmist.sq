@@ -16,7 +16,7 @@ CREATE TABLE alarm(
 CREATE TABLE alarmGroup(
 	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    color INTEGER
+    color INTEGER NOT NULL DEFAULT 0
 );
 
 insertAlarm:
