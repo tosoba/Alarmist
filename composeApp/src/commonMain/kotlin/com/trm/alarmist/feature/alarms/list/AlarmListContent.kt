@@ -1,5 +1,6 @@
 package com.trm.alarmist.feature.alarms.list
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,11 +42,18 @@ import kotlinx.datetime.toInstant
 
 @Composable
 fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponent) {
-  val alarms by component.alarms.collectAsState(emptyList())
+  val alarms by component.alarms.collectAsState()
   LazyColumn(
     modifier = modifier,
     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
   ) {
+    if (alarms.isEmpty()) {
+      item {
+        Box(modifier = Modifier.fillParentMaxSize()) {
+          Text(modifier = Modifier.align(Alignment.Center), text = "No alarms created")
+        }
+      }
+    }
     items(alarms) {
       AlarmListItem(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
