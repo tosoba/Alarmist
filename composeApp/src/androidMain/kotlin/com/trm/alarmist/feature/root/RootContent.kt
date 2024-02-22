@@ -125,7 +125,13 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             AlarmsContent(modifier = Modifier.fillMaxSize(), component = child.component)
           }
           is RootComponent.Child.Group -> {
-            GroupContent(modifier = Modifier.fillMaxSize(), component = child.component)
+            val state by child.component.feature.state.collectAsState()
+            GroupContent(
+              modifier = Modifier.fillMaxSize(),
+              state = state,
+              onNameChange = child.component.feature::onNameChange,
+              onConfirmClick = child.component.feature::onConfirmClick,
+            )
           }
           is RootComponent.Child.Clock -> {
             ClockContent(modifier = Modifier.fillMaxSize(), component = child.component)

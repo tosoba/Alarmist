@@ -21,7 +21,6 @@ import com.trm.alarmist.feature.stopwatch.DefaultStopwatchComponent
 import com.trm.alarmist.feature.stopwatch.StopwatchComponent
 import com.trm.alarmist.feature.timer.DefaultTimerComponent
 import com.trm.alarmist.feature.timer.TimerComponent
-import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
 
 interface RootComponent {
@@ -99,7 +98,11 @@ class DefaultRootComponent(componentContext: ComponentContext) :
       }
       is ChildConfig.Group -> {
         RootComponent.Child.Group(
-          DefaultGroupComponent(componentContext = componentContext, mode = config.mode)
+          DefaultGroupComponent(
+            componentContext = componentContext,
+            mode = config.mode,
+            pop = ::onBackClick,
+          )
         )
       }
       ChildConfig.Clock -> {
