@@ -5,10 +5,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
-class UpdateAlarmScheduleUseCase(
-  private val calculateAlarmNextFireOnDateTimeUseCase: CalculateAlarmNextFireOnDateTimeUseCase,
-  private val scheduler: AlarmScheduler,
-) {
+class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
   operator fun invoke(
     isOn: Boolean,
     id: Long,
@@ -18,7 +15,7 @@ class UpdateAlarmScheduleUseCase(
     offOnDates: Collection<LocalDate>,
   ) {
     if (isOn) {
-      calculateAlarmNextFireOnDateTimeUseCase(
+      calculateAlarmNextFireOnDateTime(
           fireAtTime = fireAtTime,
           scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
           scheduledOnDates = scheduledOnDates,

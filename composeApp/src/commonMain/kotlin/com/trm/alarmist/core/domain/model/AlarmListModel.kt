@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AlarmListModel(
   val id: Long,
+  val groupId: Long?,
   val fireAtTime: LocalTime,
   val name: String?,
   val isOn: Boolean,

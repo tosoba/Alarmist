@@ -4,14 +4,13 @@ import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.system.AlarmScheduler
 
 class ToggleAlarmOnOffUseCase(
-  private val calculateAlarmNextFireOnDateTimeUseCase: CalculateAlarmNextFireOnDateTimeUseCase,
   private val repository: AlarmRepository,
   private val scheduler: AlarmScheduler,
 ) {
   suspend operator fun invoke(id: Long) {
     val toggledAlarm = repository.toggleAlarmOnOff(id)
     if (toggledAlarm.isOn) {
-      calculateAlarmNextFireOnDateTimeUseCase(toggledAlarm)?.let {
+      calculateAlarmNextFireOnDateTime(toggledAlarm)?.let {
         scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
       }
     } else {
