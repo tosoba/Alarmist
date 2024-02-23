@@ -4,19 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FloatingActionButton
@@ -45,27 +44,35 @@ fun GroupContent(
   onConfirmClick: () -> Unit = {},
 ) {
   Box(modifier = modifier) {
-    Column(
-      modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      val isKeyboardOpen by keyboardAsState()
-      val focusManager = LocalFocusManager.current
-      LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
+    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
+      item {
+        val isKeyboardOpen by keyboardAsState()
+        val focusManager = LocalFocusManager.current
+        LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
-      OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        value = state.name.orEmpty(),
-        onValueChange = onNameChange,
-        label = { Text("Name") },
-        singleLine = true,
-      )
+        OutlinedTextField(
+          modifier = Modifier.fillMaxWidth(),
+          value = state.name.orEmpty(),
+          onValueChange = onNameChange,
+          label = { Text("Name") },
+          singleLine = true,
+        )
+      }
 
-      GroupColors(
-        modifier = Modifier.fillMaxWidth(),
-        selectedColor = Color(state.color),
-        onColorClick = onColorChange,
-      )
+      item { Spacer(modifier = Modifier.height(16.dp)) }
+
+      item {
+        GroupColors(
+          modifier = Modifier.fillMaxWidth(),
+          selectedColor = Color(state.color),
+          onColorClick = onColorChange,
+        )
+      }
+
+      // TODO: expandable sections for:
+      // 1) alarms in group (only in edit mode)
+      // 2) ungrouped alarms
+      // 3) alarms in other groups that can be moved (?)
     }
 
     FloatingActionButton(
@@ -86,7 +93,7 @@ private fun GroupColors(
   val boxColors = remember {
     listOf(Color.Transparent, Color.Red, Color.Yellow, Color.Green, Color.Blue, Color.Magenta)
   }
-  LazyRow(modifier = modifier, contentPadding = PaddingValues(16.dp)) {
+  LazyRow(modifier = modifier) {
     // TODO: add a gradient circle to show a color picker dialog to pick a custom color
     items(boxColors) { color ->
       GroupColor(
