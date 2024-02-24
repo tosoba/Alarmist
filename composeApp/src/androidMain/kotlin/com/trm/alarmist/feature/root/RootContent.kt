@@ -128,9 +128,11 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             val state by child.component.feature.state.collectAsState()
             GroupContent(
               modifier = Modifier.fillMaxSize(),
+              mode = child.component.mode,
               state = state,
               onNameChange = child.component.feature::onNameChange,
               onColorChange = child.component.feature::onColorChange,
+              onToggleAlarmSelection = child.component.feature::onToggleAlarmSelection,
               onConfirmClick = child.component.feature::onConfirmClick,
             )
           }

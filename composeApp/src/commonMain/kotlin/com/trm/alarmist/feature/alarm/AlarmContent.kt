@@ -2,17 +2,13 @@ package com.trm.alarmist.feature.alarm
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -29,7 +25,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -60,7 +55,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -74,6 +68,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.ui.ExpandableHeaderRow
 import com.trm.alarmist.core.ui.WheelTimePicker
 import com.trm.alarmist.core.ui.keyboardAsState
 import epicarchitect.calendar.compose.basis.EpicMonth
@@ -160,11 +155,16 @@ fun AlarmContent(
           )
 
           var isCalendarExpanded by remember { mutableStateOf(false) }
-          ExpandableCalendar(
-            headerModifier =
+          ExpandableHeaderRow(
+            modifier =
               Modifier.fillMaxWidth()
                 .clickable { isCalendarExpanded = !isCalendarExpanded }
                 .padding(vertical = 8.dp),
+            isExpanded = isCalendarExpanded,
+            text = "Calendar",
+            transitionLabel = "ExpandableCalendar",
+          )
+          ExpandableCalendar(
             calendarModifier = Modifier.fillMaxWidth(),
             fireAtTime = state.fireAtTime,
             isExpanded = isCalendarExpanded,
@@ -235,7 +235,6 @@ fun AlarmContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ColumnScope.ExpandableCalendar(
-  headerModifier: Modifier = Modifier,
   calendarModifier: Modifier = Modifier,
   fireAtTime: LocalTime = LocalTime.now(),
   isExpanded: Boolean = false,
@@ -247,28 +246,6 @@ private fun ColumnScope.ExpandableCalendar(
   onDeleteOnDateClick: (LocalDate) -> Unit = {},
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
 ) {
-  Row(
-    modifier = headerModifier,
-    horizontalArrangement = Arrangement.SpaceBetween,
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Text(modifier = Modifier.padding(horizontal = 8.dp), text = "Calendar:")
-    val expandedTransition =
-      updateTransition(
-        targetState = isExpanded,
-        label = "updateTransition-ExpandableCalendar-isExpanded",
-      )
-    val expandImageRotation by
-      expandedTransition.animateFloat(label = "animateFloat-ExpandableCalendar-rotation") { state ->
-        if (state) 180f else 0f
-      }
-    Image(
-      modifier = Modifier.rotate(expandImageRotation),
-      imageVector = Icons.Default.ArrowDropDown,
-      contentDescription = null,
-    )
-  }
-
   val scope = rememberCoroutineScope()
 
   AnimatedVisibility(modifier = calendarModifier, visible = isExpanded) {

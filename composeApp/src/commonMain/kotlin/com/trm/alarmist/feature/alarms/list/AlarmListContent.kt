@@ -85,10 +85,6 @@ private fun AlarmListItem(
   ) {
     Spacer(modifier = Modifier.height(8.dp))
 
-    item.name?.let { Text(modifier = Modifier.padding(horizontal = 16.dp), text = it) }
-
-    Spacer(modifier = Modifier.height(8.dp))
-
     Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
@@ -134,6 +130,10 @@ private fun AlarmListItem(
         },
       )
     }
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    item.name?.let { Text(modifier = Modifier.padding(horizontal = 16.dp), text = it) }
 
     Spacer(modifier = Modifier.height(8.dp))
   }

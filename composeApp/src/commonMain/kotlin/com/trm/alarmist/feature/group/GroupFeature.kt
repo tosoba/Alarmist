@@ -46,7 +46,7 @@ class GroupFeature(
     _state.update { it.copy(color = color.toArgb()) }
   }
 
-  fun onAlarmSelected(alarm: AlarmListModel) {
+  fun onToggleAlarmSelection(alarm: AlarmListModel) {
     _state.update {
       it.copy(
         selectedAlarmIds =
