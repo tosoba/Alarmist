@@ -45,7 +45,9 @@ selectAllAlarms:
 SELECT * FROM alarm ORDER BY fireAtTime;
 
 selectAllGroups:
-SELECT * FROM alarmGroup;
+SELECT alarmGroup.*,
+COALESCE((SELECT COUNT(*) FROM alarm WHERE alarm.groupId = alarmGroup.id), 0) AS alarmsCount
+FROM alarmGroup;
 
 selectAlarmById:
 SELECT * FROM alarm WHERE id = ?;

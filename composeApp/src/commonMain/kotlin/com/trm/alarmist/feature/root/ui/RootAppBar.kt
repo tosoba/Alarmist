@@ -33,7 +33,7 @@ fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenu
             is RootComponent.Child.Group -> {
               when (activeChild.component.mode) {
                 GroupComponent.Mode.Add -> "New group"
-                GroupComponent.Mode.Edit -> "Edit group"
+                is GroupComponent.Mode.Edit -> "Edit group"
               }
             }
             is RootComponent.Child.Clock -> {

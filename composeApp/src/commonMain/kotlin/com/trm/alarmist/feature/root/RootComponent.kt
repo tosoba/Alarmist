@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
@@ -40,7 +41,7 @@ interface RootComponent {
 
   fun onAddGroupClick()
 
-  fun onEditGroupClick()
+  fun onEditGroupClick(group: AlarmGroupModel)
 
   fun onBackClick()
 
@@ -144,8 +145,8 @@ class DefaultRootComponent(componentContext: ComponentContext) :
     navigation.push(ChildConfig.Group(GroupComponent.Mode.Add))
   }
 
-  override fun onEditGroupClick() {
-    navigation.push(ChildConfig.Group(GroupComponent.Mode.Edit))
+  override fun onEditGroupClick(group: AlarmGroupModel) {
+    navigation.push(ChildConfig.Group(GroupComponent.Mode.Edit(group)))
   }
 
   override fun onBackClick() {

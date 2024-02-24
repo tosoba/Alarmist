@@ -25,7 +25,7 @@ class AlarmFeature(
   private val addAlarmUseCase: AddAlarmUseCase by inject()
   private val editAlarmUseCase: EditAlarmUseCase by inject()
 
-  private val _state =
+  private val _state: MutableStateFlow<AlarmState> =
     MutableStateFlow(
       when (mode) {
         AlarmComponent.Mode.Add -> AlarmState()
@@ -84,13 +84,13 @@ class AlarmFeature(
     _state.update {
       it.copy(
         scheduledOnDaysOfWeek =
-          if (it.scheduledOnDaysOfWeek.contains(dayOfWeek)) {
+          if (dayOfWeek in it.scheduledOnDaysOfWeek) {
             it.scheduledOnDaysOfWeek - dayOfWeek
           } else {
             it.scheduledOnDaysOfWeek + dayOfWeek
           },
         scheduledOnDates =
-          if (it.scheduledOnDaysOfWeek.contains(dayOfWeek)) {
+          if (dayOfWeek in it.scheduledOnDaysOfWeek) {
             it.scheduledOnDates
           } else {
             it.scheduledOnDates.filterNot { date -> date.dayOfWeek == dayOfWeek }.toSet()

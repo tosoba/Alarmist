@@ -463,7 +463,7 @@ private fun DaysOfWeekRow(
 ) {
   Row(modifier = modifier) {
     DayOfWeek.entries.forEach { dayOfWeek ->
-      val isSelected = selectedDaysOfWeek.contains(dayOfWeek)
+      val isSelected = dayOfWeek in selectedDaysOfWeek
       Card(
         modifier = Modifier.padding(horizontal = 8.dp),
         onClick = { onDayOfWeekClick(dayOfWeek) },

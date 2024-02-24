@@ -3,6 +3,7 @@ package com.trm.alarmist.feature.group
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import kotlinx.serialization.Serializable
 
 interface GroupComponent {
@@ -16,7 +17,7 @@ interface GroupComponent {
   sealed interface Mode {
     @Serializable data object Add : Mode
 
-    @Serializable data object Edit : Mode
+    @Serializable data class Edit(val group: AlarmGroupModel) : Mode
   }
 }
 

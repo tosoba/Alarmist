@@ -9,8 +9,8 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.db.Alarm
-import com.trm.alarmist.db.AlarmGroup
 import com.trm.alarmist.db.AlarmistQueries
+import com.trm.alarmist.db.SelectAllGroups
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -74,13 +74,11 @@ class AlarmLocalRepository(
   }
 
   override fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>> =
-    queries.selectAllAlarms().asFlow().mapToList(dispatcher).map { alarms ->
-      alarms.map(Alarm::toListModel)
-    }
+    queries.selectAllAlarms().asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }
 
   override fun getAllAlarmGroupsFlow(): Flow<List<AlarmGroupModel>> =
-    queries.selectAllGroups().asFlow().mapToList(dispatcher).map { groups ->
-      groups.map(AlarmGroup::toModel)
+    queries.selectAllGroups().asFlow().mapToList(dispatcher).map {
+      it.map(SelectAllGroups::toModel)
     }
 
   override suspend fun toggleAlarmOnOff(id: Long): AlarmModel =
