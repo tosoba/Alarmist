@@ -119,7 +119,7 @@ fun AlarmContent(
         modifier =
           Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
       ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)) {
           Text(text = "Fire at time:")
 
           val textStyle = MaterialTheme.typography.headlineMedium
@@ -143,7 +143,10 @@ fun AlarmContent(
             .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
       ) {
         Column {
-          Text(modifier = Modifier.padding(horizontal = 8.dp), text = "Scheduled on:")
+          Text(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
+            text = "Scheduled on:",
+          )
           // TODO: add some extra description about when exactly alarm is going to fire that
           // will change as user tweaks scheduled on settings
 
@@ -159,7 +162,7 @@ fun AlarmContent(
             modifier =
               Modifier.fillMaxWidth()
                 .clickable { isCalendarExpanded = !isCalendarExpanded }
-                .padding(vertical = 8.dp),
+                .padding(vertical = 16.dp),
             isExpanded = isCalendarExpanded,
             text = "Calendar",
             transitionLabel = "ExpandableCalendar",
@@ -183,7 +186,7 @@ fun AlarmContent(
         modifier =
           Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
       ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)) {
           Text("Settings:")
           // TODO: sound/volume/vibrate options/snooze duration/delete button in edit mode
           // (marked

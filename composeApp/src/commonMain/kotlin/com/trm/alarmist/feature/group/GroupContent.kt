@@ -148,7 +148,10 @@ private fun LazyListScope.expandableAlarmsGroup(
         },
     ) {
       ExpandableHeaderRow(
-        modifier = Modifier.fillMaxWidth().clickable { onToggleExpandedClick(group.id) },
+        modifier =
+          Modifier.fillMaxWidth()
+            .clickable { onToggleExpandedClick(group.id) }
+            .padding(vertical = 16.dp),
         isExpanded = isExpanded,
         text = AlarmGroupModel.UNGROUPED_NAME,
         transitionLabel = "UngroupedHeader",
