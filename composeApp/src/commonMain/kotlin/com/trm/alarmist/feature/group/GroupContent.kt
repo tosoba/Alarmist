@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -66,6 +67,21 @@ fun GroupContent(
         mutableStateMapOf<Long, Boolean>().apply { putAll(state.groups.mapValues { false }) }
       }
 
+    fun toggleGroupExpanded(id: Long) {
+      groupsExpandedState[id] = groupsExpandedState[id]?.not() ?: false
+    }
+
+    fun LazyListScope.expandableAlarmsGroup(group: AlarmGroupModel) {
+      expandableAlarmsGroup(
+        group = group,
+        alarms = state.alarmsInGroup(group.id),
+        selectedAlarmIds = state.selectedAlarmIds,
+        isExpanded = groupsExpandedState[group.id] == true,
+        onToggleExpandedClick = ::toggleGroupExpanded,
+        onToggleAlarmSelection = onToggleAlarmSelection,
+      )
+    }
+
     LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
       item {
         val isKeyboardOpen by keyboardAsState()
@@ -90,92 +106,16 @@ fun GroupContent(
       }
 
       if (mode is GroupComponent.Mode.Edit) {
-        // TODO: alarms in group (only in edit mode)
+        state.groups[mode.group.id]?.let(::expandableAlarmsGroup)
       }
 
-      if ((state.groups[AlarmGroupModel.UNGROUPED_ID]?.alarmsCount ?: 0L) > 0L) {
-        item {
-          ElevatedCard(
-            modifier = Modifier.fillMaxWidth(),
-            shape =
-              if (groupsExpandedState[AlarmGroupModel.UNGROUPED_ID] == true) {
-                ShapeDefaults.Medium.copy(
-                  bottomStart = CornerSize(0.dp),
-                  bottomEnd = CornerSize(0.dp),
-                )
-              } else {
-                ShapeDefaults.Medium
-              },
-          ) {
-            ExpandableHeaderRow(
-              modifier =
-                Modifier.fillMaxWidth().clickable {
-                  groupsExpandedState[AlarmGroupModel.UNGROUPED_ID] =
-                    groupsExpandedState[AlarmGroupModel.UNGROUPED_ID]?.not() ?: false
-                },
-              isExpanded = groupsExpandedState[AlarmGroupModel.UNGROUPED_ID] ?: false,
-              text = AlarmGroupModel.UNGROUPED_NAME,
-              transitionLabel = "UngroupedHeader",
-            )
-          }
-        }
-        if (groupsExpandedState[AlarmGroupModel.UNGROUPED_ID] == true) {
-          itemsIndexed(state.ungroupedAlarms) { index, alarm ->
-            Card(
-              modifier = modifier,
-              shape =
-                if (index == state.ungroupedAlarms.lastIndex) {
-                  ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
-                } else {
-                  RectangleShape
-                },
-              colors =
-                if (alarm.isOn) {
-                  CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                  )
-                } else {
-                  CardDefaults.cardColors()
-                },
-            ) {
-              Spacer(modifier = Modifier.height(8.dp))
+      state.groups[AlarmGroupModel.UNGROUPED_ID]?.let(::expandableAlarmsGroup)
 
-              Row(
-                modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-              ) {
-                Text(
-                  text = alarm.fireAtTime.toString(),
-                  style =
-                    MaterialTheme.typography.headlineMedium.run {
-                      if (alarm.isOn) copy(fontWeight = FontWeight.Medium) else this
-                    },
-                )
-
-                alarm.name?.let {
-                  Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = it,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                  )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Checkbox(
-                  checked = alarm.id in state.selectedAlarmIds,
-                  onCheckedChange = remember(alarm) { { onToggleAlarmSelection(alarm) } },
-                )
-              }
-
-              Spacer(modifier = Modifier.height(8.dp))
-            }
-          }
-        }
+      state.groups.forEach { (id, group) ->
+        if (id == AlarmGroupModel.UNGROUPED_ID) return@forEach
+        if (mode is GroupComponent.Mode.Edit && id == mode.group.id) return@forEach
+        expandableAlarmsGroup(group = group)
       }
-
-      // TODO: alarms in other groups that can be moved (?)
     }
 
     FloatingActionButton(
@@ -183,6 +123,89 @@ fun GroupContent(
       onClick = onConfirmClick,
     ) {
       Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
+    }
+  }
+}
+
+private fun LazyListScope.expandableAlarmsGroup(
+  group: AlarmGroupModel,
+  alarms: List<AlarmListModel> = emptyList(),
+  selectedAlarmIds: Set<Long> = emptySet(),
+  isExpanded: Boolean = false,
+  onToggleExpandedClick: (Long) -> Unit = {},
+  onToggleAlarmSelection: (AlarmListModel) -> Unit = {},
+) {
+  if (group.alarmsCount <= 0L) return
+
+  item {
+    ElevatedCard(
+      modifier = Modifier.fillMaxWidth(),
+      shape =
+        if (isExpanded) {
+          ShapeDefaults.Medium.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
+        } else {
+          ShapeDefaults.Medium
+        },
+    ) {
+      ExpandableHeaderRow(
+        modifier = Modifier.fillMaxWidth().clickable { onToggleExpandedClick(group.id) },
+        isExpanded = isExpanded,
+        text = AlarmGroupModel.UNGROUPED_NAME,
+        transitionLabel = "UngroupedHeader",
+      )
+    }
+  }
+
+  if (isExpanded) {
+    itemsIndexed(alarms) { index, alarm ->
+      Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape =
+          if (index == alarms.lastIndex) {
+            ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
+          } else {
+            RectangleShape
+          },
+        colors =
+          if (alarm.isOn) {
+            CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+          } else {
+            CardDefaults.cardColors()
+          },
+      ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+          modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+            text = alarm.fireAtTime.toString(),
+            style =
+              MaterialTheme.typography.headlineMedium.run {
+                if (alarm.isOn) copy(fontWeight = FontWeight.Medium) else this
+              },
+          )
+
+          alarm.name?.let {
+            Text(
+              modifier = Modifier.padding(horizontal = 16.dp),
+              text = it,
+              maxLines = 2,
+              overflow = TextOverflow.Ellipsis,
+            )
+          }
+
+          Spacer(modifier = Modifier.weight(1f))
+
+          Checkbox(
+            checked = alarm.id in selectedAlarmIds,
+            onCheckedChange = remember(alarm) { { onToggleAlarmSelection(alarm) } },
+          )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+      }
     }
   }
 }

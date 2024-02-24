@@ -18,6 +18,5 @@ data class GroupState(
     groupModel: AlarmGroupModel
   ) : this(name = groupModel.name, color = groupModel.color.toInt())
 
-  val ungroupedAlarms: List<AlarmListModel>
-    get() = alarms[AlarmGroupModel.UNGROUPED_ID].orEmpty()
+  fun alarmsInGroup(id: Long): List<AlarmListModel> = alarms[id].orEmpty()
 }
