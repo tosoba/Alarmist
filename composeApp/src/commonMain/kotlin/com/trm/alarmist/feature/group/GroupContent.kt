@@ -40,7 +40,7 @@ fun GroupContent(
   modifier: Modifier = Modifier,
   state: GroupState = GroupState(),
   onNameChange: (String) -> Unit = {},
-  onColorChange: (Color) -> Unit,
+  onColorChange: (Color) -> Unit = {},
   onConfirmClick: () -> Unit = {},
 ) {
   Box(modifier = modifier) {

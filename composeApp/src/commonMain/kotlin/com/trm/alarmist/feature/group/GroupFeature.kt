@@ -6,14 +6,19 @@ import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.AnyStateFlow
 import com.trm.alarmist.core.common.util.wrapToAny
+import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class GroupFeature(
   savedStateContainer: SerializableContainer?,
   private val mode: GroupComponent.Mode,
-) : CoroutineFeature() {
+) : CoroutineFeature(), KoinComponent {
+  private val getGroupedAlarmsUseCase: GetGroupedAlarmsUseCase by inject()
+
   private val _state =
     MutableStateFlow(
       savedStateContainer?.consume(strategy = GroupState.serializer()) ?: GroupState()

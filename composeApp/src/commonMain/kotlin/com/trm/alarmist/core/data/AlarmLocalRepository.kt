@@ -5,9 +5,11 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
 import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.db.Alarm
+import com.trm.alarmist.db.AlarmGroup
 import com.trm.alarmist.db.AlarmistQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -74,6 +76,11 @@ class AlarmLocalRepository(
   override fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>> =
     queries.selectAllAlarms().asFlow().mapToList(dispatcher).map { alarms ->
       alarms.map(Alarm::toListModel)
+    }
+
+  override fun getAllAlarmGroupsFlow(): Flow<List<AlarmGroupModel>> =
+    queries.selectAllGroups().asFlow().mapToList(dispatcher).map { groups ->
+      groups.map(AlarmGroup::toModel)
     }
 
   override suspend fun toggleAlarmOnOff(id: Long): AlarmModel =

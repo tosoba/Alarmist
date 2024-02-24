@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.domain
 
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +31,8 @@ interface AlarmRepository {
   suspend fun getAlarmById(id: Long): AlarmModel
 
   fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>>
+
+  fun getAllAlarmGroupsFlow(): Flow<List<AlarmGroupModel>>
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel
 
