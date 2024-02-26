@@ -41,16 +41,32 @@ SET isOn = CASE
 END
 WHERE id = ?;
 
+updateAlarmsGroups:
+UPDATE alarm
+SET groupId = CASE
+    WHEN groupId = :groupId THEN NULL
+    ELSE :groupId
+END
+WHERE id IN :alarmIds;
+
 selectAllAlarms:
 SELECT * FROM alarm ORDER BY fireAtTime;
+
+selectAlarmById:
+SELECT * FROM alarm WHERE id = ?;
+
+insertGroup:
+INSERT OR REPLACE INTO alarmGroup VALUES (?,?,?);
+
+updateGroupById:
+UPDATE alarmGroup
+SET name = ?, color = ?
+WHERE id = ?;
 
 selectAllGroups:
 SELECT alarmGroup.*,
 COALESCE((SELECT COUNT(*) FROM alarm WHERE alarm.groupId = alarmGroup.id), 0) AS alarmsCount
 FROM alarmGroup;
-
-selectAlarmById:
-SELECT * FROM alarm WHERE id = ?;
 
 selectLastInsertedRowId:
 SELECT last_insert_rowid();

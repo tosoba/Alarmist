@@ -108,6 +108,29 @@ class AlarmLocalRepository(
       }
     }
 
+  override suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>) {
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        queries.insertGroup(id = null, name = name, color = color.toLong())
+        if (alarmIds.isNotEmpty()) {
+          val groupId = queries.selectLastInsertedRowId().executeAsOne()
+          queries.updateAlarmsGroups(groupId = groupId, alarmIds = alarmIds)
+        }
+      }
+    }
+  }
+
+  override suspend fun editGroup(id: Long, name: String, color: Int, alarmIds: Collection<Long>) {
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        queries.updateGroupById(name = name, color = color.toLong(), id = id)
+        if (alarmIds.isNotEmpty()) {
+          queries.updateAlarmsGroups(groupId = id, alarmIds = alarmIds)
+        }
+      }
+    }
+  }
+
   private fun daysOfWeekToDbString(daysOfWeek: Collection<DayOfWeek>): String? =
     daysOfWeek
       .takeIf(Collection<DayOfWeek>::isNotEmpty)

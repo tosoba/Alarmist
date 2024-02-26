@@ -19,12 +19,12 @@ class AddAlarmUseCase(
   ) {
     val id =
       repository.addAlarm(
-        fireAtTime,
-        name,
-        isOn,
-        scheduledOnDaysOfWeek,
-        scheduledOnDates,
-        offOnDates,
+        fireAtTime = fireAtTime,
+        name = name,
+        isOn = isOn,
+        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+        scheduledOnDates = scheduledOnDates,
+        offOnDates = offOnDates,
       )
     updateAlarmScheduleUseCase(
       isOn = isOn,

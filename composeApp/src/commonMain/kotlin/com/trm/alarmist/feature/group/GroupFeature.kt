@@ -6,6 +6,7 @@ import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.AnyStateFlow
 import com.trm.alarmist.core.common.util.wrapToAny
+import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsUseCase
 import kotlinx.coroutines.Job
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -21,6 +23,7 @@ class GroupFeature(
   private val mode: GroupComponent.Mode,
 ) : CoroutineFeature(), KoinComponent {
   private val getGroupedAlarmsUseCase: GetGroupedAlarmsUseCase by inject()
+  private val repository: AlarmRepository by inject()
 
   private val _state: MutableStateFlow<GroupState> =
     MutableStateFlow(
@@ -37,6 +40,25 @@ class GroupFeature(
       .onEach { (alarms, groups) -> _state.update { it.copy(alarms = alarms, groups = groups) } }
       .launchIn(coroutineScope)
   }
+
+  fun onConfirmClick(): Job =
+    coroutineScope.launch {
+      with(_state.value) {
+        when (mode) {
+          GroupComponent.Mode.Add -> {
+            repository.addGroup(name = name, color = color, alarmIds = selectedAlarmIds)
+          }
+          is GroupComponent.Mode.Edit -> {
+            repository.editGroup(
+              id = mode.group.id,
+              name = name,
+              color = color,
+              alarmIds = selectedAlarmIds,
+            )
+          }
+        }
+      }
+    }
 
   fun onNameChange(name: String) {
     _state.update { it.copy(name = name.ifBlank { "" }) }
@@ -58,8 +80,4 @@ class GroupFeature(
 
   fun saveState(): SerializableContainer =
     SerializableContainer(value = _state.value, strategy = GroupState.serializer())
-
-  fun onConfirmClick(): Job {
-    return Job()
-  }
 }

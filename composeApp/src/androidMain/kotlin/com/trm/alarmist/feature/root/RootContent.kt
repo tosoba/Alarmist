@@ -133,7 +133,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onNameChange = child.component.feature::onNameChange,
               onColorChange = child.component.feature::onColorChange,
               onToggleAlarmSelection = child.component.feature::onToggleAlarmSelection,
-              onConfirmClick = child.component.feature::onConfirmClick,
+              onConfirmClick = child.component::onConfirmClick,
             )
           }
           is RootComponent.Child.Clock -> {

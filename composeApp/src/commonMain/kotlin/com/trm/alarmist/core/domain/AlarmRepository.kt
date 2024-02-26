@@ -39,4 +39,8 @@ interface AlarmRepository {
   suspend fun updateAlarmOnFired(id: Long): AlarmModel
 
   suspend fun updateAlarmOnDismissed(id: Long): AlarmModel
+
+  suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>)
+
+  suspend fun editGroup(id: Long, name: String, color: Int, alarmIds: Collection<Long>)
 }
