@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.pages.PagesNavigation
 import com.arkivanov.decompose.router.pages.childPages
 import com.arkivanov.decompose.router.pages.select
 import com.arkivanov.decompose.value.Value
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.feature.alarms.groups.AlarmGroupsComponent
 import com.trm.alarmist.feature.alarms.groups.DefaultAlarmGroupsComponent
@@ -15,7 +16,6 @@ import com.trm.alarmist.feature.alarms.list.AlarmListComponent
 import com.trm.alarmist.feature.alarms.list.DefaultAlarmListComponent
 import com.trm.alarmist.feature.alarms.upcoming.DefaultUpcomingAlarmsComponent
 import com.trm.alarmist.feature.alarms.upcoming.UpcomingAlarmsComponent
-import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -41,6 +41,7 @@ class DefaultAlarmsComponent(
   private val onAddAlarmClick: () -> Unit,
   private val onEditAlarmClick: (AlarmListModel) -> Unit,
   private val onAddGroupClick: () -> Unit,
+  private val onEditGroupClick: (AlarmGroupModel) -> Unit
 ) : AlarmsComponent, ComponentContext by componentContext {
   private val navigation = PagesNavigation<PageConfig>()
 
@@ -77,7 +78,11 @@ class DefaultAlarmsComponent(
       }
       PageConfig.AlarmGroups -> {
         AlarmsComponent.Page.AlarmGroups(
-          DefaultAlarmGroupsComponent(componentContext = componentContext)
+          DefaultAlarmGroupsComponent(
+            componentContext = componentContext,
+            onEditAlarmClick = onEditAlarmClick,
+            onEditGroupClick = onEditGroupClick
+          )
         )
       }
     }

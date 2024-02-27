@@ -85,6 +85,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
             onAddAlarmClick = ::onAddAlarmClick,
             onEditAlarmClick = ::onEditAlarmClick,
             onAddGroupClick = ::onAddGroupClick,
+            onEditGroupClick = ::onEditGroupClick
           )
         )
       }
