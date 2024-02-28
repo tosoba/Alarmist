@@ -2,6 +2,8 @@ package com.trm.alarmist.core.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.trm.alarmist.core.common.util.DB_OFF
+import com.trm.alarmist.core.common.util.DB_ON
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
 import com.trm.alarmist.core.domain.AlarmRepository
@@ -86,6 +88,14 @@ class AlarmLocalRepository(
       queries.transactionWithResult {
         queries.updateToggleAlarmOnOffById(id)
         queries.selectAlarmById(id).executeAsOne().toModel()
+      }
+    }
+
+  override suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel> =
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        queries.updateAlarmsOnOffByGroupId(isOn = if (isOn) DB_ON else DB_OFF, groupId = groupId)
+        queries.selectAlarmsByGroupId(groupId).executeAsList().map(Alarm::toModel)
       }
     }
 

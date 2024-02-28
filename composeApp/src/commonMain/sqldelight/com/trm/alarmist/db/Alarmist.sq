@@ -55,6 +55,9 @@ SELECT * FROM alarm ORDER BY fireAtTime;
 selectAlarmById:
 SELECT * FROM alarm WHERE id = ?;
 
+selectAlarmsByGroupId:
+SELECT * FROM alarm WHERE groupId = ?;
+
 insertGroup:
 INSERT OR REPLACE INTO alarmGroup VALUES (?,?,?);
 
@@ -79,6 +82,9 @@ CASE
     ELSE 0
 END AS isOn
 FROM alarmGroup;
+
+updateAlarmsOnOffByGroupId:
+UPDATE alarm SET isOn = ? WHERE groupId = ?;
 
 selectLastInsertedRowId:
 SELECT last_insert_rowid();

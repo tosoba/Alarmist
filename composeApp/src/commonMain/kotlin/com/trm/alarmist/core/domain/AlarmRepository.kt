@@ -36,6 +36,8 @@ interface AlarmRepository {
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel
 
+  suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel>
+
   suspend fun updateAlarmOnFired(id: Long): AlarmModel
 
   suspend fun updateAlarmOnDismissed(id: Long): AlarmModel

@@ -8,6 +8,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 
 const val DB_ON = 1L
+const val DB_OFF = 0L
 
 fun Alarm.toListModel(): AlarmListModel =
   AlarmListModel(
