@@ -65,7 +65,19 @@ WHERE id = ?;
 
 selectAllGroups:
 SELECT alarmGroup.*,
-COALESCE((SELECT COUNT(*) FROM alarm WHERE alarm.groupId = alarmGroup.id), 0) AS alarmsCount
+COALESCE((SELECT COUNT(*) FROM alarm WHERE alarm.groupId = alarmGroup.id), 0) AS alarmsCount,
+CASE
+    WHEN EXISTS (SELECT 1 FROM alarm WHERE alarm.groupId = alarmGroup.id AND alarm.isOn = 1) THEN 1
+    ELSE 0
+END AS isOn
+FROM alarmGroup
+UNION
+SELECT -1 AS id, 'Ungrouped' AS name, 0 AS color,
+COALESCE((SELECT COUNT(*) FROM alarm WHERE alarm.groupId IS NULL), 0) AS alarmsCount,
+CASE
+    WHEN EXISTS (SELECT 1 FROM alarm WHERE alarm.groupId IS NULL AND alarm.isOn = 1) THEN 1
+    ELSE 0
+END AS isOn
 FROM alarmGroup;
 
 selectLastInsertedRowId:

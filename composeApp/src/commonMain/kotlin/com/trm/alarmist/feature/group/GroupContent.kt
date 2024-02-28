@@ -153,8 +153,8 @@ private fun LazyListScope.expandableAlarmsGroup(
             .clickable { onToggleExpandedClick(group.id) }
             .padding(vertical = 16.dp),
         isExpanded = isExpanded,
-        text = AlarmGroupModel.UNGROUPED_NAME,
-        transitionLabel = "UngroupedHeader",
+        text = group.name,
+        transitionLabel = "${group.name}Header",
       )
     }
   }

@@ -7,7 +7,7 @@ import com.trm.alarmist.db.Alarm
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 
-const val ALARM_ON = 1L
+const val DB_ON = 1L
 
 fun Alarm.toListModel(): AlarmListModel =
   AlarmListModel(
@@ -15,10 +15,10 @@ fun Alarm.toListModel(): AlarmListModel =
     groupId = groupId,
     fireAtTime = fireAtTime,
     name = name,
-    isOn = isOn == ALARM_ON,
+    isOn = isOn == DB_ON,
     nextFireOnDateTime =
       calculateAlarmNextFireOnDateTime(
-        isOn = isOn == ALARM_ON,
+        isOn = isOn == DB_ON,
         fireAtTime = fireAtTime,
         scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek(),
         scheduledOnDates = parsedScheduledOnDates(),
@@ -32,7 +32,7 @@ fun Alarm.toModel(): AlarmModel =
     groupId = groupId,
     fireAtTime = fireAtTime,
     name = name,
-    isOn = isOn == ALARM_ON,
+    isOn = isOn == DB_ON,
     scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek(),
     scheduledOnDates = parsedScheduledOnDates(),
     offOnDates = parsedOffOnDates(),
