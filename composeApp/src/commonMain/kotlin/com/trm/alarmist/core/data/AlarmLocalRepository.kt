@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.data
 
+import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.trm.alarmist.core.common.util.DB_OFF
@@ -76,12 +77,21 @@ class AlarmLocalRepository(
   }
 
   override fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>> =
-    queries.selectAllAlarms().asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }
+    queries.selectAllAlarms().asAlarmsListFlow()
 
   override fun getAllAlarmGroupsFlow(): Flow<List<AlarmGroupModel>> =
     queries.selectAllGroups().asFlow().mapToList(dispatcher).map {
       it.map(SelectAllGroups::toModel)
     }
+
+  override fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmListModel>> =
+    queries.selectAlarmsByGroupId(groupId).asAlarmsListFlow()
+
+  override fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>> =
+    queries.selectUngroupedAlarms().asAlarmsListFlow()
+
+  private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
+    asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }
 
   override suspend fun toggleAlarmOnOff(id: Long): AlarmModel =
     withContext(dispatcher) {

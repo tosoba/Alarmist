@@ -58,6 +58,9 @@ SELECT * FROM alarm WHERE id = ?;
 selectAlarmsByGroupId:
 SELECT * FROM alarm WHERE groupId = ?;
 
+selectUngroupedAlarms:
+SELECT * FROM alarm WHERE groupId IS NULL;
+
 insertGroup:
 INSERT OR REPLACE INTO alarmGroup VALUES (?,?,?);
 

@@ -2,6 +2,7 @@ package com.trm.alarmist.core.domain.di
 
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
+import com.trm.alarmist.core.domain.usecase.GetAlarmsInGroupFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissedUseCase
@@ -19,4 +20,5 @@ val domainModule = module {
   factory { UpdateAlarmOnFiredUseCase(get()) }
   factory { UpdateAlarmOnDismissedUseCase(get()) }
   factory { GetGroupedAlarmsUseCase(get()) }
+  factory { GetAlarmsInGroupFlowUseCase(get()) }
 }
