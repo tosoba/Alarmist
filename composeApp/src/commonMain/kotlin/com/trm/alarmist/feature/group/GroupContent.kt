@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -71,15 +72,23 @@ fun GroupContent(
       groupsExpandedState[id] = groupsExpandedState[id]?.not() ?: false
     }
 
-    fun LazyListScope.expandableAlarmsGroup(group: AlarmGroupModel) {
-      expandableAlarmsGroup(
+    fun LazyListScope.expandableAlarmsGroupItems(
+      group: AlarmGroupModel,
+      modifier: Modifier = Modifier,
+    ) {
+      expandableAlarmsGroupItems(
         group = group,
+        modifier = modifier,
         alarms = state.alarmsInGroup(group.id),
-        selectedAlarmIds = state.selectedAlarmIds,
         isExpanded = groupsExpandedState[group.id] == true,
         onToggleExpandedClick = ::toggleGroupExpanded,
-        onToggleAlarmSelection = onToggleAlarmSelection,
-      )
+      ) {
+        AlarmGroupCardContent(
+          alarm = it,
+          selectedAlarmIds = state.selectedAlarmIds,
+          onToggleAlarmSelection = onToggleAlarmSelection,
+        )
+      }
     }
 
     LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
@@ -106,15 +115,28 @@ fun GroupContent(
       }
 
       if (mode is GroupComponent.Mode.Edit) {
-        state.groups[mode.group.id]?.let(::expandableAlarmsGroup)
+        state.groups[mode.group.id]?.let {
+          expandableAlarmsGroupItems(
+            group = it,
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+          )
+        }
       }
 
-      state.groups[AlarmGroupModel.UNGROUPED_ID]?.let(::expandableAlarmsGroup)
+      state.groups[AlarmGroupModel.UNGROUPED_ID]?.let {
+        expandableAlarmsGroupItems(
+          group = it,
+          modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+        )
+      }
 
       state.groups.forEach { (id, group) ->
         if (id == AlarmGroupModel.UNGROUPED_ID) return@forEach
         if (mode is GroupComponent.Mode.Edit && id == mode.group.id) return@forEach
-        expandableAlarmsGroup(group = group)
+        expandableAlarmsGroupItems(
+          group = group,
+          modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+        )
       }
     }
 
@@ -127,19 +149,19 @@ fun GroupContent(
   }
 }
 
-private fun LazyListScope.expandableAlarmsGroup(
+private fun LazyListScope.expandableAlarmsGroupItems(
   group: AlarmGroupModel,
+  modifier: Modifier = Modifier,
   alarms: List<AlarmListModel> = emptyList(),
-  selectedAlarmIds: Set<Long> = emptySet(),
   isExpanded: Boolean = false,
   onToggleExpandedClick: (Long) -> Unit = {},
-  onToggleAlarmSelection: (AlarmListModel) -> Unit = {},
+  alarmGroupCardContent: @Composable ColumnScope.(AlarmListModel) -> Unit,
 ) {
   if (group.alarmsCount <= 0L) return
 
   item {
     ElevatedCard(
-      modifier = Modifier.fillMaxWidth(),
+      modifier = modifier,
       shape =
         if (isExpanded) {
           ShapeDefaults.Medium.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
@@ -176,41 +198,50 @@ private fun LazyListScope.expandableAlarmsGroup(
             CardDefaults.cardColors()
           },
       ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-          modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
-          verticalAlignment = Alignment.CenterVertically,
-        ) {
-          Text(
-            text = alarm.fireAtTime.toString(),
-            style =
-              MaterialTheme.typography.headlineMedium.run {
-                if (alarm.isOn) copy(fontWeight = FontWeight.Medium) else this
-              },
-          )
-
-          alarm.name?.let {
-            Text(
-              modifier = Modifier.padding(horizontal = 16.dp),
-              text = it,
-              maxLines = 2,
-              overflow = TextOverflow.Ellipsis,
-            )
-          }
-
-          Spacer(modifier = Modifier.weight(1f))
-
-          Checkbox(
-            checked = alarm.id in selectedAlarmIds,
-            onCheckedChange = remember(alarm) { { onToggleAlarmSelection(alarm) } },
-          )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
+        alarmGroupCardContent(alarm)
       }
     }
   }
+}
+
+@Composable
+private fun ColumnScope.AlarmGroupCardContent(
+  alarm: AlarmListModel,
+  selectedAlarmIds: Set<Long> = emptySet(),
+  onToggleAlarmSelection: (AlarmListModel) -> Unit = {},
+) {
+  Spacer(modifier = Modifier.height(8.dp))
+
+  Row(
+    modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Text(
+      text = alarm.fireAtTime.toString(),
+      style =
+        MaterialTheme.typography.headlineMedium.run {
+          if (alarm.isOn) copy(fontWeight = FontWeight.Medium) else this
+        },
+    )
+
+    alarm.name?.let {
+      Text(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        text = it,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+      )
+    }
+
+    Spacer(modifier = Modifier.weight(1f))
+
+    Checkbox(
+      checked = alarm.id in selectedAlarmIds,
+      onCheckedChange = remember(alarm) { { onToggleAlarmSelection(alarm) } },
+    )
+  }
+
+  Spacer(modifier = Modifier.height(8.dp))
 }
 
 @Composable
