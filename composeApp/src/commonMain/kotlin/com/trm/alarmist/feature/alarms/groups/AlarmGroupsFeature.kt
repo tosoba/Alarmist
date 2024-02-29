@@ -1,5 +1,6 @@
 package com.trm.alarmist.feature.alarms.groups
 
+import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.AnyStateFlow
 import com.trm.alarmist.core.common.util.wrapToAny
@@ -9,20 +10,34 @@ import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class AlarmGroupsFeature : CoroutineFeature(), KoinComponent {
+class AlarmGroupsFeature(savedStateContainer: SerializableContainer?) :
+  CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
   private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
 
-  private val _groups = MutableStateFlow<List<AlarmGroupModel>>(emptyList())
-  val groups: AnyStateFlow<List<AlarmGroupModel>> = _groups.wrapToAny()
+  private val _state: MutableStateFlow<AlarmGroupsState> =
+    MutableStateFlow(
+      savedStateContainer?.consume(AlarmGroupsState.serializer()) ?: AlarmGroupsState()
+    )
+  val state: AnyStateFlow<AlarmGroupsState> = _state.wrapToAny()
 
   init {
-    repository.getAllAlarmGroupsFlow().onEach { _groups.value = it }.launchIn(coroutineScope)
+    repository
+      .getAllAlarmGroupsFlow()
+      .onEach { groups -> _state.update { it.copy(groups = groups) } }
+      .launchIn(coroutineScope)
+    
+    //TODO: fetch alarms from group:
+//    state
+//      .mapLatest {  }
+//      .launchIn(coroutineScope)
   }
 
   fun onToggleAlarmOnOff(alarm: AlarmListModel) {
@@ -30,4 +45,15 @@ class AlarmGroupsFeature : CoroutineFeature(), KoinComponent {
   }
 
   fun onToggleGroupOnOff(group: AlarmGroupModel) {}
+
+  fun onExpandGroup(group: AlarmGroupModel) {
+    _state.update { it.copy(expandedGroupId = group.id, expandedGroupAlarms = emptyList()) }
+  }
+
+  fun onCollapseGroup() {
+    _state.update { it.copy(expandedGroupId = null, expandedGroupAlarms = emptyList()) }
+  }
+
+  fun saveState(): SerializableContainer =
+    SerializableContainer(value = _state.value, strategy = AlarmGroupsState.serializer())
 }
