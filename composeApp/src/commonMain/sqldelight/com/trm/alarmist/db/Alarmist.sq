@@ -84,7 +84,8 @@ CASE
     WHEN EXISTS (SELECT 1 FROM alarm WHERE alarm.groupId IS NULL AND alarm.isOn = 1) THEN 1
     ELSE 0
 END AS isOn
-FROM alarmGroup;
+FROM alarmGroup
+ORDER BY id;
 
 updateAlarmsOnOffByGroupId:
 UPDATE alarm SET isOn = ? WHERE groupId = ?;

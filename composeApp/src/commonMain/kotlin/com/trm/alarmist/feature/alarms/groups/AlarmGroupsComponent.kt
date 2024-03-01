@@ -10,13 +10,11 @@ import com.trm.alarmist.core.domain.model.AlarmListModel
 interface AlarmGroupsComponent {
   val state: AnyStateFlow<AlarmGroupsState>
 
+  val feature: AlarmGroupsFeature
+
   fun onEditAlarmClick(alarm: AlarmListModel)
 
-  fun onToggleAlarmOnOff(alarm: AlarmListModel)
-
   fun onEditGroupClick(group: AlarmGroupModel)
-
-  fun onToggleGroupOnOff(group: AlarmGroupModel)
 }
 
 class DefaultAlarmGroupsComponent(
@@ -24,7 +22,7 @@ class DefaultAlarmGroupsComponent(
   private val onEditAlarmClick: (AlarmListModel) -> Unit,
   private val onEditGroupClick: (AlarmGroupModel) -> Unit,
 ) : AlarmGroupsComponent, ComponentContext by componentContext {
-  private val feature =
+  override val feature: AlarmGroupsFeature =
     instanceKeeper.getOrCreate {
       AlarmGroupsFeature(
         stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
@@ -45,16 +43,8 @@ class DefaultAlarmGroupsComponent(
     onEditAlarmClick.invoke(alarm)
   }
 
-  override fun onToggleAlarmOnOff(alarm: AlarmListModel) {
-    feature.onToggleAlarmOnOff(alarm)
-  }
-
   override fun onEditGroupClick(group: AlarmGroupModel) {
     onEditGroupClick.invoke(group)
-  }
-
-  override fun onToggleGroupOnOff(group: AlarmGroupModel) {
-    feature.onToggleGroupOnOff(group)
   }
 
   companion object {

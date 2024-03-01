@@ -11,6 +11,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,7 +39,13 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
       ) { _, page ->
         when (page) {
           is AlarmsComponent.Page.AlarmGroups -> {
-            AlarmGroupsContent(modifier = Modifier.fillMaxSize(), component = page.component)
+            val state by page.component.state.collectAsState()
+            AlarmGroupsContent(
+              modifier = Modifier.fillMaxSize(),
+              state = state,
+              onExpandGroup = page.component.feature::onExpandGroup,
+              onCollapseGroup = page.component.feature::onCollapseGroup,
+            )
           }
           is AlarmsComponent.Page.AlarmsList -> {
             AlarmListContent(modifier = Modifier.fillMaxSize(), component = page.component)
