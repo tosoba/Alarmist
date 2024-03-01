@@ -14,5 +14,9 @@ fun AlarmGroupsContent(
   onExpandGroup: (AlarmGroupModel) -> Unit = {},
   onCollapseGroup: () -> Unit = {},
 ) {
-  LazyColumn(modifier = modifier, contentPadding = PaddingValues(16.dp)) { state.groups.forEach {} }
+  LazyColumn(modifier = modifier, contentPadding = PaddingValues(16.dp)) {
+    state.groups.forEach { group -> if (group.alarmsCount == 0L) {
+
+    } }
+  }
 }

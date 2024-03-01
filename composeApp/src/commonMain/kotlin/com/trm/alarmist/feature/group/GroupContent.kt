@@ -4,13 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,10 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,12 +38,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.ui.ExpandableHeaderRow
+import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
+import com.trm.alarmist.core.ui.GroupedAlarmCard
 import com.trm.alarmist.core.ui.keyboardAsState
 
 @Composable
@@ -76,18 +69,40 @@ fun GroupContent(
       group: AlarmGroupModel,
       modifier: Modifier = Modifier,
     ) {
-      expandableAlarmsGroupItems(
-        group = group,
-        modifier = modifier,
-        alarms = state.alarmsInGroup(group.id),
-        isExpanded = groupsExpandedState[group.id] == true,
-        onToggleExpandedClick = ::toggleGroupExpanded,
-      ) {
-        AlarmGroupCardContent(
-          alarm = it,
-          selectedAlarmIds = state.selectedAlarmIds,
-          onToggleAlarmSelection = onToggleAlarmSelection,
+      if (group.alarmsCount <= 0L) return
+
+      item {
+        ExpandableAlarmGroupHeaderCard(
+          group = group,
+          modifier = modifier,
+          isExpanded = groupsExpandedState[group.id] == true,
+          onToggleExpandedClick = ::toggleGroupExpanded,
         )
+      }
+
+      if (groupsExpandedState[group.id] == true) {
+        itemsIndexed(state.alarmsInGroup(group.id)) { index, alarm ->
+          GroupedAlarmCard(
+            alarm = alarm,
+            modifier = Modifier.fillMaxWidth(),
+            shape =
+              if (index == state.alarmsInGroup(group.id).lastIndex) {
+                ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
+              } else {
+                RectangleShape
+              },
+            colors =
+              if (alarm.id in state.selectedAlarmIds) {
+                CardDefaults.cardColors(
+                  containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+              } else {
+                CardDefaults.cardColors()
+              },
+            isSelected = alarm.id in state.selectedAlarmIds,
+            onToggleAlarmSelection = remember { { onToggleAlarmSelection(alarm) } },
+          )
+        }
       }
     }
 
@@ -149,106 +164,11 @@ fun GroupContent(
   }
 }
 
-private fun LazyListScope.expandableAlarmsGroupItems(
-  group: AlarmGroupModel,
-  modifier: Modifier = Modifier,
-  alarms: List<AlarmListModel> = emptyList(),
-  isExpanded: Boolean = false,
-  onToggleExpandedClick: (Long) -> Unit = {},
-  alarmGroupCardContent: @Composable ColumnScope.(AlarmListModel) -> Unit,
-) {
-  if (group.alarmsCount <= 0L) return
-
-  item {
-    ElevatedCard(
-      modifier = modifier,
-      shape =
-        if (isExpanded) {
-          ShapeDefaults.Medium.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
-        } else {
-          ShapeDefaults.Medium
-        },
-    ) {
-      ExpandableHeaderRow(
-        modifier =
-          Modifier.fillMaxWidth()
-            .clickable { onToggleExpandedClick(group.id) }
-            .padding(vertical = 16.dp),
-        isExpanded = isExpanded,
-        text = group.name,
-        transitionLabel = "${group.name}Header",
-      )
-    }
-  }
-
-  if (isExpanded) {
-    itemsIndexed(alarms) { index, alarm ->
-      Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape =
-          if (index == alarms.lastIndex) {
-            ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
-          } else {
-            RectangleShape
-          },
-        colors =
-          if (alarm.isOn) {
-            CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-          } else {
-            CardDefaults.cardColors()
-          },
-      ) {
-        alarmGroupCardContent(alarm)
-      }
-    }
-  }
-}
-
-@Composable
-private fun ColumnScope.AlarmGroupCardContent(
-  alarm: AlarmListModel,
-  selectedAlarmIds: Set<Long> = emptySet(),
-  onToggleAlarmSelection: (AlarmListModel) -> Unit = {},
-) {
-  Spacer(modifier = Modifier.height(8.dp))
-
-  Row(
-    modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Text(
-      text = alarm.fireAtTime.toString(),
-      style =
-        MaterialTheme.typography.headlineMedium.run {
-          if (alarm.isOn) copy(fontWeight = FontWeight.Medium) else this
-        },
-    )
-
-    alarm.name?.let {
-      Text(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        text = it,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-      )
-    }
-
-    Spacer(modifier = Modifier.weight(1f))
-
-    Checkbox(
-      checked = alarm.id in selectedAlarmIds,
-      onCheckedChange = remember(alarm) { { onToggleAlarmSelection(alarm) } },
-    )
-  }
-
-  Spacer(modifier = Modifier.height(8.dp))
-}
-
 @Composable
 private fun GroupColors(
   modifier: Modifier = Modifier,
   selectedColor: Color? = null,
-  onColorClick: (Color) -> Unit,
+  onColorClick: (Color) -> Unit = {},
 ) {
   val boxColors = remember {
     listOf(Color.Transparent, Color.Red, Color.Yellow, Color.Green, Color.Blue, Color.Magenta)
