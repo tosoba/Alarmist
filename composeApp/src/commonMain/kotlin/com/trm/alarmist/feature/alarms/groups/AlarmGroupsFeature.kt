@@ -12,8 +12,8 @@ import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -43,14 +43,9 @@ class AlarmGroupsFeature(savedStateContainer: SerializableContainer?) :
 
     state
       .map { it.expandedGroupId }
+      .filterNotNull()
       .distinctUntilChanged()
-      .flatMapLatest {
-        if (it == null) {
-          flowOf(emptyList())
-        } else {
-          getAlarmsInGroupFlowUseCase(it)
-        }
-      }
+      .flatMapLatest(getAlarmsInGroupFlowUseCase::invoke)
       .onEach { alarms -> _state.update { it.copy(expandedGroupAlarms = alarms) } }
       .launchIn(coroutineScope)
   }
