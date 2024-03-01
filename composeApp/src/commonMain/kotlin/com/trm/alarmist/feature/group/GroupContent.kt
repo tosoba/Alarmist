@@ -69,24 +69,35 @@ fun GroupContent(
       group: AlarmGroupModel,
       modifier: Modifier = Modifier,
     ) {
-      if (group.alarmsCount <= 0L) return
+      if (group.alarmsCount == 0L) return
 
+      val isExpanded = groupsExpandedState[group.id] == true
       item {
         ExpandableAlarmGroupHeaderCard(
           group = group,
           modifier = modifier,
-          isExpanded = groupsExpandedState[group.id] == true,
+          shape =
+            if (isExpanded) {
+              ShapeDefaults.Medium.copy(
+                bottomStart = CornerSize(0.dp),
+                bottomEnd = CornerSize(0.dp),
+              )
+            } else {
+              ShapeDefaults.Medium
+            },
+          isExpanded = isExpanded,
           onToggleExpandedClick = ::toggleGroupExpanded,
         )
       }
 
-      if (groupsExpandedState[group.id] == true) {
-        itemsIndexed(state.alarmsInGroup(group.id)) { index, alarm ->
+      if (isExpanded) {
+        val alarms = state.alarmsInGroup(group.id)
+        itemsIndexed(alarms) { index, alarm ->
           GroupedAlarmCard(
             alarm = alarm,
             modifier = Modifier.fillMaxWidth(),
             shape =
-              if (index == state.alarmsInGroup(group.id).lastIndex) {
+              if (index == alarms.lastIndex) {
                 ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
               } else {
                 RectangleShape
