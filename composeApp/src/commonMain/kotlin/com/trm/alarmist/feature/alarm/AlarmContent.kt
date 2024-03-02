@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -68,7 +69,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.trm.alarmist.core.common.util.now
-import com.trm.alarmist.core.ui.ExpandableHeaderRow
+import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.WheelTimePicker
 import com.trm.alarmist.core.ui.keyboardAsState
 import epicarchitect.calendar.compose.basis.EpicMonth
@@ -158,15 +159,16 @@ fun AlarmContent(
           )
 
           var isCalendarExpanded by remember { mutableStateOf(false) }
-          ExpandableHeaderRow(
+          Row(
             modifier =
               Modifier.fillMaxWidth()
                 .clickable { isCalendarExpanded = !isCalendarExpanded }
                 .padding(vertical = 16.dp),
-            isExpanded = isCalendarExpanded,
-            transitionLabel = "ExpandableCalendar",
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
           ) {
             Text("Calendar", modifier = Modifier.padding(horizontal = 8.dp))
+            ExpandableIcon(isExpanded = isCalendarExpanded, transitionLabel = "ExpandableCalendar")
           }
           ExpandableCalendar(
             calendarModifier = Modifier.fillMaxWidth(),
