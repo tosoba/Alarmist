@@ -33,7 +33,7 @@ fun AlarmGroupsContent(
       item(key = group.id) {
         if (group.alarmsCount == 0L) {
           ElevatedCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-            Text(modifier = Modifier.padding(horizontal = 8.dp), text = "${group.name} - empty")
+            Text(modifier = Modifier.padding(16.dp), text = "${group.name} - empty")
           }
         } else {
           ExpandableAlarmGroupHeaderCard(

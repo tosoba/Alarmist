@@ -164,9 +164,10 @@ fun AlarmContent(
                 .clickable { isCalendarExpanded = !isCalendarExpanded }
                 .padding(vertical = 16.dp),
             isExpanded = isCalendarExpanded,
-            text = "Calendar",
             transitionLabel = "ExpandableCalendar",
-          )
+          ) {
+            Text("Calendar", modifier = Modifier.padding(horizontal = 8.dp))
+          }
           ExpandableCalendar(
             calendarModifier = Modifier.fillMaxWidth(),
             fireAtTime = state.fireAtTime,

@@ -1,14 +1,19 @@
 package com.trm.alarmist.core.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 
@@ -32,8 +37,13 @@ fun ExpandableAlarmGroupHeaderCard(
           .clickable { onToggleExpandedClick(group.id) }
           .padding(vertical = 16.dp),
       isExpanded = isExpanded,
-      text = "${group.name} - ${group.alarmsCount} alarm(s)",
       transitionLabel = "${group.name}Header",
-    )
+    ) {
+      Column(modifier = Modifier.padding(horizontal = 8.dp)) {
+        Text(group.name, fontWeight = FontWeight.SemiBold)
+        Spacer(modifier = Modifier.height(2.dp))
+        Text("${group.alarmsCount} alarm(s)")
+      }
+    }
   }
 }
