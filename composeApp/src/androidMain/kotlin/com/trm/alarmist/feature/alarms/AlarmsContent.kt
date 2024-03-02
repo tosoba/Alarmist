@@ -45,6 +45,8 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
               state = state,
               onExpandGroup = page.component.feature::onExpandGroup,
               onCollapseGroup = page.component.feature::onCollapseGroup,
+              onToggleAlarmOnOff = page.component.feature::onToggleAlarmOnOff,
+              onToggleGroupOnOff = page.component.feature::onToggleGroupOnOff,
             )
           }
           is AlarmsComponent.Page.AlarmsList -> {

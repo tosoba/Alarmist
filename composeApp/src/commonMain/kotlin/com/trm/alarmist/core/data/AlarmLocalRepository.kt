@@ -109,6 +109,14 @@ class AlarmLocalRepository(
       }
     }
 
+  override suspend fun updateUngroupedAlarmsOnOff(isOn: Boolean): List<AlarmModel> =
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        queries.updateUngroupedAlarmsOnOff(isOn = if (isOn) DB_ON else DB_OFF)
+        queries.selectUngroupedAlarms().executeAsList().map(Alarm::toModel)
+      }
+    }
+
   override suspend fun getAlarmById(id: Long): AlarmModel =
     withContext(dispatcher) { queries.selectAlarmById(id).executeAsOne().toModel() }
 

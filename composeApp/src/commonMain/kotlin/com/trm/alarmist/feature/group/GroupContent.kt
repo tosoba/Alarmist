@@ -5,9 +5,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,7 +22,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,12 +43,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
-import com.trm.alarmist.core.ui.GroupedAlarmCard
 import com.trm.alarmist.core.ui.keyboardAsState
 
 @Composable
@@ -172,6 +180,49 @@ fun GroupContent(
     ) {
       Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
     }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GroupedAlarmCard(
+  alarm: AlarmListModel,
+  modifier: Modifier = Modifier,
+  shape: Shape = RectangleShape,
+  colors: CardColors = CardDefaults.cardColors(),
+  isSelected: Boolean = false,
+  onToggleAlarmSelection: () -> Unit = {},
+) {
+  Card(modifier = modifier, shape = shape, colors = colors, onClick = onToggleAlarmSelection) {
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Row(
+      modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Text(
+        text = alarm.fireAtTime.toString(),
+        style =
+          MaterialTheme.typography.headlineMedium.run {
+            if (isSelected) copy(fontWeight = FontWeight.Medium) else this
+          },
+      )
+
+      alarm.name?.let {
+        Text(
+          modifier = Modifier.padding(horizontal = 16.dp),
+          text = it,
+          maxLines = 2,
+          overflow = TextOverflow.Ellipsis,
+        )
+      }
+
+      Spacer(modifier = Modifier.weight(1f))
+
+      Checkbox(checked = isSelected, onCheckedChange = { onToggleAlarmSelection() })
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
   }
 }
 

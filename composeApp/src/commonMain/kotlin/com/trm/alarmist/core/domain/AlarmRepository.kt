@@ -42,6 +42,8 @@ interface AlarmRepository {
 
   suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel>
 
+  suspend fun updateUngroupedAlarmsOnOff(isOn: Boolean): List<AlarmModel>
+
   suspend fun updateAlarmOnFired(id: Long): AlarmModel
 
   suspend fun updateAlarmOnDismissed(id: Long): AlarmModel

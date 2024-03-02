@@ -1,6 +1,7 @@
 package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.system.AlarmScheduler
 
 class UpdateGroupOnOffUseCase(
@@ -8,7 +9,12 @@ class UpdateGroupOnOffUseCase(
   private val scheduler: AlarmScheduler,
 ) {
   suspend operator fun invoke(id: Long, isOn: Boolean) {
-    val updatedAlarms = repository.updateGroupAlarmsOnOff(id, isOn)
+    val updatedAlarms =
+      if (id == AlarmGroupModel.UNGROUPED_ID) {
+        repository.updateUngroupedAlarmsOnOff(isOn)
+      } else {
+        repository.updateGroupAlarmsOnOff(id, isOn)
+      }
     if (isOn) {
       updatedAlarms.forEach { alarm ->
         calculateAlarmNextFireOnDateTime(alarm)?.let {

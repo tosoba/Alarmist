@@ -9,6 +9,7 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsInGroupFlowUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
+import com.trm.alarmist.core.domain.usecase.UpdateGroupOnOffUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -24,8 +25,9 @@ import org.koin.core.component.inject
 class AlarmGroupsFeature(savedStateContainer: SerializableContainer?) :
   CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
-  private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
   private val getAlarmsInGroupFlowUseCase: GetAlarmsInGroupFlowUseCase by inject()
+  private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
+  private val updateGroupOnOffUseCase: UpdateGroupOnOffUseCase by inject()
 
   private val _state: MutableStateFlow<AlarmGroupsState> =
     MutableStateFlow(
@@ -50,7 +52,9 @@ class AlarmGroupsFeature(savedStateContainer: SerializableContainer?) :
     coroutineScope.launch { toggleAlarmOnOffUseCase(alarm.id) }
   }
 
-  fun onToggleGroupOnOff(group: AlarmGroupModel) {}
+  fun onToggleGroupOnOff(group: AlarmGroupModel) {
+    coroutineScope.launch { updateGroupOnOffUseCase(id = group.id, isOn = !group.isOn) }
+  }
 
   fun onExpandGroup(group: AlarmGroupModel) {
     _state.update { it.copy(expandedGroupId = group.id, expandedGroupAlarms = emptyList()) }

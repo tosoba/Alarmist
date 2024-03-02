@@ -90,6 +90,9 @@ ORDER BY id;
 updateAlarmsOnOffByGroupId:
 UPDATE alarm SET isOn = ? WHERE groupId = ?;
 
+updateUngroupedAlarmsOnOff:
+UPDATE alarm SET isOn = ? WHERE groupId IS NULL;
+
 selectLastInsertedRowId:
 SELECT last_insert_rowid();
 
