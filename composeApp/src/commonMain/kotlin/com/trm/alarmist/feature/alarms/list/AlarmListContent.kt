@@ -1,6 +1,7 @@
 package com.trm.alarmist.feature.alarms.list
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
@@ -83,39 +83,22 @@ private fun AlarmListItem(
       },
     onClick = { onItemClick(item) },
   ) {
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
-    Row(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Text(
-        text = item.fireAtTime.toString(),
-        style =
-          MaterialTheme.typography.headlineLarge.run {
-            if (item.isOn) copy(fontWeight = FontWeight.Medium) else this
-          },
-      )
-      Spacer(modifier = Modifier.weight(1f))
-      Icon(imageVector = Icons.Default.Edit, contentDescription = null)
-    }
+    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+      Column {
+        Text(
+          text = item.fireAtTime.toString(),
+          style =
+            MaterialTheme.typography.headlineLarge.run {
+              if (item.isOn) copy(fontWeight = FontWeight.Medium) else this
+            },
+        )
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
-    Row(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      item.nextFireOnDateTime?.let {
-        Countdown(
-          targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
-        ) { remainingMillis ->
-          Text(
-            text =
-              "Will fire in: ${remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown()}"
-          )
-        }
-      } ?: run { Text(text = "Off") }
+        item.name?.let { Text(it) }
+      }
 
       Spacer(modifier = Modifier.weight(1f))
 
@@ -133,9 +116,22 @@ private fun AlarmListItem(
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    item.name?.let { Text(modifier = Modifier.padding(horizontal = 16.dp), text = it) }
+    Row(
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Spacer(modifier = Modifier.weight(1f))
 
-    Spacer(modifier = Modifier.height(8.dp))
+      item.nextFireOnDateTime?.let {
+        Countdown(
+          targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+        ) { remainingMillis ->
+          Text(text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown())
+        }
+      }
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
   }
 }
 

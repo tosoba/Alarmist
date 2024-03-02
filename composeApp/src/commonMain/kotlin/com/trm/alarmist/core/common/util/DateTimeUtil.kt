@@ -37,9 +37,15 @@ fun Duration.formatCountdown(): String {
     inWholeDays == 1L -> {
       "1 day"
     }
+    inWholeHours >= 1L -> {
+      toComponents { hours, minutes, _, _ -> "${hours}h ${minutes.withZeroPrefix()}m" }
+    }
+    inWholeMinutes >= 10L -> {
+      toComponents { _, minutes, _, _ -> "${minutes}m" }
+    }
     else -> {
-      toComponents { hours, minutes, seconds, _ ->
-        "$hours:${minutes.withZeroPrefix()}:${seconds.withZeroPrefix()}"
+      toComponents { _, minutes, seconds, _ ->
+        "${minutes.withZeroPrefix()}:${seconds.withZeroPrefix()}"
       }
     }
   }
