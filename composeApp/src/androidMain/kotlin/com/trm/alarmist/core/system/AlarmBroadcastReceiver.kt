@@ -4,14 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.trm.alarmist.core.common.util.launch
-import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissedUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnFiredUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class AlarmBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   private val updateAlarmOnFiredUseCase: UpdateAlarmOnFiredUseCase by inject()
-  private val updateAlarmOnDismissedUseCase: UpdateAlarmOnDismissedUseCase by inject()
 
   override fun onReceive(context: Context?, intent: Intent?) {
     when (intent?.action) {
@@ -23,15 +21,11 @@ class AlarmBroadcastReceiver : BroadcastReceiver(), KoinComponent {
       ACTION_ALARM_UPCOMING -> {
         val alarmId = getAlarmId(intent)
         context?.notifyAlarmUpcoming(alarmId.toInt())
-        launch { updateAlarmOnDismissedUseCase(alarmId) }
       }
       else -> {
         return
       }
     }
-
-    // TODO: schedule next alarm if exists from both notification types
-    // TODO: turn off alarm scheduled for dates if it was its last scheduled date
   }
 
   private fun getAlarmId(intent: Intent): Long =

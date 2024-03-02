@@ -29,7 +29,7 @@ fun Context.notifyAlarmUpcoming(id: Int) { // TODO: pass next fireAt
       NotificationCompat.Builder(
           this,
           ALARM_NOTIFICATION_CHANNEL_ID,
-        ) // TODO: add a dismiss button to cancel alarm
+        ) // TODO: add a dismiss button to cancel alarm - updateAlarmOnDismissedUseCase
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle("Alarm is upcoming")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)

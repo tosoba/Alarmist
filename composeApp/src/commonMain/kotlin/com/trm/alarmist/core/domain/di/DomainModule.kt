@@ -17,8 +17,8 @@ val domainModule = module {
   factory { ToggleAlarmOnOffUseCase(get(), get()) }
   factory { UpdateGroupOnOffUseCase(get(), get()) }
   factory { UpdateAlarmScheduleUseCase(get()) }
-  factory { UpdateAlarmOnFiredUseCase(get()) }
-  factory { UpdateAlarmOnDismissedUseCase(get()) }
+  factory { UpdateAlarmOnFiredUseCase(get(), get()) }
+  factory { UpdateAlarmOnDismissedUseCase(get(), get()) }
   factory { GetGroupedAlarmsUseCase(get()) }
   factory { GetAlarmsInGroupFlowUseCase(get()) }
 }

@@ -2,8 +2,11 @@ package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.domain.AlarmRepository
 
-class UpdateAlarmOnDismissedUseCase(private val repository: AlarmRepository) {
+class UpdateAlarmOnDismissedUseCase(
+  private val updateAlarmScheduleUseCase: UpdateAlarmScheduleUseCase,
+  private val repository: AlarmRepository,
+) {
   suspend operator fun invoke(id: Long) {
-    repository.updateAlarmOnDismissed(id)
+    updateAlarmScheduleUseCase(repository.updateAlarmOnDismissed(id))
   }
 }

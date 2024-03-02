@@ -93,6 +93,9 @@ UPDATE alarm SET isOn = ? WHERE groupId = ?;
 updateUngroupedAlarmsOnOff:
 UPDATE alarm SET isOn = ? WHERE groupId IS NULL;
 
+updateResetAlarmById:
+UPDATE alarm SET isOn = 0, scheduledOnDaysOfWeek = NULL, scheduledOnDates = NULL, offOnDates = NULL WHERE id = ?;
+
 selectLastInsertedRowId:
 SELECT last_insert_rowid();
 

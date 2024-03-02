@@ -1,10 +1,12 @@
 package com.trm.alarmist.core.data
 
 import app.cash.sqldelight.Query
+import app.cash.sqldelight.TransactionWithReturn
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.trm.alarmist.core.common.util.DB_OFF
 import com.trm.alarmist.core.common.util.DB_ON
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
 import com.trm.alarmist.core.domain.AlarmRepository
@@ -124,7 +126,7 @@ class AlarmLocalRepository(
     withContext(dispatcher) {
       queries.transactionWithResult {
         queries.updateAlarmFiredCountById(id)
-        queries.selectAlarmById(id).executeAsOne().toModel()
+        selectAndResetAlarmByIdIfNeeded(id)
       }
     }
 
@@ -132,9 +134,24 @@ class AlarmLocalRepository(
     withContext(dispatcher) {
       queries.transactionWithResult {
         queries.updateAlarmDismissedCountById(id)
-        queries.selectAlarmById(id).executeAsOne().toModel()
+        selectAndResetAlarmByIdIfNeeded(id)
       }
     }
+
+  private fun TransactionWithReturn<AlarmModel>.selectAndResetAlarmByIdIfNeeded(
+    id: Long
+  ): AlarmModel {
+    val alarm = queries.selectAlarmById(id).executeAsOne().toModel()
+    return if (
+      alarm.scheduledOnDaysOfWeek.isEmpty() &&
+        alarm.scheduledOnDates.lastOrNull() == LocalDate.now()
+    ) {
+      queries.updateResetAlarmById(id)
+      queries.selectAlarmById(id).executeAsOne().toModel()
+    } else {
+      alarm
+    }
+  }
 
   override suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>) {
     withContext(dispatcher) {
@@ -162,10 +179,12 @@ class AlarmLocalRepository(
   private fun daysOfWeekToDbString(daysOfWeek: Collection<DayOfWeek>): String? =
     daysOfWeek
       .takeIf(Collection<DayOfWeek>::isNotEmpty)
+      ?.sorted()
       ?.joinToString(separator = ",", transform = { it.isoDayNumber.toString() })
 
   private fun datesToDbString(dates: Collection<LocalDate>): String? =
     dates
       .takeIf(Collection<LocalDate>::isNotEmpty)
+      ?.sorted()
       ?.joinToString(separator = ",", transform = LocalDate::toString)
 }
