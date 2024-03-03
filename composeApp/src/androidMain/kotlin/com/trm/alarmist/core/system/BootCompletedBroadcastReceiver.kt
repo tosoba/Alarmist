@@ -9,6 +9,6 @@ class BootCompletedBroadcastReceiver : BroadcastReceiver() {
     if (intent?.action != Intent.ACTION_BOOT_COMPLETED && intent?.action != Intent.ACTION_REBOOT) {
       return
     }
-    // TODO: check any missed alarms - maybe save last fired/last dismissed date in db
+    // TODO: check any missed alarms
   }
 }

@@ -1,12 +1,10 @@
 package com.trm.alarmist.core.data
 
 import app.cash.sqldelight.Query
-import app.cash.sqldelight.TransactionWithReturn
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.trm.alarmist.core.common.util.DB_OFF
 import com.trm.alarmist.core.common.util.DB_ON
-import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
 import com.trm.alarmist.core.domain.AlarmRepository
@@ -22,6 +20,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
 
@@ -48,8 +47,7 @@ class AlarmLocalRepository(
           scheduledOnDaysOfWeek = daysOfWeekToDbString(scheduledOnDaysOfWeek),
           scheduledOnDates = datesToDbString(scheduledOnDates),
           offOnDates = datesToDbString(offOnDates),
-          firedCount = 0L,
-          dismissedCount = 0L,
+          lastNotificationDate = null,
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
@@ -122,36 +120,25 @@ class AlarmLocalRepository(
   override suspend fun getAlarmById(id: Long): AlarmModel =
     withContext(dispatcher) { queries.selectAlarmById(id).executeAsOne().toModel() }
 
-  override suspend fun updateAlarmOnFired(id: Long): AlarmModel =
+  override suspend fun updateAlarmOnNotification(
+    id: Long,
+    notificationDateTime: LocalDateTime,
+  ): AlarmModel =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateAlarmFiredCountById(id)
-        selectAndResetAlarmByIdIfNeeded(id)
+        queries.updateAlarmLastNotificationDateById(notificationDateTime.date.toString(), id)
+        val alarm = queries.selectAlarmById(id).executeAsOne().toModel()
+        if (
+          alarm.scheduledOnDaysOfWeek.isEmpty() &&
+            alarm.scheduledOnDates.lastOrNull() == notificationDateTime.date
+        ) {
+          queries.updateResetAlarmById(id)
+          queries.selectAlarmById(id).executeAsOne().toModel()
+        } else {
+          alarm
+        }
       }
     }
-
-  override suspend fun updateAlarmOnDismissed(id: Long): AlarmModel =
-    withContext(dispatcher) {
-      queries.transactionWithResult {
-        queries.updateAlarmDismissedCountById(id)
-        selectAndResetAlarmByIdIfNeeded(id)
-      }
-    }
-
-  private fun TransactionWithReturn<AlarmModel>.selectAndResetAlarmByIdIfNeeded(
-    id: Long
-  ): AlarmModel {
-    val alarm = queries.selectAlarmById(id).executeAsOne().toModel()
-    return if (
-      alarm.scheduledOnDaysOfWeek.isEmpty() &&
-        alarm.scheduledOnDates.lastOrNull() == LocalDate.now()
-    ) {
-      queries.updateResetAlarmById(id)
-      queries.selectAlarmById(id).executeAsOne().toModel()
-    } else {
-      alarm
-    }
-  }
 
   override suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>) {
     withContext(dispatcher) {

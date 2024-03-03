@@ -19,13 +19,13 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
         .toInstant(TimeZone.currentSystemDefault())
         .minus(1, DateTimeUnit.HOUR) // TODO: this should be in alarm settings
         .toEpochMilliseconds(),
-      alarmUpcomingPendingIntent(id),
+      alarmUpcomingPendingIntent(id, fireOnDateTime),
     )
 
     alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
       fireOnDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
-      alarmFiredPendingIntent(id),
+      alarmFiredPendingIntent(id, fireOnDateTime),
     )
   }
 
@@ -33,19 +33,28 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     alarmManager.cancel(alarmFiredPendingIntent(id))
   }
 
+  private fun alarmFiredPendingIntent(id: Long, fireOnDateTime: LocalDateTime): PendingIntent =
+    PendingIntent.getBroadcast(
+      context,
+      id.toInt(),
+      AlarmBroadcastReceiver.alarmFiredIntent(context, id, fireOnDateTime),
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
+
+  // used only for alarm cancellation - no need to pass extras
   private fun alarmFiredPendingIntent(id: Long): PendingIntent =
     PendingIntent.getBroadcast(
       context,
       id.toInt(),
-      AlarmBroadcastReceiver.alarmFiredIntent(context, id),
+      AlarmBroadcastReceiver.alarmFiredIntent(context),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
-  private fun alarmUpcomingPendingIntent(id: Long): PendingIntent =
+  private fun alarmUpcomingPendingIntent(id: Long, fireOnDateTime: LocalDateTime): PendingIntent =
     PendingIntent.getBroadcast(
       context,
       id.toInt(),
-      AlarmBroadcastReceiver.alarmUpcomingIntent(context, id),
+      AlarmBroadcastReceiver.alarmUpcomingIntent(context, id, fireOnDateTime),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 }

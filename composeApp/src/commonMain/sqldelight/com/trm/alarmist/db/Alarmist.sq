@@ -9,8 +9,7 @@ CREATE TABLE alarm(
 	scheduledOnDaysOfWeek TEXT,
 	scheduledOnDates TEXT,
 	offOnDates TEXT,
-	firedCount INTEGER NOT NULL DEFAULT 0,
-	dismissedCount INTEGER NOT NULL DEFAULT 0
+	lastNotificationDate TEXT
 );
 
 CREATE TABLE alarmGroup(
@@ -20,18 +19,15 @@ CREATE TABLE alarmGroup(
 );
 
 insertAlarm:
-INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?);
+INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?);
 
 updateAlarmById:
 UPDATE alarm
 SET groupId = ?, fireAtTime = ?, name = ?, isOn = ?, scheduledOnDaysOfWeek = ?, scheduledOnDates = ?, offOnDates = ?
 WHERE id = ?;
 
-updateAlarmFiredCountById:
-UPDATE alarm SET firedCount = firedCount + 1 WHERE id = ?;
-
-updateAlarmDismissedCountById:
-UPDATE alarm SET dismissedCount = dismissedCount + 1 WHERE id = ?;
+updateAlarmLastNotificationDateById:
+UPDATE alarm SET lastNotificationDate = ? WHERE id = ?;
 
 updateToggleAlarmOnOffById:
 UPDATE alarm

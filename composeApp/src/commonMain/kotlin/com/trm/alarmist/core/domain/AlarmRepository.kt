@@ -6,6 +6,7 @@ import com.trm.alarmist.core.domain.model.AlarmModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
 interface AlarmRepository {
@@ -44,9 +45,7 @@ interface AlarmRepository {
 
   suspend fun updateUngroupedAlarmsOnOff(isOn: Boolean): List<AlarmModel>
 
-  suspend fun updateAlarmOnFired(id: Long): AlarmModel
-
-  suspend fun updateAlarmOnDismissed(id: Long): AlarmModel
+  suspend fun updateAlarmOnNotification(id: Long, notificationDateTime: LocalDateTime): AlarmModel
 
   suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>)
 
