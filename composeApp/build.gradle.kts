@@ -55,6 +55,8 @@ kotlin {
       implementation(libs.kotlinx.datetime)
       implementation(libs.kotlinx.serialization.json)
 
+      implementation(libs.napier)
+
       implementation(libs.sqldelight.coroutines.extensions)
     }
 
