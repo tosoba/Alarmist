@@ -49,9 +49,7 @@ fun calculateAlarmNextFireOnDateTime(
 
   val nextScheduledOnDayOfWeek = scheduledOnDaysOfWeek.minOfOrNull(DayOfWeek::nextScheduledOnDate)
   val nextScheduledOnDate =
-    scheduledOnDates
-      .run { if (offOnDates.isEmpty()) this else filter { it !in offOnDates } }
-      .minOrNull()
+    scheduledOnDates.filter { it.atTime(fireAtTime) > now && it !in offOnDates }.minOrNull()
   return when {
     nextScheduledOnDayOfWeek != null && nextScheduledOnDate != null -> {
       minOf(nextScheduledOnDayOfWeek, nextScheduledOnDate)
