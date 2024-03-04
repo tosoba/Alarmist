@@ -10,8 +10,10 @@ import kotlinx.datetime.LocalDate
 const val DB_ON = 1L
 const val DB_OFF = 0L
 
-fun Alarm.toListModel(): AlarmListModel =
-  AlarmListModel(
+fun Alarm.toListModel(): AlarmListModel {
+  val parsedScheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek()
+  val parsedScheduledOnDates = parsedScheduledOnDates()
+  return AlarmListModel(
     id = id,
     groupId = groupId,
     fireAtTime = fireAtTime,
@@ -21,11 +23,20 @@ fun Alarm.toListModel(): AlarmListModel =
       calculateAlarmNextFireOnDateTime(
         isOn = isOn == DB_ON,
         fireAtTime = fireAtTime,
-        scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek(),
-        scheduledOnDates = parsedScheduledOnDates(),
+        scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek,
+        scheduledOnDates = parsedScheduledOnDates,
         offOnDates = parsedOffOnDates(),
       ),
+    scheduleDescription =
+      if (parsedScheduledOnDaysOfWeek.isNotEmpty() || parsedScheduledOnDates.isNotEmpty()) {
+        (parsedScheduledOnDaysOfWeek.map { it.name.take(2) } +
+            if (parsedScheduledOnDates.isNotEmpty()) listOf("Other") else emptyList())
+          .joinToString(" ")
+      } else {
+        "Everyday"
+      }
   )
+}
 
 fun Alarm.toModel(): AlarmModel =
   AlarmModel(

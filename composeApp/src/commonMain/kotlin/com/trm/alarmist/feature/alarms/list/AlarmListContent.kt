@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.formatCountdown
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -120,6 +121,8 @@ private fun AlarmListItem(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
+      Text(item.scheduleDescription, maxLines = 2, overflow = TextOverflow.Ellipsis)
+
       Spacer(modifier = Modifier.weight(1f))
 
       item.nextFireOnDateTime?.let {
