@@ -1,5 +1,7 @@
 package com.trm.alarmist
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.compose_multiplatform
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -26,7 +28,7 @@ fun App() {
       Button(onClick = { showContent = !showContent }) { Text("Click me!") }
       AnimatedVisibility(showContent) {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-          Image(painterResource("compose-multiplatform.xml"), null)
+          Image(painterResource(Res.drawable.compose_multiplatform), null)
         }
       }
     }

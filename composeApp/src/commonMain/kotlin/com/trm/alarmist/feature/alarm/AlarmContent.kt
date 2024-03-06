@@ -1,5 +1,7 @@
 package com.trm.alarmist.feature.alarm
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.name
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -86,7 +88,10 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
@@ -112,7 +117,7 @@ fun AlarmContent(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         value = state.name.orEmpty(),
         onValueChange = onNameChange,
-        label = { Text("Name") },
+        label = { Text(stringResource(Res.string.name)) },
         singleLine = true,
       )
 
