@@ -3,11 +3,13 @@ package com.trm.alarmist.core.common.util
 import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 
@@ -49,4 +51,20 @@ fun Duration.formatCountdown(): String {
       }
     }
   }
+}
+
+fun LocalDate.previousDayOfWeek(dayOfWeek: DayOfWeek): LocalDate {
+  var current = this
+  while (current.dayOfWeek != dayOfWeek) {
+    current = current.minus(1, DateTimeUnit.DAY)
+  }
+  return current
+}
+
+fun LocalDate.nextDayOfWeek(dayOfWeek: DayOfWeek): LocalDate {
+  var current = this
+  while (current.dayOfWeek != dayOfWeek) {
+    current = current.plus(1, DateTimeUnit.DAY)
+  }
+  return current
 }
