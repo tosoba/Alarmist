@@ -17,7 +17,6 @@ import com.trm.alarmist.core.common.util.now
 import epicarchitect.calendar.compose.basis.BasisDayOfMonthContent
 import epicarchitect.calendar.compose.basis.config.DefaultBasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.config.LocalBasisEpicCalendarConfig
-import epicarchitect.calendar.compose.basis.contains
 import kotlinx.datetime.LocalDate
 
 @Composable
