@@ -1,6 +1,5 @@
 package com.trm.alarmist.feature.alarm
 
-import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.name
 import androidx.compose.animation.AnimatedVisibility
@@ -29,9 +28,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
@@ -71,6 +70,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.WheelTimePicker
 import com.trm.alarmist.core.ui.keyboardAsState
@@ -288,14 +288,14 @@ private fun ColumnScope.ExpandableCalendar(
           enabled = state.pagerState.currentMonth > state.pagerState.monthRange.start,
           onClick = { scope.launch { state.pagerState.scrollMonths(-1) } },
         ) {
-          Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Previous month")
+          Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous month")
         }
 
         IconButton(
           enabled = state.pagerState.currentMonth < state.pagerState.monthRange.endInclusive,
           onClick = { scope.launch { state.pagerState.scrollMonths(1) } },
         ) {
-          Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Next month")
+          Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next month")
         }
       }
 
