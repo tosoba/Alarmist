@@ -1,5 +1,6 @@
 package com.trm.alarmist.feature.alarm
 
+import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.name
 import androidx.compose.animation.AnimatedVisibility
@@ -37,7 +38,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -301,6 +301,7 @@ private fun ColumnScope.ExpandableCalendar(
 
       EpicDatePicker(
         state = state,
+        dayOfWeekContent = DayOfWeekEllipsizedContent,
         dayOfMonthContent = { date ->
           val basisState = LocalBasisEpicCalendarState.current!!
           val pickerState = LocalEpicDatePickerState.current!!
@@ -442,7 +443,6 @@ private fun CalendarDateAlarmOnOffSwitch(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DaysOfWeekRow(
   modifier: Modifier = Modifier,

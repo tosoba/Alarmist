@@ -1,7 +1,10 @@
 package com.trm.alarmist.feature.alarms.upcoming
 
+import DaysOfWeekRow
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
@@ -21,12 +24,21 @@ import kotlinx.datetime.plus
 @Composable
 fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlarmsComponent) {
   val today = LocalDate.now()
-  HorizontalPager(
-    rememberPagerState { weeklyCalendarPagesCount(today, LocalDate(2100, Month.DECEMBER, 31)) }
-  ) {
-    val startDate = today.previousDayOfWeek(DayOfWeek.SUNDAY).plus(it * 7, DateTimeUnit.DAY)
-    val endDate = startDate.plus(6, DateTimeUnit.DAY)
-    Text("$it week: $startDate - $endDate")
+  Column(modifier = modifier) {
+    HorizontalPager(
+      state =
+        rememberPagerState {
+          weeklyCalendarPagesCount(startDate = today, endDate = LocalDate(2100, Month.DECEMBER, 31))
+        },
+      modifier = Modifier.fillMaxWidth(),
+    ) {
+      val startDate = today.previousDayOfWeek(DayOfWeek.SUNDAY).plus(it * 7, DateTimeUnit.DAY)
+      val endDate = startDate.plus(6, DateTimeUnit.DAY)
+      Column(modifier = Modifier.fillMaxWidth()) {
+        DaysOfWeekRow(modifier = Modifier.fillMaxWidth())
+        Text("$it week: $startDate - $endDate")
+      }
+    }
   }
   Box(modifier = modifier) { Text("Upcoming", modifier = Modifier.align(Alignment.Center)) }
 }
@@ -34,5 +46,5 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
 private fun weeklyCalendarPagesCount(startDate: LocalDate, endDate: LocalDate): Int {
   require(endDate > startDate)
   return (endDate.nextDayOfWeek(DayOfWeek.SATURDAY).toEpochDays() -
-    startDate.previousDayOfWeek(DayOfWeek.SUNDAY).toEpochDays() + 1) / 7
+    startDate.previousDayOfWeek(DayOfWeek.SUNDAY).toEpochDays() + 1) / DayOfWeek.entries.size
 }
