@@ -1,6 +1,5 @@
 package com.trm.alarmist.feature.alarms.upcoming
 
-import DaysOfWeekRow
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,8 @@ import androidx.compose.ui.Modifier
 import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.previousDayOfWeek
+import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
+import com.trm.alarmist.core.ui.DaysOfWeekRow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -31,12 +32,15 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
           weeklyCalendarPagesCount(startDate = today, endDate = LocalDate(2100, Month.DECEMBER, 31))
         },
       modifier = Modifier.fillMaxWidth(),
-    ) {
-      val startDate = today.previousDayOfWeek(DayOfWeek.SUNDAY).plus(it * 7, DateTimeUnit.DAY)
-      val endDate = startDate.plus(6, DateTimeUnit.DAY)
+    ) { pageIndex ->
+      val startDate =
+        today.previousDayOfWeek(DayOfWeek.SUNDAY).plus(pageIndex * 7, DateTimeUnit.DAY)
       Column(modifier = Modifier.fillMaxWidth()) {
-        DaysOfWeekRow(modifier = Modifier.fillMaxWidth())
-        Text("$it week: $startDate - $endDate")
+        DaysOfWeekLabelsRow(modifier = Modifier.fillMaxWidth())
+        DaysOfWeekRow(
+          rowDates = List(7) { startDate.plus(it, DateTimeUnit.DAY) },
+          modifier = Modifier.fillMaxWidth(),
+        )
       }
     }
   }
