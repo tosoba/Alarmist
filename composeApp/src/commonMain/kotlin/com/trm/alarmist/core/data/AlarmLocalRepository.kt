@@ -90,6 +90,9 @@ class AlarmLocalRepository(
   override fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>> =
     queries.selectUngroupedAlarms().asAlarmsListFlow()
 
+  override suspend fun getAllOnAlarms(): List<AlarmModel> =
+    withContext(dispatcher) { queries.selectOnAlarms().executeAsList().map(Alarm::toModel) }
+
   private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
     asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }
 
@@ -126,7 +129,7 @@ class AlarmLocalRepository(
   ): AlarmModel =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateAlarmLastNotificationDateById(notificationDateTime.date.toString(), id)
+        queries.updateAlarmLastNotificationDateById(notificationDateTime.date, id)
         val alarm = queries.selectAlarmById(id).executeAsOne().toModel()
         if (
           alarm.scheduledOnDaysOfWeek.isEmpty() &&

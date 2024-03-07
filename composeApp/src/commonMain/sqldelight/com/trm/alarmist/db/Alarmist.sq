@@ -1,3 +1,4 @@
+import kotlinx.datetime.LocalDate;
 import kotlinx.datetime.LocalTime;
 
 CREATE TABLE alarm(
@@ -9,7 +10,7 @@ CREATE TABLE alarm(
 	scheduledOnDaysOfWeek TEXT,
 	scheduledOnDates TEXT,
 	offOnDates TEXT,
-	lastNotificationDate TEXT
+	lastNotificationDate TEXT AS LocalDate
 );
 
 CREATE TABLE alarmGroup(
@@ -56,6 +57,9 @@ SELECT * FROM alarm WHERE groupId = ?;
 
 selectUngroupedAlarms:
 SELECT * FROM alarm WHERE groupId IS NULL;
+
+selectOnAlarms:
+SELECT * FROM alarm WHERE isOn = 1;
 
 insertGroup:
 INSERT OR REPLACE INTO alarmGroup VALUES (?,?,?);

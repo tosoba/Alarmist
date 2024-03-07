@@ -34,7 +34,7 @@ fun Alarm.toListModel(): AlarmListModel {
           .joinToString(" ")
       } else {
         "Everyday"
-      }
+      },
   )
 }
 
@@ -48,6 +48,7 @@ fun Alarm.toModel(): AlarmModel =
     scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek(),
     scheduledOnDates = parsedScheduledOnDates(),
     offOnDates = parsedOffOnDates(),
+    lastNotificationDate = lastNotificationDate,
   )
 
 private fun Alarm?.parsedScheduledOnDaysOfWeek(): List<DayOfWeek> =
