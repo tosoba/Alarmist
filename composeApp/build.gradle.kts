@@ -1,11 +1,10 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
-
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.kotlinx.serialization)
   alias(libs.plugins.sqlDelight)
+  alias(libs.plugins.mokkery)
 }
 
 kotlin {
@@ -23,7 +22,7 @@ kotlin {
       implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.savedstate.savedstate)
       implementation(libs.androidx.lifecycle.lifecycleRuntime)
-      
+
       implementation(libs.compose.ui.tooling.preview)
 
       implementation(libs.decompose.extensions.android)
@@ -42,7 +41,7 @@ kotlin {
       implementation(compose.material3)
       implementation(compose.materialIconsExtended)
       implementation(compose.ui)
-      @OptIn(ExperimentalComposeLibrary::class) implementation(compose.components.resources)
+      implementation(compose.components.resources)
       implementation(libs.epicCalendar)
 
       implementation(libs.decompose)
@@ -58,6 +57,11 @@ kotlin {
       implementation(libs.napier)
 
       implementation(libs.sqldelight.coroutines.extensions)
+    }
+
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+      implementation(libs.kotlinx.coroutines.test)
     }
 
     iosMain.dependencies { implementation(libs.sqldelight.native.driver) }
