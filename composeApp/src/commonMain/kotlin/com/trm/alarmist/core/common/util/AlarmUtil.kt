@@ -48,6 +48,7 @@ fun Alarm.toModel(): AlarmModel =
     scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek(),
     scheduledOnDates = parsedScheduledOnDates(),
     offOnDates = parsedOffOnDates(),
+    lastModificationDateTime = lastModificationDateTime,
     lastNotificationDate = lastNotificationDate,
   )
 
@@ -59,3 +60,10 @@ private fun Alarm?.parsedScheduledOnDates(): List<LocalDate> =
 
 private fun Alarm?.parsedOffOnDates(): List<LocalDate> =
   this?.offOnDates?.split(",")?.map(LocalDate.Companion::parse).orEmpty()
+
+fun AlarmModel.shouldFireOn(date: LocalDate): Boolean =
+  firesEveryDay ||
+    (date !in offOnDates && (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates))
+
+private val AlarmModel.firesEveryDay: Boolean
+  get() = scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()

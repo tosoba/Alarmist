@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.trm.alarmist.core.common.util.DB_OFF
 import com.trm.alarmist.core.common.util.DB_ON
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
 import com.trm.alarmist.core.domain.AlarmRepository
@@ -47,7 +48,8 @@ class AlarmLocalRepository(
           scheduledOnDaysOfWeek = daysOfWeekToDbString(scheduledOnDaysOfWeek),
           scheduledOnDates = datesToDbString(scheduledOnDates),
           offOnDates = datesToDbString(offOnDates),
-          lastNotificationDate = null,
+          lastModificationDateTime = LocalDateTime.now(),
+          lastNotificationDate = null
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
@@ -72,6 +74,7 @@ class AlarmLocalRepository(
         scheduledOnDaysOfWeek = daysOfWeekToDbString(scheduledOnDaysOfWeek),
         scheduledOnDates = datesToDbString(scheduledOnDates),
         offOnDates = datesToDbString(offOnDates),
+        lastModificationDateTime = LocalDateTime.now()
       )
     }
   }
