@@ -49,7 +49,7 @@ class AlarmLocalRepository(
           scheduledOnDates = datesToDbString(scheduledOnDates),
           offOnDates = datesToDbString(offOnDates),
           lastModificationDateTime = LocalDateTime.now(),
-          lastNotificationDate = null
+          lastNotificationDate = null,
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
@@ -74,7 +74,7 @@ class AlarmLocalRepository(
         scheduledOnDaysOfWeek = daysOfWeekToDbString(scheduledOnDaysOfWeek),
         scheduledOnDates = datesToDbString(scheduledOnDates),
         offOnDates = datesToDbString(offOnDates),
-        lastModificationDateTime = LocalDateTime.now()
+        lastModificationDateTime = LocalDateTime.now(),
       )
     }
   }
@@ -106,6 +106,26 @@ class AlarmLocalRepository(
         queries.selectAlarmById(id).executeAsOne().toModel()
       }
     }
+
+  override suspend fun resetPastScheduledOnDaysOnlyAlarms() {
+    val now = LocalDate.now()
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        val ids =
+          queries
+            .selectOnAlarmsOnlyScheduledOnDates()
+            .executeAsList()
+            .map { it.id to it.scheduledOnDates.split(",").map(LocalDate.Companion::parse) }
+            .filter { (_, scheduledOnDate) ->
+              scheduledOnDate.isNotEmpty() && scheduledOnDate.last() < now
+            }
+            .map { (id) -> id }
+        if (ids.isNotEmpty()) {
+          queries.updateResetAlarmByIds(ids)
+        }
+      }
+    }
+  }
 
   override suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel> =
     withContext(dispatcher) {

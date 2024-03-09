@@ -72,6 +72,10 @@ SELECT * FROM alarm WHERE groupId IS NULL;
 selectOnAlarms:
 SELECT * FROM alarm WHERE isOn = 1;
 
+selectOnAlarmsOnlyScheduledOnDates:
+SELECT * FROM alarm
+WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NOT NULL;
+
 insertGroup:
 INSERT OR REPLACE INTO alarmGroup VALUES (?,?,?);
 
@@ -105,7 +109,22 @@ updateUngroupedAlarmsOnOff:
 UPDATE alarm SET isOn = ? WHERE groupId IS NULL;
 
 updateResetAlarmById:
-UPDATE alarm SET isOn = 0, scheduledOnDaysOfWeek = NULL, scheduledOnDates = NULL, offOnDates = NULL WHERE id = ?;
+UPDATE alarm
+SET
+    isOn = 0,
+    scheduledOnDaysOfWeek = NULL,
+    scheduledOnDates = NULL,
+    offOnDates = NULL
+WHERE id = ?;
+
+updateResetAlarmByIds:
+UPDATE alarm
+SET
+    isOn = 0,
+    scheduledOnDaysOfWeek = NULL,
+    scheduledOnDates = NULL,
+    offOnDates = NULL
+WHERE id IN :ids;
 
 selectLastInsertedRowId:
 SELECT last_insert_rowid();
