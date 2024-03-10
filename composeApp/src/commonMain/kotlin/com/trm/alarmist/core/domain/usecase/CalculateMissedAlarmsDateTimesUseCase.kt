@@ -17,7 +17,11 @@ class CalculateMissedAlarmsDateTimesUseCase(private val repository: AlarmReposit
       .associateWith {
         val missedDateTimes = mutableListOf<LocalDateTime>()
 
-        val limit = it.lastNotificationDate?.atTime(it.fireAtTime) ?: it.lastModificationDateTime
+        val limit =
+          maxOf(
+            it.lastNotificationDate?.atTime(it.fireAtTime) ?: it.lastModificationDateTime,
+            it.lastModificationDateTime,
+          )
         var current =
           if (now.time < it.fireAtTime) {
             now.date.minus(1, DateTimeUnit.DAY).atTime(it.fireAtTime)
