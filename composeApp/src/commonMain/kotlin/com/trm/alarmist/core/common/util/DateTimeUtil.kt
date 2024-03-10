@@ -34,6 +34,8 @@ fun Instant.toLocalDateTimeDefault(): LocalDateTime =
 
 fun Instant.toLocalTimeDefault(): LocalTime = toLocalDateTimeDefault().time
 
+fun Instant.toLocalDateDefault(): LocalDate = toLocalDateTimeDefault().date
+
 fun Duration.formatCountdown(): String {
   fun Int.withZeroPrefix() = if (this < 10) "0$this" else this.toString()
 
