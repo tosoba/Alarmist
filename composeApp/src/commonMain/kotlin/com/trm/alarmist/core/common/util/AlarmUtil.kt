@@ -63,7 +63,7 @@ private fun Alarm?.parsedOffOnDates(): List<LocalDate> =
 
 fun AlarmModel.shouldFireOn(date: LocalDate): Boolean =
   firesEveryDay ||
-    (date !in offOnDates && (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates))
+    ((date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) && date !in offOnDates)
 
 private val AlarmModel.firesEveryDay: Boolean
   get() = scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()

@@ -29,6 +29,11 @@ fun LocalTime.Companion.min(): LocalTime = LocalTime(0, 0)
 
 fun LocalTime.Companion.max(): LocalTime = LocalTime(23, 59, 59, 999999999)
 
+fun Instant.toLocalDateTimeDefault(): LocalDateTime =
+  toLocalDateTime(TimeZone.currentSystemDefault())
+
+fun Instant.toLocalTimeDefault(): LocalTime = toLocalDateTimeDefault().time
+
 fun Duration.formatCountdown(): String {
   fun Int.withZeroPrefix() = if (this < 10) "0$this" else this.toString()
 
