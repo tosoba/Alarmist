@@ -1,6 +1,5 @@
 package com.trm.alarmist.core.domain
 
-import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toLocalDateDefault
 import com.trm.alarmist.core.common.util.toLocalDateTimeDefault
 import com.trm.alarmist.core.common.util.toLocalTimeDefault
@@ -15,6 +14,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 
@@ -32,7 +32,7 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
   }
 
   @Test
-  fun `given only alarms with null lastNotificationDate that was not missed - then return emptyMap`() =
+  fun `given only alarms with null lastNotificationDate that were not missed - then return emptyMap`() =
     runTest {
       val now = Clock.System.now()
       assertEquals(
@@ -60,7 +60,7 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
     }
 
   @Test
-  fun `given only alarm with non null lastNotificationDate that was not missed - then return emptyMap`() =
+  fun `given only alarms with non null lastNotificationDate that were not missed - then return emptyMap`() =
     runTest {
       val now = Clock.System.now()
       assertEquals(
@@ -95,4 +95,51 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
           )(),
       )
     }
+
+  @Test
+  fun `given everyday alarms that were missed once - then return missed alarms with single timestamps`() =
+    runTest {
+      val now = Clock.System.now()
+      val alarms =
+        listOf(
+          alarmModel(
+            id = 1L,
+            fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
+            lastModificationDateTime =
+              LocalDateTime(
+                date = now.toLocalDateDefault().minus(2, DateTimeUnit.DAY),
+                time = now.minus(2, DateTimeUnit.HOUR).toLocalTimeDefault(),
+              ),
+            lastNotificationDate = now.toLocalDateDefault().minus(1, DateTimeUnit.DAY),
+          ),
+          alarmModel(
+            id = 2L,
+            fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
+            lastModificationDateTime =
+              LocalDateTime(
+                date = now.toLocalDateDefault().minus(2, DateTimeUnit.DAY),
+                time = now.minus(2, DateTimeUnit.HOUR).toLocalTimeDefault(),
+              ),
+            lastNotificationDate = now.toLocalDateDefault().minus(2, DateTimeUnit.DAY),
+          ),
+        )
+
+      assertEquals(
+        expected =
+          mapOf(
+            alarms.first() to listOf(now.toLocalDateDefault().atTime(alarms.first().fireAtTime)),
+            alarms.last() to
+              listOf(
+                now.toLocalDateDefault().minus(1, DateTimeUnit.DAY).atTime(alarms.last().fireAtTime)
+              ),
+          ),
+        actual =
+          CalculateMissedAlarmsDateTimesUseCase(
+            repository =
+              mock<AlarmRepository>().apply { everySuspend { getAllOnAlarms() } returns alarms }
+          )(),
+      )
+    }
+
+  // TODO: test case for maxOf (when previously missed alarm was modified
 }

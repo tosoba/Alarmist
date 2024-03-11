@@ -22,6 +22,12 @@ class BootCompletedBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     launch {
       calculateMissedAlarmsDateTimesUseCase()
       // TODO: create notifications with grouped missed alarms
+
+      // >>TODO<<: consider performing all operations in a single transactions:
+      // - returning missed alarms
+      // - reset past scheduled on days only
+      // - update all on modification dates to now to prevent showing missed alarms multiple times
+      // after multiple reboots
       alarmRepository.resetPastScheduledOnDaysOnlyAlarms()
     }
   }
