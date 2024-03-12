@@ -13,7 +13,7 @@ class CalculateMissedAlarmsDateTimesUseCase(private val repository: AlarmReposit
   suspend operator fun invoke(): Map<AlarmModel, List<LocalDateTime>> {
     val now = LocalDateTime.now()
     return repository
-      .getAllOnAlarms()
+      .getAndUpdateOnAlarms()
       .associateWith {
         val missedDateTimes = mutableListOf<LocalDateTime>()
 

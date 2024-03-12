@@ -26,7 +26,7 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
       actual =
         CalculateMissedAlarmsDateTimesUseCase(
           repository =
-            mock<AlarmRepository>().apply { everySuspend { getAllOnAlarms() } returns emptyList() }
+            mock<AlarmRepository>().apply { everySuspend { getAndUpdateOnAlarms() } returns emptyList() }
         )(),
     )
   }
@@ -41,7 +41,7 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
           CalculateMissedAlarmsDateTimesUseCase(
             repository =
               mock<AlarmRepository>().apply {
-                everySuspend { getAllOnAlarms() } returns
+                everySuspend { getAndUpdateOnAlarms() } returns
                   listOf(
                     alarmModel(
                       fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
@@ -69,7 +69,7 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
           CalculateMissedAlarmsDateTimesUseCase(
             repository =
               mock<AlarmRepository>().apply {
-                everySuspend { getAllOnAlarms() } returns
+                everySuspend { getAndUpdateOnAlarms() } returns
                   listOf(
                     alarmModel(
                       fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
@@ -136,7 +136,7 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
         actual =
           CalculateMissedAlarmsDateTimesUseCase(
             repository =
-              mock<AlarmRepository>().apply { everySuspend { getAllOnAlarms() } returns alarms }
+              mock<AlarmRepository>().apply { everySuspend { getAndUpdateOnAlarms() } returns alarms }
           )(),
       )
     }

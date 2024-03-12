@@ -28,7 +28,9 @@ class BootCompletedBroadcastReceiver : BroadcastReceiver(), KoinComponent {
       // - reset past scheduled on days only
       // - update all on modification dates to now to prevent showing missed alarms multiple times
       // after multiple reboots
-      alarmRepository.resetPastScheduledOnDaysOnlyAlarms()
+
+      // >>TODO<<: consider replacing SQLDelight with noSQL solution to make operations on dates
+      // such as calculating missed alarms (and other things) easier
     }
   }
 }

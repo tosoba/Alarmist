@@ -39,7 +39,7 @@ interface AlarmRepository {
 
   fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>>
 
-  suspend fun getAllOnAlarms(): List<AlarmModel>
+  suspend fun getAndUpdateOnAlarms(): List<AlarmModel>
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel
 

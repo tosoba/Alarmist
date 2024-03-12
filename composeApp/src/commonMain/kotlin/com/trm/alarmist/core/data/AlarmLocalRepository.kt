@@ -93,8 +93,28 @@ class AlarmLocalRepository(
   override fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>> =
     queries.selectUngroupedAlarms().asAlarmsListFlow()
 
-  override suspend fun getAllOnAlarms(): List<AlarmModel> =
-    withContext(dispatcher) { queries.selectOnAlarms().executeAsList().map(Alarm::toModel) }
+  override suspend fun getAndUpdateOnAlarms(): List<AlarmModel> {
+    val now = LocalDate.now()
+    return withContext(dispatcher) {
+      queries.transactionWithResult {
+        val onAlarms = queries.selectOnAlarms().executeAsList().map(Alarm::toModel)
+
+        // turns off (sets isOn = 0) alarms that are scheduled on past dates only
+        queries
+          .selectOnAlarmsOnlyScheduledOnDates()
+          .executeAsList()
+          .map { it.id to it.scheduledOnDates.split(",").map(LocalDate.Companion::parse) }
+          .filter { (_, scheduledOnDate) ->
+            scheduledOnDate.isNotEmpty() && scheduledOnDate.last() < now
+          }
+          .map { (id) -> id }
+          .takeIf(List<Long>::isNotEmpty)
+          ?.let(queries::updateResetAlarmByIds)
+
+        onAlarms
+      }
+    }
+  }
 
   private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
     asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }
