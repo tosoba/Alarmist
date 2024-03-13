@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.domain.usecase.GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase
+import io.github.aakira.napier.Napier
+import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -19,7 +21,14 @@ class BootCompletedBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     }
 
     launch {
-      getAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase()
+      val missedAlarms =
+        getAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase()
+      if (missedAlarms.isEmpty()) return@launch
+
+      missedAlarms.forEach {
+        Napier.e("${it.key.id} - ${it.value.joinToString(transform = LocalDateTime::toString)}")
+      }
+
       // TODO: create notifications with grouped missed alarms
     }
   }
