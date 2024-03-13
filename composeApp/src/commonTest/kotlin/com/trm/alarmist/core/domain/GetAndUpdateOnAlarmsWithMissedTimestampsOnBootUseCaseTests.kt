@@ -3,7 +3,7 @@ package com.trm.alarmist.core.domain
 import com.trm.alarmist.core.common.util.toLocalDateDefault
 import com.trm.alarmist.core.common.util.toLocalDateTimeDefault
 import com.trm.alarmist.core.common.util.toLocalTimeDefault
-import com.trm.alarmist.core.domain.usecase.CalculateMissedAlarmsDateTimesUseCase
+import com.trm.alarmist.core.domain.usecase.GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase
 import com.trm.alarmist.core.util.alarmModel
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
@@ -18,15 +18,17 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 
-class CalculateMissedAlarmsDateTimesUseCaseTests {
+class GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCaseTests {
   @Test
   fun `given empty alarms - then return emptyMap`() = runTest {
     assertEquals(
       expected = emptyMap(),
       actual =
-        CalculateMissedAlarmsDateTimesUseCase(
+        GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
           repository =
-            mock<AlarmRepository>().apply { everySuspend { getAndUpdateOnAlarms() } returns emptyList() }
+            mock<AlarmRepository>().apply {
+              everySuspend { getAndUpdateOnAlarms() } returns emptyList()
+            }
         )(),
     )
   }
@@ -38,7 +40,7 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
       assertEquals(
         expected = emptyMap(),
         actual =
-          CalculateMissedAlarmsDateTimesUseCase(
+          GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
             repository =
               mock<AlarmRepository>().apply {
                 everySuspend { getAndUpdateOnAlarms() } returns
@@ -66,7 +68,7 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
       assertEquals(
         expected = emptyMap(),
         actual =
-          CalculateMissedAlarmsDateTimesUseCase(
+          GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
             repository =
               mock<AlarmRepository>().apply {
                 everySuspend { getAndUpdateOnAlarms() } returns
@@ -134,9 +136,11 @@ class CalculateMissedAlarmsDateTimesUseCaseTests {
               ),
           ),
         actual =
-          CalculateMissedAlarmsDateTimesUseCase(
+          GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
             repository =
-              mock<AlarmRepository>().apply { everySuspend { getAndUpdateOnAlarms() } returns alarms }
+              mock<AlarmRepository>().apply {
+                everySuspend { getAndUpdateOnAlarms() } returns alarms
+              }
           )(),
       )
     }

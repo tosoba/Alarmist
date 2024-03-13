@@ -94,7 +94,7 @@ class AlarmLocalRepository(
     queries.selectUngroupedAlarms().asAlarmsListFlow()
 
   override suspend fun getAndUpdateOnAlarms(): List<AlarmModel> {
-    val now = LocalDate.now()
+    val now = LocalDateTime.now()
     return withContext(dispatcher) {
       queries.transactionWithResult {
         val onAlarms = queries.selectOnAlarms().executeAsList().map(Alarm::toModel)
@@ -105,11 +105,13 @@ class AlarmLocalRepository(
           .executeAsList()
           .map { it.id to it.scheduledOnDates.split(",").map(LocalDate.Companion::parse) }
           .filter { (_, scheduledOnDate) ->
-            scheduledOnDate.isNotEmpty() && scheduledOnDate.last() < now
+            scheduledOnDate.isNotEmpty() && scheduledOnDate.last() < now.date
           }
           .map { (id) -> id }
           .takeIf(List<Long>::isNotEmpty)
           ?.let(queries::updateResetAlarmByIds)
+
+        queries.updateOnAlarmsLastModificationDateTime(now)
 
         onAlarms
       }
