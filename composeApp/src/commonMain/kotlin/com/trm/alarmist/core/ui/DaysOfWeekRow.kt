@@ -23,6 +23,7 @@ import kotlinx.datetime.LocalDate
 fun DaysOfWeekRow(
   rowDates: List<LocalDate>,
   modifier: Modifier = Modifier,
+  selectedDates: List<LocalDate> = emptyList(),
   onDayOfMonthClick: ((LocalDate) -> Unit)? = null,
   dayOfMonthContent: BasisDayOfMonthContent = {
     Text(

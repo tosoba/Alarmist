@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -17,6 +18,11 @@ import com.trm.alarmist.core.common.util.previousDayOfWeek
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
 import com.trm.alarmist.core.ui.DaysOfWeekRow
 import com.trm.alarmist.core.ui.WeekArrowsRow
+import epicarchitect.calendar.compose.basis.EpicMonth
+import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
+import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerConfig
+import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
+import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -52,6 +58,20 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
       },
     )
 
+    val state =
+      rememberEpicDatePickerState(
+        config =
+          rememberEpicDatePickerConfig(
+            pagerConfig =
+              rememberEpicCalendarPagerConfig(
+                basisConfig = rememberMutableBasisEpicCalendarConfig()
+              ),
+            selectionContentColor = MaterialTheme.colorScheme.onPrimary,
+            selectionContainerColor = MaterialTheme.colorScheme.primary,
+          ),
+        monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
+      )
+    // TODO: CrossFade with EpicCalendar + draw selectedDates in DaysOfWeekRow
     HorizontalPager(state = weeklyCalendarPagerState, modifier = Modifier.fillMaxWidth()) {
       pageIndex ->
       Column(modifier = Modifier.fillMaxWidth()) {
@@ -59,6 +79,7 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
         DaysOfWeekRow(
           rowDates = weeklyCalendarRowDates(today, pageIndex),
           modifier = Modifier.fillMaxWidth(),
+          selectedDates = state.selectedDates,
         )
       }
     }
