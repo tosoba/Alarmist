@@ -1,26 +1,38 @@
 package com.trm.alarmist.feature.alarms.upcoming
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.style.TextAlign
 import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.previousDayOfWeek
+import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
 import com.trm.alarmist.core.ui.DaysOfWeekRow
 import com.trm.alarmist.core.ui.WeekArrowsRow
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
+import epicarchitect.calendar.compose.basis.contains
+import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
+import epicarchitect.calendar.compose.datepicker.EpicDatePicker
 import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerConfig
+import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
 import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
 import kotlinx.coroutines.launch
@@ -72,19 +84,62 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
         monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
       )
     // TODO: CrossFade with EpicCalendar + draw selectedDates in DaysOfWeekRow
-    HorizontalPager(state = weeklyCalendarPagerState, modifier = Modifier.fillMaxWidth()) {
-      pageIndex ->
-      Column(modifier = Modifier.fillMaxWidth()) {
-        DaysOfWeekLabelsRow(modifier = Modifier.fillMaxWidth())
-        DaysOfWeekRow(
-          rowDates = weeklyCalendarRowDates(today, pageIndex),
-          modifier = Modifier.fillMaxWidth(),
-          selectedDates = state.selectedDates,
-        )
+
+    var calendarExpanded by remember { mutableStateOf(false) }
+    Crossfade(calendarExpanded) { expanded ->
+      if (expanded) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+          EpicDatePicker(
+            state = state,
+            dayOfWeekContent = DayOfWeekEllipsizedContent,
+            dayOfMonthContent = { date ->
+              val basisState = LocalBasisEpicCalendarState.current!!
+              val pickerState = LocalEpicDatePickerState.current!!
+
+              val selectedDays = pickerState.selectedDates
+              val isSelected = remember(selectedDays, date) { date in selectedDays }
+
+              Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                  modifier =
+                    Modifier.alpha(
+                      when {
+                        date < LocalDate.now() -> 0.5f
+                        date in basisState.currentMonth -> 1.0f
+                        else -> 0.5f
+                      }
+                    ),
+                  text = date.dayOfMonth.toString(),
+                  textAlign = TextAlign.Center,
+                  color =
+                    if (isSelected) pickerState.config.selectionContentColor
+                    else pickerState.config.pagerConfig.basisConfig.contentColor,
+                )
+              }
+            },
+          )
+          TextButton(modifier = Modifier.fillMaxWidth(), onClick = { calendarExpanded = false }) {
+            Text("Collapse calendar")
+          }
+        }
+      } else {
+        HorizontalPager(state = weeklyCalendarPagerState, modifier = Modifier.fillMaxWidth()) {
+          pageIndex ->
+          Column(modifier = Modifier.fillMaxWidth()) {
+            DaysOfWeekLabelsRow(modifier = Modifier.fillMaxWidth())
+            DaysOfWeekRow(
+              rowDates = weeklyCalendarRowDates(today, pageIndex),
+              modifier = Modifier.fillMaxWidth(),
+              selectedDates = state.selectedDates,
+            )
+            TextButton(modifier = Modifier.fillMaxWidth(), onClick = { calendarExpanded = true }) {
+              Text("Expand calendar")
+            }
+          }
+        }
       }
     }
   }
-  Box(modifier = modifier) { Text("Upcoming", modifier = Modifier.align(Alignment.Center)) }
 }
 
 private fun weeklyCalendarPagesCount(startDate: LocalDate, endDate: LocalDate): Int {
