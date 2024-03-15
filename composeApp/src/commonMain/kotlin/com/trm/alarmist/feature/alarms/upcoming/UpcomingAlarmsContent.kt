@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalen
 import epicarchitect.calendar.compose.basis.contains
 import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
 import epicarchitect.calendar.compose.datepicker.EpicDatePicker
+import epicarchitect.calendar.compose.datepicker.config.LocalEpicDatePickerConfig
 import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerConfig
 import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
@@ -83,7 +85,6 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
           ),
         monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
       )
-    // TODO: CrossFade with EpicCalendar + draw selectedDates in DaysOfWeekRow
 
     var calendarExpanded by remember { mutableStateOf(false) }
     Crossfade(calendarExpanded) { expanded ->
@@ -123,17 +124,26 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
           }
         }
       } else {
-        HorizontalPager(state = weeklyCalendarPagerState, modifier = Modifier.fillMaxWidth()) {
-          pageIndex ->
-          Column(modifier = Modifier.fillMaxWidth()) {
-            DaysOfWeekLabelsRow(modifier = Modifier.fillMaxWidth())
-            DaysOfWeekRow(
-              rowDates = weeklyCalendarRowDates(today, pageIndex),
-              modifier = Modifier.fillMaxWidth(),
-              selectedDates = state.selectedDates,
-            )
-            TextButton(modifier = Modifier.fillMaxWidth(), onClick = { calendarExpanded = true }) {
-              Text("Expand calendar")
+        CompositionLocalProvider(
+          LocalEpicDatePickerConfig provides state.config,
+          LocalEpicDatePickerState provides state,
+        ) {
+          HorizontalPager(state = weeklyCalendarPagerState, modifier = Modifier.fillMaxWidth()) {
+            pageIndex ->
+            Column(modifier = Modifier.fillMaxWidth()) {
+              DaysOfWeekLabelsRow(modifier = Modifier.fillMaxWidth())
+              DaysOfWeekRow(
+                rowDates = weeklyCalendarRowDates(today, pageIndex),
+                modifier = Modifier.fillMaxWidth(),
+                selectedDates = state.selectedDates,
+                onDayOfMonthClick = state::toggleDateSelection,
+              )
+              TextButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { calendarExpanded = true },
+              ) {
+                Text("Expand calendar")
+              }
             }
           }
         }

@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import com.trm.alarmist.core.common.util.now
 import epicarchitect.calendar.compose.basis.BasisDayOfMonthContent
 import epicarchitect.calendar.compose.basis.config.DefaultBasisEpicCalendarConfig
-import epicarchitect.calendar.compose.basis.config.LocalBasisEpicCalendarConfig
+import epicarchitect.calendar.compose.datepicker.config.LocalEpicDatePickerConfig
+import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import kotlinx.datetime.LocalDate
 
 @Composable
@@ -30,7 +32,10 @@ fun DaysOfWeekRow(
       modifier = Modifier.alpha(alpha = if (it >= LocalDate.now()) 1.0f else 0.5f),
       text = it.dayOfMonth.toString(),
       textAlign = TextAlign.Center,
-      color = LocalBasisEpicCalendarConfig.current.contentColor,
+      color =
+        LocalEpicDatePickerState.current!!.config.run {
+          if (it in selectedDates) selectionContentColor else pagerConfig.basisConfig.contentColor
+        },
     )
   },
 ) {
@@ -42,6 +47,13 @@ fun DaysOfWeekRow(
             Modifier.clip(DefaultBasisEpicCalendarConfig.dayOfMonthShape)
               .height(DefaultBasisEpicCalendarConfig.dayOfMonthViewHeight)
               .width(DefaultBasisEpicCalendarConfig.columnWidth)
+              .let {
+                if (date in selectedDates) {
+                  it.background(LocalEpicDatePickerConfig.current.selectionContainerColor)
+                } else {
+                  it
+                }
+              }
               .let {
                 if (onDayOfMonthClick == null) it else it.clickable { onDayOfMonthClick(date) }
               },
