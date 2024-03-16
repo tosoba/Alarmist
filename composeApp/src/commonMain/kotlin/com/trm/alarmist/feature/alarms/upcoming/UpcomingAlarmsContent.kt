@@ -33,6 +33,7 @@ import com.trm.alarmist.core.ui.WeekArrowsRow
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.contains
+import epicarchitect.calendar.compose.basis.firstDayOfWeek
 import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
 import epicarchitect.calendar.compose.datepicker.EpicDatePicker
 import epicarchitect.calendar.compose.datepicker.config.LocalEpicDatePickerConfig
@@ -95,8 +96,8 @@ private fun WeeklyMonthlyCalendar(modifier: Modifier = Modifier) {
           it.month == monthlyCalendarState.pagerState.currentMonth.month
         } ?: with(monthlyCalendarState.pagerState.currentMonth) { LocalDate(year, month, 1) }
       weeklyCalendarState.scrollToPage(
-        (destinationDate.previousDayOfWeek(DayOfWeek.SUNDAY).toEpochDays() -
-            today.previousDayOfWeek(DayOfWeek.SUNDAY).toEpochDays())
+        (destinationDate.previousDayOfWeek(firstDayOfWeek()).toEpochDays() -
+            today.previousDayOfWeek(firstDayOfWeek()).toEpochDays())
           .coerceAtLeast(0) / 7
       )
     }
@@ -203,12 +204,14 @@ private enum class CalendarMode {
 
 private fun weeklyCalendarPagesCount(startDate: LocalDate, endDate: LocalDate): Int {
   require(endDate > startDate)
-  return (endDate.nextDayOfWeek(DayOfWeek.SATURDAY).toEpochDays() -
-    startDate.previousDayOfWeek(DayOfWeek.SUNDAY).toEpochDays() + 1) / DayOfWeek.entries.size
+  val startDateFirstDayOfWeek = startDate.previousDayOfWeek(firstDayOfWeek())
+  val lastDayOfWeek = startDateFirstDayOfWeek.plus(6, DateTimeUnit.DAY).dayOfWeek
+  return (endDate.nextDayOfWeek(lastDayOfWeek).toEpochDays() -
+    startDateFirstDayOfWeek.toEpochDays() + 1) / DayOfWeek.entries.size
 }
 
 private fun weeklyCalendarRowDates(today: LocalDate, weekIndex: Int): List<LocalDate> {
   require(weekIndex >= 0)
-  val startDate = today.previousDayOfWeek(DayOfWeek.SUNDAY).plus(weekIndex * 7, DateTimeUnit.DAY)
+  val startDate = today.previousDayOfWeek(firstDayOfWeek()).plus(weekIndex * 7, DateTimeUnit.DAY)
   return List(7) { startDate.plus(it, DateTimeUnit.DAY) }
 }
