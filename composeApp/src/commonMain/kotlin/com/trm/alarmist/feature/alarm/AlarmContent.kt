@@ -28,8 +28,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -39,7 +37,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
@@ -50,7 +47,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,14 +58,13 @@ import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.WheelTimePicker
@@ -83,7 +78,6 @@ import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerCo
 import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
 import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
-import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -257,8 +251,6 @@ private fun ColumnScope.ExpandableCalendar(
   onDeleteOnDateClick: (LocalDate) -> Unit = {},
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
 ) {
-  val scope = rememberCoroutineScope()
-
   AnimatedVisibility(modifier = calendarModifier, visible = isExpanded) {
     Column {
       val state =
@@ -275,29 +267,7 @@ private fun ColumnScope.ExpandableCalendar(
           monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
         )
 
-      Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(
-          modifier = Modifier.padding(start = 16.dp),
-          text =
-            "${state.pagerState.currentMonth.month.name.lowercase().capitalize(Locale.current)} ${state.pagerState.currentMonth.year}",
-        ) // TODO: copy over year selection expandable menu from material DatePicker
-
-        Spacer(Modifier.weight(1f))
-
-        IconButton(
-          enabled = state.pagerState.currentMonth > state.pagerState.monthRange.start,
-          onClick = { scope.launch { state.pagerState.scrollMonths(-1) } },
-        ) {
-          Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous month")
-        }
-
-        IconButton(
-          enabled = state.pagerState.currentMonth < state.pagerState.monthRange.endInclusive,
-          onClick = { scope.launch { state.pagerState.scrollMonths(1) } },
-        ) {
-          Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next month")
-        }
-      }
+      DatePickerYearMonthControls(pagerState = state.pagerState, modifier = Modifier.fillMaxWidth())
 
       EpicDatePicker(
         state = state,
