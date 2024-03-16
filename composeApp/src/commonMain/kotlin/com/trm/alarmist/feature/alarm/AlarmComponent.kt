@@ -26,7 +26,7 @@ class DefaultAlarmComponent(
   override val mode: AlarmComponent.Mode,
   private val pop: () -> Unit,
 ) : AlarmComponent, ComponentContext by componentContext {
-  override val feature =
+  override val feature: AlarmFeature =
     instanceKeeper.getOrCreate {
       AlarmFeature(
         savedStateContainer =

@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +40,7 @@ import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
 import epicarchitect.calendar.compose.datepicker.EpicDatePicker
 import epicarchitect.calendar.compose.datepicker.config.LocalEpicDatePickerConfig
 import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerConfig
+import epicarchitect.calendar.compose.datepicker.state.EpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
 import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
@@ -49,33 +52,48 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 
 @Composable
-fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlarmsComponent) {
-  Column(modifier = modifier) { WeeklyMonthlyCalendar() }
+fun UpcomingAlarmsContent(modifier: Modifier = Modifier, initialState: UpcomingAlarmsState) {
+  LazyColumn(modifier = modifier) { item { WeeklyMonthlyCalendar(initialState) } }
 }
+
+@Composable
+private fun rememberMonthlyCalendarState(initialState: UpcomingAlarmsState): EpicDatePickerState =
+  rememberEpicDatePickerState(
+    config =
+      rememberEpicDatePickerConfig(
+        pagerConfig =
+          rememberEpicCalendarPagerConfig(basisConfig = rememberMutableBasisEpicCalendarConfig()),
+        selectionContentColor = MaterialTheme.colorScheme.onPrimary,
+        selectionContainerColor = MaterialTheme.colorScheme.primary,
+      ),
+    monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
+    initialMonth = EpicMonth(initialState.currentYear, initialState.currentMonth),
+    selectedDates = listOfNotNull(initialState.selectedDate),
+  )
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun WeeklyMonthlyCalendar(modifier: Modifier = Modifier) {
+private fun WeeklyMonthlyCalendar(
+  initialState: UpcomingAlarmsState,
+  modifier: Modifier = Modifier,
+) {
   val today = LocalDate.now()
   val scope = rememberCoroutineScope()
 
-  val weeklyCalendarState = rememberPagerState {
-    weeklyCalendarPagesCount(startDate = today, endDate = LocalDate(2100, Month.DECEMBER, 31))
-  }
+  val weeklyCalendarState =
+    rememberPagerState(
+      initialPage =
+        (LocalDate(initialState.currentYear, initialState.currentMonth, 1)
+            .previousDayOfWeek(firstDayOfWeek())
+            .toEpochDays() - today.previousDayOfWeek(firstDayOfWeek()).toEpochDays())
+          .coerceAtLeast(0) / 7
+    ) {
+      weeklyCalendarPagesCount(startDate = today, endDate = LocalDate(2100, Month.DECEMBER, 31))
+    }
 
-  val monthlyCalendarState =
-    rememberEpicDatePickerState(
-      config =
-        rememberEpicDatePickerConfig(
-          pagerConfig =
-            rememberEpicCalendarPagerConfig(basisConfig = rememberMutableBasisEpicCalendarConfig()),
-          selectionContentColor = MaterialTheme.colorScheme.onPrimary,
-          selectionContainerColor = MaterialTheme.colorScheme.primary,
-        ),
-      monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
-    )
+  val monthlyCalendarState = rememberMonthlyCalendarState(initialState)
 
-  var calendarMode by remember { mutableStateOf(CalendarMode.WEEKLY) }
+  var calendarMode by rememberSaveable { mutableStateOf(CalendarMode.WEEKLY) }
 
   LaunchedEffect(weeklyCalendarState.currentPage) {
     if (calendarMode == CalendarMode.WEEKLY) {

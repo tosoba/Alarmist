@@ -53,7 +53,10 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
             AlarmListContent(modifier = Modifier.fillMaxSize(), component = page.component)
           }
           is AlarmsComponent.Page.UpcomingAlarms -> {
-            UpcomingAlarmsContent(modifier = Modifier.fillMaxSize(), component = page.component)
+            UpcomingAlarmsContent(
+              modifier = Modifier.fillMaxSize(),
+              initialState = page.component.feature.state,
+            )
           }
         }
       }
