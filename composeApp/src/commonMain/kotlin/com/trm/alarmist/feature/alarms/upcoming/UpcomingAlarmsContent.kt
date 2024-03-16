@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,15 +50,15 @@ import kotlinx.datetime.plus
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlarmsComponent) {
-  val today = LocalDate.now()
-  val scope = rememberCoroutineScope()
-
   Column(modifier = modifier) {
-    val weeklyCalendarPagerState = rememberPagerState {
+    val today = LocalDate.now()
+    val scope = rememberCoroutineScope()
+
+    val weeklyCalendarState = rememberPagerState {
       weeklyCalendarPagesCount(startDate = today, endDate = LocalDate(2100, Month.DECEMBER, 31))
     }
 
-    val state =
+    val monthlyCalendarState =
       rememberEpicDatePickerState(
         config =
           rememberEpicDatePickerConfig(
@@ -71,96 +72,132 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
         monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
       )
 
-    var calendarExpanded by remember { mutableStateOf(false) }
-    Crossfade(calendarExpanded) { expanded ->
+    var calendarMode by remember { mutableStateOf(CalendarMode.WEEKLY) }
+
+    LaunchedEffect(weeklyCalendarState.currentPage) {
+      if (calendarMode == CalendarMode.WEEKLY) {
+        monthlyCalendarState.pagerState.scrollToMonth(
+          weeklyCalendarRowDates(today, weeklyCalendarState.currentPage)
+            .run {
+              monthlyCalendarState.selectedDates.firstOrNull()?.takeIf { it in this } ?: first()
+            }
+            .run { EpicMonth(year, month) }
+        )
+      }
+    }
+
+    LaunchedEffect(monthlyCalendarState.pagerState.currentMonth) {
+      if (calendarMode == CalendarMode.MONTHLY) {
+        val destinationDate =
+          monthlyCalendarState.selectedDates.firstOrNull()?.takeIf {
+            it.month == monthlyCalendarState.pagerState.currentMonth.month
+          } ?: with(monthlyCalendarState.pagerState.currentMonth) { LocalDate(year, month, 1) }
+        weeklyCalendarState.scrollToPage(
+          (destinationDate.previousDayOfWeek(DayOfWeek.SUNDAY).toEpochDays() -
+              today.previousDayOfWeek(DayOfWeek.SUNDAY).toEpochDays())
+            .coerceAtLeast(0) / 7
+        )
+      }
+    }
+
+    Crossfade(calendarMode) { mode ->
       Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
-        if (expanded) {
-          DatePickerYearMonthControls(
-            pagerState = state.pagerState,
-            modifier = Modifier.fillMaxWidth(),
-          )
+        when (mode) {
+          CalendarMode.WEEKLY -> {
+            CompositionLocalProvider(
+              LocalEpicDatePickerConfig provides monthlyCalendarState.config,
+              LocalEpicDatePickerState provides monthlyCalendarState,
+            ) {
+              WeekArrowsRow(
+                rowDates = weeklyCalendarRowDates(today, weeklyCalendarState.currentPage),
+                modifier = Modifier.fillMaxWidth(),
+                prevWeekEnabled = weeklyCalendarState.canScrollBackward,
+                onPrevWeekClick = {
+                  scope.launch {
+                    weeklyCalendarState.animateScrollToPage(weeklyCalendarState.currentPage - 1)
+                  }
+                },
+                nextWeekEnabled = weeklyCalendarState.canScrollForward,
+                onNextWeekClick = {
+                  scope.launch {
+                    weeklyCalendarState.animateScrollToPage(weeklyCalendarState.currentPage + 1)
+                  }
+                },
+              )
 
-          EpicDatePicker(
-            state = state,
-            dayOfWeekContent = DayOfWeekEllipsizedContent,
-            dayOfMonthContent = { date ->
-              val basisState = LocalBasisEpicCalendarState.current!!
-              val pickerState = LocalEpicDatePickerState.current!!
-
-              val selectedDays = pickerState.selectedDates
-              val isSelected = remember(selectedDays, date) { date in selectedDays }
-
-              Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                  modifier =
-                    Modifier.alpha(
-                      when {
-                        date < LocalDate.now() -> 0.5f
-                        date in basisState.currentMonth -> 1.0f
-                        else -> 0.5f
-                      }
-                    ),
-                  text = date.dayOfMonth.toString(),
-                  textAlign = TextAlign.Center,
-                  color =
-                    if (isSelected) pickerState.config.selectionContentColor
-                    else pickerState.config.pagerConfig.basisConfig.contentColor,
-                )
-              }
-            },
-          )
-          TextButton(modifier = Modifier.fillMaxWidth(), onClick = { calendarExpanded = false }) {
-            Text("Collapse calendar")
-          }
-        } else {
-          CompositionLocalProvider(
-            LocalEpicDatePickerConfig provides state.config,
-            LocalEpicDatePickerState provides state,
-          ) {
-            WeekArrowsRow(
-              rowDates = weeklyCalendarRowDates(today, weeklyCalendarPagerState.currentPage),
-              modifier = Modifier.fillMaxWidth(),
-              prevWeekEnabled = weeklyCalendarPagerState.canScrollBackward,
-              onPrevWeekClick = {
-                scope.launch {
-                  weeklyCalendarPagerState.animateScrollToPage(
-                    weeklyCalendarPagerState.currentPage - 1
+              HorizontalPager(state = weeklyCalendarState, modifier = Modifier.fillMaxWidth()) {
+                pageIndex ->
+                Column(modifier = Modifier.fillMaxWidth()) {
+                  DaysOfWeekLabelsRow(modifier = Modifier.fillMaxWidth())
+                  DaysOfWeekRow(
+                    rowDates = weeklyCalendarRowDates(today, pageIndex),
+                    modifier = Modifier.fillMaxWidth(),
+                    selectedDates = monthlyCalendarState.selectedDates,
+                    onDayOfMonthClick = monthlyCalendarState::toggleDateSelection,
                   )
                 }
-              },
-              nextWeekEnabled = weeklyCalendarPagerState.canScrollForward,
-              onNextWeekClick = {
-                scope.launch {
-                  weeklyCalendarPagerState.animateScrollToPage(
-                    weeklyCalendarPagerState.currentPage + 1
+              }
+            }
+
+            TextButton(
+              modifier = Modifier.fillMaxWidth(),
+              onClick = { calendarMode = CalendarMode.MONTHLY },
+            ) {
+              Text("Expand calendar")
+            }
+          }
+          CalendarMode.MONTHLY -> {
+            DatePickerYearMonthControls(
+              pagerState = monthlyCalendarState.pagerState,
+              modifier = Modifier.fillMaxWidth(),
+            )
+
+            EpicDatePicker(
+              state = monthlyCalendarState,
+              dayOfWeekContent = DayOfWeekEllipsizedContent,
+              dayOfMonthContent = { date ->
+                val basisState = LocalBasisEpicCalendarState.current!!
+                val pickerState = LocalEpicDatePickerState.current!!
+
+                val selectedDays = pickerState.selectedDates
+                val isSelected = remember(selectedDays, date) { date in selectedDays }
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                  Text(
+                    modifier =
+                      Modifier.alpha(
+                        when {
+                          date < LocalDate.now() -> 0.5f
+                          date in basisState.currentMonth -> 1.0f
+                          else -> 0.5f
+                        }
+                      ),
+                    text = date.dayOfMonth.toString(),
+                    textAlign = TextAlign.Center,
+                    color =
+                      if (isSelected) pickerState.config.selectionContentColor
+                      else pickerState.config.pagerConfig.basisConfig.contentColor,
                   )
                 }
               },
             )
 
-            HorizontalPager(state = weeklyCalendarPagerState, modifier = Modifier.fillMaxWidth()) {
-              pageIndex ->
-              Column(modifier = Modifier.fillMaxWidth()) {
-                DaysOfWeekLabelsRow(modifier = Modifier.fillMaxWidth())
-                DaysOfWeekRow(
-                  rowDates = weeklyCalendarRowDates(today, pageIndex),
-                  modifier = Modifier.fillMaxWidth(),
-                  selectedDates = state.selectedDates,
-                  onDayOfMonthClick = state::toggleDateSelection,
-                )
-                TextButton(
-                  modifier = Modifier.fillMaxWidth(),
-                  onClick = { calendarExpanded = true },
-                ) {
-                  Text("Expand calendar")
-                }
-              }
+            TextButton(
+              modifier = Modifier.fillMaxWidth(),
+              onClick = { calendarMode = CalendarMode.WEEKLY },
+            ) {
+              Text("Collapse calendar")
             }
           }
         }
       }
     }
   }
+}
+
+private enum class CalendarMode {
+  WEEKLY,
+  MONTHLY
 }
 
 private fun weeklyCalendarPagesCount(startDate: LocalDate, endDate: LocalDate): Int {
