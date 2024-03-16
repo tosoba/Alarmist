@@ -89,8 +89,8 @@ fun UpcomingAlarmsContent(modifier: Modifier = Modifier, component: UpcomingAlar
         )
 
       var calendarExpanded by remember { mutableStateOf(false) }
-      Crossfade(calendarExpanded) {
-        if (it) {
+      Crossfade(calendarExpanded) { expanded ->
+        if (expanded) {
           Column(modifier = Modifier.fillMaxWidth()) {
             EpicDatePicker(
               state = state,

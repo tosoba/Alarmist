@@ -1,5 +1,6 @@
 package com.trm.alarmist.feature.alarms.groups
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -46,7 +47,18 @@ fun AlarmGroupsContent(
   onToggleAlarmOnOff: (AlarmListModel) -> Unit = {},
   onToggleGroupOnOff: (AlarmGroupModel) -> Unit = {},
 ) {
-  LazyColumn(modifier = modifier, contentPadding = PaddingValues(16.dp)) {
+  LazyColumn(
+    modifier = modifier,
+    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+  ) {
+    if (state.groups.isEmpty()) {
+      item {
+        Box(modifier = Modifier.fillParentMaxSize()) {
+          Text(modifier = Modifier.align(Alignment.Center), text = "No groups created")
+        }
+      }
+    }
+
     state.groups.forEachIndexed { groupIndex, group ->
       val isExpanded = state.expandedGroupId == group.id
 

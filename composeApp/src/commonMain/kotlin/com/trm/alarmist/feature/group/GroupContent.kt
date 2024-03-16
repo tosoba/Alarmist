@@ -26,7 +26,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -183,7 +182,6 @@ fun GroupContent(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupedAlarmCard(
   alarm: AlarmListModel,
