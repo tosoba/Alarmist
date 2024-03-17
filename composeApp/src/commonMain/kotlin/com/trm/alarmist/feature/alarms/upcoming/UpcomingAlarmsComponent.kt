@@ -3,13 +3,18 @@ package com.trm.alarmist.feature.alarms.upcoming
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
+import com.trm.alarmist.core.domain.model.AlarmListModel
 
 interface UpcomingAlarmsComponent {
   val feature: UpcomingAlarmsFeature
+
+  fun onAlarmClick(alarm: AlarmListModel)
 }
 
-class DefaultUpcomingAlarmsComponent(componentContext: ComponentContext) :
-  UpcomingAlarmsComponent, ComponentContext by componentContext {
+class DefaultUpcomingAlarmsComponent(
+  componentContext: ComponentContext,
+  private val onEditAlarmClick: (AlarmListModel) -> Unit,
+) : UpcomingAlarmsComponent, ComponentContext by componentContext {
   override val feature: UpcomingAlarmsFeature =
     instanceKeeper.getOrCreate {
       UpcomingAlarmsFeature(
@@ -17,6 +22,10 @@ class DefaultUpcomingAlarmsComponent(componentContext: ComponentContext) :
           stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
       )
     }
+
+  override fun onAlarmClick(alarm: AlarmListModel) {
+    onEditAlarmClick(alarm)
+  }
 
   init {
     stateKeeper.register(

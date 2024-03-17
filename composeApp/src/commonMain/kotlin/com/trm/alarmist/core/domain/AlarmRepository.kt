@@ -39,6 +39,10 @@ interface AlarmRepository {
 
   fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>>
 
+  fun getOnAlarmsScheduledToFireOnDate(date: LocalDate): Flow<List<AlarmListModel>>
+
+  fun getOnOneTimeAlarms(): Flow<List<AlarmListModel>>
+
   suspend fun getAndUpdateOnAlarms(): List<AlarmModel>
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel

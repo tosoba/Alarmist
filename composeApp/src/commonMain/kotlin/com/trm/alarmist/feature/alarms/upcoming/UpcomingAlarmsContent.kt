@@ -4,8 +4,11 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -24,9 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.previousDayOfWeek
+import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
@@ -51,13 +57,41 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun UpcomingAlarmsContent(modifier: Modifier = Modifier, initialState: UpcomingAlarmsState) {
-  LazyColumn(modifier = modifier) { item { WeeklyMonthlyCalendar(initialState) } }
+fun UpcomingAlarmsContent(
+  modifier: Modifier = Modifier,
+  initialState: UpcomingAlarmsCalendarState,
+  selectedDateAlarms: List<AlarmListModel> = emptyList(),
+  onAlarmItemClick: (AlarmListModel) -> Unit = {},
+  onAlarmToggleOnOff: (AlarmListModel) -> Unit = {},
+  onSelectedDateChange: (LocalDate?) -> Unit = {},
+) {
+  LazyColumn(
+    modifier = modifier,
+    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+  ) {
+    item {
+      WeeklyMonthlyCalendar(
+        initialState = initialState,
+        onSelectedDateChange = onSelectedDateChange,
+      )
+    }
+    items(selectedDateAlarms) {
+      AlarmListItem(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItemPlacement(),
+        item = it,
+        onItemClick = onAlarmItemClick,
+        onToggleOnOff = onAlarmToggleOnOff,
+      )
+    }
+  }
 }
 
 @Composable
-private fun rememberMonthlyCalendarState(initialState: UpcomingAlarmsState): EpicDatePickerState =
+private fun rememberMonthlyCalendarState(
+  initialState: UpcomingAlarmsCalendarState
+): EpicDatePickerState =
   rememberEpicDatePickerState(
     config =
       rememberEpicDatePickerConfig(
@@ -74,8 +108,9 @@ private fun rememberMonthlyCalendarState(initialState: UpcomingAlarmsState): Epi
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun WeeklyMonthlyCalendar(
-  initialState: UpcomingAlarmsState,
+  initialState: UpcomingAlarmsCalendarState,
   modifier: Modifier = Modifier,
+  onSelectedDateChange: (LocalDate?) -> Unit = {},
 ) {
   val today = LocalDate.now()
   val scope = rememberCoroutineScope()
@@ -119,6 +154,10 @@ private fun WeeklyMonthlyCalendar(
           .coerceAtLeast(0) / 7
       )
     }
+  }
+
+  LaunchedEffect(monthlyCalendarState.selectedDates) {
+    onSelectedDateChange(monthlyCalendarState.selectedDates.firstOrNull())
   }
 
   Crossfade(targetState = calendarMode, modifier = modifier) { mode ->

@@ -80,6 +80,20 @@ updateOnAlarmsLastModificationDateTime:
 UPDATE alarm SET lastModificationDateTime = :modificationDateTime
 WHERE id IN (SELECT id FROM alarm WHERE isOn = 1);
 
+selectOnAlarmsScheduledToFireOnDate:
+SELECT * FROM alarm
+WHERE isOn = 1
+AND
+    (
+        scheduledOnDates LIKE ('%' || :date || '%')
+        OR
+        scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
+    );
+
+selectOnOneTimeAlarms:
+SELECT * FROM alarm
+WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL;
+
 insertGroup:
 INSERT OR REPLACE INTO alarmGroup VALUES (?,?,?);
 

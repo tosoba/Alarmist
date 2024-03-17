@@ -53,9 +53,14 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
             AlarmListContent(modifier = Modifier.fillMaxSize(), component = page.component)
           }
           is AlarmsComponent.Page.UpcomingAlarms -> {
+            val selectedDateAlarms by page.component.feature.selectedDateAlarmsFlow.collectAsState()
             UpcomingAlarmsContent(
               modifier = Modifier.fillMaxSize(),
-              initialState = page.component.feature.state,
+              initialState = page.component.feature.calendarState,
+              selectedDateAlarms = selectedDateAlarms,
+              onAlarmItemClick = page.component::onAlarmClick,
+              onAlarmToggleOnOff = page.component.feature::onToggleAlarmOnOff,
+              onSelectedDateChange = page.component.feature::onSelectedDateChange
             )
           }
         }

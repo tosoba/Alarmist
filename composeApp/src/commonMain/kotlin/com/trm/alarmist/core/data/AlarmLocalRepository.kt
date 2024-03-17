@@ -118,6 +118,17 @@ class AlarmLocalRepository(
     }
   }
 
+  override fun getOnAlarmsScheduledToFireOnDate(date: LocalDate): Flow<List<AlarmListModel>> =
+    queries
+      .selectOnAlarmsScheduledToFireOnDate(
+        date = date.toString(),
+        dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
+      )
+      .asAlarmsListFlow()
+
+  override fun getOnOneTimeAlarms(): Flow<List<AlarmListModel>> =
+    queries.selectOnOneTimeAlarms().asAlarmsListFlow()
+
   private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
     asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }
 

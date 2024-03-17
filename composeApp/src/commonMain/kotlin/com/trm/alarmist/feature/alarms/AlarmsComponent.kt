@@ -41,7 +41,7 @@ class DefaultAlarmsComponent(
   private val onAddAlarmClick: () -> Unit,
   private val onEditAlarmClick: (AlarmListModel) -> Unit,
   private val onAddGroupClick: () -> Unit,
-  private val onEditGroupClick: (AlarmGroupModel) -> Unit
+  private val onEditGroupClick: (AlarmGroupModel) -> Unit,
 ) : AlarmsComponent, ComponentContext by componentContext {
   private val navigation = PagesNavigation<PageConfig>()
 
@@ -73,7 +73,10 @@ class DefaultAlarmsComponent(
       }
       PageConfig.UpcomingAlarms -> {
         AlarmsComponent.Page.UpcomingAlarms(
-          DefaultUpcomingAlarmsComponent(componentContext = componentContext)
+          DefaultUpcomingAlarmsComponent(
+            componentContext = componentContext,
+            onEditAlarmClick = onEditAlarmClick,
+          )
         )
       }
       PageConfig.AlarmGroups -> {
@@ -81,7 +84,7 @@ class DefaultAlarmsComponent(
           DefaultAlarmGroupsComponent(
             componentContext = componentContext,
             onEditAlarmClick = onEditAlarmClick,
-            onEditGroupClick = onEditGroupClick
+            onEditGroupClick = onEditGroupClick,
           )
         )
       }

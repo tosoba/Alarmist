@@ -1,9 +1,10 @@
 package com.trm.alarmist.core.domain.di
 
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
-import com.trm.alarmist.core.domain.usecase.GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.GetAlarmsInGroupFlowUseCase
+import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateUseCase
+import com.trm.alarmist.core.domain.usecase.GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase
 import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnNotificationUseCase
@@ -21,4 +22,5 @@ val domainModule = module {
   factory { GetGroupedAlarmsUseCase(get()) }
   factory { GetAlarmsInGroupFlowUseCase(get()) }
   factory { GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(get()) }
+  factory { GetAlarmsScheduledOnDateUseCase(get()) }
 }
