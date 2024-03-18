@@ -33,7 +33,7 @@ fun Alarm.toListModel(): AlarmListModel {
             if (parsedScheduledOnDates.isNotEmpty()) listOf("Other") else emptyList())
           .joinToString(" ")
       } else {
-        "Everyday"
+        "One time"
       },
   )
 }

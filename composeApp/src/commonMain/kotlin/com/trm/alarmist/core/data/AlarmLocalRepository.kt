@@ -126,8 +126,11 @@ class AlarmLocalRepository(
       )
       .asAlarmsListFlow()
 
-  override fun getOnOneTimeAlarms(): Flow<List<AlarmListModel>> =
-    queries.selectOnOneTimeAlarms().asAlarmsListFlow()
+  override fun getOnOneTimeAlarmsBeforeTime(time: LocalTime): Flow<List<AlarmListModel>> =
+    queries.selectOnOneTimeAlarmsBeforeTime(time).asAlarmsListFlow()
+
+  override fun getOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<List<AlarmListModel>> =
+    queries.selectOnOneTimeAlarmsAfterTime(time).asAlarmsListFlow()
 
   private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
     asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }

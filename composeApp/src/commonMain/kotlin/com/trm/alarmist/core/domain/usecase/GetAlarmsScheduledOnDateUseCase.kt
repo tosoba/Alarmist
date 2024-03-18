@@ -6,7 +6,6 @@ import com.trm.alarmist.core.domain.model.AlarmListModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -16,23 +15,21 @@ class GetAlarmsScheduledOnDateUseCase(private val repository: AlarmRepository) {
   operator fun invoke(date: LocalDate): Flow<List<AlarmListModel>> {
     val now = LocalDateTime.now()
     return when {
-      date < now.date -> flowOf(emptyList())
+      date < now.date -> {
+        flowOf(emptyList())
+      }
       date == now.date -> {
         combine(
-          repository.getOnOneTimeAlarms().map { alarms ->
-            alarms.filter { it.fireAtTime > now.time }
-          },
+          repository.getOnOneTimeAlarmsAfterTime(now.time),
           repository.getOnAlarmsScheduledToFireOnDate(date),
-          ::combineSortedByFireAtTime,
+          ::concatSortedByFireAtTime,
         )
       }
       date == now.date.plus(1, DateTimeUnit.DAY) -> {
         combine(
-          repository.getOnOneTimeAlarms().map { alarms ->
-            alarms.filter { it.fireAtTime < now.time }
-          },
+          repository.getOnOneTimeAlarmsBeforeTime(now.time),
           repository.getOnAlarmsScheduledToFireOnDate(date),
-          ::combineSortedByFireAtTime,
+          ::concatSortedByFireAtTime,
         )
       }
       else -> {
@@ -41,7 +38,7 @@ class GetAlarmsScheduledOnDateUseCase(private val repository: AlarmRepository) {
     }
   }
 
-  private fun combineSortedByFireAtTime(
+  private fun concatSortedByFireAtTime(
     alarms1: List<AlarmListModel>,
     alarms2: List<AlarmListModel>,
   ): List<AlarmListModel> = (alarms1 + alarms2).sortedBy(AlarmListModel::fireAtTime)
