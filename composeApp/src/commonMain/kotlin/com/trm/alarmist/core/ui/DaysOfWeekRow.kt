@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -26,17 +28,25 @@ fun DaysOfWeekRow(
   rowDates: List<LocalDate>,
   modifier: Modifier = Modifier,
   selectedDates: List<LocalDate> = emptyList(),
+  alarmCounts: Map<LocalDate, Int> = emptyMap(),
   onDayOfMonthClick: ((LocalDate) -> Unit)? = null,
-  dayOfMonthContent: BasisDayOfMonthContent = {
-    Text(
-      modifier = Modifier.alpha(alpha = if (it >= LocalDate.now()) 1.0f else 0.5f),
-      text = it.dayOfMonth.toString(),
-      textAlign = TextAlign.Center,
-      color =
-        LocalEpicDatePickerState.current!!.config.run {
-          if (it in selectedDates) selectionContentColor else pagerConfig.basisConfig.contentColor
-        },
-    )
+  dayOfMonthContent: BasisDayOfMonthContent = { date ->
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+      Text(
+        modifier = Modifier.alpha(alpha = if (date >= LocalDate.now()) 1.0f else 0.5f),
+        text = date.dayOfMonth.toString(),
+        textAlign = TextAlign.Center,
+        color =
+          LocalEpicDatePickerState.current!!.config.run {
+            if (date in selectedDates) selectionContentColor
+            else pagerConfig.basisConfig.contentColor
+          },
+      )
+
+      alarmCounts[date]
+        ?.takeIf { it > 0 }
+        ?.let { AlarmCountDotsRow(count = it, modifier = Modifier.fillMaxWidth()) }
+    }
   },
 ) {
   Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {

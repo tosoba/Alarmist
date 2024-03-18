@@ -32,6 +32,7 @@ import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.previousDayOfWeek
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.ui.AlarmCountDotsRow
 import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
@@ -69,6 +70,7 @@ import kotlinx.datetime.plus
 fun UpcomingAlarmsContent(
   modifier: Modifier = Modifier,
   initialState: UpcomingAlarmsCalendarState,
+  alarmCounts: Map<LocalDate, Int> = emptyMap(),
   selectedDateAlarms: List<AlarmListModel> = emptyList(),
   onAlarmItemClick: (AlarmListModel) -> Unit = {},
   onAlarmToggleOnOff: (AlarmListModel) -> Unit = {},
@@ -119,6 +121,7 @@ private fun rememberMonthlyCalendarState(
 private fun WeeklyMonthlyCalendar(
   initialState: UpcomingAlarmsCalendarState,
   modifier: Modifier = Modifier,
+  alarmCounts: Map<LocalDate, Int> = emptyMap(),
   onSelectedDateChange: (LocalDate?) -> Unit = {},
   onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit = {},
 ) {
@@ -255,6 +258,10 @@ private fun WeeklyMonthlyCalendar(
                     if (isSelected) pickerState.config.selectionContentColor
                     else pickerState.config.pagerConfig.basisConfig.contentColor,
                 )
+
+                alarmCounts[date]
+                  ?.takeIf { it > 0 }
+                  ?.let { AlarmCountDotsRow(count = it, modifier = Modifier.fillMaxWidth()) }
               }
             },
           )
