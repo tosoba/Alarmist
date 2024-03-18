@@ -38,10 +38,16 @@ import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
 import com.trm.alarmist.core.ui.DaysOfWeekRow
 import com.trm.alarmist.core.ui.WeekArrowsRow
+import epicarchitect.calendar.compose.basis.EpicCalendarConstants
 import epicarchitect.calendar.compose.basis.EpicMonth
+import epicarchitect.calendar.compose.basis.atDay
+import epicarchitect.calendar.compose.basis.config.BasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.contains
 import epicarchitect.calendar.compose.basis.firstDayOfWeek
+import epicarchitect.calendar.compose.basis.lastDayOfWeek
+import epicarchitect.calendar.compose.basis.next
+import epicarchitect.calendar.compose.basis.previous
 import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
 import epicarchitect.calendar.compose.datepicker.EpicDatePicker
 import epicarchitect.calendar.compose.datepicker.config.LocalEpicDatePickerConfig
@@ -55,6 +61,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
+import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -271,4 +278,42 @@ private fun weeklyCalendarRowDates(today: LocalDate, weekIndex: Int): List<Local
   require(weekIndex >= 0)
   val startDate = today.previousDayOfWeek(firstDayOfWeek()).plus(weekIndex * 7, DateTimeUnit.DAY)
   return List(7) { startDate.plus(it, DateTimeUnit.DAY) }
+}
+
+private fun monthlyCalendarDateRange(
+  month: EpicMonth,
+  config: BasisEpicCalendarConfig,
+): ClosedRange<LocalDate> {
+  val firstDayOfWeek = config.daysOfWeek.first()
+  val previousMonth = month.previous()
+  val nextMonth = month.next()
+  val previousMonthLastDayOfWeek = previousMonth.lastDayOfWeek()
+
+  val lastDaysAmountInPreviousMonth =
+    when (firstDayOfWeek) {
+      DayOfWeek.MONDAY -> previousMonthLastDayOfWeek.isoDayNumber
+      DayOfWeek.SUNDAY -> {
+        if (previousMonthLastDayOfWeek == DayOfWeek.SATURDAY) 0
+        else previousMonthLastDayOfWeek.isoDayNumber + 1
+      }
+      else -> error("Unexpected firstDayOfWeek: $firstDayOfWeek")
+    } % EpicCalendarConstants.DayOfWeekAmount
+  val daysAmountInCurrentMonth = month.numberOfDays
+  val firstDaysAmountInNextMonth =
+    EpicCalendarConstants.GridCellAmount - lastDaysAmountInPreviousMonth - daysAmountInCurrentMonth
+
+  val startDate =
+    if (lastDaysAmountInPreviousMonth > 0) {
+      previousMonth.atDay(previousMonth.numberOfDays + 1 - lastDaysAmountInPreviousMonth)
+    } else {
+      month.atDay(1)
+    }
+  val endDate =
+    if (firstDaysAmountInNextMonth > 0) {
+      nextMonth.atDay(firstDaysAmountInNextMonth)
+    } else {
+      month.atDay(daysAmountInCurrentMonth)
+    }
+
+  return startDate..endDate
 }
