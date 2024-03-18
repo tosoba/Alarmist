@@ -73,6 +73,7 @@ fun UpcomingAlarmsContent(
   onAlarmItemClick: (AlarmListModel) -> Unit = {},
   onAlarmToggleOnOff: (AlarmListModel) -> Unit = {},
   onSelectedDateChange: (LocalDate?) -> Unit = {},
+  onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit = {},
 ) {
   LazyColumn(
     modifier = modifier,
@@ -82,6 +83,7 @@ fun UpcomingAlarmsContent(
       WeeklyMonthlyCalendar(
         initialState = initialState,
         onSelectedDateChange = onSelectedDateChange,
+        onMonthlyDateRangeChange = onMonthlyDateRangeChange,
       )
     }
     items(selectedDateAlarms) {
@@ -118,6 +120,7 @@ private fun WeeklyMonthlyCalendar(
   initialState: UpcomingAlarmsCalendarState,
   modifier: Modifier = Modifier,
   onSelectedDateChange: (LocalDate?) -> Unit = {},
+  onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit = {},
 ) {
   val today = LocalDate.now()
   val scope = rememberCoroutineScope()
@@ -161,6 +164,13 @@ private fun WeeklyMonthlyCalendar(
           .coerceAtLeast(0) / 7
       )
     }
+
+    onMonthlyDateRangeChange(
+      monthlyCalendarDateRange(
+        month = monthlyCalendarState.pagerState.currentMonth,
+        config = monthlyCalendarState.pagerState.config.basisConfig,
+      )
+    )
   }
 
   LaunchedEffect(monthlyCalendarState.selectedDates) {

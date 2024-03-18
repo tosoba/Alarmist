@@ -60,7 +60,8 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
               selectedDateAlarms = selectedDateAlarms,
               onAlarmItemClick = page.component::onAlarmClick,
               onAlarmToggleOnOff = page.component.feature::onToggleAlarmOnOff,
-              onSelectedDateChange = page.component.feature::onSelectedDateChange
+              onSelectedDateChange = page.component.feature::onSelectedDateChange,
+              onMonthlyDateRangeChange = page.component.feature::onMonthlyDateRangeChange,
             )
           }
         }

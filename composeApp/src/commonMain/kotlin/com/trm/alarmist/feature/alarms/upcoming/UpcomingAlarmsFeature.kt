@@ -42,8 +42,14 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
       }
       .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 
+  private val monthlyDateRangeFlow = MutableSharedFlow<ClosedRange<LocalDate>>()
+
   fun onSelectedDateChange(date: LocalDate?) {
     coroutineScope.launch { selectedDateFlow.emit(date) }
+  }
+
+  fun onMonthlyDateRangeChange(range: ClosedRange<LocalDate>) {
+    coroutineScope.launch { monthlyDateRangeFlow.emit(range) }
   }
 
   fun onToggleAlarmOnOff(alarm: AlarmListModel) {
