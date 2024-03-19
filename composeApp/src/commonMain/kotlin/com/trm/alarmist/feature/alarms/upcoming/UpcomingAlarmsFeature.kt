@@ -5,6 +5,7 @@ import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateUseCase
+import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,6 +25,9 @@ import org.koin.core.component.inject
 class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
   CoroutineFeature(), KoinComponent {
   private val getAlarmsScheduledOnDateUseCase: GetAlarmsScheduledOnDateUseCase by inject()
+  private val getScheduledAlarmCountsForDateRangeUseCase:
+    GetScheduledAlarmCountsForDateRangeUseCase by
+    inject()
 
   var calendarState: UpcomingAlarmsCalendarState =
     savedStateContainer?.consume(strategy = UpcomingAlarmsCalendarState.serializer())
@@ -43,6 +47,20 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
       .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 
   private val monthlyDateRangeFlow = MutableSharedFlow<ClosedRange<LocalDate>>()
+
+  val scheduledAlarmCountsFlow: StateFlow<Map<LocalDate, Int>> =
+    monthlyDateRangeFlow
+      .onEach {
+        val middleDate =
+          LocalDate.fromEpochDays(
+            it.start.toEpochDays() + (it.endInclusive.toEpochDays() - it.start.toEpochDays()) / 2
+          )
+        calendarState =
+          calendarState.copy(currentMonth = middleDate.month, currentYear = middleDate.year)
+      }
+      .distinctUntilChanged()
+      .flatMapLatest { getScheduledAlarmCountsForDateRangeUseCase(it) }
+      .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyMap())
 
   fun onSelectedDateChange(date: LocalDate?) {
     coroutineScope.launch { selectedDateFlow.emit(date) }

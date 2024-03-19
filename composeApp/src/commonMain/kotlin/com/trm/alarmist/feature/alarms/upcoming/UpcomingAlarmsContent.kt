@@ -214,6 +214,7 @@ private fun WeeklyMonthlyCalendar(
                   rowDates = weeklyCalendarRowDates(today, pageIndex),
                   modifier = Modifier.fillMaxWidth(),
                   selectedDates = monthlyCalendarState.selectedDates,
+                  alarmCounts = alarmCounts,
                   onDayOfMonthClick = monthlyCalendarState::toggleDateSelection,
                 )
               }
