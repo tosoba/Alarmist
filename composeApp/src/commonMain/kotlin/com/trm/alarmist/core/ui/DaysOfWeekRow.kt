@@ -6,9 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,20 +33,23 @@ fun DaysOfWeekRow(
   onDayOfMonthClick: ((LocalDate) -> Unit)? = null,
   dayOfMonthContent: BasisDayOfMonthContent = { date ->
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-      Text(
-        modifier = Modifier.alpha(alpha = if (date >= LocalDate.now()) 1.0f else 0.5f),
-        text = date.dayOfMonth.toString(),
-        textAlign = TextAlign.Center,
-        color =
-          LocalEpicDatePickerState.current!!.config.run {
-            if (date in selectedDates) selectionContentColor
-            else pagerConfig.basisConfig.contentColor
-          },
-      )
+      @Composable
+      fun DayText() {
+        Text(
+          modifier = Modifier.alpha(alpha = if (date >= LocalDate.now()) 1.0f else 0.5f),
+          text = date.dayOfMonth.toString(),
+          textAlign = TextAlign.Center,
+          color =
+            LocalEpicDatePickerState.current!!.config.run {
+              if (date in selectedDates) selectionContentColor
+              else pagerConfig.basisConfig.contentColor
+            },
+        )
+      }
 
       alarmCounts[date]
         ?.takeIf { it > 0 }
-        ?.let { AlarmCountDotsRow(count = it, modifier = Modifier.fillMaxWidth()) }
+        ?.let { BadgedBox(badge = { Badge { Text(it.toString()) } }) { DayText() } } ?: DayText()
     }
   },
 ) {

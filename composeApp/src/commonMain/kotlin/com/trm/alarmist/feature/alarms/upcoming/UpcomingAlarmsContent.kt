@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,7 +34,6 @@ import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.previousDayOfWeek
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.ui.AlarmCountDotsRow
 import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
@@ -245,25 +246,29 @@ private fun WeeklyMonthlyCalendar(
               val isSelected = remember(selectedDays, date) { date in selectedDays }
 
               Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                  modifier =
-                    Modifier.alpha(
-                      when {
-                        date < LocalDate.now() -> 0.5f
-                        date in basisState.currentMonth -> 1.0f
-                        else -> 0.5f
-                      }
-                    ),
-                  text = date.dayOfMonth.toString(),
-                  textAlign = TextAlign.Center,
-                  color =
-                    if (isSelected) pickerState.config.selectionContentColor
-                    else pickerState.config.pagerConfig.basisConfig.contentColor,
-                )
+                @Composable
+                fun DayText() {
+                  Text(
+                    modifier =
+                      Modifier.alpha(
+                        when {
+                          date < LocalDate.now() -> 0.5f
+                          date in basisState.currentMonth -> 1.0f
+                          else -> 0.5f
+                        }
+                      ),
+                    text = date.dayOfMonth.toString(),
+                    textAlign = TextAlign.Center,
+                    color =
+                      if (isSelected) pickerState.config.selectionContentColor
+                      else pickerState.config.pagerConfig.basisConfig.contentColor,
+                  )
+                }
 
                 alarmCounts[date]
                   ?.takeIf { it > 0 }
-                  ?.let { AlarmCountDotsRow(count = it, modifier = Modifier.fillMaxWidth()) }
+                  ?.let { BadgedBox(badge = { Badge { Text(it.toString()) } }) { DayText() } }
+                  ?: DayText()
               }
             },
           )
