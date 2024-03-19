@@ -6,12 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -71,16 +67,7 @@ fun AlarmListItem(
 
       Spacer(modifier = Modifier.weight(1f))
 
-      Switch(
-        checked = item.isOn,
-        onCheckedChange = { _ -> onToggleOnOff(item) },
-        thumbContent = {
-          Icon(
-            imageVector = if (item.isOn) Icons.Default.Pause else Icons.Default.PlayArrow,
-            contentDescription = null,
-          )
-        },
-      )
+      Switch(checked = item.isOn, onCheckedChange = { _ -> onToggleOnOff(item) })
     }
 
     Spacer(modifier = Modifier.height(8.dp))
