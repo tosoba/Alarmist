@@ -84,6 +84,7 @@ fun UpcomingAlarmsContent(
     item {
       WeeklyMonthlyCalendar(
         initialState = initialState,
+        alarmCounts = alarmCounts,
         onSelectedDateChange = onSelectedDateChange,
         onMonthlyDateRangeChange = onMonthlyDateRangeChange,
       )
