@@ -3,6 +3,7 @@ package com.trm.alarmist.core.domain
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
+import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -41,9 +42,15 @@ interface AlarmRepository {
 
   fun getOnAlarmsScheduledToFireOnDate(date: LocalDate): Flow<List<AlarmListModel>>
 
+  fun getOnAlarmSchedulesForDates(dates: ClosedRange<LocalDate>): Flow<List<AlarmScheduleModel>>
+
   fun getOnOneTimeAlarmsBeforeTime(time: LocalTime): Flow<List<AlarmListModel>>
 
   fun getOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<List<AlarmListModel>>
+
+  fun countOnOneTimeAlarmsBeforeTime(time: LocalTime): Flow<Int>
+
+  fun countOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<Int>
 
   suspend fun getAndUpdateOnAlarms(): List<AlarmModel>
 

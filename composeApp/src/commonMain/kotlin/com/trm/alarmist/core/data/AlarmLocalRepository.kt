@@ -3,27 +3,33 @@ package com.trm.alarmist.core.data
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import com.trm.alarmist.core.common.util.DB_OFF
 import com.trm.alarmist.core.common.util.DB_ON
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.common.util.toAlarmScheduleModel
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
+import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.db.Alarm
 import com.trm.alarmist.db.AlarmistQueries
 import com.trm.alarmist.db.SelectAllGroups
+import com.trm.alarmist.db.SelectOnAlarmSchedules
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.plus
 
 class AlarmLocalRepository(
   private val queries: AlarmistQueries,
@@ -126,11 +132,28 @@ class AlarmLocalRepository(
       )
       .asAlarmsListFlow()
 
+  override fun getOnAlarmSchedulesForDates(
+    dates: ClosedRange<LocalDate>
+  ): Flow<List<AlarmScheduleModel>> =
+    queries.selectOnAlarmSchedules(dates.toQueryString()).asFlow().mapToList(dispatcher).map {
+      it.map(SelectOnAlarmSchedules::toAlarmScheduleModel)
+    }
+
+  private fun ClosedRange<LocalDate>.toQueryString(): String =
+    List(endInclusive.toEpochDays() - start.toEpochDays() + 1) { start.plus(it, DateTimeUnit.DAY) }
+      .joinToString { it.toString().replace(".", "\\.") }
+
   override fun getOnOneTimeAlarmsBeforeTime(time: LocalTime): Flow<List<AlarmListModel>> =
     queries.selectOnOneTimeAlarmsBeforeTime(time).asAlarmsListFlow()
 
   override fun getOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<List<AlarmListModel>> =
     queries.selectOnOneTimeAlarmsAfterTime(time).asAlarmsListFlow()
+
+  override fun countOnOneTimeAlarmsBeforeTime(time: LocalTime): Flow<Int> =
+    queries.selectCountOneTimeAlarmsBeforeTime(time).asFlow().mapToOne(dispatcher).map(Long::toInt)
+
+  override fun countOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<Int> =
+    queries.selectCountOneTimeAlarmsAfterTime(time).asFlow().mapToOne(dispatcher).map(Long::toInt)
 
   private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
     asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }

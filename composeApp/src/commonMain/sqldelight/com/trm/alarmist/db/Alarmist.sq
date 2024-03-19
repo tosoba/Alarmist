@@ -90,12 +90,31 @@ AND
         scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
     );
 
+selectOnAlarmSchedules:
+SELECT id, scheduledOnDaysOfWeek, scheduledOnDates, offOnDates
+FROM alarm
+WHERE isOn = 1
+AND
+    (
+        scheduledOnDaysOfWeek IS NOT NULL
+        OR
+        scheduledOnDates REGEXP :dates
+    );
+
 selectOnOneTimeAlarmsBeforeTime:
 SELECT * FROM alarm
 WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime < :fireAtTime;
 
 selectOnOneTimeAlarmsAfterTime:
 SELECT * FROM alarm
+WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime > :fireAtTime;
+
+selectCountOneTimeAlarmsBeforeTime:
+SELECT COUNT(*) FROM alarm
+WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime < :fireAtTime;
+
+selectCountOneTimeAlarmsAfterTime:
+SELECT COUNT(*) FROM alarm
 WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime > :fireAtTime;
 
 insertGroup:

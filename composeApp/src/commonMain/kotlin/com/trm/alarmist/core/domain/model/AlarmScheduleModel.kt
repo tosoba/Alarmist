@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AlarmScheduleModel(
   val id: Long,
-  val scheduledOnDaysOfWeek: List<DayOfWeek>,
-  val scheduledOnDates: List<LocalDate>,
-  val offOnDates: List<LocalDate>,
+  val scheduledOnDaysOfWeek: Set<DayOfWeek>,
+  val scheduledOnDates: Set<LocalDate>,
+  val offOnDates: Set<LocalDate>,
 )
