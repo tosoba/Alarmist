@@ -1,3 +1,5 @@
+import kotlin.collections.List;
+import kotlinx.datetime.DayOfWeek;
 import kotlinx.datetime.LocalDate;
 import kotlinx.datetime.LocalDateTime;
 import kotlinx.datetime.LocalTime;
@@ -8,9 +10,9 @@ CREATE TABLE alarm(
 	fireAtTime TEXT AS LocalTime NOT NULL,
 	name TEXT,
 	isOn INTEGER NOT NULL DEFAULT 1, -- global/alarm-wide on/off flag
-	scheduledOnDaysOfWeek TEXT,
-	scheduledOnDates TEXT,
-	offOnDates TEXT,
+	scheduledOnDaysOfWeek TEXT AS List<DayOfWeek>,
+	scheduledOnDates TEXT AS List<LocalDate>,
+	offOnDates TEXT AS List<LocalDate>,
     lastModificationDateTime TEXT AS LocalDateTime NOT NULL,
 	lastNotificationDate TEXT AS LocalDate
 );

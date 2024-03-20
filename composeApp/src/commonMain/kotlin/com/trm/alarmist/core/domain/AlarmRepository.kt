@@ -56,8 +56,6 @@ interface AlarmRepository {
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel
 
-  suspend fun resetPastScheduledOnDaysOnlyAlarms()
-
   suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel>
 
   suspend fun updateUngroupedAlarmsOnOff(isOn: Boolean): List<AlarmModel>

@@ -6,16 +6,13 @@ import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.core.domain.usecase.calculateAlarmNextFireOnDateTime
 import com.trm.alarmist.db.Alarm
 import com.trm.alarmist.db.SelectOnAlarmSchedules
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 
 const val DB_ON = 1L
 const val DB_OFF = 0L
 
-fun Alarm.toListModel(): AlarmListModel {
-  val parsedScheduledOnDaysOfWeek = scheduledOnDaysOfWeek.parsedDaysOfWeek()
-  val parsedScheduledOnDates = scheduledOnDates.parsedDates()
-  return AlarmListModel(
+fun Alarm.toListModel(): AlarmListModel =
+  AlarmListModel(
     id = id,
     groupId = groupId,
     fireAtTime = fireAtTime,
@@ -25,20 +22,19 @@ fun Alarm.toListModel(): AlarmListModel {
       calculateAlarmNextFireOnDateTime(
         isOn = isOn == DB_ON,
         fireAtTime = fireAtTime,
-        scheduledOnDaysOfWeek = parsedScheduledOnDaysOfWeek,
-        scheduledOnDates = parsedScheduledOnDates,
-        offOnDates = offOnDates.parsedDates(),
+        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
+        scheduledOnDates = scheduledOnDates.orEmpty(),
+        offOnDates = offOnDates.orEmpty(),
       ),
     scheduleDescription =
-      if (parsedScheduledOnDaysOfWeek.isNotEmpty() || parsedScheduledOnDates.isNotEmpty()) {
-        (parsedScheduledOnDaysOfWeek.map { it.name.take(2) } +
-            if (parsedScheduledOnDates.isNotEmpty()) listOf("Other") else emptyList())
+      if (!scheduledOnDaysOfWeek.isNullOrEmpty() || !scheduledOnDates.isNullOrEmpty()) {
+        (scheduledOnDaysOfWeek?.map { it.name.take(2) }.orEmpty() +
+            if (!scheduledOnDates.isNullOrEmpty()) listOf("Other") else emptyList())
           .joinToString(" ")
       } else {
         "One time"
       },
   )
-}
 
 fun Alarm.toModel(): AlarmModel =
   AlarmModel(
@@ -47,9 +43,9 @@ fun Alarm.toModel(): AlarmModel =
     fireAtTime = fireAtTime,
     name = name,
     isOn = isOn == DB_ON,
-    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.parsedDaysOfWeek(),
-    scheduledOnDates = scheduledOnDates.parsedDates(),
-    offOnDates = offOnDates.parsedDates(),
+    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
+    scheduledOnDates = scheduledOnDates.orEmpty(),
+    offOnDates = offOnDates.orEmpty(),
     lastModificationDateTime = lastModificationDateTime,
     lastNotificationDate = lastNotificationDate,
   )
@@ -57,16 +53,10 @@ fun Alarm.toModel(): AlarmModel =
 fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =
   AlarmScheduleModel(
     id = id,
-    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.parsedDaysOfWeek().toSet(),
-    scheduledOnDates = scheduledOnDates.parsedDates().toSet(),
-    offOnDates = offOnDates.parsedDates().toSet(),
+    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty().toSet(),
+    scheduledOnDates = scheduledOnDates.orEmpty().toSet(),
+    offOnDates = offOnDates.orEmpty().toSet(),
   )
-
-private fun String?.parsedDaysOfWeek(): List<DayOfWeek> =
-  this?.split(",")?.map { DayOfWeek(isoDayNumber = it.toInt()) }.orEmpty()
-
-private fun String?.parsedDates(): List<LocalDate> =
-  this?.split(",")?.map(LocalDate.Companion::parse).orEmpty()
 
 fun AlarmModel.shouldFireOn(date: LocalDate): Boolean =
   firesEveryDay ||

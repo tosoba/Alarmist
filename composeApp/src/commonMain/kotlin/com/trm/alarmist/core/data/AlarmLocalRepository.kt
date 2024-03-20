@@ -51,9 +51,10 @@ class AlarmLocalRepository(
           fireAtTime = fireAtTime,
           name = name,
           isOn = if (isOn) 1L else 0L,
-          scheduledOnDaysOfWeek = daysOfWeekToDbString(scheduledOnDaysOfWeek),
-          scheduledOnDates = datesToDbString(scheduledOnDates),
-          offOnDates = datesToDbString(offOnDates),
+          scheduledOnDaysOfWeek =
+            scheduledOnDaysOfWeek.takeIf(Collection<DayOfWeek>::isNotEmpty)?.toList(),
+          scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
+          offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
           lastModificationDateTime = LocalDateTime.now(),
           lastNotificationDate = null,
         )
@@ -77,9 +78,10 @@ class AlarmLocalRepository(
         fireAtTime = fireAtTime,
         name = name,
         isOn = if (isOn) 1L else 0L,
-        scheduledOnDaysOfWeek = daysOfWeekToDbString(scheduledOnDaysOfWeek),
-        scheduledOnDates = datesToDbString(scheduledOnDates),
-        offOnDates = datesToDbString(offOnDates),
+        scheduledOnDaysOfWeek =
+          scheduledOnDaysOfWeek.takeIf(Collection<DayOfWeek>::isNotEmpty)?.toList(),
+        scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
+        offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
         lastModificationDateTime = LocalDateTime.now(),
       )
     }
@@ -109,7 +111,7 @@ class AlarmLocalRepository(
         queries
           .selectOnAlarmsOnlyScheduledOnDates()
           .executeAsList()
-          .map { it.id to it.scheduledOnDates.split(",").map(LocalDate.Companion::parse) }
+          .map { it.id to it.scheduledOnDates }
           .filter { (_, scheduledOnDate) ->
             scheduledOnDate.isNotEmpty() && scheduledOnDate.last() < now.date
           }
@@ -165,26 +167,6 @@ class AlarmLocalRepository(
         queries.selectAlarmById(id).executeAsOne().toModel()
       }
     }
-
-  override suspend fun resetPastScheduledOnDaysOnlyAlarms() {
-    val now = LocalDate.now()
-    withContext(dispatcher) {
-      queries.transactionWithResult {
-        val ids =
-          queries
-            .selectOnAlarmsOnlyScheduledOnDates()
-            .executeAsList()
-            .map { it.id to it.scheduledOnDates.split(",").map(LocalDate.Companion::parse) }
-            .filter { (_, scheduledOnDate) ->
-              scheduledOnDate.isNotEmpty() && scheduledOnDate.last() < now
-            }
-            .map { (id) -> id }
-        if (ids.isNotEmpty()) {
-          queries.updateResetAlarmByIds(ids)
-        }
-      }
-    }
-  }
 
   override suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel> =
     withContext(dispatcher) {
@@ -247,16 +229,4 @@ class AlarmLocalRepository(
       }
     }
   }
-
-  private fun daysOfWeekToDbString(daysOfWeek: Collection<DayOfWeek>): String? =
-    daysOfWeek
-      .takeIf(Collection<DayOfWeek>::isNotEmpty)
-      ?.sorted()
-      ?.joinToString(separator = ",", transform = { it.isoDayNumber.toString() })
-
-  private fun datesToDbString(dates: Collection<LocalDate>): String? =
-    dates
-      .takeIf(Collection<LocalDate>::isNotEmpty)
-      ?.sorted()
-      ?.joinToString(separator = ",", transform = LocalDate::toString)
 }
