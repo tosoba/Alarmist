@@ -168,6 +168,15 @@ class AlarmLocalRepository(
       }
     }
 
+  override suspend fun updateAlarmOffOnDates(offOnDates: Collection<LocalDate>, id: Long) {
+    withContext(dispatcher) {
+      queries.updateOffOnDatesById(
+        offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
+        id = id,
+      )
+    }
+  }
+
   override suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel> =
     withContext(dispatcher) {
       queries.transactionWithResult {

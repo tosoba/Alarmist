@@ -51,6 +51,11 @@ SET isOn = CASE
 END
 WHERE id = ?;
 
+updateOffOnDatesById:
+UPDATE alarm
+SET offOnDates = ?
+WHERE id = ?;
+
 updateAlarmsGroups:
 UPDATE alarm
 SET groupId = CASE
