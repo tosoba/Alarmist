@@ -56,7 +56,7 @@ interface AlarmRepository {
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel
 
-  suspend fun updateAlarmOffOnDates(offOnDates: Collection<LocalDate>, id: Long)
+  suspend fun toggleAlarmOnOffOnDate(id: Long, date: LocalDate): AlarmModel
 
   suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel>
 

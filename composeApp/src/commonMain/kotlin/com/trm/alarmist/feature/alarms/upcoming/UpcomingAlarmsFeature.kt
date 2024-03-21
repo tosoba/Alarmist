@@ -6,6 +6,7 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
+import com.trm.alarmist.core.domain.usecase.ToggleUpcomingAlarmOnOffOnDateUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,6 +28,9 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
   private val getAlarmsScheduledOnDateUseCase: GetAlarmsScheduledOnDateUseCase by inject()
   private val getScheduledAlarmCountsForDateRangeUseCase:
     GetScheduledAlarmCountsForDateRangeUseCase by
+    inject()
+
+  private val toggleUpcomingAlarmOnOffOnDateUseCase: ToggleUpcomingAlarmOnOffOnDateUseCase by
     inject()
 
   var calendarState: UpcomingAlarmsCalendarState =
@@ -71,7 +75,9 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
   }
 
   fun onToggleAlarmOnOff(alarm: AlarmListModel) {
-    // TODO: pause/play alarm on given date or globally turn it on/off?
+    calendarState.selectedDate?.let {
+      coroutineScope.launch { toggleUpcomingAlarmOnOffOnDateUseCase(alarm.id, it) }
+    }
   }
 
   fun saveState(): SerializableContainer =
