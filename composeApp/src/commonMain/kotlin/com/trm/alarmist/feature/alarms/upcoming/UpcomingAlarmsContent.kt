@@ -153,9 +153,10 @@ private fun WeeklyMonthlyCalendar(
   val monthlyCalendarState = rememberMonthlyCalendarState(initialState)
 
   var calendarMode by rememberSaveable { mutableStateOf(CalendarMode.WEEKLY) }
+  var mostRecentSelectedDate: LocalDate? by remember { mutableStateOf(null) }
 
   LaunchedEffect(calendarMode) {
-    monthlyCalendarState.selectedDates.firstOrNull()?.let { destinationDate ->
+    mostRecentSelectedDate?.let { destinationDate ->
       when (calendarMode) {
         CalendarMode.WEEKLY -> {
           weeklyCalendarState.scrollToDate(destinationDate)
@@ -167,6 +168,7 @@ private fun WeeklyMonthlyCalendar(
           }
         }
       }
+      mostRecentSelectedDate = null
     }
   }
 
@@ -179,6 +181,7 @@ private fun WeeklyMonthlyCalendar(
           }
           .run { EpicMonth(year, month) }
       )
+      mostRecentSelectedDate = null
     }
   }
 
@@ -189,6 +192,7 @@ private fun WeeklyMonthlyCalendar(
           it.month == monthlyCalendarState.pagerState.currentMonth.month
         } ?: with(monthlyCalendarState.pagerState.currentMonth) { LocalDate(year, month, 1) }
       )
+      mostRecentSelectedDate = null
     }
 
     onMonthlyDateRangeChange(
@@ -200,7 +204,9 @@ private fun WeeklyMonthlyCalendar(
   }
 
   LaunchedEffect(monthlyCalendarState.selectedDates) {
-    onSelectedDateChange(monthlyCalendarState.selectedDates.firstOrNull())
+    val date = monthlyCalendarState.selectedDates.firstOrNull()
+    onSelectedDateChange(date)
+    mostRecentSelectedDate = date
   }
 
   Crossfade(targetState = calendarMode, modifier = modifier) { mode ->
