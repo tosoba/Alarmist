@@ -221,7 +221,8 @@ class AlarmLocalRepository(
         val alarm = queries.selectAlarmById(id).executeAsOne().toModel()
         if (
           alarm.scheduledOnDaysOfWeek.isEmpty() &&
-            alarm.scheduledOnDates.lastOrNull() == notificationDateTime.date
+            (alarm.scheduledOnDates.isEmpty() ||
+              alarm.scheduledOnDates.lastOrNull() == notificationDateTime.date)
         ) {
           queries.updateResetAlarmById(id)
           queries.selectAlarmById(id).executeAsOne().toModel()
