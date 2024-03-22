@@ -10,6 +10,7 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toAlarmScheduleModel
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
+import com.trm.alarmist.core.common.util.toUpcomingListModelScheduledAtDate
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -132,7 +133,7 @@ class AlarmLocalRepository(
         date = date.toString(),
         dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
       )
-      .asAlarmsListFlow()
+      .asAlarmsListFlow { it.toUpcomingListModelScheduledAtDate(date) }
 
   override fun getOnAlarmSchedulesForDates(
     dates: ClosedRange<LocalDate>
@@ -157,8 +158,9 @@ class AlarmLocalRepository(
   override fun countOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<Int> =
     queries.selectCountOneTimeAlarmsAfterTime(time).asFlow().mapToOne(dispatcher).map(Long::toInt)
 
-  private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
-    asFlow().mapToList(dispatcher).map { it.map(Alarm::toListModel) }
+  private fun Query<Alarm>.asAlarmsListFlow(
+    mapper: (Alarm) -> AlarmListModel = Alarm::toListModel
+  ): Flow<List<AlarmListModel>> = asFlow().mapToList(dispatcher).map { it.map(mapper) }
 
   override suspend fun toggleAlarmOnOff(id: Long): AlarmModel =
     withContext(dispatcher) {

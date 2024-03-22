@@ -80,7 +80,7 @@ fun AlarmListItem(
 
       Spacer(modifier = Modifier.weight(1f))
 
-      item.nextFireOnDateTime?.let {
+      item.fireOnDateTime?.let {
         Countdown(
           targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         ) { remainingMillis ->

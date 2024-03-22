@@ -7,6 +7,7 @@ import com.trm.alarmist.core.domain.usecase.calculateAlarmNextFireOnDateTime
 import com.trm.alarmist.db.Alarm
 import com.trm.alarmist.db.SelectOnAlarmSchedules
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 const val DB_ON = 1L
 const val DB_OFF = 0L
@@ -18,7 +19,7 @@ fun Alarm.toListModel(): AlarmListModel =
     fireAtTime = fireAtTime,
     name = name,
     isOn = isOn == DB_ON,
-    nextFireOnDateTime =
+    fireOnDateTime =
       calculateAlarmNextFireOnDateTime(
         isOn = isOn == DB_ON,
         fireAtTime = fireAtTime,
@@ -26,6 +27,25 @@ fun Alarm.toListModel(): AlarmListModel =
         scheduledOnDates = scheduledOnDates.orEmpty(),
         offOnDates = offOnDates.orEmpty(),
       ),
+    scheduleDescription =
+      if (!scheduledOnDaysOfWeek.isNullOrEmpty() || !scheduledOnDates.isNullOrEmpty()) {
+        (scheduledOnDaysOfWeek?.map { it.name.take(2) }.orEmpty() +
+            if (!scheduledOnDates.isNullOrEmpty()) listOf("Other") else emptyList())
+          .joinToString(" ")
+      } else {
+        "One time"
+      },
+  )
+
+fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
+  AlarmListModel(
+    id = id,
+    groupId = groupId,
+    fireAtTime = fireAtTime,
+    name = name,
+    isOn = offOnDates.isNullOrEmpty() || !offOnDates.contains(date),
+    fireOnDateTime =
+      if (offOnDates?.contains(date) == true) null else LocalDateTime(date, fireAtTime),
     scheduleDescription =
       if (!scheduledOnDaysOfWeek.isNullOrEmpty() || !scheduledOnDates.isNullOrEmpty()) {
         (scheduledOnDaysOfWeek?.map { it.name.take(2) }.orEmpty() +

@@ -11,6 +11,6 @@ data class AlarmListModel(
   val fireAtTime: LocalTime,
   val name: String?,
   val isOn: Boolean,
-  val nextFireOnDateTime: LocalDateTime?,
+  val fireOnDateTime: LocalDateTime?,
   val scheduleDescription: String,
 )
