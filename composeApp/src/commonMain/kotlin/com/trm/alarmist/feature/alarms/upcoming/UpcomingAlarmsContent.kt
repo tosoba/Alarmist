@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -141,9 +142,33 @@ private fun WeeklyMonthlyCalendar(
       weeklyCalendarPagesCount(startDate = today, endDate = LocalDate(2100, Month.DECEMBER, 31))
     }
 
+  suspend fun PagerState.scrollToDate(destinationDate: LocalDate) {
+    scrollToPage(
+      (destinationDate.previousDayOfWeek(firstDayOfWeek()).toEpochDays() -
+          today.previousDayOfWeek(firstDayOfWeek()).toEpochDays())
+        .coerceAtLeast(0) / 7
+    )
+  }
+
   val monthlyCalendarState = rememberMonthlyCalendarState(initialState)
 
   var calendarMode by rememberSaveable { mutableStateOf(CalendarMode.WEEKLY) }
+
+  LaunchedEffect(calendarMode) {
+    monthlyCalendarState.selectedDates.firstOrNull()?.let { destinationDate ->
+      when (calendarMode) {
+        CalendarMode.WEEKLY -> {
+          weeklyCalendarState.scrollToDate(destinationDate)
+        }
+        CalendarMode.MONTHLY -> {
+          val destinationMonth = EpicMonth(destinationDate.year, destinationDate.month)
+          if (destinationMonth != monthlyCalendarState.pagerState.currentMonth) {
+            monthlyCalendarState.pagerState.scrollToMonth(destinationMonth)
+          }
+        }
+      }
+    }
+  }
 
   LaunchedEffect(weeklyCalendarState.currentPage) {
     if (calendarMode == CalendarMode.WEEKLY) {
@@ -159,14 +184,10 @@ private fun WeeklyMonthlyCalendar(
 
   LaunchedEffect(monthlyCalendarState.pagerState.currentMonth) {
     if (calendarMode == CalendarMode.MONTHLY) {
-      val destinationDate =
+      weeklyCalendarState.scrollToDate(
         monthlyCalendarState.selectedDates.firstOrNull()?.takeIf {
           it.month == monthlyCalendarState.pagerState.currentMonth.month
         } ?: with(monthlyCalendarState.pagerState.currentMonth) { LocalDate(year, month, 1) }
-      weeklyCalendarState.scrollToPage(
-        (destinationDate.previousDayOfWeek(firstDayOfWeek()).toEpochDays() -
-            today.previousDayOfWeek(firstDayOfWeek()).toEpochDays())
-          .coerceAtLeast(0) / 7
       )
     }
 
