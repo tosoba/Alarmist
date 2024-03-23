@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -84,7 +85,9 @@ fun AlarmListItem(
         Countdown(
           targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         ) { remainingMillis ->
-          Text(text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown())
+          AnimatedVisibility(remainingMillis >= 0L) {
+            Text(text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown())
+          }
         }
       }
     }

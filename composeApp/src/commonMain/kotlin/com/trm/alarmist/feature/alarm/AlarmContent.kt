@@ -191,8 +191,7 @@ fun AlarmContent(
         Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)) {
           Text("Settings:")
           // TODO: sound/volume/vibrate options/snooze duration/delete button in edit mode
-          // (marked
-          // in red) + maybe group choice?
+          // (marked in red) + maybe group choice?
         }
       }
 
