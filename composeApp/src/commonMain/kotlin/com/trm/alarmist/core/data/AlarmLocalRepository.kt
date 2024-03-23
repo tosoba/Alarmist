@@ -118,7 +118,7 @@ class AlarmLocalRepository(
           }
           .map { (id) -> id }
           .takeIf(List<Long>::isNotEmpty)
-          ?.let(queries::updateResetAlarmByIds)
+          ?.let { queries.updateResetAlarmByIds(now, it) }
 
         queries.updateOnAlarmsLastModificationDateTime(now)
 
@@ -165,7 +165,7 @@ class AlarmLocalRepository(
   override suspend fun toggleAlarmOnOff(id: Long): AlarmModel =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateToggleAlarmOnOffById(id)
+        queries.updateToggleAlarmOnOffById(LocalDateTime.now(), id)
         queries.selectAlarmById(id).executeAsOne().toModel()
       }
     }
@@ -176,14 +176,19 @@ class AlarmLocalRepository(
         val alarm = queries.selectAlarmById(id).executeAsOne()
         when {
           alarm.scheduledOnDaysOfWeek.isNullOrEmpty() && alarm.scheduledOnDates.isNullOrEmpty() -> {
-            queries.updateToggleAlarmOnOffById(id)
+            queries.updateToggleAlarmOnOffById(LocalDateTime.now(), id)
           }
           alarm.offOnDates?.contains(date) == true -> {
-            queries.updateOffOnDatesById(offOnDates = alarm.offOnDates - date, id = id)
+            queries.updateOffOnDatesById(
+              offOnDates = alarm.offOnDates - date,
+              lastModificationDateTime = LocalDateTime.now(),
+              id = id,
+            )
           }
           else -> {
             queries.updateOffOnDatesById(
               offOnDates = alarm.offOnDates?.let { it + date } ?: listOf(date),
+              lastModificationDateTime = LocalDateTime.now(),
               id = id,
             )
           }
@@ -195,7 +200,11 @@ class AlarmLocalRepository(
   override suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel> =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateAlarmsOnOffByGroupId(isOn = if (isOn) DB_ON else DB_OFF, groupId = groupId)
+        queries.updateAlarmsOnOffByGroupId(
+          isOn = if (isOn) DB_ON else DB_OFF,
+          lastModificationDateTime = LocalDateTime.now(),
+          groupId = groupId,
+        )
         queries.selectAlarmsByGroupId(groupId).executeAsList().map(Alarm::toModel)
       }
     }
@@ -203,7 +212,10 @@ class AlarmLocalRepository(
   override suspend fun updateUngroupedAlarmsOnOff(isOn: Boolean): List<AlarmModel> =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateUngroupedAlarmsOnOff(isOn = if (isOn) DB_ON else DB_OFF)
+        queries.updateUngroupedAlarmsOnOff(
+          isOn = if (isOn) DB_ON else DB_OFF,
+          lastModificationDateTime = LocalDateTime.now(),
+        )
         queries.selectUngroupedAlarms().executeAsList().map(Alarm::toModel)
       }
     }
@@ -224,7 +236,7 @@ class AlarmLocalRepository(
             (alarm.scheduledOnDates.isEmpty() ||
               alarm.scheduledOnDates.lastOrNull() == notificationDateTime.date)
         ) {
-          queries.updateResetAlarmById(id)
+          queries.updateResetAlarmById(LocalDateTime.now(), id)
           queries.selectAlarmById(id).executeAsOne().toModel()
         } else {
           alarm

@@ -45,15 +45,17 @@ UPDATE alarm SET lastNotificationDate = ? WHERE id = ?;
 
 updateToggleAlarmOnOffById:
 UPDATE alarm
-SET isOn = CASE
-    WHEN isOn = 1 THEN 0
-    ELSE 1
+SET
+    lastModificationDateTime = ?,
+    isOn = CASE
+        WHEN isOn = 1 THEN 0
+        ELSE 1
 END
 WHERE id = ?;
 
 updateOffOnDatesById:
 UPDATE alarm
-SET offOnDates = ?
+SET offOnDates = ?, lastModificationDateTime = ?
 WHERE id = ?;
 
 updateAlarmsGroups:
@@ -151,10 +153,10 @@ FROM alarmGroup
 ORDER BY id;
 
 updateAlarmsOnOffByGroupId:
-UPDATE alarm SET isOn = ? WHERE groupId = ?;
+UPDATE alarm SET isOn = ?, lastModificationDateTime = ? WHERE groupId = ?;
 
 updateUngroupedAlarmsOnOff:
-UPDATE alarm SET isOn = ? WHERE groupId IS NULL;
+UPDATE alarm SET isOn = ?, lastModificationDateTime = ? WHERE groupId IS NULL;
 
 updateResetAlarmById:
 UPDATE alarm
@@ -162,7 +164,9 @@ SET
     isOn = 0,
     scheduledOnDaysOfWeek = NULL,
     scheduledOnDates = NULL,
-    offOnDates = NULL
+    offOnDates = NULL,
+    lastModificationDateTime = ?,
+    lastNotificationDate = NULL
 WHERE id = ?;
 
 updateResetAlarmByIds:
@@ -171,7 +175,9 @@ SET
     isOn = 0,
     scheduledOnDaysOfWeek = NULL,
     scheduledOnDates = NULL,
-    offOnDates = NULL
+    offOnDates = NULL,
+    lastModificationDateTime = ?,
+    lastNotificationDate = NULL
 WHERE id IN :ids;
 
 selectLastInsertedRowId:
