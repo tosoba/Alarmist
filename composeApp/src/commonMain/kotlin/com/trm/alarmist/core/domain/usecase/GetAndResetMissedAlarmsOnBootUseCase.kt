@@ -9,13 +9,11 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
 
-class GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
-  private val repository: AlarmRepository
-) {
+class GetAndResetMissedAlarmsOnBootUseCase(private val repository: AlarmRepository) {
   suspend operator fun invoke(): Map<AlarmModel, List<LocalDateTime>> {
     val now = LocalDateTime.now()
     return repository
-      .getAndUpdateOnAlarms()
+      .getOnAlarmsAndResetMissedAlarms()
       .associateWith {
         val missedDateTimes = mutableListOf<LocalDateTime>()
 

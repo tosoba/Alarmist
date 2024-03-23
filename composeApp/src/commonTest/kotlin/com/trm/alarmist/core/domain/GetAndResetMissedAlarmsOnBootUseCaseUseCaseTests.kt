@@ -3,7 +3,7 @@ package com.trm.alarmist.core.domain
 import com.trm.alarmist.core.common.util.toLocalDateDefault
 import com.trm.alarmist.core.common.util.toLocalDateTimeDefault
 import com.trm.alarmist.core.common.util.toLocalTimeDefault
-import com.trm.alarmist.core.domain.usecase.GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase
+import com.trm.alarmist.core.domain.usecase.GetAndResetMissedAlarmsOnBootUseCase
 import com.trm.alarmist.core.util.alarmModel
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
@@ -18,16 +18,16 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 
-class GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCaseTests {
+class GetAndResetMissedAlarmsOnBootUseCaseUseCaseTests {
   @Test
   fun `given empty alarms - then return emptyMap`() = runTest {
     assertEquals(
       expected = emptyMap(),
       actual =
-        GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
+        GetAndResetMissedAlarmsOnBootUseCase(
           repository =
             mock<AlarmRepository>().apply {
-              everySuspend { getAndUpdateOnAlarms() } returns emptyList()
+              everySuspend { getOnAlarmsAndResetMissedAlarms() } returns emptyList()
             }
         )(),
     )
@@ -40,10 +40,10 @@ class GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCaseTests {
       assertEquals(
         expected = emptyMap(),
         actual =
-          GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
+          GetAndResetMissedAlarmsOnBootUseCase(
             repository =
               mock<AlarmRepository>().apply {
-                everySuspend { getAndUpdateOnAlarms() } returns
+                everySuspend { getOnAlarmsAndResetMissedAlarms() } returns
                   listOf(
                     alarmModel(
                       fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
@@ -68,10 +68,10 @@ class GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCaseTests {
       assertEquals(
         expected = emptyMap(),
         actual =
-          GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
+          GetAndResetMissedAlarmsOnBootUseCase(
             repository =
               mock<AlarmRepository>().apply {
-                everySuspend { getAndUpdateOnAlarms() } returns
+                everySuspend { getOnAlarmsAndResetMissedAlarms() } returns
                   listOf(
                     alarmModel(
                       fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
@@ -136,10 +136,10 @@ class GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCaseTests {
               ),
           ),
         actual =
-          GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase(
+          GetAndResetMissedAlarmsOnBootUseCase(
             repository =
               mock<AlarmRepository>().apply {
-                everySuspend { getAndUpdateOnAlarms() } returns alarms
+                everySuspend { getOnAlarmsAndResetMissedAlarms() } returns alarms
               }
           )(),
       )

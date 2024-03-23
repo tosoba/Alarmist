@@ -4,15 +4,15 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.trm.alarmist.core.common.util.launch
-import com.trm.alarmist.core.domain.usecase.GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase
+import com.trm.alarmist.core.domain.usecase.GetAndResetMissedAlarmsOnBootUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class BootCompletedBroadcastReceiver : BroadcastReceiver(), KoinComponent {
-  private val getAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase:
-    GetAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase by
+  private val getAndResetMissedAlarmsOnBootUseCase:
+    GetAndResetMissedAlarmsOnBootUseCase by
     inject()
 
   override fun onReceive(context: Context?, intent: Intent?) {
@@ -22,7 +22,7 @@ class BootCompletedBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
     launch {
       val missedAlarms =
-        getAndUpdateOnAlarmsWithMissedTimestampsOnBootUseCase()
+        getAndResetMissedAlarmsOnBootUseCase()
       if (missedAlarms.isEmpty()) return@launch
 
       missedAlarms.forEach {

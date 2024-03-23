@@ -52,7 +52,7 @@ interface AlarmRepository {
 
   fun countOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<Int>
 
-  suspend fun getAndUpdateOnAlarms(): List<AlarmModel>
+  suspend fun getOnAlarmsAndResetMissedAlarms(): List<AlarmModel>
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel
 
