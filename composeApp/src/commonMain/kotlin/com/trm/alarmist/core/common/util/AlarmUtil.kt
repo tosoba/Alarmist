@@ -6,8 +6,10 @@ import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.core.domain.usecase.calculateAlarmNextFireOnDateTime
 import com.trm.alarmist.db.Alarm
 import com.trm.alarmist.db.SelectOnAlarmSchedules
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.plus
 
 const val DB_ON = 1L
 const val DB_OFF = 0L
@@ -78,9 +80,21 @@ fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =
     offOnDates = offOnDates.orEmpty().toSet(),
   )
 
-fun AlarmModel.shouldFireOn(date: LocalDate): Boolean =
-  firesEveryDay ||
-    ((date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) && date !in offOnDates)
+fun AlarmModel.isScheduledToFireOn(date: LocalDate): Boolean {
+  require(scheduledOnDaysOfWeek.isNotEmpty() || scheduledOnDates.isNotEmpty())
+  return (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) &&
+    date !in offOnDates
+}
 
-private val AlarmModel.firesEveryDay: Boolean
-  get() = scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()
+fun AlarmModel.expectedOneTimeNotificationDateTime(): LocalDateTime {
+  require(scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty())
+  return LocalDateTime(
+    date =
+      if (lastModificationDateTime.time > fireAtTime) {
+        lastModificationDateTime.date.plus(1, DateTimeUnit.DAY)
+      } else {
+        lastModificationDateTime.date
+      },
+    time = fireAtTime,
+  )
+}

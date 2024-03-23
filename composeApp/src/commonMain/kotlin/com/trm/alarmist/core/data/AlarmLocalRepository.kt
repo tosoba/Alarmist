@@ -6,6 +6,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
 import com.trm.alarmist.core.common.util.DB_OFF
 import com.trm.alarmist.core.common.util.DB_ON
+import com.trm.alarmist.core.common.util.expectedOneTimeNotificationDateTime
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toAlarmScheduleModel
 import com.trm.alarmist.core.common.util.toListModel
@@ -111,18 +112,7 @@ class AlarmLocalRepository(
         // Reset missed one time alarms
         onAlarms
           .filter { it.scheduledOnDaysOfWeek.isEmpty() && it.scheduledOnDates.isEmpty() }
-          .map {
-            it to
-              LocalDateTime(
-                date =
-                  if (it.lastModificationDateTime.time > it.fireAtTime) {
-                    it.lastModificationDateTime.date.plus(1, DateTimeUnit.DAY)
-                  } else {
-                    it.lastModificationDateTime.date
-                  },
-                time = it.fireAtTime,
-              )
-          }
+          .map { it to it.expectedOneTimeNotificationDateTime() }
           .filter { (alarm, expectedNotificationDateTime) ->
             now > expectedNotificationDateTime &&
               alarm.lastNotificationDate != expectedNotificationDateTime.date
