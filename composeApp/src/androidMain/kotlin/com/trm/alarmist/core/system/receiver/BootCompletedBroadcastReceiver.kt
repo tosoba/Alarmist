@@ -1,4 +1,4 @@
-package com.trm.alarmist.core.system
+package com.trm.alarmist.core.system.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

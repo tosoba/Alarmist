@@ -28,10 +28,12 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".core.system.AlarmBroadcastReceiver" />
+        <receiver android:name=".core.system.receiver.AlarmDismissedBroadcastReceiver" />
+        <receiver android:name=".core.system.receiver.AlarmFiredBroadcastReceiver" />
+        <receiver android:name=".core.system.receiver.AlarmUpcomingBroadcastReceiver" />
 
         <receiver
-            android:name=".core.system.BootCompletedBroadcastReceiver"
+            android:name=".core.system.receiver.BootCompletedBroadcastReceiver"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="false"

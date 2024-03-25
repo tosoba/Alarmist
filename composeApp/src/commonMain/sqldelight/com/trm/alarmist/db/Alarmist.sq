@@ -58,6 +58,11 @@ UPDATE alarm
 SET offOnDates = ?, lastModificationDateTime = ?
 WHERE id = ?;
 
+updateScheduledOnDatesById:
+UPDATE alarm
+SET scheduledOnDates = ?, lastModificationDateTime = ?
+WHERE id = ?;
+
 updateAlarmsGroups:
 UPDATE alarm
 SET groupId = CASE

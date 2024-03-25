@@ -193,7 +193,7 @@ class AlarmLocalRepository(
           }
           alarm.offOnDates?.contains(date) == true -> {
             queries.updateOffOnDatesById(
-              offOnDates = alarm.offOnDates - date,
+              offOnDates = (alarm.offOnDates - date).takeIf(Collection<LocalDate>::isNotEmpty),
               lastModificationDateTime = LocalDateTime.now(),
               id = id,
             )
@@ -250,6 +250,16 @@ class AlarmLocalRepository(
               alarm.scheduledOnDates.lastOrNull() == notificationDateTime.date)
         ) {
           queries.updateResetAlarmById(LocalDateTime.now(), id)
+          queries.selectAlarmById(id).executeAsOne().toModel()
+        } else if (notificationDateTime.date in alarm.scheduledOnDates) {
+          queries.updateScheduledOnDatesById(
+            scheduledOnDates =
+              (alarm.scheduledOnDates - notificationDateTime.date).takeIf(
+                Collection<LocalDate>::isNotEmpty
+              ),
+            lastModificationDateTime = notificationDateTime,
+            id = id,
+          )
           queries.selectAlarmById(id).executeAsOne().toModel()
         } else {
           alarm

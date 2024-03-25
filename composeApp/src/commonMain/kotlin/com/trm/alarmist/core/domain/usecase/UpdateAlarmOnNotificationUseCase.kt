@@ -8,6 +8,9 @@ class UpdateAlarmOnNotificationUseCase(
   private val repository: AlarmRepository,
 ) {
   suspend operator fun invoke(id: Long, notificationDateTime: LocalDateTime) {
-    updateAlarmScheduleUseCase(repository.updateAlarmOnNotification(id, notificationDateTime))
+    updateAlarmScheduleUseCase(
+      alarmModel = repository.updateAlarmOnNotification(id, notificationDateTime),
+      afterDateTime = notificationDateTime,
+    )
   }
 }

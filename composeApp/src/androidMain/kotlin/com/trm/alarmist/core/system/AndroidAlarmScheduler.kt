@@ -3,6 +3,8 @@ package com.trm.alarmist.core.system
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import com.trm.alarmist.core.system.receiver.AlarmFiredBroadcastReceiver
+import com.trm.alarmist.core.system.receiver.AlarmUpcomingBroadcastReceiver
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -41,7 +43,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     PendingIntent.getBroadcast(
       context,
       id.toInt(),
-      AlarmBroadcastReceiver.alarmFiredIntent(context, id, fireOnDateTime),
+      AlarmFiredBroadcastReceiver.intent(context, id, fireOnDateTime),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -50,7 +52,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     PendingIntent.getBroadcast(
       context,
       id.toInt(),
-      AlarmBroadcastReceiver.alarmFiredIntent(context),
+      AlarmFiredBroadcastReceiver.intent(context),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -58,7 +60,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     PendingIntent.getBroadcast(
       context,
       id.toInt(),
-      AlarmBroadcastReceiver.alarmUpcomingIntent(context, id, fireOnDateTime),
+      AlarmUpcomingBroadcastReceiver.intent(context, id, fireOnDateTime),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 }
