@@ -56,14 +56,14 @@ fun AlarmListItem(
         Text(
           text = item.fireAtTime.toString(),
           style =
-            MaterialTheme.typography.headlineLarge.run {
+            MaterialTheme.typography.displayMedium.run {
               if (item.isOn) copy(fontWeight = FontWeight.Medium) else this
             },
         )
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        item.name?.let { Text(it) }
+        item.name?.let { Text(text = it, style = MaterialTheme.typography.bodyLarge) }
       }
 
       Spacer(modifier = Modifier.weight(1f))
@@ -86,7 +86,10 @@ fun AlarmListItem(
           targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         ) { remainingMillis ->
           AnimatedVisibility(remainingMillis >= 0L) {
-            Text(text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown())
+            Text(
+              text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown(),
+              style = MaterialTheme.typography.bodyLarge,
+            )
           }
         }
       }
