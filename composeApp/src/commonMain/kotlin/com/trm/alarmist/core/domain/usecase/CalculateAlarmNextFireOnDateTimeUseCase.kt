@@ -19,49 +19,39 @@ fun calculateAlarmNextFireOnDateTime(alarm: AlarmModel): LocalDateTime? =
   )
 
 fun calculateAlarmNextFireOnDateTime(
-  isOn: Boolean = true,
   fireAtTime: LocalTime,
   scheduledOnDaysOfWeek: Collection<DayOfWeek>,
   scheduledOnDates: Collection<LocalDate>,
   offOnDates: Collection<LocalDate>,
+  isOn: Boolean = true,
+  afterDateTime: LocalDateTime = LocalDateTime.now(),
 ): LocalDateTime? {
   if (!isOn) return null
 
-  val now = LocalDateTime.now()
-
   if (scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()) {
     return when {
-      fireAtTime < now.time -> LocalDate.now().plus(1, DateTimeUnit.DAY)
-      else -> LocalDate.now()
+      fireAtTime < afterDateTime.time -> afterDateTime.date.plus(1, DateTimeUnit.DAY)
+      else -> afterDateTime.date
     }.atTime(fireAtTime)
   }
 
   fun DayOfWeek.nextScheduledOnDate(): LocalDate {
-    var currentDate = now.date
+    var currentDate = afterDateTime.date
     while (currentDate.dayOfWeek != this) {
       currentDate = currentDate.plus(1, DateTimeUnit.DAY)
     }
-    while (currentDate.atTime(fireAtTime) < now || currentDate in offOnDates) {
+    while (currentDate.atTime(fireAtTime) < afterDateTime || currentDate in offOnDates) {
       currentDate = currentDate.plus(1, DateTimeUnit.WEEK)
     }
     return currentDate
   }
 
-  val nextScheduledOnDayOfWeek = scheduledOnDaysOfWeek.minOfOrNull(DayOfWeek::nextScheduledOnDate)
-  val nextScheduledOnDate =
-    scheduledOnDates.filter { it.atTime(fireAtTime) > now && it !in offOnDates }.minOrNull()
-  return when {
-    nextScheduledOnDayOfWeek != null && nextScheduledOnDate != null -> {
-      minOf(nextScheduledOnDayOfWeek, nextScheduledOnDate)
-    }
-    nextScheduledOnDayOfWeek != null -> {
-      nextScheduledOnDayOfWeek
-    }
-    nextScheduledOnDate != null -> {
-      nextScheduledOnDate
-    }
-    else -> {
-      null
-    }
-  }?.atTime(fireAtTime)
+  return listOfNotNull(
+      scheduledOnDaysOfWeek.minOfOrNull(DayOfWeek::nextScheduledOnDate),
+      scheduledOnDates
+        .filter { it.atTime(fireAtTime) > afterDateTime && it !in offOnDates }
+        .minOrNull(),
+    )
+    .minOrNull()
+    ?.atTime(fireAtTime)
 }

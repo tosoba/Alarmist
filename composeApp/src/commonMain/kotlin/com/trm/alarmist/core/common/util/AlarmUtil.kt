@@ -23,11 +23,11 @@ fun Alarm.toListModel(): AlarmListModel =
     isOn = isOn == DB_ON,
     fireOnDateTime =
       calculateAlarmNextFireOnDateTime(
-        isOn = isOn == DB_ON,
         fireAtTime = fireAtTime,
         scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
         scheduledOnDates = scheduledOnDates.orEmpty(),
         offOnDates = offOnDates.orEmpty(),
+        isOn = isOn == DB_ON,
       ),
     scheduleDescription =
       if (!scheduledOnDaysOfWeek.isNullOrEmpty() || !scheduledOnDates.isNullOrEmpty()) {
