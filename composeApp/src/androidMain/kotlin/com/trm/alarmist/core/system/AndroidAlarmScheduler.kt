@@ -13,6 +13,8 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
   private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
   override fun scheduleAlarm(id: Long, fireOnDateTime: LocalDateTime) {
+    context.cancelNotification(id.toInt())
+
     alarmManager.setExact(
       AlarmManager.RTC,
       fireOnDateTime
@@ -30,6 +32,8 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
   }
 
   override fun cancelAlarm(id: Long) {
+    context.cancelNotification(id.toInt())
+
     alarmManager.cancel(alarmFiredPendingIntent(id))
   }
 

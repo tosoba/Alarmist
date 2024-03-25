@@ -42,6 +42,10 @@ fun Context.notifyAlarmUpcoming(
     )
 }
 
+fun Context.cancelNotification(id: Int) {
+  getSystemService(NotificationManager::class.java).cancel(id)
+}
+
 fun Application.createAlarmNotificationChannel() {
   getSystemService(NotificationManager::class.java)
     .createNotificationChannel(
