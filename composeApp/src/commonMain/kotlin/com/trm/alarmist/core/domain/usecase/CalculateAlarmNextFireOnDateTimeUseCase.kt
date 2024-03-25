@@ -16,6 +16,7 @@ fun calculateAlarmNextFireOnDateTime(alarm: AlarmModel): LocalDateTime? =
     scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek,
     scheduledOnDates = alarm.scheduledOnDates,
     offOnDates = alarm.offOnDates,
+    isOn = alarm.isOn,
   )
 
 fun calculateAlarmNextFireOnDateTime(
