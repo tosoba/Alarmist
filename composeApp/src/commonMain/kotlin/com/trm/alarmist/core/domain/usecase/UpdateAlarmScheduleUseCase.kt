@@ -39,6 +39,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
           afterDateTime = afterDateTime,
         )
         ?.let { scheduler.scheduleAlarm(id = id, fireOnDateTime = it) }
+        ?: run { scheduler.cancelAlarm(id) }
     } else {
       scheduler.cancelAlarm(id)
     }

@@ -15,14 +15,10 @@ class UpdateGroupOnOffUseCase(
       } else {
         repository.updateGroupAlarmsOnOff(id, isOn)
       }
-    if (isOn) {
-      updatedAlarms.forEach { alarm ->
-        calculateAlarmNextFireOnDateTime(alarm)?.let {
-          scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
-        }
-      }
-    } else {
-      updatedAlarms.forEach { scheduler.cancelAlarm(it.id) }
+    updatedAlarms.forEach { alarm ->
+      calculateAlarmNextFireOnDateTime(alarm)?.let {
+        scheduler.scheduleAlarm(id = alarm.id, fireOnDateTime = it)
+      } ?: run { scheduler.cancelAlarm(alarm.id) }
     }
   }
 }

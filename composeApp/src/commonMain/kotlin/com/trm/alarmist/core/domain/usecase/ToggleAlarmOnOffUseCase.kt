@@ -9,12 +9,8 @@ class ToggleAlarmOnOffUseCase(
 ) {
   suspend operator fun invoke(id: Long) {
     val toggledAlarm = repository.toggleAlarmOnOff(id)
-    if (toggledAlarm.isOn) {
-      calculateAlarmNextFireOnDateTime(toggledAlarm)?.let {
-        scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
-      }
-    } else {
-      scheduler.cancelAlarm(id)
-    }
+    calculateAlarmNextFireOnDateTime(toggledAlarm)?.let {
+      scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
+    } ?: run { scheduler.cancelAlarm(id) }
   }
 }

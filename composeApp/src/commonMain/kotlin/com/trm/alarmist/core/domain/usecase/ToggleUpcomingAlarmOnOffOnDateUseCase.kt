@@ -11,13 +11,9 @@ class ToggleUpcomingAlarmOnOffOnDateUseCase(
   suspend operator fun invoke(id: Long, date: LocalDate) {
     val toggledAlarm = repository.toggleAlarmOnOffOnDate(id, date)
     if (toggledAlarm.scheduledOnDaysOfWeek.isEmpty() && toggledAlarm.scheduledOnDates.isEmpty()) {
-      if (toggledAlarm.isOn) {
-        calculateAlarmNextFireOnDateTime(toggledAlarm)?.let {
-          scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
-        }
-      } else {
-        scheduler.cancelAlarm(id)
-      }
+      calculateAlarmNextFireOnDateTime(toggledAlarm)?.let {
+        scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
+      } ?: run { scheduler.cancelAlarm(id) }
     } else {
       calculateAlarmNextFireOnDateTime(toggledAlarm)
         ?.takeIf { it.date == date }
@@ -28,6 +24,8 @@ class ToggleUpcomingAlarmOnOffOnDateUseCase(
             scheduler.cancelAlarm(id)
           }
         }
+      // scheduler.cancelAlarm(id) is not called here since a scheduled alarm might be scheduled on an
+      // earlier date
     }
   }
 }
