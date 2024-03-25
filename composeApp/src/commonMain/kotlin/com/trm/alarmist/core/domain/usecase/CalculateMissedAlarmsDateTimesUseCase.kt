@@ -9,42 +9,38 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
 
-fun calculateMissedAlarmsDateTimes(alarms: List<AlarmModel>): Map<AlarmModel, List<LocalDateTime>> {
-  val now = LocalDateTime.now()
-  return alarms
-    .associateWith {
-      if (it.scheduledOnDaysOfWeek.isEmpty() && it.scheduledOnDates.isEmpty()) {
-        val expectedNotificationDateTime = it.expectedOneTimeNotificationDateTime()
-        if (
-          now > expectedNotificationDateTime &&
-            it.lastNotificationDate != expectedNotificationDateTime.date
-        ) {
-          return@associateWith listOf(expectedNotificationDateTime)
-        } else {
-          return@associateWith emptyList()
-        }
-      }
-
-      val missedDateTimes = mutableListOf<LocalDateTime>()
-      val limit =
-        maxOf(
-          it.lastNotificationDate?.atTime(it.fireAtTime) ?: it.lastModificationDateTime,
-          it.lastModificationDateTime,
-        )
-      var current =
-        if (now.time < it.fireAtTime) {
-          now.date.minus(1, DateTimeUnit.DAY).atTime(it.fireAtTime)
-        } else {
-          LocalDateTime(now.date, it.fireAtTime)
-        }
-      while (current > limit) {
-        if (it.isScheduledToFireOn(current.date)) {
-          missedDateTimes.add(current)
-        }
-        current = current.date.minus(1, DateTimeUnit.DAY).atTime(it.fireAtTime)
-      }
-
-      missedDateTimes
+fun calculateAlarmMissedDateTimes(
+  alarm: AlarmModel,
+  now: LocalDateTime = LocalDateTime.now(),
+): List<LocalDateTime> {
+  if (alarm.scheduledOnDaysOfWeek.isEmpty() && alarm.scheduledOnDates.isEmpty()) {
+    val expectedNotificationDateTime = alarm.expectedOneTimeNotificationDateTime()
+    return if (
+      now > expectedNotificationDateTime &&
+        alarm.lastNotificationDate != expectedNotificationDateTime.date
+    ) {
+      listOf(expectedNotificationDateTime)
+    } else {
+      emptyList()
     }
-    .filterValues(List<LocalDateTime>::isNotEmpty)
+  }
+
+  val missedDateTimes = mutableListOf<LocalDateTime>()
+  val limit =
+    maxOf(
+      alarm.lastNotificationDate?.atTime(alarm.fireAtTime) ?: alarm.lastModificationDateTime,
+      alarm.lastModificationDateTime,
+    )
+  var current =
+    LocalDateTime(
+      date = if (now.time < alarm.fireAtTime) now.date.minus(1, DateTimeUnit.DAY) else now.date,
+      time = alarm.fireAtTime,
+    )
+  while (current > limit) {
+    if (alarm.isScheduledToFireOn(current.date)) {
+      missedDateTimes.add(current)
+    }
+    current = current.date.minus(1, DateTimeUnit.DAY).atTime(alarm.fireAtTime)
+  }
+  return missedDateTimes
 }
