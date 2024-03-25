@@ -9,12 +9,13 @@ import com.trm.alarmist.db.SelectOnAlarmSchedules
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
 
 const val DB_ON = 1L
 const val DB_OFF = 0L
 
-fun Alarm.toListModel(): AlarmListModel =
+fun Alarm.toListModel(now: LocalDateTime): AlarmListModel =
   AlarmListModel(
     id = id,
     groupId = groupId,
@@ -28,6 +29,7 @@ fun Alarm.toListModel(): AlarmListModel =
         scheduledOnDates = scheduledOnDates.orEmpty(),
         offOnDates = offOnDates.orEmpty(),
         isOn = isOn == DB_ON,
+        afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
       ),
     scheduleDescription =
       if (!scheduledOnDaysOfWeek.isNullOrEmpty() || !scheduledOnDates.isNullOrEmpty()) {

@@ -41,7 +41,7 @@ fun calculateAlarmNextFireOnDateTime(
     while (currentDate.dayOfWeek != this) {
       currentDate = currentDate.plus(1, DateTimeUnit.DAY)
     }
-    while (currentDate.atTime(fireAtTime) < afterDateTime || currentDate in offOnDates) {
+    while (currentDate.atTime(fireAtTime) <= afterDateTime || currentDate in offOnDates) {
       currentDate = currentDate.plus(1, DateTimeUnit.WEEK)
     }
     return currentDate
