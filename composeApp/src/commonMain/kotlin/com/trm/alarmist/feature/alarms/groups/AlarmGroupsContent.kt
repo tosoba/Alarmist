@@ -14,8 +14,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -94,17 +92,7 @@ fun AlarmGroupsContent(
                 modifier = Modifier.padding(end = 16.dp),
                 horizontalAlignment = Alignment.End,
               ) {
-                Switch(
-                  checked = group.isOn,
-                  onCheckedChange = { _ -> onToggleGroupOnOff(group) },
-                  thumbContent = {
-                    Icon(
-                      imageVector =
-                        if (group.isOn) Icons.Default.Pause else Icons.Default.PlayArrow,
-                      contentDescription = null,
-                    )
-                  },
-                )
+                Switch(checked = group.isOn, onCheckedChange = { _ -> onToggleGroupOnOff(group) })
                 Spacer(Modifier.weight(1f))
                 ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
               }
@@ -171,16 +159,7 @@ private fun AlarmCard(
 
       Spacer(modifier = Modifier.weight(1f))
 
-      Switch(
-        checked = alarm.isOn,
-        onCheckedChange = { _ -> onToggleAlarmOnOff() },
-        thumbContent = {
-          Icon(
-            imageVector = if (alarm.isOn) Icons.Default.Pause else Icons.Default.PlayArrow,
-            contentDescription = null,
-          )
-        },
-      )
+      Switch(checked = alarm.isOn, onCheckedChange = { _ -> onToggleAlarmOnOff() })
     }
 
     Spacer(modifier = Modifier.height(8.dp))

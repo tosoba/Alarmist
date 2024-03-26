@@ -29,8 +29,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -402,12 +400,6 @@ private fun CalendarDateAlarmOnOffSwitch(
       modifier = Modifier.padding(start = 8.dp),
       checked = isOn,
       onCheckedChange = onCheckedChange,
-      thumbContent = {
-        Icon(
-          imageVector = if (isOn) Icons.Default.Pause else Icons.Default.PlayArrow,
-          contentDescription = null,
-        )
-      },
     )
   }
 }
