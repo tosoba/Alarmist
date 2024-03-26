@@ -31,14 +31,12 @@ fun Alarm.toListModel(now: LocalDateTime): AlarmListModel =
         isOn = isOn == DB_ON,
         afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
       ),
-    scheduleDescription =
-      if (!scheduledOnDaysOfWeek.isNullOrEmpty() || !scheduledOnDates.isNullOrEmpty()) {
-        (scheduledOnDaysOfWeek?.map { it.name.take(2) }.orEmpty() +
-            if (!scheduledOnDates.isNullOrEmpty()) listOf("Other") else emptyList())
-          .joinToString(" ")
-      } else {
-        "One time"
-      },
+    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
+    scheduledOnClosestDate =
+      scheduledOnDates
+        ?.run { if (offOnDates.isNullOrEmpty()) this else filter { it !in offOnDates } }
+        ?.minOrNull(),
+    scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
   )
 
 fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
@@ -50,14 +48,9 @@ fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
     isOn = offOnDates.isNullOrEmpty() || !offOnDates.contains(date),
     fireOnDateTime =
       if (offOnDates?.contains(date) == true) null else LocalDateTime(date, fireAtTime),
-    scheduleDescription =
-      if (!scheduledOnDaysOfWeek.isNullOrEmpty() || !scheduledOnDates.isNullOrEmpty()) {
-        (scheduledOnDaysOfWeek?.map { it.name.take(2) }.orEmpty() +
-            if (!scheduledOnDates.isNullOrEmpty()) listOf("Other") else emptyList())
-          .joinToString(" ")
-      } else {
-        "One time"
-      },
+    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
+    scheduledOnClosestDate = scheduledOnDates?.minOrNull(),
+    scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
   )
 
 fun Alarm.toModel(): AlarmModel =

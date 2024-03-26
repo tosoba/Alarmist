@@ -1,6 +1,7 @@
 package com.trm.alarmist.core.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,15 +20,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.formatCountdown
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
+import epicarchitect.calendar.compose.basis.firstDayOfWeek
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
@@ -80,7 +87,7 @@ fun AlarmListItem(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      Text(item.scheduleDescription, maxLines = 2, overflow = TextOverflow.Ellipsis)
+      AlarmScheduleDescription(item)
 
       Spacer(modifier = Modifier.weight(1f))
 
@@ -99,6 +106,51 @@ fun AlarmListItem(
     }
 
     Spacer(modifier = Modifier.height(16.dp))
+  }
+}
+
+@Composable
+private fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = Modifier) {
+  if (item.scheduledOnDaysOfWeek.isNotEmpty() || item.scheduledOnClosestDate != null) {
+    Column(modifier = modifier) {
+      if (item.scheduledOnDaysOfWeek.isNotEmpty()) {
+        Text(
+          buildAnnotatedString {
+            daysOfWeekSortedBy(firstDayOfWeek()).forEachIndexed { index, dayOfWeek ->
+              if (dayOfWeek in item.scheduledOnDaysOfWeek) {
+                withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
+                  append(dayOfWeek.name.take(2))
+                }
+              } else {
+                withStyle(SpanStyle(fontWeight = FontWeight.Light)) {
+                  append(dayOfWeek.name.take(2))
+                }
+              }
+              if (index != DayOfWeek.entries.lastIndex) {
+                append(" ")
+              }
+            }
+          },
+          overflow = TextOverflow.Ellipsis,
+        )
+      }
+
+      if (item.scheduledOnClosestDate != null) {
+        Text(
+          buildAnnotatedString {
+            withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
+              append(item.scheduledOnClosestDate.toString())
+            }
+            if (item.scheduledOnMultipleDates) {
+              append(" and others")
+            }
+          },
+          overflow = TextOverflow.Ellipsis,
+        )
+      }
+    }
+  } else {
+    Text("One time", overflow = TextOverflow.Ellipsis)
   }
 }
 

@@ -1,5 +1,7 @@
 package com.trm.alarmist.core.domain.model
 
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
@@ -12,5 +14,7 @@ data class AlarmListModel(
   val name: String?,
   val isOn: Boolean,
   val fireOnDateTime: LocalDateTime?,
-  val scheduleDescription: String,
+  val scheduledOnDaysOfWeek: List<DayOfWeek>,
+  val scheduledOnClosestDate: LocalDate?,
+  val scheduledOnMultipleDates: Boolean
 )
