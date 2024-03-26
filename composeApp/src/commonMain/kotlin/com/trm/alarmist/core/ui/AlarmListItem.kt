@@ -1,7 +1,6 @@
 package com.trm.alarmist.core.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,20 +50,24 @@ fun AlarmListItem(
   ) {
     Spacer(modifier = Modifier.height(16.dp))
 
+    item.name?.let {
+      Text(
+        text = it,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        style = MaterialTheme.typography.bodyLarge,
+      )
+
+      Spacer(modifier = Modifier.height(8.dp))
+    }
+
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-      Column {
-        Text(
-          text = item.fireAtTime.toString(),
-          style =
-            MaterialTheme.typography.displayMedium.run {
-              if (item.isOn) copy(fontWeight = FontWeight.Medium) else this
-            },
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        item.name?.let { Text(text = it, style = MaterialTheme.typography.bodyLarge) }
-      }
+      Text(
+        text = item.fireAtTime.toString(),
+        style =
+          MaterialTheme.typography.displayMedium.run {
+            if (item.isOn) copy(fontWeight = FontWeight.Medium) else this
+          },
+      )
 
       Spacer(modifier = Modifier.weight(1f))
 
