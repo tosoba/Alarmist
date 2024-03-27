@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -40,8 +41,9 @@ import kotlinx.datetime.toInstant
 
 @Composable
 fun AlarmListItem(
-  modifier: Modifier = Modifier,
   item: AlarmListModel,
+  modifier: Modifier = Modifier,
+  shape: Shape = CardDefaults.shape,
   onItemClick: (AlarmListModel) -> Unit = {},
   onToggleOnOff: (AlarmListModel) -> Unit = {},
 ) {
@@ -53,6 +55,7 @@ fun AlarmListItem(
       } else {
         CardDefaults.cardColors()
       },
+    shape = shape,
     onClick = { onItemClick(item) },
   ) {
     Spacer(modifier = Modifier.height(16.dp))

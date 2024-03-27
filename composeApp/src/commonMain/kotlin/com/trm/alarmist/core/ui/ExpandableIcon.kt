@@ -4,7 +4,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,7 +23,7 @@ fun ExpandableIcon(isExpanded: Boolean = false, transitionLabel: String = "Expan
     }
   Image(
     modifier = Modifier.rotate(expandImageRotation),
-    imageVector = Icons.Default.ArrowDropDown,
+    imageVector = Icons.Outlined.ExpandMore,
     contentDescription = null,
   )
 }

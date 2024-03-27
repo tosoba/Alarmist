@@ -3,18 +3,12 @@ package com.trm.alarmist.feature.alarms.groups
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -23,11 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.ExpandableIcon
 
@@ -81,8 +74,8 @@ fun AlarmGroupsContent(
           items = state.expandedGroupAlarms,
           key = { _, alarm -> "alarm-${alarm.id}" },
         ) { alarmIndex, alarm ->
-          AlarmCard(
-            alarm = alarm,
+          AlarmListItem(
+            item = alarm,
             modifier = Modifier.fillMaxWidth(),
             shape =
               if (alarmIndex == state.expandedGroupAlarms.lastIndex) {
@@ -90,62 +83,11 @@ fun AlarmGroupsContent(
               } else {
                 RectangleShape
               },
-            colors =
-              if (alarm.isOn) {
-                CardDefaults.cardColors(
-                  containerColor = MaterialTheme.colorScheme.secondaryContainer
-                )
-              } else {
-                CardDefaults.cardColors()
-              },
-            onToggleAlarmOnOff = remember { { onToggleAlarmOnOff(alarm) } },
+            onItemClick = {}, // TODO:
+            onToggleOnOff = remember { { onToggleAlarmOnOff(alarm) } },
           )
         }
       }
     }
-  }
-}
-
-@Composable
-private fun AlarmCard(
-  alarm: AlarmListModel,
-  modifier: Modifier = Modifier,
-  shape: Shape = RectangleShape,
-  colors: CardColors = CardDefaults.cardColors(),
-  onToggleAlarmOnOff: () -> Unit = {},
-) {
-  Card(modifier = modifier, shape = shape, colors = colors) {
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-      Column {
-        val textColor =
-          if (alarm.isOn) {
-            MaterialTheme.colorScheme.onPrimaryContainer
-          } else {
-            MaterialTheme.colorScheme.onSecondaryContainer
-          }
-
-        alarm.name?.let {
-          Text(text = it, style = MaterialTheme.typography.bodyLarge, color = textColor)
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-          text = alarm.fireAtTime.toString(),
-          style =
-            MaterialTheme.typography.headlineLarge.run {
-              if (alarm.isOn) copy(fontWeight = FontWeight.Medium) else this
-            },
-        )
-      }
-
-      Spacer(modifier = Modifier.weight(1f))
-
-      Switch(checked = alarm.isOn, onCheckedChange = { _ -> onToggleAlarmOnOff() })
-    }
-
-    Spacer(modifier = Modifier.height(8.dp))
   }
 }

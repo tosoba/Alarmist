@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,8 +31,8 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
     }
     items(alarms) {
       AlarmListItem(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         item = it,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         onItemClick = component::onAlarmClick,
         onToggleOnOff = component::onToggleAlarmOnOff,
       )

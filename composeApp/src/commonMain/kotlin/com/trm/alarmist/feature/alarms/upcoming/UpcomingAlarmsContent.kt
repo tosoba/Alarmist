@@ -93,8 +93,8 @@ fun UpcomingAlarmsContent(
     }
     items(selectedDateAlarms) {
       AlarmListItem(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItemPlacement(),
         item = it,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItemPlacement(),
         onItemClick = onAlarmItemClick,
         onToggleOnOff = onAlarmToggleOnOff,
       )
