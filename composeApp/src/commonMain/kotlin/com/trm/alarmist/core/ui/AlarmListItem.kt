@@ -57,11 +57,19 @@ fun AlarmListItem(
   ) {
     Spacer(modifier = Modifier.height(16.dp))
 
+    val textColor =
+      if (item.isOn) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+      } else {
+        MaterialTheme.colorScheme.onSecondaryContainer
+      }
+
     item.name?.let {
       Text(
         text = it,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         style = MaterialTheme.typography.bodyLarge,
+        color = textColor,
       )
 
       Spacer(modifier = Modifier.height(8.dp))
@@ -74,6 +82,7 @@ fun AlarmListItem(
           MaterialTheme.typography.displayMedium.run {
             if (item.isOn) copy(fontWeight = FontWeight.Medium) else this
           },
+        color = textColor,
       )
 
       Spacer(modifier = Modifier.weight(1f))
@@ -99,6 +108,7 @@ fun AlarmListItem(
             Text(
               text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown(),
               style = MaterialTheme.typography.bodyLarge,
+              color = textColor,
             )
           }
         }
@@ -111,6 +121,12 @@ fun AlarmListItem(
 
 @Composable
 private fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = Modifier) {
+  val textColor =
+    if (item.isOn) {
+      MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+      MaterialTheme.colorScheme.onSecondaryContainer
+    }
   if (item.scheduledOnDaysOfWeek.isNotEmpty() || item.scheduledOnClosestDate != null) {
     Column(modifier = modifier) {
       if (item.scheduledOnDaysOfWeek.isNotEmpty()) {
@@ -132,6 +148,7 @@ private fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = 
             }
           },
           overflow = TextOverflow.Ellipsis,
+          color = textColor,
         )
       }
 
@@ -146,11 +163,12 @@ private fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = 
             }
           },
           overflow = TextOverflow.Ellipsis,
+          color = textColor,
         )
       }
     }
   } else {
-    Text("One time", overflow = TextOverflow.Ellipsis)
+    Text("One time", overflow = TextOverflow.Ellipsis, color = textColor)
   }
 }
 
