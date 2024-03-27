@@ -30,6 +30,7 @@ fun AlarmGroupsContent(
   state: AlarmGroupsState = AlarmGroupsState(),
   onExpandGroup: (AlarmGroupModel) -> Unit = {},
   onCollapseGroup: () -> Unit = {},
+  onAlarmItemClick: (AlarmListModel) -> Unit = {},
   onToggleAlarmOnOff: (AlarmListModel) -> Unit = {},
   onToggleGroupOnOff: (AlarmGroupModel) -> Unit = {},
 ) {
@@ -83,7 +84,7 @@ fun AlarmGroupsContent(
               } else {
                 RectangleShape
               },
-            onItemClick = {}, // TODO:
+            onItemClick = onAlarmItemClick,
             onToggleOnOff = remember { { onToggleAlarmOnOff(alarm) } },
           )
         }
