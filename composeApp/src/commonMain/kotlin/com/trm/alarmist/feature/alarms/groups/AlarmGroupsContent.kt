@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,12 +52,22 @@ fun AlarmGroupsContent(
 
     state.groups.forEachIndexed { groupIndex, group ->
       val isExpanded = state.expandedGroupId == group.id
+      val editGroupButtonVisible = isExpanded || group.alarmsCount == 0L
 
       item(key = "group-${group.id}") {
         ExpandableAlarmGroupHeaderCard(
           group = group,
           modifier = Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp),
           isExpanded = isExpanded,
+          shape =
+            if (editGroupButtonVisible) {
+              ShapeDefaults.Medium.copy(
+                bottomStart = CornerSize(0.dp),
+                bottomEnd = CornerSize(0.dp),
+              )
+            } else {
+              ShapeDefaults.Medium
+            },
           onToggleExpandedClick = { if (isExpanded) onCollapseGroup() else onExpandGroup(group) },
           trailing = {
             if (group.alarmsCount > 0L) {
@@ -71,22 +85,38 @@ fun AlarmGroupsContent(
       }
 
       if (isExpanded && state.expandedGroupAlarms.isNotEmpty()) {
-        itemsIndexed(
-          items = state.expandedGroupAlarms,
-          key = { _, alarm -> "alarm-${alarm.id}" },
-        ) { alarmIndex, alarm ->
+        items(items = state.expandedGroupAlarms, key = { alarm -> "alarm-${alarm.id}" }) { alarm ->
           AlarmListItem(
             item = alarm,
             modifier = Modifier.fillMaxWidth(),
-            shape =
-              if (alarmIndex == state.expandedGroupAlarms.lastIndex) {
-                ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
-              } else {
-                RectangleShape
-              },
+            shape = RectangleShape,
             onItemClick = onAlarmItemClick,
             onToggleOnOff = remember { { onToggleAlarmOnOff(alarm) } },
           )
+        }
+      }
+
+      if (editGroupButtonVisible) {
+        item {
+          Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors =
+              if (group.isOn) {
+                CardDefaults.cardColors(
+                  containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+              } else {
+                CardDefaults.cardColors()
+              },
+            shape =
+              ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp)),
+          ) {
+            Box(Modifier.fillMaxWidth()) {
+              TextButton(onClick = {}, modifier = Modifier.fillMaxWidth().align(Alignment.Center)) {
+                Text("Edit group")
+              }
+            }
+          }
         }
       }
     }
