@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.defaultComponentContext
+import com.trm.alarmist.core.ui.theme.AppTheme
 import com.trm.alarmist.feature.root.DefaultRootComponent
 import com.trm.alarmist.feature.root.RootContent
 
@@ -15,11 +16,11 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      MaterialTheme {
+      AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
           RootContent(
-              component = DefaultRootComponent(componentContext = defaultComponentContext()),
-              modifier = Modifier.fillMaxSize(),
+            component = DefaultRootComponent(componentContext = defaultComponentContext()),
+            modifier = Modifier.fillMaxSize(),
           )
         }
       }
