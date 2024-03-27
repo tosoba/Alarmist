@@ -83,6 +83,7 @@ fun GroupContent(
         ExpandableAlarmGroupHeaderCard(
           group = group,
           modifier = modifier,
+          isExpanded = isExpanded,
           shape =
             if (isExpanded) {
               ShapeDefaults.Medium.copy(
@@ -92,7 +93,6 @@ fun GroupContent(
             } else {
               ShapeDefaults.Medium
             },
-          isExpanded = isExpanded,
           onToggleExpandedClick = ::toggleGroupExpanded,
         )
       }

@@ -8,17 +8,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Switch
@@ -61,33 +56,13 @@ fun AlarmGroupsContent(
       val isExpanded = state.expandedGroupId == group.id
 
       item(key = "group-${group.id}") {
-        val headerModifier =
-          Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp)
-
-        if (group.alarmsCount == 0L) {
-          ElevatedCard(modifier = headerModifier) {
-            Row(
-              modifier = Modifier.fillMaxWidth().padding(16.dp),
-              verticalAlignment = Alignment.CenterVertically,
-            ) {
-              Icon(Icons.Default.Folder, contentDescription = group.name)
-
-              Spacer(Modifier.width(16.dp))
-
-              Column {
-                Text(text = group.name, fontWeight = FontWeight.SemiBold)
-                Spacer(modifier = Modifier.height(2.dp))
-                Text("Empty")
-              }
-            }
-          }
-        } else {
-          ExpandableAlarmGroupHeaderCard(
-            group = group,
-            modifier = headerModifier,
-            isExpanded = isExpanded,
-            onToggleExpandedClick = { if (isExpanded) onCollapseGroup() else onExpandGroup(group) },
-            trailing = {
+        ExpandableAlarmGroupHeaderCard(
+          group = group,
+          modifier = Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp),
+          isExpanded = isExpanded,
+          onToggleExpandedClick = { if (isExpanded) onCollapseGroup() else onExpandGroup(group) },
+          trailing = {
+            if (group.alarmsCount > 0L) {
               Column(
                 modifier = Modifier.padding(end = 16.dp),
                 horizontalAlignment = Alignment.End,
@@ -96,9 +71,9 @@ fun AlarmGroupsContent(
                 Spacer(Modifier.weight(1f))
                 ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
               }
-            },
-          )
-        }
+            }
+          },
+        )
       }
 
       if (isExpanded && state.expandedGroupAlarms.isNotEmpty()) {
@@ -144,6 +119,19 @@ private fun AlarmCard(
 
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
       Column {
+        val textColor =
+          if (alarm.isOn) {
+            MaterialTheme.colorScheme.onPrimaryContainer
+          } else {
+            MaterialTheme.colorScheme.onSecondaryContainer
+          }
+
+        alarm.name?.let {
+          Text(text = it, style = MaterialTheme.typography.bodyLarge, color = textColor)
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
         Text(
           text = alarm.fireAtTime.toString(),
           style =
@@ -151,10 +139,6 @@ private fun AlarmCard(
               if (alarm.isOn) copy(fontWeight = FontWeight.Medium) else this
             },
         )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        alarm.name?.let { Text(it) }
       }
 
       Spacer(modifier = Modifier.weight(1f))

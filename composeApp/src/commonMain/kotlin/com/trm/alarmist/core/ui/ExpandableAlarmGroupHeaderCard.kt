@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,27 +32,54 @@ fun ExpandableAlarmGroupHeaderCard(
     } else {
       ShapeDefaults.Medium
     },
+  onToggleExpandedClick: (Long) -> Unit = {},
   trailing: @Composable () -> Unit = {
     ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
   },
-  onToggleExpandedClick: (Long) -> Unit = {},
 ) {
-  ElevatedCard(modifier = modifier, shape = shape) {
+  Card(
+    modifier = modifier,
+    shape = shape,
+    colors =
+      if (group.isOn) {
+        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+      } else {
+        CardDefaults.cardColors()
+      },
+  ) {
     Row(
       modifier =
         Modifier.fillMaxWidth()
-          .clickable { onToggleExpandedClick(group.id) }
+          .run {
+            if (group.alarmsCount > 0L) clickable { onToggleExpandedClick(group.id) } else this
+          }
           .padding(vertical = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      Spacer(Modifier.width(16.dp))
-
-      Icon(Icons.Default.Folder, contentDescription = group.name)
+      val textColor =
+        if (group.isOn) {
+          MaterialTheme.colorScheme.onPrimaryContainer
+        } else {
+          MaterialTheme.colorScheme.onSecondaryContainer
+        }
 
       Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Text(group.name, fontWeight = FontWeight.SemiBold)
+        Text(
+          text = group.name,
+          style =
+            MaterialTheme.typography.titleLarge.run {
+              if (group.isOn) copy(fontWeight = FontWeight.Medium) else this
+            },
+          color = textColor,
+        )
+
         Spacer(modifier = Modifier.height(2.dp))
-        Text("${group.alarmsCount} alarm(s)")
+
+        Text(
+          text = if (group.alarmsCount > 0L) "${group.alarmsCount} alarm(s)" else "Empty",
+          style = MaterialTheme.typography.bodyLarge,
+          color = textColor,
+        )
       }
 
       Spacer(Modifier.weight(1f))
