@@ -63,7 +63,7 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
           calendarState.copy(currentMonth = middleDate.month, currentYear = middleDate.year)
       }
       .distinctUntilChanged()
-      .flatMapLatest { getScheduledAlarmCountsForDateRangeUseCase(it) }
+      .flatMapLatest(getScheduledAlarmCountsForDateRangeUseCase::invoke)
       .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyMap())
 
   fun onSelectedDateChange(date: LocalDate?) {

@@ -36,12 +36,13 @@ class GetScheduledAlarmCountsForDateRangeUseCase(private val repository: AlarmRe
               date in it.scheduledOnDates || date.dayOfWeek in it.scheduledOnDaysOfWeek
             }
           }
-          .toMutableMap()
       },
     ) { oneTimeTodayCount, oneTimeTommorowCount, scheduledCounts ->
-      scheduledCounts[now.date]?.let { scheduledCounts[now.date] = it + oneTimeTodayCount }
-      scheduledCounts[tommorow]?.let { scheduledCounts[tommorow] = it + oneTimeTommorowCount }
-      scheduledCounts
+      buildMap {
+        putAll(scheduledCounts)
+        scheduledCounts[now.date]?.let { this[now.date] = it + oneTimeTodayCount }
+        scheduledCounts[tommorow]?.let { this[tommorow] = it + oneTimeTommorowCount }
+      }
     }
   }
 }
