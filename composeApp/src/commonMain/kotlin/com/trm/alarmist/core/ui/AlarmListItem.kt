@@ -1,12 +1,18 @@
 package com.trm.alarmist.core.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.formatCountdown
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
 import epicarchitect.calendar.compose.basis.firstDayOfWeek
@@ -43,6 +52,7 @@ import kotlinx.datetime.toInstant
 fun AlarmListItem(
   item: AlarmListModel,
   modifier: Modifier = Modifier,
+  group: AlarmGroupModel? = null,
   shape: Shape = CardDefaults.shape,
   onItemClick: (AlarmListModel) -> Unit = {},
   onToggleOnOff: (AlarmListModel) -> Unit = {},
@@ -67,16 +77,11 @@ fun AlarmListItem(
         MaterialTheme.colorScheme.onSecondaryContainer
       }
 
-    item.name?.let {
-      Text(
-        text = it,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        style = MaterialTheme.typography.bodyLarge,
-        color = textColor,
-      )
-
-      Spacer(modifier = Modifier.height(8.dp))
-    }
+    AlarmLabel(
+      item = item,
+      group = group,
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+    )
 
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
       Text(
@@ -119,6 +124,53 @@ fun AlarmListItem(
     }
 
     Spacer(modifier = Modifier.height(16.dp))
+  }
+}
+
+@Composable
+private fun AlarmLabel(
+  item: AlarmListModel,
+  group: AlarmGroupModel?,
+  modifier: Modifier = Modifier
+) {
+  val textColor =
+    if (item.isOn) {
+      MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+      MaterialTheme.colorScheme.onSecondaryContainer
+    }
+
+  if (item.name != null || group != null) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+      if (group != null) {
+        Box(
+          modifier =
+            Modifier.size(24.dp)
+              .background(color = Color(group.color), shape = CircleShape)
+              .border(width = 1.dp, color = textColor, shape = CircleShape)
+              .clip(CircleShape)
+        )
+
+        Spacer(Modifier.width(16.dp))
+      }
+
+      Text(
+        text =
+          if (item.name != null && group != null) {
+            buildString {
+              append(group.name)
+              append(" - ")
+              append(item.name)
+            }
+          } else {
+            group?.name ?: item.name.orEmpty()
+          },
+        style = MaterialTheme.typography.bodyLarge,
+        color = textColor,
+      )
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
   }
 }
 

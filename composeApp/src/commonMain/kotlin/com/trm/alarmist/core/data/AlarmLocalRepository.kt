@@ -66,6 +66,7 @@ class AlarmLocalRepository(
 
   override suspend fun editAlarm(
     id: Long,
+    groupId: Long?,
     fireAtTime: LocalTime,
     name: String?,
     isOn: Boolean,
@@ -76,7 +77,7 @@ class AlarmLocalRepository(
     withContext(dispatcher) {
       queries.updateAlarmById(
         id = id,
-        groupId = null,
+        groupId = groupId,
         fireAtTime = fireAtTime,
         name = name,
         isOn = if (isOn) 1L else 0L,

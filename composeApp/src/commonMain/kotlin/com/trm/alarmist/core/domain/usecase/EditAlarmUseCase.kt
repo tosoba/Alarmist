@@ -11,6 +11,7 @@ class EditAlarmUseCase(
 ) {
   suspend operator fun invoke(
     id: Long,
+    groupId: Long?,
     fireAtTime: LocalTime,
     name: String?,
     isOn: Boolean,
@@ -20,6 +21,7 @@ class EditAlarmUseCase(
   ) {
     repository.editAlarm(
       id = id,
+      groupId = groupId,
       fireAtTime = fireAtTime,
       name = name,
       isOn = isOn,

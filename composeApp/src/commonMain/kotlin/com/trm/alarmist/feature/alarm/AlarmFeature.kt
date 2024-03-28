@@ -60,6 +60,7 @@ class AlarmFeature(
           is AlarmComponent.Mode.Edit -> {
             editAlarmUseCase(
               id = mode.alarm.id,
+              groupId = mode.alarm.groupId,
               fireAtTime = fireAtTime,
               name = name,
               isOn = true,

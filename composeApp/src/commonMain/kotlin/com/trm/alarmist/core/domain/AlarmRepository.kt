@@ -22,6 +22,7 @@ interface AlarmRepository {
 
   suspend fun editAlarm(
     id: Long,
+    groupId: Long?,
     fireAtTime: LocalTime,
     name: String?,
     isOn: Boolean,

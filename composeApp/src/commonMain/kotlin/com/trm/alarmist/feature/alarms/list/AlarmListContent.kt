@@ -20,6 +20,7 @@ import com.trm.alarmist.core.ui.AlarmListItem
 @Composable
 fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponent) {
   val alarms by component.alarms.collectAsState()
+  val groups by component.groups.collectAsState()
 
   LazyColumn(
     modifier = modifier,
@@ -36,6 +37,7 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
     items(alarms) {
       AlarmListItem(
         item = it,
+        group = it.groupId?.let(groups::get),
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         onItemClick = component::onAlarmClick,
         onToggleOnOff = component::onToggleAlarmOnOff,
