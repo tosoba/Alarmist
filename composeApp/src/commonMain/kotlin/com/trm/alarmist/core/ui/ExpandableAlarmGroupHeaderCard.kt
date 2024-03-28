@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +33,12 @@ fun ExpandableAlarmGroupHeaderCard(
       ShapeDefaults.Medium
     },
   trailing: @Composable () -> Unit = {
-    ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
+    Box(modifier = Modifier.padding(end = 16.dp)) {
+      ExpandableIcon(
+        isExpanded = isExpanded,
+        transitionLabel = "${group.name}Header",
+      )
+    }
   },
 ) {
   Card(

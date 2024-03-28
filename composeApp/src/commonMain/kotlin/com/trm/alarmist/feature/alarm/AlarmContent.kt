@@ -36,12 +36,12 @@ import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -120,7 +120,7 @@ fun AlarmContent(
         singleLine = true,
       )
 
-      ElevatedCard(
+      OutlinedCard(
         modifier =
           Modifier.fillMaxWidth()
             .animateContentSize()
@@ -172,7 +172,7 @@ fun AlarmContent(
         }
       }
 
-      ElevatedCard(
+      OutlinedCard(
         modifier =
           Modifier.fillMaxWidth()
             .animateContentSize()
@@ -227,7 +227,7 @@ fun AlarmContent(
         }
       }
 
-      ElevatedCard(
+      OutlinedCard(
         modifier =
           Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
       ) {

@@ -123,7 +123,10 @@ fun GroupContent(
       }
     }
 
-    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
+    LazyColumn(
+      modifier = Modifier.fillMaxSize(),
+      contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+    ) {
       item {
         val isKeyboardOpen by keyboardAsState()
         val focusManager = LocalFocusManager.current
@@ -140,7 +143,7 @@ fun GroupContent(
 
       item {
         GroupColors(
-          modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+          modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
           selectedColor = Color(state.color),
           onColorClick = onColorChange,
         )
@@ -170,6 +173,8 @@ fun GroupContent(
           modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
         )
       }
+
+      item { Spacer(Modifier.height(72.dp)) }
     }
 
     FloatingActionButton(
