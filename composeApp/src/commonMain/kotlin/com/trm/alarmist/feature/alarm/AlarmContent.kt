@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -179,7 +180,7 @@ fun AlarmContent(
       ) {
         Column {
           Text(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
+            modifier = Modifier.padding(16.dp),
             text = "Scheduled on:",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -199,16 +200,16 @@ fun AlarmContent(
             modifier =
               Modifier.fillMaxWidth()
                 .clickable { isCalendarExpanded = !isCalendarExpanded }
-                .padding(vertical = 16.dp),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
           ) {
             Text(
               "Calendar",
-              modifier = Modifier.padding(horizontal = 8.dp),
               style = MaterialTheme.typography.bodyLarge,
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
+            Spacer(Modifier.width(16.dp))
             ExpandableIcon(isExpanded = isCalendarExpanded, transitionLabel = "ExpandableCalendar")
           }
           ExpandableCalendar(
@@ -230,7 +231,7 @@ fun AlarmContent(
         modifier =
           Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
       ) {
-        Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
           Text(
             "Settings:",
             style = MaterialTheme.typography.bodyLarge,
@@ -486,9 +487,10 @@ private fun DaysOfWeekRow(
           },
       ) {
         Text(
-          modifier = Modifier.padding(8.dp),
+          modifier = Modifier.padding(12.dp),
           text = dayOfWeek.name.take(2),
           fontWeight = if (isSelected) FontWeight.SemiBold else null,
+          style = MaterialTheme.typography.headlineSmall
         )
       }
     }
