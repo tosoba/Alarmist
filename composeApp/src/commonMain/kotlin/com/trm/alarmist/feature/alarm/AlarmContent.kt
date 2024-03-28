@@ -3,6 +3,7 @@ package com.trm.alarmist.feature.alarm
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.name
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,17 +30,24 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Keyboard
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,14 +66,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.ExpandableIcon
-import com.trm.alarmist.core.ui.WheelTimePicker
 import com.trm.alarmist.core.ui.keyboardAsState
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
@@ -83,7 +89,7 @@ import kotlinx.datetime.Month
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
@@ -115,22 +121,53 @@ fun AlarmContent(
 
       ElevatedCard(
         modifier =
-          Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+          Modifier.fillMaxWidth()
+            .animateContentSize()
+            .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
       ) {
-        Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)) {
-          Text(text = "Fire at time:")
-
-          val textStyle = MaterialTheme.typography.headlineMedium
-          val textHeightDp = with(LocalDensity.current) { textStyle.fontSize.toDp() } + 10.dp
-          WheelTimePicker(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-            startTime = state.fireAtTime,
-            rowCount = 5,
-            size = DpSize(textHeightDp, textHeightDp) * 5,
-            textStyle = textStyle,
-            centerTextStyle = textStyle.copy(fontWeight = FontWeight.Bold),
-            onSnappedTime = onFireAtChange,
+        Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+          Text(
+            text = "Fire at time:",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
+
+          var timePickerMode by rememberSaveable { mutableStateOf(TimePickerMode.DIAL) }
+
+          Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+            val timePickerState =
+              rememberTimePickerState(
+                initialHour = state.fireAtTime.hour,
+                initialMinute = state.fireAtTime.minute,
+                is24Hour = true,
+              )
+            LaunchedEffect(timePickerState.hour, timePickerState.minute) {
+              onFireAtChange(LocalTime(timePickerState.hour, timePickerState.minute))
+            }
+            Crossfade(timePickerMode, modifier = Modifier.align(Alignment.Center)) {
+              when (it) {
+                TimePickerMode.DIAL -> TimePicker(state = timePickerState)
+                TimePickerMode.INPUT -> TimeInput(state = timePickerState)
+              }
+            }
+          }
+
+          IconButton(
+            onClick = {
+              timePickerMode =
+                when (timePickerMode) {
+                  TimePickerMode.DIAL -> TimePickerMode.INPUT
+                  TimePickerMode.INPUT -> TimePickerMode.DIAL
+                }
+            }
+          ) {
+            Crossfade(timePickerMode) {
+              when (it) {
+                TimePickerMode.DIAL -> Icon(Icons.Outlined.Keyboard, "Time input")
+                TimePickerMode.INPUT -> Icon(Icons.Outlined.Timer, "Time dial")
+              }
+            }
+          }
         }
       }
 
@@ -144,6 +181,8 @@ fun AlarmContent(
           Text(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
             text = "Scheduled on:",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
           // TODO: add some extra description about when exactly alarm is going to fire that
           // will change as user tweaks scheduled on settings
@@ -164,7 +203,12 @@ fun AlarmContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
           ) {
-            Text("Calendar", modifier = Modifier.padding(horizontal = 8.dp))
+            Text(
+              "Calendar",
+              modifier = Modifier.padding(horizontal = 8.dp),
+              style = MaterialTheme.typography.bodyLarge,
+              color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
             ExpandableIcon(isExpanded = isCalendarExpanded, transitionLabel = "ExpandableCalendar")
           }
           ExpandableCalendar(
@@ -187,7 +231,11 @@ fun AlarmContent(
           Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
       ) {
         Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)) {
-          Text("Settings:")
+          Text(
+            "Settings:",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
           // TODO: sound/volume/vibrate options/snooze duration/delete button in edit mode
           // (marked in red) + maybe group choice?
         }
@@ -465,4 +513,9 @@ private fun PostNotificationPermissionInfoDialog(
       text = { Text(text = text) },
     )
   }
+}
+
+private enum class TimePickerMode {
+  DIAL,
+  INPUT
 }
