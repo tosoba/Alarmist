@@ -1,6 +1,5 @@
 package com.trm.alarmist.core.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +31,6 @@ fun ExpandableAlarmGroupHeaderCard(
     } else {
       ShapeDefaults.Medium
     },
-  onToggleExpandedClick: (Long) -> Unit = {},
   trailing: @Composable () -> Unit = {
     ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
   },
@@ -48,12 +46,7 @@ fun ExpandableAlarmGroupHeaderCard(
       },
   ) {
     Row(
-      modifier =
-        Modifier.fillMaxWidth()
-          .run {
-            if (group.alarmsCount > 0L) clickable { onToggleExpandedClick(group.id) } else this
-          }
-          .padding(vertical = 16.dp),
+      modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
       val textColor =

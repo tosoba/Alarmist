@@ -1,5 +1,6 @@
 package com.trm.alarmist.feature.alarms.groups
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,6 +36,7 @@ fun AlarmGroupsContent(
   onExpandGroup: (AlarmGroupModel) -> Unit = {},
   onCollapseGroup: () -> Unit = {},
   onAlarmItemClick: (AlarmListModel) -> Unit = {},
+  onEditGroupClick: (AlarmGroupModel) -> Unit = {},
   onToggleAlarmOnOff: (AlarmListModel) -> Unit = {},
   onToggleGroupOnOff: (AlarmGroupModel) -> Unit = {},
 ) {
@@ -52,15 +54,21 @@ fun AlarmGroupsContent(
 
     state.groups.forEachIndexed { groupIndex, group ->
       val isExpanded = state.expandedGroupId == group.id
-      val editGroupButtonVisible = isExpanded || group.alarmsCount == 0L
 
       item(key = "group-${group.id}") {
         ExpandableAlarmGroupHeaderCard(
           group = group,
-          modifier = Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp),
+          modifier =
+            Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp).clickable {
+              if (group.alarmsCount > 0L) {
+                if (isExpanded) onCollapseGroup() else onExpandGroup(group)
+              } else {
+                onEditGroupClick(group)
+              }
+            },
           isExpanded = isExpanded,
           shape =
-            if (editGroupButtonVisible) {
+            if (isExpanded) {
               ShapeDefaults.Medium.copy(
                 bottomStart = CornerSize(0.dp),
                 bottomEnd = CornerSize(0.dp),
@@ -68,7 +76,6 @@ fun AlarmGroupsContent(
             } else {
               ShapeDefaults.Medium
             },
-          onToggleExpandedClick = { if (isExpanded) onCollapseGroup() else onExpandGroup(group) },
           trailing = {
             if (group.alarmsCount > 0L) {
               Column(
@@ -96,7 +103,7 @@ fun AlarmGroupsContent(
         }
       }
 
-      if (editGroupButtonVisible) {
+      if (isExpanded) {
         item {
           Card(
             modifier = Modifier.fillMaxWidth(),
@@ -112,7 +119,10 @@ fun AlarmGroupsContent(
               ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp)),
           ) {
             Box(Modifier.fillMaxWidth()) {
-              TextButton(onClick = {}, modifier = Modifier.fillMaxWidth().align(Alignment.Center)) {
+              TextButton(
+                onClick = remember { { onEditGroupClick(group) } },
+                modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+              ) {
                 Text("Edit group")
               }
             }
