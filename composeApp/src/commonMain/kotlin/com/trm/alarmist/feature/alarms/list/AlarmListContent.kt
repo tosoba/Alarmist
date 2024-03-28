@@ -2,7 +2,9 @@ package com.trm.alarmist.feature.alarms.list
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +20,7 @@ import com.trm.alarmist.core.ui.AlarmListItem
 @Composable
 fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponent) {
   val alarms by component.alarms.collectAsState()
+
   LazyColumn(
     modifier = modifier,
     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
@@ -29,6 +32,7 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
         }
       }
     }
+
     items(alarms) {
       AlarmListItem(
         item = it,
@@ -37,5 +41,7 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
         onToggleOnOff = component::onToggleAlarmOnOff,
       )
     }
+
+    item { Spacer(Modifier.height(72.dp)) }
   }
 }
