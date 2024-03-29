@@ -128,7 +128,7 @@ fun AlarmGroupsContent(
         }
       }
 
-      if (group.id != AlarmGroupModel.UNGROUPED_ID && isExpanded) {
+      if (group.id != AlarmGroupModel.UNGROUPED_ID && isExpanded && group.alarmsCount > 0L) {
         item {
           Card(
             modifier = Modifier.fillMaxWidth(),
