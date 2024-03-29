@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
@@ -44,14 +43,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.ui.AlarmFireAtTime
+import com.trm.alarmist.core.ui.AlarmFireOnDateTimeCountdown
+import com.trm.alarmist.core.ui.AlarmScheduleDescription
 import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.core.ui.keyboardAsState
+import com.trm.alarmist.core.ui.theme.onOffCardColors
+import com.trm.alarmist.core.ui.theme.onOffContainer
 
 @Composable
 fun GroupContent(
@@ -108,14 +110,6 @@ fun GroupContent(
                 ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
               } else {
                 RectangleShape
-              },
-            colors =
-              if (alarm.id in state.selectedAlarmIds) {
-                CardDefaults.cardColors(
-                  containerColor = MaterialTheme.colorScheme.secondaryContainer
-                )
-              } else {
-                CardDefaults.cardColors()
               },
             isSelected = alarm.id in state.selectedAlarmIds,
             onToggleAlarmSelection = remember { { onToggleAlarmSelection(alarm) } },
@@ -188,44 +182,51 @@ fun GroupContent(
 }
 
 @Composable
-fun GroupedAlarmCard(
+private fun GroupedAlarmCard(
   alarm: AlarmListModel,
   modifier: Modifier = Modifier,
   shape: Shape = RectangleShape,
-  colors: CardColors = CardDefaults.cardColors(),
   isSelected: Boolean = false,
   onToggleAlarmSelection: () -> Unit = {},
 ) {
-  Card(modifier = modifier, shape = shape, colors = colors, onClick = onToggleAlarmSelection) {
-    Spacer(modifier = Modifier.height(8.dp))
+  Card(
+    modifier = modifier,
+    colors = CardDefaults.onOffCardColors(alarm.isOn),
+    shape = shape,
+    onClick = onToggleAlarmSelection,
+  ) {
+    Spacer(modifier = Modifier.height(16.dp))
+
+    alarm.name?.let {
+      Text(
+        text = it,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onOffContainer(alarm.isOn),
+      )
+    }
 
     Row(
-      modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      Text(
-        text = alarm.fireAtTime.toString(),
-        style =
-          MaterialTheme.typography.headlineMedium.run {
-            if (isSelected) copy(fontWeight = FontWeight.Medium) else this
-          },
-      )
-
-      alarm.name?.let {
-        Text(
-          modifier = Modifier.padding(horizontal = 16.dp),
-          text = it,
-          maxLines = 2,
-          overflow = TextOverflow.Ellipsis,
-        )
-      }
-
+      AlarmFireAtTime(alarm)
       Spacer(modifier = Modifier.weight(1f))
-
       Checkbox(checked = isSelected, onCheckedChange = { onToggleAlarmSelection() })
     }
 
     Spacer(modifier = Modifier.height(8.dp))
+
+    Row(
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      AlarmScheduleDescription(alarm)
+      Spacer(modifier = Modifier.weight(1f))
+      AlarmFireOnDateTimeCountdown(alarm)
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
   }
 }
 
