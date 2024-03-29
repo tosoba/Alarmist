@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -60,10 +61,12 @@ fun AlarmGroupsContent(
         ExpandableAlarmGroupHeaderCard(
           group = group,
           modifier =
-            Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp).clickable {
+            Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp).clickable(
+              enabled = group.alarmsCount > 0L || group.id != AlarmGroupModel.UNGROUPED_ID
+            ) {
               if (group.alarmsCount > 0L) {
                 if (isExpanded) onCollapseGroup() else onExpandGroup(group)
-              } else {
+              } else if (group.id != AlarmGroupModel.UNGROUPED_ID) {
                 onEditGroupClick(group)
               }
             },
@@ -93,18 +96,30 @@ fun AlarmGroupsContent(
       }
 
       if (isExpanded && state.expandedGroupAlarms.isNotEmpty()) {
-        items(items = state.expandedGroupAlarms, key = { alarm -> "alarm-${alarm.id}" }) { alarm ->
+        itemsIndexed(
+          items = state.expandedGroupAlarms,
+          key = { _, alarm -> "alarm-${alarm.id}" },
+        ) { index, alarm ->
           AlarmListItem(
             item = alarm,
             modifier = Modifier.fillMaxWidth(),
-            shape = RectangleShape,
+            shape =
+              if (
+                group.id == AlarmGroupModel.UNGROUPED_ID &&
+                  isExpanded &&
+                  index == state.expandedGroupAlarms.lastIndex
+              ) {
+                ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
+              } else {
+                RectangleShape
+              },
             onItemClick = onAlarmItemClick,
             onToggleOnOff = remember { { onToggleAlarmOnOff(alarm) } },
           )
         }
       }
 
-      if (isExpanded) {
+      if (group.id != AlarmGroupModel.UNGROUPED_ID && isExpanded) {
         item {
           Card(
             modifier = Modifier.fillMaxWidth(),
