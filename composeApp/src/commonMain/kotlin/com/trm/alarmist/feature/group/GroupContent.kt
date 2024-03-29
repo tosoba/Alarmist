@@ -18,8 +18,8 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
@@ -256,9 +256,13 @@ private fun GroupColor(color: Color, isSelected: Boolean, onClick: () -> Unit) {
   Box(
     modifier =
       Modifier.size(64.dp)
-        .background(color = color, shape = CircleShape)
-        .border(width = 1.dp, color = MaterialTheme.colorScheme.onBackground, shape = CircleShape)
-        .clip(CircleShape)
+        .background(color = color, shape = RoundedCornerShape(16.dp))
+        .border(
+          width = 0.5.dp,
+          color = MaterialTheme.colorScheme.onBackground,
+          shape = RoundedCornerShape(16.dp),
+        )
+        .clip(RoundedCornerShape(16.dp))
         .clickable(onClick = onClick)
   ) {
     if (isSelected) {

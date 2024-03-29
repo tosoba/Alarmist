@@ -350,7 +350,7 @@ private fun ColumnScope.ExpandableCalendar(
                 Box(
                   Modifier.size(7.dp)
                     .clip(CircleShape)
-                    .border(width = 1.dp, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    .border(width = 0.5.dp, color = MaterialTheme.colorScheme.onPrimaryContainer)
                 )
               } else if (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) {
                 Box(
