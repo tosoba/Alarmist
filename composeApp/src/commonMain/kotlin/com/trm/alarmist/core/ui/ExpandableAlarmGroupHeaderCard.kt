@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -28,6 +27,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
+import com.trm.alarmist.core.ui.theme.onOffContainer
 
 @Composable
 fun ExpandableAlarmGroupHeaderCard(
@@ -60,12 +60,7 @@ fun ExpandableAlarmGroupHeaderCard(
       modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      val textColor =
-        if (group.isOn) {
-          MaterialTheme.colorScheme.onPrimaryContainer
-        } else {
-          MaterialTheme.colorScheme.onSecondaryContainer
-        }
+      val textColor = MaterialTheme.colorScheme.onOffContainer(group.isOn)
 
       Spacer(Modifier.width(16.dp))
 

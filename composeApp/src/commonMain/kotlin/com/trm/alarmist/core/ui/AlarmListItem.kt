@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.formatCountdown
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.ui.theme.onOffContainer
 import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
 import epicarchitect.calendar.compose.basis.firstDayOfWeek
 import kotlin.time.DurationUnit
@@ -70,12 +71,7 @@ fun AlarmListItem(
   ) {
     Spacer(modifier = Modifier.height(16.dp))
 
-    val textColor =
-      if (item.isOn) {
-        MaterialTheme.colorScheme.onPrimaryContainer
-      } else {
-        MaterialTheme.colorScheme.onSecondaryContainer
-      }
+    val textColor = MaterialTheme.colorScheme.onOffContainer(item.isOn)
 
     AlarmLabel(
       item = item,
@@ -133,12 +129,7 @@ private fun AlarmLabel(
   group: AlarmGroupModel?,
   modifier: Modifier = Modifier,
 ) {
-  val textColor =
-    if (item.isOn) {
-      MaterialTheme.colorScheme.onPrimaryContainer
-    } else {
-      MaterialTheme.colorScheme.onSecondaryContainer
-    }
+  val textColor = MaterialTheme.colorScheme.onOffContainer(item.isOn)
 
   if (item.name != null || group != null) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
@@ -176,12 +167,8 @@ private fun AlarmLabel(
 
 @Composable
 private fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = Modifier) {
-  val textColor =
-    if (item.isOn) {
-      MaterialTheme.colorScheme.onPrimaryContainer
-    } else {
-      MaterialTheme.colorScheme.onSecondaryContainer
-    }
+  val textColor = MaterialTheme.colorScheme.onOffContainer(item.isOn)
+
   if (item.scheduledOnDaysOfWeek.isNotEmpty() || item.scheduledOnClosestDate != null) {
     Column(modifier = modifier) {
       if (item.scheduledOnDaysOfWeek.isNotEmpty()) {
