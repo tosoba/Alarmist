@@ -1,18 +1,24 @@
 package com.trm.alarmist.feature.alarms.groups
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Switch
@@ -24,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -32,6 +39,7 @@ import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AlarmGroupsContent(
   modifier: Modifier = Modifier,
@@ -49,8 +57,29 @@ fun AlarmGroupsContent(
   ) {
     if (state.groups.isEmpty()) {
       item {
-        Box(modifier = Modifier.fillParentMaxSize()) {
-          Text(modifier = Modifier.align(Alignment.Center), text = "No groups created")
+        Column(
+          modifier =
+            Modifier.fillParentMaxSize()
+              .padding(vertical = 32.dp, horizontal = 16.dp)
+              .animateItemPlacement(),
+          verticalArrangement = Arrangement.Center,
+          horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+          Icon(
+            modifier = Modifier.size(100.dp),
+            imageVector = Icons.Default.GroupAdd,
+            contentDescription = "No alarm groups created",
+          )
+          Text(
+            text = "No alarm groups created",
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+          )
+          Text(
+            text = "Create one using the button in bottom right.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+          )
         }
       }
     }
@@ -156,6 +185,8 @@ fun AlarmGroupsContent(
       }
     }
 
-    floatingActionButtonSpacerItem()
+    if (state.groups.isNotEmpty()) {
+      floatingActionButtonSpacerItem()
+    }
   }
 }
