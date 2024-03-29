@@ -5,9 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,6 +41,7 @@ import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
 import com.trm.alarmist.core.ui.DaysOfWeekRow
 import com.trm.alarmist.core.ui.WeekArrowsRow
+import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import epicarchitect.calendar.compose.basis.EpicCalendarConstants
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.atDay
@@ -103,7 +102,7 @@ fun UpcomingAlarmsContent(
       )
     }
 
-    item { Spacer(Modifier.height(72.dp)) }
+    floatingActionButtonSpacerItem()
   }
 }
 

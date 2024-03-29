@@ -73,6 +73,7 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.ExpandableIcon
+import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.keyboardAsState
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
@@ -242,7 +243,7 @@ fun AlarmContent(
         }
       }
 
-      Spacer(modifier = Modifier.height(72.dp))
+      FloatingActionButtonSpacer()
     }
 
     var permissionDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -490,7 +491,7 @@ private fun DaysOfWeekRow(
           modifier = Modifier.padding(12.dp),
           text = dayOfWeek.name.take(2),
           fontWeight = if (isSelected) FontWeight.SemiBold else null,
-          style = MaterialTheme.typography.headlineSmall
+          style = MaterialTheme.typography.headlineSmall,
         )
       }
     }

@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
+import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.core.ui.keyboardAsState
 
 @Composable
@@ -125,7 +126,7 @@ fun GroupContent(
 
     LazyColumn(
       modifier = Modifier.fillMaxSize(),
-      contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+      contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
     ) {
       item {
         val isKeyboardOpen by keyboardAsState()
@@ -174,7 +175,7 @@ fun GroupContent(
         )
       }
 
-      item { Spacer(Modifier.height(72.dp)) }
+      floatingActionButtonSpacerItem()
     }
 
     FloatingActionButton(
