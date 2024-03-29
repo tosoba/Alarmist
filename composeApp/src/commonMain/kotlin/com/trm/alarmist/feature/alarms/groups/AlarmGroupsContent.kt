@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Switch
@@ -100,22 +101,29 @@ fun AlarmGroupsContent(
           items = state.expandedGroupAlarms,
           key = { _, alarm -> "alarm-${alarm.id}" },
         ) { index, alarm ->
-          AlarmListItem(
-            item = alarm,
-            modifier = Modifier.fillMaxWidth(),
-            shape =
-              if (
-                group.id == AlarmGroupModel.UNGROUPED_ID &&
-                  isExpanded &&
-                  index == state.expandedGroupAlarms.lastIndex
-              ) {
-                ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
-              } else {
-                RectangleShape
-              },
-            onItemClick = onAlarmItemClick,
-            onToggleOnOff = remember { { onToggleAlarmOnOff(alarm) } },
-          )
+          Box(modifier = Modifier.fillMaxWidth()) {
+            AlarmListItem(
+              item = alarm,
+              modifier = Modifier.fillMaxWidth(),
+              shape =
+                if (
+                  group.id == AlarmGroupModel.UNGROUPED_ID &&
+                    isExpanded &&
+                    index == state.expandedGroupAlarms.lastIndex
+                ) {
+                  ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
+                } else {
+                  RectangleShape
+                },
+              onItemClick = onAlarmItemClick,
+              onToggleOnOff = remember { { onToggleAlarmOnOff(alarm) } },
+            )
+
+            HorizontalDivider(
+              modifier =
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp).align(Alignment.TopCenter)
+            )
+          }
         }
       }
 
