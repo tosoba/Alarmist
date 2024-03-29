@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.formatCountdown
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
 import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
 import epicarchitect.calendar.compose.basis.firstDayOfWeek
@@ -60,12 +61,7 @@ fun AlarmListItem(
 ) {
   Card(
     modifier = modifier,
-    colors =
-      if (item.isOn) {
-        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-      } else {
-        CardDefaults.cardColors()
-      },
+    colors = CardDefaults.onOffCardColors(item.isOn),
     shape = shape,
     onClick = { onItemClick(item) },
   ) {

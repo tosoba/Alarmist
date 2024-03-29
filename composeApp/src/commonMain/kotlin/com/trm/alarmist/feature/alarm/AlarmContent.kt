@@ -75,6 +75,7 @@ import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.keyboardAsState
+import com.trm.alarmist.core.ui.theme.onOffCardColors
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.contains
@@ -480,12 +481,7 @@ private fun DaysOfWeekRow(
               focusedElevation = 1.dp,
             )
           },
-        colors =
-          if (isSelected) {
-            CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-          } else {
-            CardDefaults.cardColors()
-          },
+        colors = CardDefaults.onOffCardColors(isSelected),
       ) {
         Text(
           modifier = Modifier.padding(12.dp),

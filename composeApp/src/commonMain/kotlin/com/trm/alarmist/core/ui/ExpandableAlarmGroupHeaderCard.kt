@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
+import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
 
 @Composable
@@ -46,16 +47,7 @@ fun ExpandableAlarmGroupHeaderCard(
     }
   },
 ) {
-  Card(
-    modifier = modifier,
-    shape = shape,
-    colors =
-      if (group.isOn) {
-        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-      } else {
-        CardDefaults.cardColors()
-      },
-  ) {
+  Card(modifier = modifier, shape = shape, colors = CardDefaults.onOffCardColors(group.isOn)) {
     Row(
       modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
