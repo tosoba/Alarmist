@@ -26,6 +26,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -102,18 +103,25 @@ fun GroupContent(
       if (isExpanded) {
         val alarms = state.alarmsInGroup(group.id)
         itemsIndexed(alarms) { index, alarm ->
-          GroupedAlarmCard(
-            alarm = alarm,
-            modifier = Modifier.fillMaxWidth(),
-            shape =
-              if (index == alarms.lastIndex) {
-                ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
-              } else {
-                RectangleShape
-              },
-            isSelected = alarm.id in state.selectedAlarmIds,
-            onToggleAlarmSelection = remember { { onToggleAlarmSelection(alarm) } },
-          )
+          Box(modifier = Modifier.fillMaxWidth()) {
+            GroupedAlarmCard(
+              alarm = alarm,
+              modifier = Modifier.fillMaxWidth(),
+              shape =
+                if (index == alarms.lastIndex) {
+                  ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
+                } else {
+                  RectangleShape
+                },
+              isSelected = alarm.id in state.selectedAlarmIds,
+              onToggleAlarmSelection = remember { { onToggleAlarmSelection(alarm) } },
+            )
+
+            HorizontalDivider(
+              modifier =
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp).align(Alignment.TopCenter)
+            )
+          }
         }
       }
     }
