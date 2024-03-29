@@ -71,8 +71,6 @@ fun AlarmListItem(
   ) {
     Spacer(modifier = Modifier.height(16.dp))
 
-    val textColor = MaterialTheme.colorScheme.onOffContainer(item.isOn)
-
     AlarmLabel(
       item = item,
       group = group,
@@ -80,17 +78,8 @@ fun AlarmListItem(
     )
 
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-      Text(
-        text = item.fireAtTime.toString(),
-        style =
-          MaterialTheme.typography.displayMedium.run {
-            if (item.isOn) copy(fontWeight = FontWeight.Medium) else this
-          },
-        color = textColor,
-      )
-
+      AlarmFireAtTime(item)
       Spacer(modifier = Modifier.weight(1f))
-
       Switch(checked = item.isOn, onCheckedChange = { _ -> onToggleOnOff(item) })
     }
 
@@ -101,26 +90,42 @@ fun AlarmListItem(
       verticalAlignment = Alignment.CenterVertically,
     ) {
       AlarmScheduleDescription(item)
-
       Spacer(modifier = Modifier.weight(1f))
-
-      item.fireOnDateTime?.let {
-        Countdown(
-          targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
-        ) { remainingMillis ->
-          AnimatedVisibility(remainingMillis >= 0L) {
-            Text(
-              text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown(),
-              style = MaterialTheme.typography.bodyLarge,
-              color = textColor,
-            )
-          }
-        }
-      }
+      AlarmFireOnDateTimeCountdown(item)
     }
 
     Spacer(modifier = Modifier.height(16.dp))
   }
+}
+
+@Composable
+private fun AlarmFireOnDateTimeCountdown(item: AlarmListModel, modifier: Modifier = Modifier) {
+  item.fireOnDateTime?.let {
+    Countdown(
+      targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+    ) { remainingMillis ->
+      AnimatedVisibility(remainingMillis >= 0L, modifier = modifier) {
+        Text(
+          text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown(),
+          style = MaterialTheme.typography.bodyLarge,
+          color = MaterialTheme.colorScheme.onOffContainer(item.isOn),
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun AlarmFireAtTime(item: AlarmListModel, modifier: Modifier = Modifier) {
+  Text(
+    text = item.fireAtTime.toString(),
+    modifier = modifier,
+    style =
+      MaterialTheme.typography.displayMedium.run {
+        if (item.isOn) copy(fontWeight = FontWeight.Medium) else this
+      },
+    color = MaterialTheme.colorScheme.onOffContainer(item.isOn),
+  )
 }
 
 @Composable
