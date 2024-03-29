@@ -35,7 +35,7 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
 
   var calendarState: UpcomingAlarmsCalendarState =
     savedStateContainer?.consume(strategy = UpcomingAlarmsCalendarState.serializer())
-      ?: with(LocalDate.now()) { UpcomingAlarmsCalendarState(null, month, year) }
+      ?: with(LocalDate.now()) { UpcomingAlarmsCalendarState(this, month, year) }
     private set
 
   private val selectedDateFlow = MutableSharedFlow<LocalDate?>()
