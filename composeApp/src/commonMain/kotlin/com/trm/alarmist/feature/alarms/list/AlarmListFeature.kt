@@ -18,10 +18,15 @@ class AlarmListFeature : CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
   private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
 
-  val alarms: AnyStateFlow<List<AlarmListModel>> =
+  val alarms: AnyStateFlow<Pair<List<AlarmListModel>, Boolean>> =
     repository
       .getAllAlarmsListFlow()
-      .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
+      .map { it to false }
+      .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        initialValue = emptyList<AlarmListModel>() to true
+      )
       .wrapToAny()
 
   val groups: AnyStateFlow<Map<Long, AlarmGroupModel>> =

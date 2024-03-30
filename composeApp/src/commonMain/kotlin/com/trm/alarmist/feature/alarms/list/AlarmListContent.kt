@@ -1,6 +1,9 @@
 package com.trm.alarmist.feature.alarms.list
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,30 +26,32 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
   val alarms by component.alarms.collectAsState()
   val groups by component.groups.collectAsState()
 
-  Crossfade(targetState = alarms.isEmpty(), modifier = modifier) { alarmsEmpty ->
-    if (alarmsEmpty) {
-      EmptyPlaceholder(
-        imageVector = Icons.Default.AlarmAdd,
-        primaryText = "No alarms created",
-        secondaryText = "Create one using the button in bottom right.",
-        modifier = Modifier.fillMaxSize()
-      )
-    } else {
-      LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-      ) {
-        items(alarms) {
-          AlarmListItem(
-            item = it,
-            group = it.groupId?.let(groups::get),
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-            onItemClick = component::onAlarmClick,
-            onToggleOnOff = component::onToggleAlarmOnOff,
-          )
-        }
+  AnimatedVisibility(!alarms.second, enter = fadeIn(), exit = fadeOut(), modifier = modifier) {
+    Crossfade(targetState = alarms.first.isEmpty()) { alarmsEmpty ->
+      if (alarmsEmpty) {
+        EmptyPlaceholder(
+          imageVector = Icons.Default.AlarmAdd,
+          primaryText = "No alarms created",
+          secondaryText = "Create one using the button in bottom right.",
+          modifier = Modifier.fillMaxSize()
+        )
+      } else {
+        LazyColumn(
+          modifier = Modifier.fillMaxSize(),
+          contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+          items(alarms.first) {
+            AlarmListItem(
+              item = it,
+              group = it.groupId?.let(groups::get),
+              modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+              onItemClick = component::onAlarmClick,
+              onToggleOnOff = component::onToggleAlarmOnOff,
+            )
+          }
 
-        floatingActionButtonSpacerItem()
+          floatingActionButtonSpacerItem()
+        }
       }
     }
   }

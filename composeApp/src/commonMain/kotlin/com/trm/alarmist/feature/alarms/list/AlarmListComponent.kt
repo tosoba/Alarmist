@@ -7,7 +7,7 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 
 interface AlarmListComponent {
-  val alarms: AnyStateFlow<List<AlarmListModel>>
+  val alarms: AnyStateFlow<Pair<List<AlarmListModel>, Boolean>>
   val groups: AnyStateFlow<Map<Long, AlarmGroupModel>>
 
   fun onAlarmClick(alarm: AlarmListModel)
@@ -21,7 +21,7 @@ class DefaultAlarmListComponent(
 ) : AlarmListComponent, ComponentContext by componentContext {
   private val feature = instanceKeeper.getOrCreate(::AlarmListFeature)
 
-  override val alarms: AnyStateFlow<List<AlarmListModel>> = feature.alarms
+  override val alarms: AnyStateFlow<Pair<List<AlarmListModel>, Boolean>> = feature.alarms
   override val groups: AnyStateFlow<Map<Long, AlarmGroupModel>> = feature.groups
 
   override fun onAlarmClick(alarm: AlarmListModel) {
