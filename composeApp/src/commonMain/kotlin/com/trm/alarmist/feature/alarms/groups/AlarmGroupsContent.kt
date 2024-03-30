@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GroupAdd
+import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -51,7 +51,7 @@ fun AlarmGroupsContent(
   Crossfade(state.groups.isEmpty(), modifier = modifier) { groupsEmpty ->
     if (groupsEmpty) {
       EmptyPlaceholder(
-        imageVector = Icons.Default.GroupAdd,
+        imageVector = Icons.Default.CreateNewFolder,
         primaryText = "No alarm groups created",
         secondaryText = "Create one using the button in bottom right.",
         modifier = Modifier.fillMaxSize()
