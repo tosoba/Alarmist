@@ -54,6 +54,8 @@ kotlin {
       implementation(libs.kotlinx.datetime)
       implementation(libs.kotlinx.serialization.json)
 
+      implementation(libs.material3.windowSizeClass)
+
       implementation(libs.napier)
 
       implementation(libs.sqldelight.coroutines.extensions)
