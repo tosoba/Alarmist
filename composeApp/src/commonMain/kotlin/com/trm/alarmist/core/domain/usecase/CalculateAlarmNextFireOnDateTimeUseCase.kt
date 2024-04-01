@@ -31,7 +31,7 @@ fun calculateAlarmNextFireOnDateTime(
 
   if (scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()) {
     return when {
-      fireAtTime < afterDateTime.time -> afterDateTime.date.plus(1, DateTimeUnit.DAY)
+      fireAtTime <= afterDateTime.time -> afterDateTime.date.plus(1, DateTimeUnit.DAY)
       else -> afterDateTime.date
     }.atTime(fireAtTime)
   }
