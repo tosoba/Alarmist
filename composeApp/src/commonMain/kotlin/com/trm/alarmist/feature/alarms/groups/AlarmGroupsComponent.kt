@@ -3,7 +3,7 @@ package com.trm.alarmist.feature.alarms.groups
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
-import com.trm.alarmist.core.common.util.AnyStateFlow
+import com.trm.alarmist.core.common.model.AnyStateFlow
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 

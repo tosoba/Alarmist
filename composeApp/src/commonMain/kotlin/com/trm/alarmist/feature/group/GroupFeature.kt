@@ -4,8 +4,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
-import com.trm.alarmist.core.common.util.AnyStateFlow
-import com.trm.alarmist.core.common.util.wrapToAny
+import com.trm.alarmist.core.common.model.AnyStateFlow
+import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsUseCase

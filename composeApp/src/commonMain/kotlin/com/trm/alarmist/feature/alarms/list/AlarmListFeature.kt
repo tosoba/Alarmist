@@ -1,8 +1,9 @@
 package com.trm.alarmist.feature.alarms.list
 
 import com.trm.alarmist.core.common.CoroutineFeature
-import com.trm.alarmist.core.common.util.AnyStateFlow
-import com.trm.alarmist.core.common.util.wrapToAny
+import com.trm.alarmist.core.common.model.AnyStateFlow
+import com.trm.alarmist.core.common.model.Initializable
+import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -18,14 +19,14 @@ class AlarmListFeature : CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
   private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
 
-  val alarms: AnyStateFlow<Pair<List<AlarmListModel>, Boolean>> =
+  val alarms: AnyStateFlow<Initializable<List<AlarmListModel>>> =
     repository
       .getAllAlarmsListFlow()
-      .map { it to false }
+      .map { Initializable(data = it, initialized = true) }
       .stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5_000L),
-        initialValue = emptyList<AlarmListModel>() to true
+        initialValue = Initializable(emptyList())
       )
       .wrapToAny()
 

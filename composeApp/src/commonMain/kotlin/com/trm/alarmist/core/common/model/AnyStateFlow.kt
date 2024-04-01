@@ -1,4 +1,4 @@
-package com.trm.alarmist.core.common.util
+package com.trm.alarmist.core.common.model
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

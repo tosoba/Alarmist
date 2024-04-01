@@ -26,8 +26,8 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
   val alarms by component.alarms.collectAsState()
   val groups by component.groups.collectAsState()
 
-  AnimatedVisibility(!alarms.second, enter = fadeIn(), exit = fadeOut(), modifier = modifier) {
-    Crossfade(targetState = alarms.first.isEmpty()) { alarmsEmpty ->
+  AnimatedVisibility(alarms.initialized, enter = fadeIn(), exit = fadeOut(), modifier = modifier) {
+    Crossfade(targetState = alarms.data.isEmpty()) { alarmsEmpty ->
       if (alarmsEmpty) {
         EmptyPlaceholder(
           imageVector = Icons.Default.AlarmAdd,
@@ -40,7 +40,7 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
           modifier = Modifier.fillMaxSize(),
           contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         ) {
-          items(alarms.first) {
+          items(alarms.data) {
             AlarmListItem(
               item = it,
               group = it.groupId?.let(groups::get),

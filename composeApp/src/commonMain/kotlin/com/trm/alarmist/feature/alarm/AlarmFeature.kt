@@ -2,8 +2,8 @@ package com.trm.alarmist.feature.alarm
 
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
-import com.trm.alarmist.core.common.util.AnyStateFlow
-import com.trm.alarmist.core.common.util.wrapToAny
+import com.trm.alarmist.core.common.model.AnyStateFlow
+import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
