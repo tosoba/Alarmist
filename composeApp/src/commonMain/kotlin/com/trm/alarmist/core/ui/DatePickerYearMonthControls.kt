@@ -1,5 +1,8 @@
 package com.trm.alarmist.core.ui
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.next_month
+import alarmist.composeapp.generated.resources.previous_month
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -18,7 +21,10 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import epicarchitect.calendar.compose.pager.state.EpicCalendarPagerState
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DatePickerYearMonthControls(pagerState: EpicCalendarPagerState, modifier: Modifier = Modifier) {
   val scope = rememberCoroutineScope()
@@ -35,14 +41,20 @@ fun DatePickerYearMonthControls(pagerState: EpicCalendarPagerState, modifier: Mo
       enabled = pagerState.currentMonth > pagerState.monthRange.start,
       onClick = { scope.launch { pagerState.scrollMonths(-1) } },
     ) {
-      Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous month")
+      Icon(
+        Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+        contentDescription = stringResource(Res.string.previous_month),
+      )
     }
 
     IconButton(
       enabled = pagerState.currentMonth < pagerState.monthRange.endInclusive,
       onClick = { scope.launch { pagerState.scrollMonths(1) } },
     ) {
-      Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next month")
+      Icon(
+        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+        contentDescription = stringResource(Res.string.next_month),
+      )
     }
   }
 }

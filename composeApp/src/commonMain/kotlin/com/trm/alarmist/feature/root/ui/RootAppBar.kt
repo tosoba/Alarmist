@@ -1,6 +1,10 @@
 package com.trm.alarmist.feature.root.ui
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.back
+import alarmist.composeapp.generated.resources.menu
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -12,8 +16,10 @@ import androidx.compose.runtime.Composable
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.root.RootComponent
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenuClick: () -> Unit) {
   CenterAlignedTopAppBar(
@@ -65,10 +71,16 @@ fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenu
           is RootComponent.Child.Clock,
           is RootComponent.Child.Timer,
           is RootComponent.Child.Stopwatch -> {
-            Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
+            Icon(
+              imageVector = Icons.Default.Menu,
+              contentDescription = stringResource(Res.string.menu),
+            )
           }
           else -> {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            Icon(
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = stringResource(Res.string.back),
+            )
           }
         }
       }

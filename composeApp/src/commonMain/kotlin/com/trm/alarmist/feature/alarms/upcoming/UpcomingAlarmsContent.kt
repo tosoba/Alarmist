@@ -1,5 +1,10 @@
 package com.trm.alarmist.feature.alarms.upcoming
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.collapse_calendar
+import alarmist.composeapp.generated.resources.create_alarm_using_button
+import alarmist.composeapp.generated.resources.expand_calendar
+import alarmist.composeapp.generated.resources.no_upcoming_alarms
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -72,8 +77,10 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
 @Composable
 fun UpcomingAlarmsContent(
   modifier: Modifier = Modifier,
@@ -111,15 +118,15 @@ fun UpcomingAlarmsContent(
           Icon(
             modifier = Modifier.size(100.dp),
             imageVector = Icons.Default.EditCalendar,
-            contentDescription = "No upcoming alarms",
+            contentDescription = stringResource(Res.string.no_upcoming_alarms),
           )
           Text(
-            text = "No upcoming alarms",
+            text = stringResource(Res.string.no_upcoming_alarms),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
           )
           Text(
-            text = "Create one using the button in bottom right.",
+            text = stringResource(Res.string.create_alarm_using_button),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
           )
@@ -157,7 +164,7 @@ private fun rememberMonthlyCalendarState(
     selectedDates = listOfNotNull(initialState.selectedDate),
   )
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
 @Composable
 private fun WeeklyMonthlyCalendar(
   initialState: UpcomingAlarmsCalendarState,
@@ -268,7 +275,7 @@ private fun WeeklyMonthlyCalendar(
             modifier = Modifier.fillMaxWidth(),
             onClick = { calendarMode = CalendarMode.MONTHLY },
           ) {
-            Text("Expand calendar")
+            Text(stringResource(Res.string.expand_calendar))
           }
         }
         CalendarMode.MONTHLY -> {
@@ -319,7 +326,7 @@ private fun WeeklyMonthlyCalendar(
             modifier = Modifier.fillMaxWidth(),
             onClick = { calendarMode = CalendarMode.WEEKLY },
           ) {
-            Text("Collapse calendar")
+            Text(stringResource(Res.string.collapse_calendar))
           }
         }
       }

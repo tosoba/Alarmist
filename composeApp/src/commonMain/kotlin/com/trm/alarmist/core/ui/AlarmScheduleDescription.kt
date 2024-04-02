@@ -1,5 +1,7 @@
 package com.trm.alarmist.core.ui
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.one_time
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,7 +17,10 @@ import com.trm.alarmist.core.ui.theme.onOffContainer
 import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
 import epicarchitect.calendar.compose.basis.firstDayOfWeek
 import kotlinx.datetime.DayOfWeek
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = Modifier) {
   val textColor = MaterialTheme.colorScheme.onOffContainer(item.isOn)
@@ -61,6 +66,6 @@ fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = Modifier
       }
     }
   } else {
-    Text("One time", overflow = TextOverflow.Ellipsis, color = textColor)
+    Text(stringResource(Res.string.one_time), overflow = TextOverflow.Ellipsis, color = textColor)
   }
 }

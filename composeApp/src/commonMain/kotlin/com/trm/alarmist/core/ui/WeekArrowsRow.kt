@@ -1,5 +1,8 @@
 package com.trm.alarmist.core.ui
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.next_week
+import alarmist.composeapp.generated.resources.previous_week
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -18,7 +21,10 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun WeekArrowsRow(
   rowDates: List<LocalDate>,
@@ -63,11 +69,17 @@ fun WeekArrowsRow(
     Spacer(Modifier.weight(1f))
 
     IconButton(enabled = prevWeekEnabled, onClick = onPrevWeekClick) {
-      Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous week")
+      Icon(
+        Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+        contentDescription = stringResource(Res.string.previous_week),
+      )
     }
 
     IconButton(enabled = nextWeekEnabled, onClick = onNextWeekClick) {
-      Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next week")
+      Icon(
+        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+        contentDescription = stringResource(Res.string.next_week),
+      )
     }
   }
 }

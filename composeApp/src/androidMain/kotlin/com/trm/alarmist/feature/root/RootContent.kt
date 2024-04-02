@@ -1,5 +1,11 @@
 package com.trm.alarmist.feature.root
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.alarms
+import alarmist.composeapp.generated.resources.app_name
+import alarmist.composeapp.generated.resources.clock
+import alarmist.composeapp.generated.resources.stopwatch
+import alarmist.composeapp.generated.resources.timer
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,11 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.LockClock
 import androidx.compose.material.icons.filled.MoreTime
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Timer3
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +44,10 @@ import com.trm.alarmist.feature.root.ui.RootAppBar
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   val childStack by component.childStack.subscribeAsState()
@@ -64,20 +71,25 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       ModalDrawerSheet {
         Text(
           modifier = Modifier.fillMaxWidth().padding(28.dp),
-          text = "Alarmist",
+          text = stringResource(Res.string.app_name),
           style = MaterialTheme.typography.titleSmall,
         )
 
         NavigationDrawerItem(
           modifier = Modifier.padding(horizontal = 12.dp),
-          icon = { Icon(imageVector = Icons.Default.Alarm, contentDescription = "Alarms") },
+          icon = {
+            Icon(
+              imageVector = Icons.Default.Alarm,
+              contentDescription = stringResource(Res.string.alarms),
+            )
+          },
           label = {
             Text(
-              text = "Alarms",
+              text = stringResource(Res.string.alarms),
               style = MaterialTheme.typography.labelLarge,
               fontWeight =
                 if (childStack.isItemSelected<RootComponent.Child.Alarms>()) FontWeight.Medium
-                else FontWeight.Normal
+                else FontWeight.Normal,
             )
           },
           selected = childStack.isItemSelected<RootComponent.Child.Alarms>(),
@@ -88,14 +100,19 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         )
         NavigationDrawerItem(
           modifier = Modifier.padding(horizontal = 12.dp),
-          icon = { Icon(imageVector = Icons.Default.MoreTime, contentDescription = "Clock") },
+          icon = {
+            Icon(
+              imageVector = Icons.Default.MoreTime,
+              contentDescription = stringResource(Res.string.clock),
+            )
+          },
           label = {
             Text(
-              text = "Clock",
+              text = stringResource(Res.string.clock),
               style = MaterialTheme.typography.labelLarge,
               fontWeight =
                 if (childStack.isItemSelected<RootComponent.Child.Clock>()) FontWeight.Medium
-                else FontWeight.Normal
+                else FontWeight.Normal,
             )
           },
           selected = childStack.isItemSelected<RootComponent.Child.Clock>(),
@@ -106,14 +123,19 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         )
         NavigationDrawerItem(
           modifier = Modifier.padding(horizontal = 12.dp),
-          icon = { Icon(imageVector = Icons.Default.Timer, contentDescription = "Timer") },
+          icon = {
+            Icon(
+              imageVector = Icons.Default.Timer,
+              contentDescription = stringResource(Res.string.timer),
+            )
+          },
           label = {
             Text(
-              text = "Timer",
+              text = stringResource(Res.string.timer),
               style = MaterialTheme.typography.labelLarge,
               fontWeight =
                 if (childStack.isItemSelected<RootComponent.Child.Timer>()) FontWeight.Medium
-                else FontWeight.Normal
+                else FontWeight.Normal,
             )
           },
           selected = childStack.isItemSelected<RootComponent.Child.Timer>(),
@@ -124,14 +146,19 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         )
         NavigationDrawerItem(
           modifier = Modifier.padding(horizontal = 12.dp),
-          icon = { Icon(imageVector = Icons.Default.Timelapse, contentDescription = "Stopwatch") },
+          icon = {
+            Icon(
+              imageVector = Icons.Default.Timelapse,
+              contentDescription = stringResource(Res.string.stopwatch),
+            )
+          },
           label = {
             Text(
-              text = "Stopwatch",
+              text = stringResource(Res.string.stopwatch),
               style = MaterialTheme.typography.labelLarge,
               fontWeight =
                 if (childStack.isItemSelected<RootComponent.Child.Stopwatch>()) FontWeight.Medium
-                else FontWeight.Normal
+                else FontWeight.Normal,
             )
           },
           selected = childStack.isItemSelected<RootComponent.Child.Stopwatch>(),

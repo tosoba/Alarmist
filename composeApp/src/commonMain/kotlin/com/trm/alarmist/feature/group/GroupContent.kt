@@ -1,5 +1,8 @@
 package com.trm.alarmist.feature.group
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.confirm
+import alarmist.composeapp.generated.resources.name
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -55,7 +58,10 @@ import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.core.ui.keyboardAsState
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun GroupContent(
   modifier: Modifier = Modifier,
@@ -139,7 +145,7 @@ fun GroupContent(
           modifier = Modifier.fillMaxWidth(),
           value = state.name,
           onValueChange = onNameChange,
-          label = { Text("Name") },
+          label = { Text(stringResource(Res.string.name)) },
           singleLine = true,
         )
       }
@@ -184,7 +190,10 @@ fun GroupContent(
       modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
       onClick = onConfirmClick,
     ) {
-      Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
+      Icon(
+        imageVector = Icons.Default.Check,
+        contentDescription = stringResource(Res.string.confirm),
+      )
     }
   }
 }

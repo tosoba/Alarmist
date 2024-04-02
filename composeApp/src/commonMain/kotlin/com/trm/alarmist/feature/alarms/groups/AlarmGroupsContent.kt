@@ -1,5 +1,9 @@
 package com.trm.alarmist.feature.alarms.groups
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.create_alarm_using_button
+import alarmist.composeapp.generated.resources.edit_group
+import alarmist.composeapp.generated.resources.no_alarm_groups_created
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -36,7 +40,10 @@ import com.trm.alarmist.core.ui.EmptyPlaceholder
 import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AlarmGroupsContent(
   modifier: Modifier = Modifier,
@@ -52,9 +59,9 @@ fun AlarmGroupsContent(
     if (groupsEmpty) {
       EmptyPlaceholder(
         imageVector = Icons.Default.CreateNewFolder,
-        primaryText = "No alarm groups created",
-        secondaryText = "Create one using the button in bottom right.",
-        modifier = Modifier.fillMaxSize()
+        primaryText = stringResource(Res.string.no_alarm_groups_created),
+        secondaryText = stringResource(Res.string.create_alarm_using_button),
+        modifier = Modifier.fillMaxSize(),
       )
     } else {
       LazyColumn(
@@ -69,7 +76,7 @@ fun AlarmGroupsContent(
               if (isExpanded) {
                 ShapeDefaults.Medium.copy(
                   bottomStart = CornerSize(0.dp),
-                  bottomEnd = CornerSize(0.dp)
+                  bottomEnd = CornerSize(0.dp),
                 )
               } else {
                 ShapeDefaults.Medium
@@ -99,7 +106,7 @@ fun AlarmGroupsContent(
                   ) {
                     Switch(
                       checked = group.isOn,
-                      onCheckedChange = { _ -> onToggleGroupOnOff(group) }
+                      onCheckedChange = { _ -> onToggleGroupOnOff(group) },
                     )
                     Spacer(Modifier.weight(1f))
                     ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
@@ -126,7 +133,7 @@ fun AlarmGroupsContent(
                     ) {
                       ShapeDefaults.Medium.copy(
                         topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp)
+                        topEnd = CornerSize(0.dp),
                       )
                     } else {
                       RectangleShape
@@ -163,7 +170,7 @@ fun AlarmGroupsContent(
                     onClick = remember { { onEditGroupClick(group) } },
                     modifier = Modifier.fillMaxWidth().align(Alignment.Center),
                   ) {
-                    Text("Edit group")
+                    Text(stringResource(Res.string.edit_group))
                   }
                 }
               }

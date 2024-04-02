@@ -1,5 +1,8 @@
 package com.trm.alarmist.feature.alarms.list
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.create_alarm_using_button
+import alarmist.composeapp.generated.resources.no_alarms_created
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
@@ -20,7 +23,10 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.EmptyPlaceholder
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponent) {
   val alarms by component.alarms.collectAsState()
@@ -31,9 +37,9 @@ fun AlarmListContent(modifier: Modifier = Modifier, component: AlarmListComponen
       if (alarmsEmpty) {
         EmptyPlaceholder(
           imageVector = Icons.Default.AlarmAdd,
-          primaryText = "No alarms created",
-          secondaryText = "Create one using the button in bottom right.",
-          modifier = Modifier.fillMaxSize()
+          primaryText = stringResource(Res.string.no_alarms_created),
+          secondaryText = stringResource(Res.string.create_alarm_using_button),
+          modifier = Modifier.fillMaxSize(),
         )
       } else {
         LazyColumn(

@@ -1,5 +1,7 @@
 package com.trm.alarmist.feature.alarms
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.add
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +26,14 @@ import com.trm.alarmist.feature.alarms.groups.AlarmGroupsContent
 import com.trm.alarmist.feature.alarms.list.AlarmListContent
 import com.trm.alarmist.feature.alarms.ui.AlarmsNavigationBar
 import com.trm.alarmist.feature.alarms.upcoming.UpcomingAlarmsContent
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalDecomposeApi::class, ExperimentalFoundationApi::class)
+@OptIn(
+  ExperimentalDecomposeApi::class,
+  ExperimentalFoundationApi::class,
+  ExperimentalResourceApi::class,
+)
 @Composable
 fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
   val pagesState = component.pages.subscribeAsState()
@@ -75,7 +83,7 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
         modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
         onClick = component::onAddClick,
       ) {
-        Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+        Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(Res.string.add))
       }
     }
 

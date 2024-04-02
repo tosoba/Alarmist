@@ -1,7 +1,24 @@
 package com.trm.alarmist.feature.alarm
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.calendar
+import alarmist.composeapp.generated.resources.cancel
+import alarmist.composeapp.generated.resources.confirm
+import alarmist.composeapp.generated.resources.delete
+import alarmist.composeapp.generated.resources.delete_all_weekdays
+import alarmist.composeapp.generated.resources.fire_at_time
 import alarmist.composeapp.generated.resources.name
+import alarmist.composeapp.generated.resources.notification_permission_rationale
+import alarmist.composeapp.generated.resources.notification_permission_settings
+import alarmist.composeapp.generated.resources.off
+import alarmist.composeapp.generated.resources.ok
+import alarmist.composeapp.generated.resources.on
+import alarmist.composeapp.generated.resources.permission_required
+import alarmist.composeapp.generated.resources.schedule_alarm
+import alarmist.composeapp.generated.resources.scheduled
+import alarmist.composeapp.generated.resources.scheduled_on
+import alarmist.composeapp.generated.resources.time_dial
+import alarmist.composeapp.generated.resources.time_input
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
@@ -130,7 +147,7 @@ fun AlarmContent(
       ) {
         Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
           Text(
-            text = "Fire at time:",
+            text = stringResource(Res.string.fire_at_time),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
@@ -166,8 +183,18 @@ fun AlarmContent(
           ) {
             Crossfade(timePickerMode) {
               when (it) {
-                TimePickerMode.DIAL -> Icon(Icons.Outlined.Keyboard, "Time input")
-                TimePickerMode.INPUT -> Icon(Icons.Outlined.Timer, "Time dial")
+                TimePickerMode.DIAL -> {
+                  Icon(
+                    imageVector = Icons.Outlined.Keyboard,
+                    contentDescription = stringResource(Res.string.time_input),
+                  )
+                }
+                TimePickerMode.INPUT -> {
+                  Icon(
+                    imageVector = Icons.Outlined.Timer,
+                    contentDescription = stringResource(Res.string.time_dial),
+                  )
+                }
               }
             }
           }
@@ -183,7 +210,7 @@ fun AlarmContent(
         Column {
           Text(
             modifier = Modifier.padding(16.dp),
-            text = "Scheduled on:",
+            text = stringResource(Res.string.scheduled_on),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
@@ -207,7 +234,7 @@ fun AlarmContent(
             verticalAlignment = Alignment.CenterVertically,
           ) {
             Text(
-              "Calendar",
+              stringResource(Res.string.calendar),
               style = MaterialTheme.typography.bodyLarge,
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
@@ -263,9 +290,9 @@ fun AlarmContent(
       visible = permissionDialogVisible,
       text =
         if (shouldShowRationale) {
-          "A permission to post notifications is required to create an alarm. Permission dialog will appear again after clicking OK."
+          stringResource(Res.string.notification_permission_rationale)
         } else {
-          "A permission to post notifications which you have denied is required to create an alarm. Use application settings to grant that permission."
+          stringResource(Res.string.notification_permission_settings)
         },
       onDismiss = { permissionDialogVisible = false },
       onOkClick = {
@@ -280,12 +307,15 @@ fun AlarmContent(
       modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
       onClick = permissionsHandler,
     ) {
-      Icon(imageVector = Icons.Default.Check, contentDescription = "Confirm")
+      Icon(
+        imageVector = Icons.Default.Check,
+        contentDescription = stringResource(Res.string.confirm),
+      )
     }
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
 @Composable
 private fun ColumnScope.ExpandableCalendar(
   calendarModifier: Modifier = Modifier,
@@ -410,7 +440,12 @@ private fun ColumnScope.ExpandableCalendar(
                   modifier = Modifier.fillMaxWidth(),
                   onClick = { onDeleteOnAllDaysWeekClick(selectedDate.dayOfWeek) },
                 ) {
-                  Text("Delete on all ${selectedDate.dayOfWeek.name.lowercase()}s")
+                  Text(
+                    stringResource(
+                      Res.string.delete_all_weekdays,
+                      selectedDate.dayOfWeek.name.lowercase(),
+                    )
+                  )
                 }
               }
               selectedDate in scheduledOnDates -> {
@@ -419,7 +454,7 @@ private fun ColumnScope.ExpandableCalendar(
                   modifier = Modifier.fillMaxWidth(),
                   onClick = { onDeleteOnDateClick(selectedDate) },
                 ) {
-                  Text("Delete")
+                  Text(stringResource(Res.string.delete))
                 }
               }
               else -> {
@@ -427,7 +462,7 @@ private fun ColumnScope.ExpandableCalendar(
                   modifier = Modifier.fillMaxWidth(),
                   onClick = { onScheduleOnDateClick(selectedDate) },
                 ) {
-                  Text("Schedule alarm")
+                  Text(stringResource(Res.string.schedule_alarm))
                 }
               }
             }
@@ -437,6 +472,7 @@ private fun ColumnScope.ExpandableCalendar(
   }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun CalendarDateAlarmOnOffSwitch(
   modifier: Modifier = Modifier,
@@ -444,9 +480,9 @@ private fun CalendarDateAlarmOnOffSwitch(
   onCheckedChange: (Boolean) -> Unit = {},
 ) {
   Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-    Text(modifier = Modifier.padding(end = 8.dp), text = "Scheduled")
+    Text(modifier = Modifier.padding(end = 8.dp), text = stringResource(Res.string.scheduled))
     Spacer(modifier = Modifier.weight(1f))
-    Text(if (isOn) "On" else "Off")
+    Text(if (isOn) stringResource(Res.string.on) else stringResource(Res.string.off))
     Switch(
       modifier = Modifier.padding(start = 8.dp),
       checked = isOn,
@@ -494,6 +530,7 @@ private fun DaysOfWeekRow(
   }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun PostNotificationPermissionInfoDialog(
   modifier: Modifier = Modifier,
@@ -506,9 +543,15 @@ private fun PostNotificationPermissionInfoDialog(
     AlertDialog(
       modifier = modifier,
       onDismissRequest = onDismiss,
-      confirmButton = { TextButton(onClick = onOkClick) { Text(text = "OK") } },
-      dismissButton = { TextButton(onClick = onDismiss) { Text(text = "Cancel") } },
-      title = { Text(text = "Permission required", textAlign = TextAlign.Center) },
+      confirmButton = {
+        TextButton(onClick = onOkClick) { Text(text = stringResource(Res.string.ok)) }
+      },
+      dismissButton = {
+        TextButton(onClick = onDismiss) { Text(text = stringResource(Res.string.cancel)) }
+      },
+      title = {
+        Text(text = stringResource(Res.string.permission_required), textAlign = TextAlign.Center)
+      },
       text = { Text(text = text) },
     )
   }
