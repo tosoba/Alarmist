@@ -12,6 +12,7 @@ import kotlinx.datetime.LocalTime
 
 interface AlarmRepository {
   suspend fun addAlarm(
+    groupId: Long?,
     fireAtTime: LocalTime,
     name: String?,
     isOn: Boolean,

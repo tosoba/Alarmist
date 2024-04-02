@@ -130,6 +130,7 @@ fun AlarmContent(
   onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
   onDeleteOnDateClick: (LocalDate) -> Unit = {},
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
+  onGroupClick: (AlarmGroupModel) -> Unit = {},
   onConfirmClick: () -> Unit = {},
 ) {
   Box(modifier = modifier) {
@@ -308,7 +309,12 @@ fun AlarmContent(
               group = group,
               modifier = Modifier.fillMaxWidth().clip(shape).clickable {},
               shape = shape,
-              trailing = { Checkbox(checked = false, onCheckedChange = {}) },
+              trailing = {
+                Checkbox(
+                  checked = state.groupId == group.id,
+                  onCheckedChange = { onGroupClick(group) },
+                )
+              },
             )
           }
         }

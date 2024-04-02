@@ -38,6 +38,7 @@ class AlarmLocalRepository(
   private val dispatcher: CoroutineDispatcher,
 ) : AlarmRepository {
   override suspend fun addAlarm(
+    groupId: Long?,
     fireAtTime: LocalTime,
     name: String?,
     isOn: Boolean,
@@ -49,7 +50,7 @@ class AlarmLocalRepository(
       queries.transactionWithResult {
         queries.insertAlarm(
           id = null,
-          groupId = null,
+          groupId = groupId,
           fireAtTime = fireAtTime,
           name = name,
           isOn = if (isOn) 1L else 0L,

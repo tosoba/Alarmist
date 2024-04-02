@@ -40,7 +40,11 @@ class AlarmFeature(
   val groups: AnyStateFlow<List<AlarmGroupModel>> =
     repository
       .getAllAlarmGroupsFlow()
-      .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
+      .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        initialValue = emptyList(),
+      )
       .wrapToAny()
 
   init {
@@ -58,8 +62,9 @@ class AlarmFeature(
         when (mode) {
           AlarmComponent.Mode.Add -> {
             addAlarmUseCase(
-              fireAtTime = fireAtTime,
+              groupId = groupId,
               name = name,
+              fireAtTime = fireAtTime,
               isOn = true,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
@@ -69,7 +74,7 @@ class AlarmFeature(
           is AlarmComponent.Mode.Edit -> {
             editAlarmUseCase(
               id = mode.alarm.id,
-              groupId = mode.alarm.groupId,
+              groupId = groupId,
               fireAtTime = fireAtTime,
               name = name,
               isOn = true,
@@ -131,6 +136,10 @@ class AlarmFeature(
 
   fun onScheduleOnDateClick(date: LocalDate) {
     _state.update { it.copy(scheduledOnDates = it.scheduledOnDates + date) }
+  }
+
+  fun onGroupClick(group: AlarmGroupModel) {
+    _state.update { it.copy(groupId = group.id) }
   }
 
   fun saveState(): SerializableContainer =

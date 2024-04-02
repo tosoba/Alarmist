@@ -198,6 +198,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onDeleteOnAllDaysWeekClick = child.component.feature::onDeleteOnAllDaysWeekClick,
               onDeleteOnDateClick = child.component.feature::onDeleteOnDateClick,
               onScheduleOnDateClick = child.component.feature::onScheduleOnDateClick,
+              onGroupClick = child.component.feature::onGroupClick,
               onConfirmClick = child.component::onConfirmClick,
             )
           }
