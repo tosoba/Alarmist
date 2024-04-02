@@ -26,5 +26,5 @@ val domainModule = module {
   factory { GetAndResetMissedAlarmsOnBootUseCase(get()) }
   factory { GetAlarmsScheduledOnDateUseCase(get()) }
   factory { GetScheduledAlarmCountsForDateRangeUseCase(get()) }
-  factory { ToggleUpcomingAlarmOnOffOnDateUseCase(get(), get()) }
+  factory { ToggleUpcomingAlarmOnOffOnDateUseCase(get(), get(), get()) }
 }

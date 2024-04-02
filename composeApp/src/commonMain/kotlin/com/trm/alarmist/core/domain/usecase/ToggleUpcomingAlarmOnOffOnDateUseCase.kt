@@ -5,15 +5,14 @@ import com.trm.alarmist.core.system.AlarmScheduler
 import kotlinx.datetime.LocalDate
 
 class ToggleUpcomingAlarmOnOffOnDateUseCase(
+  private val updateAlarmScheduleUseCase: UpdateAlarmScheduleUseCase,
   private val repository: AlarmRepository,
   private val scheduler: AlarmScheduler,
 ) {
   suspend operator fun invoke(id: Long, date: LocalDate) {
     val toggledAlarm = repository.toggleAlarmOnOffOnDate(id, date)
     if (toggledAlarm.scheduledOnDaysOfWeek.isEmpty() && toggledAlarm.scheduledOnDates.isEmpty()) {
-      calculateAlarmNextFireOnDateTime(toggledAlarm)?.let {
-        scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
-      } ?: run { scheduler.cancelAlarm(id) }
+      updateAlarmScheduleUseCase(toggledAlarm)
     } else {
       calculateAlarmNextFireOnDateTime(toggledAlarm)
         ?.takeIf { it.date == date }
@@ -24,8 +23,8 @@ class ToggleUpcomingAlarmOnOffOnDateUseCase(
             scheduler.cancelAlarm(id)
           }
         }
-      // scheduler.cancelAlarm(id) is not called here since a scheduled alarm might be scheduled on an
-      // earlier date
+      // scheduler.cancelAlarm(id) is only called for a scheduled alarm if date matches
+      // since a scheduled alarm might already be scheduled on an earlier date
     }
   }
 }
