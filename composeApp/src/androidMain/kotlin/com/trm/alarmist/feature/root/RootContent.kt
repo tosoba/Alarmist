@@ -185,9 +185,11 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         when (val child = it.instance) {
           is RootComponent.Child.Alarm -> {
             val state by child.component.feature.state.collectAsState()
+            val groups by child.component.feature.groups.collectAsState()
             AlarmContent(
               modifier = Modifier.fillMaxSize(),
               state = state,
+              groups = groups,
               onNameChange = child.component.feature::onNameChange,
               onFireAtChange = child.component.feature::onFireAtChange,
               onDayOfWeekClick = child.component.feature::onDayOfWeekClick,

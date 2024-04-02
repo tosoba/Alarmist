@@ -7,6 +7,7 @@ import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.delete
 import alarmist.composeapp.generated.resources.delete_all_weekdays
 import alarmist.composeapp.generated.resources.fire_at_time
+import alarmist.composeapp.generated.resources.groups
 import alarmist.composeapp.generated.resources.name
 import alarmist.composeapp.generated.resources.notification_permission_rationale
 import alarmist.composeapp.generated.resources.notification_permission_settings
@@ -17,6 +18,7 @@ import alarmist.composeapp.generated.resources.permission_required
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.scheduled
 import alarmist.composeapp.generated.resources.scheduled_on
+import alarmist.composeapp.generated.resources.settings
 import alarmist.composeapp.generated.resources.time_dial
 import alarmist.composeapp.generated.resources.time_input
 import androidx.compose.animation.AnimatedVisibility
@@ -45,6 +47,7 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -53,6 +56,7 @@ import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -60,6 +64,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -79,6 +84,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -87,6 +93,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
+import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.ExpandableIcon
@@ -114,6 +122,7 @@ import org.jetbrains.compose.resources.stringResource
 fun AlarmContent(
   modifier: Modifier = Modifier,
   state: AlarmState = AlarmState(),
+  groups: List<AlarmGroupModel> = emptyList(),
   onNameChange: (String) -> Unit = {},
   onFireAtChange: (LocalTime) -> Unit = {},
   onDayOfWeekClick: (DayOfWeek) -> Unit = {},
@@ -214,8 +223,6 @@ fun AlarmContent(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
-          // TODO: add some extra description about when exactly alarm is going to fire that
-          // will change as user tweaks scheduled on settings
 
           DaysOfWeekRow(
             modifier =
@@ -258,16 +265,52 @@ fun AlarmContent(
 
       OutlinedCard(
         modifier =
-          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
       ) {
         Column(modifier = Modifier.padding(16.dp)) {
           Text(
-            "Settings:",
+            text = stringResource(Res.string.settings),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
-          // TODO: sound/volume/vibrate options/snooze duration/delete button in edit mode
-          // (marked in red) + maybe group choice?
+        }
+      }
+
+      OutlinedCard(
+        modifier =
+          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+      ) {
+        Column {
+          Text(
+            text = stringResource(Res.string.groups),
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+
+          groups.forEachIndexed { index, group ->
+            val shape =
+              when (index) {
+                0 -> {
+                  ShapeDefaults.Medium.copy(
+                    bottomStart = CornerSize(0.dp),
+                    bottomEnd = CornerSize(0.dp),
+                  )
+                }
+                groups.lastIndex -> {
+                  ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
+                }
+                else -> {
+                  RectangleShape
+                }
+              }
+            AlarmGroupHeaderCard(
+              group = group,
+              modifier = Modifier.fillMaxWidth().clip(shape).clickable {},
+              shape = shape,
+              trailing = { Checkbox(checked = false, onCheckedChange = {}) },
+            )
+          }
         }
       }
 

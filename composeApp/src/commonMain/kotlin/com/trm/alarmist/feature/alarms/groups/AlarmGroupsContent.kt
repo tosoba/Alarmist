@@ -37,7 +37,7 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.EmptyPlaceholder
-import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
+import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -81,7 +81,7 @@ fun AlarmGroupsContent(
               } else {
                 ShapeDefaults.Medium
               }
-            ExpandableAlarmGroupHeaderCard(
+            AlarmGroupHeaderCard(
               group = group,
               modifier =
                 Modifier.fillMaxWidth()
@@ -96,7 +96,6 @@ fun AlarmGroupsContent(
                       onEditGroupClick(group)
                     }
                   },
-              isExpanded = isExpanded,
               shape = shape,
               trailing = {
                 if (group.alarmsCount > 0L) {

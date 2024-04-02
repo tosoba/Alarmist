@@ -33,8 +33,9 @@
     <string name="create_alarm_using_button">Create one using the button in bottom right.</string>
     <string name="no_alarm_groups_created">No alarm groups created</string>
     <string name="no_alarms_created">No alarms created</string>
-    <string name="fire_at_time">Fire at time:</string>
-    <string name="scheduled_on">Scheduled on:</string>
+    <string name="fire_at_time">Fire at time</string>
+    <string name="scheduled_on">Scheduled on</string>
+    <string name="settings">Settings</string>
     <string name="calendar">Calendar</string>
     <string name="time_input">Time input</string>
     <string name="time_dial">Time dial</string>

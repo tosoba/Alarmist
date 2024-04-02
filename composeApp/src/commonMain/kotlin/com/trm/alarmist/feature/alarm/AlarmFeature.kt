@@ -5,10 +5,13 @@ import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.model.AnyStateFlow
 import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
@@ -33,6 +36,12 @@ class AlarmFeature(
       }
     )
   val state: AnyStateFlow<AlarmState> = _state.wrapToAny()
+
+  val groups: AnyStateFlow<List<AlarmGroupModel>> =
+    repository
+      .getAllAlarmGroupsFlow()
+      .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
+      .wrapToAny()
 
   init {
     val savedState = savedStateContainer?.consume(strategy = AlarmState.serializer())

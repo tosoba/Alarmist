@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,21 +30,11 @@ import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
 
 @Composable
-fun ExpandableAlarmGroupHeaderCard(
+fun AlarmGroupHeaderCard(
   group: AlarmGroupModel,
   modifier: Modifier = Modifier,
-  isExpanded: Boolean = false,
-  shape: Shape =
-    if (isExpanded) {
-      ShapeDefaults.Medium.copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp))
-    } else {
-      ShapeDefaults.Medium
-    },
-  trailing: @Composable () -> Unit = {
-    Box(modifier = Modifier.padding(end = 16.dp)) {
-      ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
-    }
-  },
+  shape: Shape = ShapeDefaults.Medium,
+  trailing: @Composable () -> Unit = {},
 ) {
   Card(modifier = modifier, shape = shape, colors = CardDefaults.onOffCardColors(group.isOn)) {
     Row(

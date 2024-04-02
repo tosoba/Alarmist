@@ -52,8 +52,9 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.AlarmFireAtTime
 import com.trm.alarmist.core.ui.AlarmFireOnDateTimeCountdown
+import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.AlarmScheduleDescription
-import com.trm.alarmist.core.ui.ExpandableAlarmGroupHeaderCard
+import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.core.ui.keyboardAsState
 import com.trm.alarmist.core.ui.theme.onOffCardColors
@@ -90,10 +91,9 @@ fun GroupContent(
 
       val isExpanded = groupsExpandedState[group.id] == true
       item {
-        ExpandableAlarmGroupHeaderCard(
+        AlarmGroupHeaderCard(
           group = group,
           modifier = modifier.clickable(onClick = { toggleGroupExpanded(group.id) }),
-          isExpanded = isExpanded,
           shape =
             if (isExpanded) {
               ShapeDefaults.Medium.copy(
@@ -103,6 +103,11 @@ fun GroupContent(
             } else {
               ShapeDefaults.Medium
             },
+          trailing = {
+            Box(modifier = Modifier.padding(end = 16.dp)) {
+              ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
+            }
+          },
         )
       }
 
