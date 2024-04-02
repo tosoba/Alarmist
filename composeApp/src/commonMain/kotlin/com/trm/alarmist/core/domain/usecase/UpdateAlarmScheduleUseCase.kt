@@ -30,18 +30,15 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
     offOnDates: Collection<LocalDate>,
     afterDateTime: LocalDateTime = LocalDateTime.now(),
   ) {
-    if (isOn) {
-      calculateAlarmNextFireOnDateTime(
-          fireAtTime = fireAtTime,
-          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
-          scheduledOnDates = scheduledOnDates,
-          offOnDates = offOnDates,
-          afterDateTime = afterDateTime,
-        )
-        ?.let { scheduler.scheduleAlarm(id = id, fireOnDateTime = it) }
-        ?: run { scheduler.cancelAlarm(id) }
-    } else {
-      scheduler.cancelAlarm(id)
-    }
+    calculateAlarmNextFireOnDateTime(
+        fireAtTime = fireAtTime,
+        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+        scheduledOnDates = scheduledOnDates,
+        offOnDates = offOnDates,
+        isOn = isOn,
+        afterDateTime = afterDateTime,
+      )
+      ?.let { scheduler.scheduleAlarm(id = id, fireOnDateTime = it) }
+      ?: run { scheduler.cancelAlarm(id) }
   }
 }
