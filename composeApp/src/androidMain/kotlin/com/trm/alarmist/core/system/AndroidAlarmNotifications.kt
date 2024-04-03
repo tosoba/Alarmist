@@ -27,11 +27,11 @@ fun Context.notifyAlarmFired(
   getSystemService(NotificationManager::class.java)
     .notify(
       id.toInt(),
-      NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
+      NotificationCompat.Builder(this, ALARM_FIRED_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle("Alarm was fired")
         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-        .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setPriority(NotificationCompat.PRIORITY_MAX)
         .addDismissAction(this, id, fireOnDateTime)
         .build()
         .apply { flags or Notification.FLAG_INSISTENT },
@@ -45,7 +45,7 @@ fun Context.notifyAlarmUpcoming(
   getSystemService(NotificationManager::class.java)
     .notify(
       id.toInt(),
-      NotificationCompat.Builder(this, ALARM_NOTIFICATION_CHANNEL_ID)
+      NotificationCompat.Builder(this, ALARM_UPCOMING_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle("Alarm is upcoming")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -76,16 +76,35 @@ fun Context.cancelNotification(id: Int) {
   getSystemService(NotificationManager::class.java).cancel(id)
 }
 
-fun Application.createAlarmNotificationChannel() {
+fun Application.createAlarmNotificationChannels() {
+  createAlarmUpcomingNotificationChannel()
+  createAlarmFiredNotificationChannel()
+}
+
+private fun Application.createAlarmUpcomingNotificationChannel() {
   getSystemService(NotificationManager::class.java)
     .createNotificationChannel(
       NotificationChannel(
-        ALARM_NOTIFICATION_CHANNEL_ID,
-        ALARM_NOTIFICATION_CHANNEL_NAME,
-        NotificationManager.IMPORTANCE_HIGH, // TODO: IMPORTANCE_MAX?
+        ALARM_UPCOMING_NOTIFICATION_CHANNEL_ID,
+        ALARM_UPCOMING_NOTIFICATION_CHANNEL_NAME,
+        NotificationManager.IMPORTANCE_DEFAULT,
       )
     )
 }
 
-internal const val ALARM_NOTIFICATION_CHANNEL_ID = "ALARM_CHANNEL"
-internal const val ALARM_NOTIFICATION_CHANNEL_NAME = "Alarms"
+private const val ALARM_UPCOMING_NOTIFICATION_CHANNEL_ID = "ALARM_UPCOMING_CHANNEL"
+private const val ALARM_UPCOMING_NOTIFICATION_CHANNEL_NAME = "Upcoming alarms"
+
+private fun Application.createAlarmFiredNotificationChannel() {
+  getSystemService(NotificationManager::class.java)
+    .createNotificationChannel(
+      NotificationChannel(
+        ALARM_FIRED_NOTIFICATION_CHANNEL_ID,
+        ALARM_FIRED_NOTIFICATION_CHANNEL_NAME,
+        NotificationManager.IMPORTANCE_HIGH,
+      )
+    )
+}
+
+private const val ALARM_FIRED_NOTIFICATION_CHANNEL_ID = "ALARM_FIRED_CHANNEL"
+private const val ALARM_FIRED_NOTIFICATION_CHANNEL_NAME = "Fired alarms"
