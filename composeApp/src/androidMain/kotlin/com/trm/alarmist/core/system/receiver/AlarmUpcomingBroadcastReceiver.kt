@@ -12,9 +12,9 @@ import kotlinx.datetime.LocalDateTime
 
 class AlarmUpcomingBroadcastReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context?, intent: Intent?) {
-    if (intent?.action != ACTION_ALARM_UPCOMING) return
-
-    context?.notifyAlarmUpcoming(getAlarmId(intent), getAlarmFireOnDateTime(intent))
+    if (intent?.action == ACTION_ALARM_UPCOMING) {
+      context?.notifyAlarmUpcoming(getAlarmId(intent), getAlarmFireOnDateTime(intent))
+    }
   }
 
   companion object {
