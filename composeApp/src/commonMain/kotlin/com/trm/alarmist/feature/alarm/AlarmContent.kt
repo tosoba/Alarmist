@@ -11,9 +11,8 @@ import alarmist.composeapp.generated.resources.groups_label
 import alarmist.composeapp.generated.resources.name
 import alarmist.composeapp.generated.resources.notification_permission_rationale
 import alarmist.composeapp.generated.resources.notification_permission_settings
-import alarmist.composeapp.generated.resources.off
 import alarmist.composeapp.generated.resources.ok
-import alarmist.composeapp.generated.resources.on
+import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.permission_required
 import alarmist.composeapp.generated.resources.repeat_on_label
 import alarmist.composeapp.generated.resources.schedule_alarm
@@ -536,9 +535,11 @@ private fun CalendarDateAlarmOnOffSwitch(
   onCheckedChange: (Boolean) -> Unit = {},
 ) {
   Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-    Text(modifier = Modifier.padding(end = 8.dp), text = stringResource(Res.string.scheduled))
+    Text(
+      modifier = Modifier.padding(end = 8.dp),
+      text = stringResource(if (isOn) Res.string.scheduled else Res.string.paused),
+    )
     Spacer(modifier = Modifier.weight(1f))
-    Text(if (isOn) stringResource(Res.string.on) else stringResource(Res.string.off))
     Switch(
       modifier = Modifier.padding(start = 8.dp),
       checked = isOn,
