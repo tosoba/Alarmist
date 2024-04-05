@@ -167,7 +167,6 @@ fun AlarmContent(
               rememberTimePickerState(
                 initialHour = state.fireAtTime.hour,
                 initialMinute = state.fireAtTime.minute,
-                is24Hour = true,
               )
             LaunchedEffect(timePickerState.hour, timePickerState.minute) {
               onFireAtChange(LocalTime(timePickerState.hour, timePickerState.minute))

@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.common.util
 
+import androidx.compose.runtime.Composable
 import kotlin.time.Duration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -9,6 +10,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
@@ -74,4 +78,16 @@ fun LocalDate.nextDayOfWeek(dayOfWeek: DayOfWeek): LocalDate {
     current = current.plus(1, DateTimeUnit.DAY)
   }
   return current
+}
+
+@Composable
+fun LocalTime.toFormattedString(): String {
+  return format(
+    LocalTime.Format {
+      if (true) amPmHour(padding = Padding.ZERO) // TODO: expect/actual time format check
+      else hour(padding = Padding.ZERO)
+      char(':')
+      minute(padding = Padding.NONE)
+    }
+  )
 }
