@@ -279,45 +279,50 @@ fun AlarmContent(
         }
       }
 
-      OutlinedCard(
-        modifier =
-          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
-      ) {
-        Column {
-          Text(
-            text = stringResource(Res.string.groups_label),
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-          )
-
-          groups.forEachIndexed { index, group ->
-            val shape =
-              when (index) {
-                0 -> {
-                  ShapeDefaults.Medium.copy(
-                    bottomStart = CornerSize(0.dp),
-                    bottomEnd = CornerSize(0.dp),
-                  )
-                }
-                groups.lastIndex -> {
-                  ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
-                }
-                else -> {
-                  RectangleShape
-                }
-              }
-            AlarmGroupHeaderCard(
-              group = group,
-              modifier = Modifier.fillMaxWidth().clip(shape).clickable {},
-              shape = shape,
-              trailing = {
-                Checkbox(
-                  checked = state.groupId == group.id,
-                  onCheckedChange = { onGroupClick(group) },
-                )
-              },
+      if (groups.isNotEmpty()) {
+        OutlinedCard(
+          modifier =
+            Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+        ) {
+          Column {
+            Text(
+              text = stringResource(Res.string.groups_label),
+              modifier = Modifier.padding(16.dp),
+              style = MaterialTheme.typography.bodyLarge,
+              color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
+
+            groups.forEachIndexed { index, group ->
+              val shape =
+                when (index) {
+                  0 -> {
+                    ShapeDefaults.Medium.copy(
+                      bottomStart = CornerSize(0.dp),
+                      bottomEnd = CornerSize(0.dp),
+                    )
+                  }
+                  groups.lastIndex -> {
+                    ShapeDefaults.Medium.copy(
+                      topStart = CornerSize(0.dp),
+                      topEnd = CornerSize(0.dp),
+                    )
+                  }
+                  else -> {
+                    RectangleShape
+                  }
+                }
+              AlarmGroupHeaderCard(
+                group = group,
+                modifier = Modifier.fillMaxWidth().clip(shape).clickable {},
+                shape = shape,
+                trailing = {
+                  Checkbox(
+                    checked = state.groupId == group.id,
+                    onCheckedChange = { onGroupClick(group) },
+                  )
+                },
+              )
+            }
           }
         }
       }
