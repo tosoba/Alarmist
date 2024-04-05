@@ -34,10 +34,11 @@
     <string name="create_alarm_using_button">Create one using the button in bottom right.</string>
     <string name="no_alarm_groups_created">No alarm groups created</string>
     <string name="no_alarms_created">No alarms created</string>
-    <string name="fire_at_time">Fire at time</string>
-    <string name="scheduled_on">Scheduled on</string>
-    <string name="settings">Settings</string>
-    <string name="calendar">Calendar</string>
+    <string name="fire_at_time_label">Fire at time:</string>
+    <string name="repeat_on_label">Repeat on:</string>
+    <string name="settings_label">Settings:</string>
+    <string name="custom_schedule_label">Custom schedule:</string>
+    <string name="groups_label">Groups:</string>
     <string name="time_input">Time input</string>
     <string name="time_dial">Time dial</string>
     <string name="notification_permission_rationale">A permission to post notifications is required to create an alarm. Permission dialog will appear again after clicking OK.</string>

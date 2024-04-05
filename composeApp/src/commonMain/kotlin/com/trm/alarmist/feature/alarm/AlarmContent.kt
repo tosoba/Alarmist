@@ -1,13 +1,13 @@
 package com.trm.alarmist.feature.alarm
 
 import alarmist.composeapp.generated.resources.Res
-import alarmist.composeapp.generated.resources.calendar
 import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
+import alarmist.composeapp.generated.resources.custom_schedule_label
 import alarmist.composeapp.generated.resources.delete
 import alarmist.composeapp.generated.resources.delete_all_weekdays
-import alarmist.composeapp.generated.resources.fire_at_time
-import alarmist.composeapp.generated.resources.groups
+import alarmist.composeapp.generated.resources.fire_at_time_label
+import alarmist.composeapp.generated.resources.groups_label
 import alarmist.composeapp.generated.resources.name
 import alarmist.composeapp.generated.resources.notification_permission_rationale
 import alarmist.composeapp.generated.resources.notification_permission_settings
@@ -15,10 +15,10 @@ import alarmist.composeapp.generated.resources.off
 import alarmist.composeapp.generated.resources.ok
 import alarmist.composeapp.generated.resources.on
 import alarmist.composeapp.generated.resources.permission_required
+import alarmist.composeapp.generated.resources.repeat_on_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.scheduled
-import alarmist.composeapp.generated.resources.scheduled_on
-import alarmist.composeapp.generated.resources.settings
+import alarmist.composeapp.generated.resources.settings_label
 import alarmist.composeapp.generated.resources.time_dial
 import alarmist.composeapp.generated.resources.time_input
 import androidx.compose.animation.AnimatedVisibility
@@ -39,7 +39,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -157,7 +156,7 @@ fun AlarmContent(
       ) {
         Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
           Text(
-            text = stringResource(Res.string.fire_at_time),
+            text = stringResource(Res.string.fire_at_time_label),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
@@ -220,7 +219,7 @@ fun AlarmContent(
         Column {
           Text(
             modifier = Modifier.padding(16.dp),
-            text = stringResource(Res.string.scheduled_on),
+            text = stringResource(Res.string.repeat_on_label),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
@@ -232,27 +231,30 @@ fun AlarmContent(
             onDayOfWeekClick = onDayOfWeekClick,
           )
 
-          var isCalendarExpanded by remember { mutableStateOf(false) }
+          var isCustomScheduleExpanded by remember { mutableStateOf(false) }
           Row(
             modifier =
               Modifier.fillMaxWidth()
-                .clickable { isCalendarExpanded = !isCalendarExpanded }
+                .clickable { isCustomScheduleExpanded = !isCustomScheduleExpanded }
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
           ) {
             Text(
-              stringResource(Res.string.calendar),
+              text = stringResource(Res.string.custom_schedule_label),
               style = MaterialTheme.typography.bodyLarge,
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
             Spacer(Modifier.width(16.dp))
-            ExpandableIcon(isExpanded = isCalendarExpanded, transitionLabel = "ExpandableCalendar")
+            ExpandableIcon(
+              isExpanded = isCustomScheduleExpanded,
+              transitionLabel = "ExpandableCustomSchedule",
+            )
           }
           ExpandableCalendar(
             calendarModifier = Modifier.fillMaxWidth(),
             fireAtTime = state.fireAtTime,
-            isExpanded = isCalendarExpanded,
+            isExpanded = isCustomScheduleExpanded,
             scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
             scheduledOnDates = state.scheduledOnDates,
             offOnDates = state.offOnDates,
@@ -270,7 +272,7 @@ fun AlarmContent(
       ) {
         Column(modifier = Modifier.padding(16.dp)) {
           Text(
-            text = stringResource(Res.string.settings),
+            text = stringResource(Res.string.settings_label),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
@@ -283,7 +285,7 @@ fun AlarmContent(
       ) {
         Column {
           Text(
-            text = stringResource(Res.string.groups),
+            text = stringResource(Res.string.groups_label),
             modifier = Modifier.padding(16.dp),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
