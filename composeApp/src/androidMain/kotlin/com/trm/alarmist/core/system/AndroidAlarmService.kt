@@ -17,6 +17,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
+import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnNotificationUseCase
@@ -69,7 +70,28 @@ class AndroidAlarmService : Service(), KoinComponent {
         .setCategory(NotificationCompat.CATEGORY_ALARM)
         .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
         .setOngoing(true)
-        // TODO: setFullScreenIntent(pendingIntent, true) for AlarmActivity
+        .setFullScreenIntent(
+          PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MainActivity::class.java) // TODO: replace with AlarmActivity
+              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+          ),
+          true,
+        )
+        .setDeleteIntent(
+          PendingIntent.getBroadcast(
+            this,
+            100,
+            Intent(
+                ACTION_FIRED_ALARM
+              ) // TODO: likely should use snooze action here (instead of dismiss)
+              .putExtra(EXTRA_ALARM_ID, alarmId)
+              .putExtra(EXTRA_FIRE_ON_DATE_TIME, getAlarmFireOnDateTime(intent).toString()),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+          )
+        )
         .addAction(
           R.drawable.ic_launcher_foreground,
           runBlocking { org.jetbrains.compose.resources.getString(Res.string.dismiss) },
