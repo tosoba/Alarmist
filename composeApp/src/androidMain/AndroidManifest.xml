@@ -7,6 +7,8 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
 
     <application
         android:name=".AlarmistApp"
@@ -43,6 +45,11 @@
                 <action android:name="android.intent.action.REBOOT" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".core.system.AndroidAlarmService"
+            android:exported="false"
+            android:foregroundServiceType="systemExempted" />
 
     </application>
 

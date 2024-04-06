@@ -3,19 +3,25 @@ package com.trm.alarmist.core.system.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.content.ContextCompat
+import com.trm.alarmist.core.system.AndroidAlarmService
 import com.trm.alarmist.core.system.EXTRA_ALARM_ID
 import com.trm.alarmist.core.system.EXTRA_FIRE_ON_DATE_TIME
 import com.trm.alarmist.core.system.getAlarmFireOnDateTime
 import com.trm.alarmist.core.system.getAlarmId
-import com.trm.alarmist.core.system.notifyAlarmFired
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 
 class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
-  override fun onReceive(context: Context?, intent: Intent?) {
+  override fun onReceive(context: Context, intent: Intent?) {
     if (intent?.action == ACTION_ALARM_FIRED) {
-      context?.notifyAlarmFired(getAlarmId(intent), getAlarmFireOnDateTime(intent))
+      ContextCompat.startForegroundService(
+        context,
+        Intent(context, AndroidAlarmService::class.java)
+          .putExtra(EXTRA_ALARM_ID, getAlarmId(intent))
+          .putExtra(EXTRA_FIRE_ON_DATE_TIME, getAlarmFireOnDateTime(intent).toString()),
+      )
     }
   }
 
