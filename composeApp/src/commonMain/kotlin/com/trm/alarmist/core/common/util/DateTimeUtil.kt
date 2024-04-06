@@ -80,14 +80,22 @@ fun LocalDate.nextDayOfWeek(dayOfWeek: DayOfWeek): LocalDate {
   return current
 }
 
+@Composable expect fun is24HoursFormat(): Boolean
+
 @Composable
 fun LocalTime.toFormattedString(): String {
+  val is24HoursFormat = is24HoursFormat()
   return format(
     LocalTime.Format {
-      if (true) amPmHour(padding = Padding.ZERO) // TODO: expect/actual time format check
-      else hour(padding = Padding.ZERO)
+      if (!is24HoursFormat) amPmHour(padding = Padding.ZERO) else hour(padding = Padding.ZERO)
       char(':')
-      minute(padding = Padding.NONE)
+      minute(padding = Padding.ZERO)
     }
   )
+}
+
+@Composable
+fun LocalTime.amPmString(): String {
+  val is24HoursFormat = is24HoursFormat()
+  return format(LocalTime.Format { if (!is24HoursFormat) amPmMarker("AM", "PM") })
 }

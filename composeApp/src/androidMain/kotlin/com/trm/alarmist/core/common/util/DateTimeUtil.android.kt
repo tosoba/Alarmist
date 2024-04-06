@@ -1,0 +1,7 @@
+package com.trm.alarmist.core.common.util
+
+import android.text.format.DateFormat
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+
+@Composable actual fun is24HoursFormat(): Boolean = DateFormat.is24HourFormat(LocalContext.current)
