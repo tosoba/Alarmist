@@ -9,11 +9,10 @@ import android.app.PendingIntent
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.trm.alarmist.R
+import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.system.receiver.AlarmDismissedBroadcastReceiver
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.getString
 
 @OptIn(ExperimentalResourceApi::class)
 fun Context.notifyAlarmUpcoming(
@@ -29,7 +28,7 @@ fun Context.notifyAlarmUpcoming(
         .setSilent(true)
         .addAction(
           R.drawable.ic_launcher_foreground,
-          runBlocking { getString(Res.string.dismiss) },
+          getStringBlocking(Res.string.dismiss),
           PendingIntent.getBroadcast(
             this,
             id.toInt(),
