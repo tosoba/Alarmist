@@ -124,11 +124,9 @@ class AndroidAlarmService : Service(), KoinComponent {
 
     mediaPlayer =
       MediaPlayer().apply {
-        setOnErrorListener { mp, _, _ ->
-          Napier.e("Error occurred while playing audio.")
-          mp.stop()
-          mp.release()
-          mediaPlayer = null
+        setOnErrorListener { player, what, extra ->
+          Napier.e("Error occurred while playing audio - $what : $extra")
+          player.stopAndRelease()
           true
         }
 
@@ -151,11 +149,7 @@ class AndroidAlarmService : Service(), KoinComponent {
   }
 
   private fun stopPlaying() {
-    mediaPlayer?.apply {
-      stop()
-      release()
-      mediaPlayer = null
-    }
+    mediaPlayer?.stopAndRelease()
 
     // TODO: cancel vibration
   }
@@ -167,6 +161,12 @@ class AndroidAlarmService : Service(), KoinComponent {
   }
 
   override fun onBind(intent: Intent?): IBinder? = null
+
+  private fun MediaPlayer.stopAndRelease() {
+    stop()
+    release()
+    mediaPlayer = null
+  }
 
   companion object {
     private const val ACTION_FIRED_ALARM = "ACTION_FIRED_ALARM"
