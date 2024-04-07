@@ -31,7 +31,6 @@ class AndroidAlarmService : Service(), KoinComponent {
   private val updateAlarmOnNotificationUseCase: UpdateAlarmOnNotificationUseCase by inject()
 
   private var mediaPlayer: MediaPlayer? = null
-  private var notificationId: Int = 0
 
   private val firedAlarmActionReceiver: BroadcastReceiver =
     object : BroadcastReceiver() {
@@ -112,7 +111,6 @@ class AndroidAlarmService : Service(), KoinComponent {
         0
       },
     )
-    notificationId = alarmId.toInt()
 
     startPlaying()
 
@@ -160,14 +158,12 @@ class AndroidAlarmService : Service(), KoinComponent {
     }
 
     // TODO: cancel vibration
-    cancelNotification(notificationId)
   }
 
   override fun onDestroy() {
+    super.onDestroy()
     stopPlaying()
     unregisterReceiver(firedAlarmActionReceiver)
-    ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-    super.onDestroy()
   }
 
   override fun onBind(intent: Intent?): IBinder? = null
