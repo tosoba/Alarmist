@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreateNewFolder
@@ -35,9 +35,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.EmptyPlaceholder
-import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -87,12 +87,10 @@ fun AlarmGroupsContent(
                 Modifier.fillMaxWidth()
                   .padding(top = if (groupIndex > 0) 16.dp else 0.dp)
                   .clip(shape)
-                  .clickable(
-                    enabled = group.alarmsCount > 0L || group.id != AlarmGroupModel.UNGROUPED_ID
-                  ) {
+                  .clickable {
                     if (group.alarmsCount > 0L) {
                       if (isExpanded) onCollapseGroup() else onExpandGroup(group)
-                    } else if (group.id != AlarmGroupModel.UNGROUPED_ID) {
+                    } else {
                       onEditGroupClick(group)
                     }
                   },
@@ -116,27 +114,12 @@ fun AlarmGroupsContent(
           }
 
           if (isExpanded && state.expandedGroupAlarms.isNotEmpty()) {
-            itemsIndexed(
-              items = state.expandedGroupAlarms,
-              key = { _, alarm -> "alarm-${alarm.id}" },
-            ) { index, alarm ->
+            items(state.expandedGroupAlarms, key = { alarm -> "alarm-${alarm.id}" }) { alarm ->
               Box(modifier = Modifier.fillMaxWidth()) {
                 AlarmListItem(
                   item = alarm,
                   modifier = Modifier.fillMaxWidth(),
-                  shape =
-                    if (
-                      group.id == AlarmGroupModel.UNGROUPED_ID &&
-                        isExpanded &&
-                        index == state.expandedGroupAlarms.lastIndex
-                    ) {
-                      ShapeDefaults.Medium.copy(
-                        topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp),
-                      )
-                    } else {
-                      RectangleShape
-                    },
+                  shape = RectangleShape,
                   onItemClick = onAlarmItemClick,
                   onToggleOnOff = remember { { onToggleAlarmOnOff(alarm) } },
                 )
@@ -149,7 +132,7 @@ fun AlarmGroupsContent(
             }
           }
 
-          if (group.id != AlarmGroupModel.UNGROUPED_ID && isExpanded && group.alarmsCount > 0L) {
+          if (isExpanded && group.alarmsCount > 0L) {
             item {
               Card(
                 modifier = Modifier.fillMaxWidth(),

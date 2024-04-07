@@ -147,14 +147,6 @@ CASE
     ELSE 0
 END AS isOn
 FROM alarmGroup
-UNION
-SELECT -1 AS id, 'Ungrouped' AS name, 0 AS color,
-COALESCE((SELECT COUNT(*) FROM alarm WHERE alarm.groupId IS NULL), 0) AS alarmsCount,
-CASE
-    WHEN EXISTS (SELECT 1 FROM alarm WHERE alarm.groupId IS NULL AND alarm.isOn = 1) THEN 1
-    ELSE 0
-END AS isOn
-FROM alarmGroup
 ORDER BY id;
 
 updateAlarmsOnOffByGroupId:

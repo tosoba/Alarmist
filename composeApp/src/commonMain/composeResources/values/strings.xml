@@ -4,6 +4,7 @@
     <string name="cancel">Cancel</string>
     <string name="dismiss">Dismiss</string>
     <string name="snooze">Snooze</string>
+    <string name="ungrouped">Ungrouped</string>
     <string name="scheduled">Scheduled</string>
     <string name="paused">Paused</string>
     <string name="permission_required">Permission required</string>
