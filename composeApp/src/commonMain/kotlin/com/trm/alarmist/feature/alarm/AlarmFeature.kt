@@ -138,6 +138,10 @@ class AlarmFeature(
     _state.update { it.copy(scheduledOnDates = it.scheduledOnDates + date) }
   }
 
+  fun onSnoozeDurationChange(alarmSnoozeDuration: AlarmSnoozeDuration) {
+    _state.update { it.copy(snoozeDuration = alarmSnoozeDuration) }
+  }
+
   fun onGroupClick(group: AlarmGroupModel) {
     _state.update { it.copy(groupId = group.id) }
   }

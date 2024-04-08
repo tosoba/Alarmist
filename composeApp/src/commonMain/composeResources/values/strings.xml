@@ -37,7 +37,7 @@
     <string name="no_alarms_created">No alarms created</string>
     <string name="fire_at_time_label">Fire at time:</string>
     <string name="repeat_on_label">Repeat on:</string>
-    <string name="settings_label">Settings:</string>
+    <string name="snooze_duration_label">Snooze duration (minutes):</string>
     <string name="custom_schedule_label">Custom schedule:</string>
     <string name="groups_label">Groups:</string>
     <string name="time_input">Time input</string>

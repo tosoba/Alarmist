@@ -199,6 +199,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onDeleteOnDateClick = child.component.feature::onDeleteOnDateClick,
               onScheduleOnDateClick = child.component.feature::onScheduleOnDateClick,
               onGroupClick = child.component.feature::onGroupClick,
+              onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
               onConfirmClick = child.component::onConfirmClick,
             )
           }

@@ -17,7 +17,7 @@ import alarmist.composeapp.generated.resources.permission_required
 import alarmist.composeapp.generated.resources.repeat_on_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.scheduled
-import alarmist.composeapp.generated.resources.settings_label
+import alarmist.composeapp.generated.resources.snooze_duration_label
 import alarmist.composeapp.generated.resources.time_dial
 import alarmist.composeapp.generated.resources.time_input
 import androidx.compose.animation.AnimatedVisibility
@@ -30,6 +30,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,6 +64,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -89,6 +92,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
@@ -128,6 +132,7 @@ fun AlarmContent(
   onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
   onDeleteOnDateClick: (LocalDate) -> Unit = {},
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
+  onSnoozeDurationChange: (AlarmSnoozeDuration) -> Unit = {},
   onGroupClick: (AlarmGroupModel) -> Unit = {},
   onConfirmClick: () -> Unit = {},
 ) {
@@ -270,9 +275,35 @@ fun AlarmContent(
       ) {
         Column(modifier = Modifier.padding(16.dp)) {
           Text(
-            text = stringResource(Res.string.settings_label),
+            text = stringResource(Res.string.snooze_duration_label),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+
+          val snoozeDurationValues = remember { AlarmSnoozeDuration.entries.toTypedArray() }
+          val snoozeSliderInteractionSource = remember(::MutableInteractionSource)
+          Slider(
+            value = state.snoozeDuration.ordinal.toFloat(),
+            valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
+            onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
+            steps = snoozeDurationValues.size - 2,
+            thumb = {
+              Box {
+                SliderDefaults.Thumb(
+                  interactionSource = snoozeSliderInteractionSource,
+                  colors = SliderDefaults.colors(),
+                  enabled = true,
+                  modifier = Modifier.align(Alignment.Center),
+                )
+                Text(
+                  text = state.snoozeDuration.minutes.toString(),
+                  fontSize = 12.sp,
+                  color = MaterialTheme.colorScheme.onPrimary,
+                  modifier = Modifier.align(Alignment.Center),
+                )
+              }
+            },
+            modifier = Modifier.fillMaxWidth(),
           )
         }
       }
