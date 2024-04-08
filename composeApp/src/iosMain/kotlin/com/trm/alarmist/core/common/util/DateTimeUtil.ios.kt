@@ -1,9 +1,10 @@
 package com.trm.alarmist.core.common.util
 
 import androidx.compose.runtime.Composable
+import platform.Foundation.NSDateFormatter
+import platform.Foundation.NSLocale
+import platform.Foundation.currentLocale
 
 @Composable
-actual fun is24HoursFormat(): Boolean {
-  // TODO: https://stackoverflow.com/questions/12214398/detect-iphone-24-hour-time-setting
-  return true
-}
+actual fun is24HoursFormat(): Boolean =
+  NSDateFormatter.dateFormatFromTemplate("j", 0u, NSLocale.currentLocale)?.contains("a") == true
