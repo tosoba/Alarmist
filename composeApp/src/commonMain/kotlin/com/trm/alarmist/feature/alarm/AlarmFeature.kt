@@ -69,6 +69,7 @@ class AlarmFeature(
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
+              snoozeDurationMinutes = snoozeDuration.minutes,
             )
           }
           is AlarmComponent.Mode.Edit -> {
@@ -81,6 +82,7 @@ class AlarmFeature(
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
+              snoozeDurationMinutes = snoozeDuration.minutes,
             )
           }
         }

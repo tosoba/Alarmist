@@ -18,6 +18,7 @@ fun alarmModel(
   offOnDates: List<LocalDate> = emptyList(),
   lastModificationDateTime: LocalDateTime = LocalDateTime.now(),
   lastNotificationDate: LocalDate? = null,
+  snoozeDurationMinutes: Long = 0L,
 ): AlarmModel =
   AlarmModel(
     id = id,
@@ -30,4 +31,5 @@ fun alarmModel(
     offOnDates = offOnDates,
     lastModificationDateTime = lastModificationDateTime,
     lastNotificationDate = lastNotificationDate,
+    snoozeDurationMinutes = snoozeDurationMinutes,
   )

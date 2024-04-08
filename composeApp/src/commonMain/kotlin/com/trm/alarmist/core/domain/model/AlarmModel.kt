@@ -18,4 +18,5 @@ data class AlarmModel(
   val offOnDates: List<LocalDate>,
   val lastModificationDateTime: LocalDateTime,
   val lastNotificationDate: LocalDate?,
+  val snoozeDurationMinutes: Long,
 )

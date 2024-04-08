@@ -31,7 +31,7 @@ data class AlarmState(
     scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek.toSet(),
     scheduledOnDates = alarm.scheduledOnDates.toSet(),
     offOnDates = alarm.offOnDates.toSet(),
-    // TODO: snoozeDuration from alarm
+    snoozeDuration = AlarmSnoozeDuration.fromMinutes(alarm.snoozeDurationMinutes),
   )
 
   constructor(

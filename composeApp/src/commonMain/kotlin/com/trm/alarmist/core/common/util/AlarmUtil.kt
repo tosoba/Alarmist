@@ -65,6 +65,7 @@ fun Alarm.toModel(): AlarmModel =
     offOnDates = offOnDates.orEmpty(),
     lastModificationDateTime = lastModificationDateTime,
     lastNotificationDate = lastNotificationDate,
+    snoozeDurationMinutes = snoozeDurationMinutes,
   )
 
 fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =

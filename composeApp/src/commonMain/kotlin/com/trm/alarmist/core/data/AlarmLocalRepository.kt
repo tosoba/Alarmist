@@ -45,6 +45,7 @@ class AlarmLocalRepository(
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
+    snoozeDurationMinutes: Long,
   ): Long =
     withContext(dispatcher) {
       queries.transactionWithResult {
@@ -60,6 +61,8 @@ class AlarmLocalRepository(
           offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
           lastModificationDateTime = LocalDateTime.now(),
           lastNotificationDate = null,
+          snoozeDurationMinutes = snoozeDurationMinutes,
+          snoozeMultiplier = 0,
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
@@ -74,6 +77,7 @@ class AlarmLocalRepository(
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
+    snoozeDurationMinutes: Long,
   ) {
     withContext(dispatcher) {
       queries.updateAlarmById(
@@ -87,6 +91,7 @@ class AlarmLocalRepository(
         scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
         offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
         lastModificationDateTime = LocalDateTime.now(),
+        snoozeDurationMinutes = snoozeDurationMinutes,
       )
     }
   }

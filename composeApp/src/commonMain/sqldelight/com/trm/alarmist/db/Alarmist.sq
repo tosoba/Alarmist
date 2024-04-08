@@ -14,7 +14,9 @@ CREATE TABLE alarm(
 	scheduledOnDates TEXT AS List<LocalDate>,
 	offOnDates TEXT AS List<LocalDate>,
     lastModificationDateTime TEXT AS LocalDateTime NOT NULL,
-	lastNotificationDate TEXT AS LocalDate
+	lastNotificationDate TEXT AS LocalDate,
+	snoozeDurationMinutes INTEGER NOT NULL DEFAULT 0,
+	snoozeMultiplier INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE alarmGroup(
@@ -24,7 +26,7 @@ CREATE TABLE alarmGroup(
 );
 
 insertAlarm:
-INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?);
+INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateAlarmById:
 UPDATE alarm
@@ -37,7 +39,9 @@ SET
     scheduledOnDates = ?,
     offOnDates = ?,
     lastModificationDateTime = ?,
-    lastNotificationDate = NULL
+    lastNotificationDate = NULL,
+    snoozeDurationMinutes = ?,
+    snoozeMultiplier = 0
 WHERE id = ?;
 
 updateAlarmLastNotificationDateById:
@@ -163,7 +167,9 @@ SET
     scheduledOnDates = NULL,
     offOnDates = NULL,
     lastModificationDateTime = ?,
-    lastNotificationDate = NULL
+    lastNotificationDate = NULL,
+    snoozeDurationMinutes = 0,
+    snoozeMultiplier = 0
 WHERE id = ?;
 
 updateResetAlarmByIds:
@@ -174,7 +180,9 @@ SET
     scheduledOnDates = NULL,
     offOnDates = NULL,
     lastModificationDateTime = ?,
-    lastNotificationDate = NULL
+    lastNotificationDate = NULL,
+    snoozeDurationMinutes = 0,
+    snoozeMultiplier = 0
 WHERE id IN :ids;
 
 selectLastInsertedRowId:
