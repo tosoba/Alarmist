@@ -16,7 +16,7 @@ CREATE TABLE alarm(
     lastModificationDateTime TEXT AS LocalDateTime NOT NULL,
 	lastNotificationDate TEXT AS LocalDate,
 	snoozeDurationMinutes INTEGER NOT NULL DEFAULT 0,
-	snoozeMultiplier INTEGER NOT NULL DEFAULT 0
+	snoozeCount INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE alarmGroup(
@@ -41,7 +41,7 @@ SET
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
     snoozeDurationMinutes = ?,
-    snoozeMultiplier = 0
+    snoozeCount = 0
 WHERE id = ?;
 
 updateAlarmLastNotificationDateById:
@@ -169,7 +169,7 @@ SET
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
     snoozeDurationMinutes = 0,
-    snoozeMultiplier = 0
+    snoozeCount = 0
 WHERE id = ?;
 
 updateResetAlarmByIds:
@@ -182,7 +182,7 @@ SET
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
     snoozeDurationMinutes = 0,
-    snoozeMultiplier = 0
+    snoozeCount = 0
 WHERE id IN :ids;
 
 selectLastInsertedRowId:

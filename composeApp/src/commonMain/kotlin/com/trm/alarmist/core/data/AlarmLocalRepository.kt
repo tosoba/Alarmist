@@ -62,7 +62,7 @@ class AlarmLocalRepository(
           lastModificationDateTime = LocalDateTime.now(),
           lastNotificationDate = null,
           snoozeDurationMinutes = snoozeDurationMinutes,
-          snoozeMultiplier = 0,
+          snoozeCount = 0,
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
