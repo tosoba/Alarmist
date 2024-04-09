@@ -9,7 +9,8 @@ import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleUpcomingAlarmOnOffOnDateUseCase
-import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnNotificationUseCase
+import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
+import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmScheduleUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateGroupOnOffUseCase
 import org.koin.dsl.module
@@ -20,7 +21,8 @@ val domainModule = module {
   factory { ToggleAlarmOnOffUseCase(get(), get()) }
   factory { UpdateGroupOnOffUseCase(get(), get()) }
   factory { UpdateAlarmScheduleUseCase(get()) }
-  factory { UpdateAlarmOnNotificationUseCase(get(), get()) }
+  factory { UpdateAlarmOnDismissUseCase(get(), get()) }
+  factory { UpdateAlarmOnSnoozeUseCase(get(), get()) }
   factory { GetGroupedAlarmsUseCase(get()) }
   factory { GetAlarmsInGroupFlowUseCase(get()) }
   factory { GetAndResetMissedAlarmsOnBootUseCase(get()) }

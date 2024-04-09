@@ -23,14 +23,16 @@ import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.getSerializable
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.common.util.launch
-import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnNotificationUseCase
+import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
+import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import io.github.aakira.napier.Napier
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class AndroidAlarmService : Service(), KoinComponent {
-  private val updateAlarmOnNotificationUseCase: UpdateAlarmOnNotificationUseCase by inject()
+  private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
+  private val updateAlarmOnSnoozeUseCase: UpdateAlarmOnSnoozeUseCase by inject()
 
   private var mediaPlayer: MediaPlayer? = null
 
@@ -46,11 +48,11 @@ class AndroidAlarmService : Service(), KoinComponent {
         ) {
           NotificationInteraction.DISMISS -> {
             launch {
-              updateAlarmOnNotificationUseCase(getAlarmId(intent), getAlarmFireOnDateTime(intent))
+              updateAlarmOnDismissUseCase(getAlarmId(intent), getAlarmFireOnDateTime(intent))
             }
           }
           NotificationInteraction.SNOOZE -> {
-            // TODO: handle snooze
+            launch { updateAlarmOnSnoozeUseCase(getAlarmId(intent)) }
           }
           null -> {
             throw IllegalArgumentException()
@@ -98,6 +100,7 @@ class AndroidAlarmService : Service(), KoinComponent {
           getStringBlocking(Res.string.dismiss),
           getAlarmBroadcastPendingIntent(intent, NotificationInteraction.DISMISS),
         )
+        // TODO: make snooze action conditional based on alarm snooze settings
         .addAction(
           R.drawable.ic_launcher_foreground,
           getStringBlocking(Res.string.snooze),

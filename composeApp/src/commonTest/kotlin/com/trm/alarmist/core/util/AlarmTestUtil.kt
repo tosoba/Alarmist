@@ -19,6 +19,7 @@ fun alarmModel(
   lastModificationDateTime: LocalDateTime = LocalDateTime.now(),
   lastNotificationDate: LocalDate? = null,
   snoozeDurationMinutes: Long = 0L,
+  snoozeCount: Long = 0L,
 ): AlarmModel =
   AlarmModel(
     id = id,
@@ -32,4 +33,5 @@ fun alarmModel(
     lastModificationDateTime = lastModificationDateTime,
     lastNotificationDate = lastNotificationDate,
     snoozeDurationMinutes = snoozeDurationMinutes,
+    snoozeCount = snoozeCount,
   )

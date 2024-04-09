@@ -51,10 +51,14 @@ updateToggleAlarmOnOffById:
 UPDATE alarm
 SET
     lastModificationDateTime = ?,
+    snoozeCount = CASE
+        WHEN isOn = 1 THEN 0
+        ELSE snoozeCount
+    END,
     isOn = CASE
         WHEN isOn = 1 THEN 0
         ELSE 1
-END
+    END
 WHERE id = ?;
 
 updateOffOnDatesById:
@@ -168,7 +172,6 @@ SET
     offOnDates = NULL,
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
-    snoozeDurationMinutes = 0,
     snoozeCount = 0
 WHERE id = ?;
 
@@ -181,9 +184,17 @@ SET
     offOnDates = NULL,
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
-    snoozeDurationMinutes = 0,
     snoozeCount = 0
 WHERE id IN :ids;
+
+updateSnoozeCountById:
+UPDATE alarm
+    SET snoozeCount = CASE
+        WHEN (snoozeCount + 1) * snoozeDurationMinutes >= 24 * 60
+        THEN 0
+        ELSE snoozeCount + 1
+        END
+    WHERE id = ?;
 
 selectLastInsertedRowId:
 SELECT last_insert_rowid();

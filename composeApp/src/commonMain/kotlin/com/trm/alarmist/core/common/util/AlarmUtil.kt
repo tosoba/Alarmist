@@ -9,6 +9,7 @@ import com.trm.alarmist.db.SelectOnAlarmSchedules
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
@@ -17,30 +18,48 @@ import kotlinx.datetime.toInstant
 const val DB_ON = 1L
 const val DB_OFF = 0L
 
-fun Alarm.toListModel(now: LocalDateTime): AlarmListModel =
-  AlarmListModel(
+fun Alarm.toListModel(now: LocalDateTime): AlarmListModel {
+  val snoozedFireAtTime =
+    snoozedFireAtTime(
+      fireAtTime = fireAtTime,
+      snoozeDurationMinutes = snoozeDurationMinutes,
+      snoozeCount = snoozeCount,
+    )
+  return AlarmListModel(
     id = id,
     groupId = groupId,
     fireAtTime = fireAtTime,
     name = name,
     isOn = isOn == DB_ON,
     fireOnDateTime =
-      calculateAlarmNextFireOnDateTime(
-        fireAtTime = fireAtTime,
-        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
-        scheduledOnDates = scheduledOnDates.orEmpty(),
-        offOnDates = offOnDates.orEmpty(),
-        isOn = isOn == DB_ON,
-        afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
-      ),
+      if (snoozedFireAtTime != null) {
+        calculateAlarmNextFireOnDateTime(
+          fireAtTime = snoozedFireAtTime,
+          scheduledOnDaysOfWeek = emptyList(),
+          scheduledOnDates = emptyList(),
+          offOnDates = emptyList(),
+          isOn = isOn == DB_ON,
+          afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
+        )
+      } else {
+        calculateAlarmNextFireOnDateTime(
+          fireAtTime = fireAtTime,
+          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
+          scheduledOnDates = scheduledOnDates.orEmpty(),
+          offOnDates = offOnDates.orEmpty(),
+          isOn = isOn == DB_ON,
+          afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
+        )
+      },
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
     scheduledOnClosestDate =
       scheduledOnDates
         ?.run { if (offOnDates.isNullOrEmpty()) this else filter { it !in offOnDates } }
         ?.minOrNull(),
     scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
-    snoozedFireAtTime = snoozedFireAtTime(now.date),
+    snoozedFireAtTime = snoozedFireAtTime,
   )
+}
 
 fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
   AlarmListModel(
@@ -54,14 +73,19 @@ fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
     scheduledOnClosestDate = scheduledOnDates?.minOrNull(),
     scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
-    snoozedFireAtTime = snoozedFireAtTime(date),
+    snoozedFireAtTime =
+      snoozedFireAtTime(
+        fireAtTime = fireAtTime,
+        snoozeDurationMinutes = snoozeDurationMinutes,
+        snoozeCount = snoozeCount,
+      ),
   )
 
-private fun Alarm.snoozedFireAtTime(date: LocalDate) =
+fun snoozedFireAtTime(fireAtTime: LocalTime, snoozeDurationMinutes: Long, snoozeCount: Long) =
   (snoozeCount * snoozeDurationMinutes)
     .takeIf { it > 0L }
     ?.let {
-      date
+      LocalDate.now()
         .atTime(fireAtTime)
         .toInstant(TimeZone.currentSystemDefault())
         .plus(it, DateTimeUnit.MINUTE)
@@ -81,6 +105,7 @@ fun Alarm.toModel(): AlarmModel =
     lastModificationDateTime = lastModificationDateTime,
     lastNotificationDate = lastNotificationDate,
     snoozeDurationMinutes = snoozeDurationMinutes,
+    snoozeCount = snoozeCount,
   )
 
 fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =

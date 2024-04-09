@@ -66,7 +66,9 @@ interface AlarmRepository {
 
   suspend fun updateUngroupedAlarmsOnOff(isOn: Boolean): List<AlarmModel>
 
-  suspend fun updateAlarmOnNotification(id: Long, notificationDateTime: LocalDateTime): AlarmModel
+  suspend fun updateAlarmOnDismiss(id: Long, notificationDateTime: LocalDateTime): AlarmModel
+
+  suspend fun updateAlarmOnSnooze(id: Long): AlarmModel
 
   suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>)
 

@@ -246,7 +246,7 @@ class AlarmLocalRepository(
   override suspend fun getAlarmById(id: Long): AlarmModel =
     withContext(dispatcher) { queries.selectAlarmById(id).executeAsOne().toModel() }
 
-  override suspend fun updateAlarmOnNotification(
+  override suspend fun updateAlarmOnDismiss(
     id: Long,
     notificationDateTime: LocalDateTime,
   ): AlarmModel =
@@ -274,6 +274,14 @@ class AlarmLocalRepository(
         } else {
           alarm
         }
+      }
+    }
+
+  override suspend fun updateAlarmOnSnooze(id: Long): AlarmModel =
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        queries.updateSnoozeCountById(id)
+        queries.selectAlarmById(id).executeAsOne().toModel()
       }
     }
 
