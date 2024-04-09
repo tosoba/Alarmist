@@ -27,10 +27,10 @@ fun AlarmFireAtTime(item: AlarmListModel, modifier: Modifier = Modifier) {
               else MaterialTheme.typography.displayMedium.fontWeight,
           )
         ) {
-          append(item.fireAtTime.toFormattedString())
+          append(item.nextFireAtTime.toFormattedString())
         }
 
-        item.fireAtTime.amPmString().takeIf(String::isNotEmpty)?.let {
+        item.nextFireAtTime.amPmString().takeIf(String::isNotEmpty)?.let {
           append(" ")
           withStyle(
             SpanStyle(

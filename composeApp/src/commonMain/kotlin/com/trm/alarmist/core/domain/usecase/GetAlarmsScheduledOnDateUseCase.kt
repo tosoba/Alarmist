@@ -41,5 +41,5 @@ class GetAlarmsScheduledOnDateUseCase(private val repository: AlarmRepository) {
   private fun concatSortedByFireAtTime(
     alarms1: List<AlarmListModel>,
     alarms2: List<AlarmListModel>,
-  ): List<AlarmListModel> = (alarms1 + alarms2).sortedBy(AlarmListModel::fireAtTime)
+  ): List<AlarmListModel> = (alarms1 + alarms2).sortedBy(AlarmListModel::nextFireAtTime)
 }

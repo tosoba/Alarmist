@@ -9,8 +9,10 @@ import com.trm.alarmist.db.SelectOnAlarmSchedules
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
 
 const val DB_ON = 1L
 const val DB_OFF = 0L
@@ -37,6 +39,7 @@ fun Alarm.toListModel(now: LocalDateTime): AlarmListModel =
         ?.run { if (offOnDates.isNullOrEmpty()) this else filter { it !in offOnDates } }
         ?.minOrNull(),
     scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
+    snoozedFireAtTime = snoozedFireAtTime(now.date),
   )
 
 fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
@@ -51,7 +54,19 @@ fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
     scheduledOnClosestDate = scheduledOnDates?.minOrNull(),
     scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
+    snoozedFireAtTime = snoozedFireAtTime(date),
   )
+
+private fun Alarm.snoozedFireAtTime(date: LocalDate) =
+  (snoozeCount * snoozeDurationMinutes)
+    .takeIf { it > 0L }
+    ?.let {
+      date
+        .atTime(fireAtTime)
+        .toInstant(TimeZone.currentSystemDefault())
+        .plus(it, DateTimeUnit.MINUTE)
+    }
+    ?.toLocalTimeDefault()
 
 fun Alarm.toModel(): AlarmModel =
   AlarmModel(
