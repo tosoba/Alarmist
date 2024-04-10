@@ -7,6 +7,7 @@ enum class AlarmSnoozeDuration(val minutes: Long) {
   MIN_5(5L),
   MIN_10(10L),
   MIN_15(15L),
+  MIN_20(20L),
   MIN_30(30L),
   H_1(60L);
 

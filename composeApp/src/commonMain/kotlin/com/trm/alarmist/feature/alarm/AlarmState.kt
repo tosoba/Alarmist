@@ -20,7 +20,7 @@ data class AlarmState(
   val scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
   val scheduledOnDates: Set<LocalDate> = emptySet(),
   val offOnDates: Set<LocalDate> = emptySet(),
-  val snoozeDuration: AlarmSnoozeDuration = AlarmSnoozeDuration.ZERO,
+  val snoozeDuration: AlarmSnoozeDuration = AlarmSnoozeDuration.MIN_10,
 ) {
   constructor(
     alarm: AlarmModel

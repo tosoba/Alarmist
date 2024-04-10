@@ -286,7 +286,6 @@ fun AlarmContent(
             value = state.snoozeDuration.ordinal.toFloat(),
             valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
             onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
-            steps = snoozeDurationValues.size - 2,
             thumb = {
               Box {
                 SliderDefaults.Thumb(
