@@ -100,7 +100,8 @@ class AndroidAlarmService : Service(), KoinComponent {
           getStringBlocking(Res.string.dismiss),
           getAlarmBroadcastPendingIntent(intent, NotificationInteraction.DISMISS),
         )
-        // TODO: make snooze action conditional based on alarm snooze settings
+        // TODO: make snooze action conditional based on alarm snooze settings:
+        // (snoozeDurationMinutes > 0L && snoozeCount < SNOOZE_LIMIT)
         .addAction(
           R.drawable.ic_launcher_foreground,
           getStringBlocking(Res.string.snooze),
@@ -116,7 +117,7 @@ class AndroidAlarmService : Service(), KoinComponent {
 
     startPlaying()
 
-    // TODO: auto snooze timer?
+    // TODO: auto snooze timer like in ClockYou
 
     return START_REDELIVER_INTENT
   }

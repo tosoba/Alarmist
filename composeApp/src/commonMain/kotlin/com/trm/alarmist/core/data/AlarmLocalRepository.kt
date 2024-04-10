@@ -63,6 +63,7 @@ class AlarmLocalRepository(
           lastNotificationDate = null,
           snoozeDurationMinutes = snoozeDurationMinutes,
           snoozeCount = 0,
+          lastSnoozedAt = null,
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
@@ -280,7 +281,7 @@ class AlarmLocalRepository(
   override suspend fun updateAlarmOnSnooze(id: Long): AlarmModel =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateSnoozeCountById(id)
+        queries.updateAlarmSnoozeById(LocalDateTime.now(), id)
         queries.selectAlarmById(id).executeAsOne().toModel()
       }
     }

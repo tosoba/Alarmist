@@ -21,7 +21,7 @@ const val DB_OFF = 0L
 fun Alarm.toListModel(now: LocalDateTime): AlarmListModel {
   val snoozedFireAtTime =
     snoozedFireAtTime(
-      fireAtTime = fireAtTime,
+      lastSnoozedAt = lastSnoozedAt ?: now,
       snoozeDurationMinutes = snoozeDurationMinutes,
       snoozeCount = snoozeCount,
     )
@@ -73,23 +73,17 @@ fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
     scheduledOnClosestDate = scheduledOnDates?.minOrNull(),
     scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
-    snoozedFireAtTime =
-      snoozedFireAtTime(
-        fireAtTime = fireAtTime,
-        snoozeDurationMinutes = snoozeDurationMinutes,
-        snoozeCount = snoozeCount,
-      ),
+    snoozedFireAtTime = null, // currently disregarding snooze info for upcoming alarms
   )
 
-fun snoozedFireAtTime(fireAtTime: LocalTime, snoozeDurationMinutes: Long, snoozeCount: Long) =
+fun snoozedFireAtTime(
+  lastSnoozedAt: LocalDateTime,
+  snoozeDurationMinutes: Long,
+  snoozeCount: Long,
+): LocalTime? =
   (snoozeCount * snoozeDurationMinutes)
     .takeIf { it > 0L }
-    ?.let {
-      LocalDate.now()
-        .atTime(fireAtTime)
-        .toInstant(TimeZone.currentSystemDefault())
-        .plus(it, DateTimeUnit.MINUTE)
-    }
+    ?.let { lastSnoozedAt.toInstant(TimeZone.currentSystemDefault()).plus(it, DateTimeUnit.MINUTE) }
     ?.toLocalTimeDefault()
 
 fun Alarm.toModel(): AlarmModel =
@@ -106,6 +100,7 @@ fun Alarm.toModel(): AlarmModel =
     lastNotificationDate = lastNotificationDate,
     snoozeDurationMinutes = snoozeDurationMinutes,
     snoozeCount = snoozeCount,
+    lastSnoozedAt = lastSnoozedAt,
   )
 
 fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =

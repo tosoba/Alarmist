@@ -23,6 +23,7 @@ actual val databaseModule = module {
           offOnDatesAdapter = DateListAdapter,
           lastModificationDateTimeAdapter = LocalDateTimeAdapter,
           lastNotificationDateAdapter = LocalDateAdapter,
+          lastSnoozedAtAdapter = LocalDateTimeAdapter,
         ),
     )
   }

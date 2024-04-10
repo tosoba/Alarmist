@@ -16,7 +16,8 @@ CREATE TABLE alarm(
     lastModificationDateTime TEXT AS LocalDateTime NOT NULL,
 	lastNotificationDate TEXT AS LocalDate,
 	snoozeDurationMinutes INTEGER NOT NULL DEFAULT 0,
-	snoozeCount INTEGER NOT NULL DEFAULT 0
+	snoozeCount INTEGER NOT NULL DEFAULT 0,
+	lastSnoozedAt TEXT AS LocalDateTime
 );
 
 CREATE TABLE alarmGroup(
@@ -26,7 +27,7 @@ CREATE TABLE alarmGroup(
 );
 
 insertAlarm:
-INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
+INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateAlarmById:
 UPDATE alarm
@@ -41,7 +42,7 @@ SET
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
     snoozeDurationMinutes = ?,
-    snoozeCount = 0
+    lastSnoozedAt = NULL
 WHERE id = ?;
 
 updateAlarmLastNotificationDateById:
@@ -51,6 +52,10 @@ updateToggleAlarmOnOffById:
 UPDATE alarm
 SET
     lastModificationDateTime = ?,
+    lastSnoozedAt = CASE
+        WHEN isOn = 1 THEN NULL
+        ELSE lastSnoozedAt
+    END,
     snoozeCount = CASE
         WHEN isOn = 1 THEN 0
         ELSE snoozeCount
@@ -172,7 +177,8 @@ SET
     offOnDates = NULL,
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
-    snoozeCount = 0
+    snoozeCount = 0,
+    lastSnoozedAt = NULL
 WHERE id = ?;
 
 updateResetAlarmByIds:
@@ -184,17 +190,14 @@ SET
     offOnDates = NULL,
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
-    snoozeCount = 0
+    snoozeCount = 0,
+    lastSnoozedAt = NULL
 WHERE id IN :ids;
 
-updateSnoozeCountById:
+updateAlarmSnoozeById:
 UPDATE alarm
-    SET snoozeCount = CASE
-        WHEN (snoozeCount + 1) * snoozeDurationMinutes >= 24 * 60
-        THEN 0
-        ELSE snoozeCount + 1
-        END
-    WHERE id = ?;
+SET snoozeCount = snoozeCount + 1, lastSnoozedAt = ?
+WHERE id = ?;
 
 selectLastInsertedRowId:
 SELECT last_insert_rowid();

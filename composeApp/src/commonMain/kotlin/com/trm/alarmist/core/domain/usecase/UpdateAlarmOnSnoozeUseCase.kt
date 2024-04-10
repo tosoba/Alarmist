@@ -10,17 +10,22 @@ class UpdateAlarmOnSnoozeUseCase(
 ) {
   suspend operator fun invoke(id: Long) {
     val alarm = repository.updateAlarmOnSnooze(id)
-    calculateAlarmNextFireOnDateTime(
-        fireAtTime =
-          snoozedFireAtTime(
-            fireAtTime = alarm.fireAtTime,
-            snoozeDurationMinutes = alarm.snoozeDurationMinutes,
-            snoozeCount = alarm.snoozeCount,
-          ) ?: alarm.fireAtTime,
-        scheduledOnDaysOfWeek = emptyList(),
-        scheduledOnDates = emptyList(),
-        offOnDates = emptyList(),
-      )
+    alarm.lastSnoozedAt
+      ?.let {
+        snoozedFireAtTime(
+          lastSnoozedAt = it,
+          snoozeDurationMinutes = alarm.snoozeDurationMinutes,
+          snoozeCount = alarm.snoozeCount,
+        )
+      }
+      ?.let {
+        calculateAlarmNextFireOnDateTime(
+          fireAtTime = it,
+          scheduledOnDaysOfWeek = emptyList(),
+          scheduledOnDates = emptyList(),
+          offOnDates = emptyList(),
+        )
+      }
       ?.let { scheduler.scheduleAlarm(id, it) }
   }
 }
