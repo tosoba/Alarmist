@@ -29,10 +29,6 @@ fun LocalDate.Companion.now(): LocalDate = LocalDateTime.now().date
 
 fun LocalTime.Companion.now(): LocalTime = LocalDateTime.now().time
 
-fun LocalTime.Companion.min(): LocalTime = LocalTime(0, 0)
-
-fun LocalTime.Companion.max(): LocalTime = LocalTime(23, 59, 59, 999999999)
-
 fun Instant.toLocalDateTimeDefault(): LocalDateTime =
   toLocalDateTime(TimeZone.currentSystemDefault())
 
