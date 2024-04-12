@@ -1,16 +1,11 @@
 package com.trm.alarmist.core.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -19,8 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
@@ -83,14 +76,7 @@ private fun AlarmLabel(
   if (item.name != null || group != null) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
       if (group != null) {
-        Box(
-          modifier =
-            Modifier.size(24.dp)
-              .background(color = Color(group.color), shape = RoundedCornerShape(8.dp))
-              .border(width = 0.5.dp, color = textColor, shape = RoundedCornerShape(8.dp))
-              .clip(RoundedCornerShape(8.dp))
-        )
-
+        AlarmGroupIcon(group.color)
         Spacer(Modifier.width(16.dp))
       }
 
