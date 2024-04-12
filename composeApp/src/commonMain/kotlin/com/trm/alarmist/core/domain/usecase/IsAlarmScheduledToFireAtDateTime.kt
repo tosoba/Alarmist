@@ -6,7 +6,7 @@ import com.trm.alarmist.core.common.util.snoozedFireAtTime
 import com.trm.alarmist.core.domain.AlarmRepository
 import kotlinx.datetime.LocalDateTime
 
-class IsAlarmScheduledToFireAt(private val repository: AlarmRepository) {
+class IsAlarmScheduledToFireAtDateTime(private val repository: AlarmRepository) {
   suspend operator fun invoke(id: Long, fireAtDateTime: LocalDateTime): Boolean {
     val alarm = repository.getAlarmById(id)
     return if (alarm.scheduledOnDaysOfWeek.isEmpty() && alarm.scheduledOnDates.isEmpty()) {
