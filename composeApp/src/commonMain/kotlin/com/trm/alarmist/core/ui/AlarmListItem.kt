@@ -71,8 +71,6 @@ private fun AlarmLabel(
   group: AlarmGroupModel?,
   modifier: Modifier = Modifier,
 ) {
-  val textColor = MaterialTheme.colorScheme.onOffContainer(item.isOn)
-
   if (item.name != null || group != null) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
       if (group != null) {
@@ -92,10 +90,8 @@ private fun AlarmLabel(
             group?.name ?: item.name.orEmpty()
           },
         style = MaterialTheme.typography.bodyLarge,
-        color = textColor,
+        color = MaterialTheme.colorScheme.onOffContainer(item.isOn),
       )
     }
-
-    Spacer(modifier = Modifier.height(8.dp))
   }
 }
