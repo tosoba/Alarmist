@@ -99,10 +99,6 @@ SELECT * FROM alarm WHERE groupId IS NULL;
 selectOnAlarms:
 SELECT * FROM alarm WHERE isOn = 1;
 
-selectOnAlarmsOnlyScheduledOnDates:
-SELECT * FROM alarm
-WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NOT NULL;
-
 updateOnAlarmsLastModificationDateTime:
 UPDATE alarm SET lastModificationDateTime = :modificationDateTime
 WHERE id IN (SELECT id FROM alarm WHERE isOn = 1);

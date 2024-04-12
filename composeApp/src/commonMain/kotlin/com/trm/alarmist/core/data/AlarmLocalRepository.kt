@@ -130,12 +130,12 @@ class AlarmLocalRepository(
           ?.let { queries.updateResetAlarmByIds(now, it) }
 
         // Reset alarms that are scheduled on past dates only
-        queries
-          .selectOnAlarmsOnlyScheduledOnDates()
-          .executeAsList()
-          .map { it.id to it.scheduledOnDates }
-          .filter { (_, scheduledOnDate) ->
-            scheduledOnDate.isNotEmpty() && scheduledOnDate.last() < now.date
+        onAlarms
+          .filter {
+            it.scheduledOnDaysOfWeek.isEmpty() &&
+              it.scheduledOnDates.isNotEmpty() &&
+              (it.scheduledOnDates.last() < now.date ||
+                (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time))
           }
           .map { (id) -> id }
           .takeIf(List<Long>::isNotEmpty)
