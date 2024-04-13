@@ -58,6 +58,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -144,6 +145,7 @@ fun AlarmContent(
       val isKeyboardOpen by keyboardAsState()
       val focusManager = LocalFocusManager.current
       LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
+
       OutlinedTextField(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         value = state.name.orEmpty(),
@@ -339,18 +341,28 @@ fun AlarmContent(
                     RectangleShape
                   }
                 }
-              AlarmGroupHeaderCard(
-                group = group,
-                modifier = Modifier.fillMaxWidth().clip(shape).clickable {},
-                shape = shape,
-                trailing = {
-                  Checkbox(
-                    checked = state.groupId == group.id,
-                    onCheckedChange = { onGroupClick(group) },
-                    modifier = Modifier.padding(end = 8.dp),
+
+              Box(modifier = Modifier.fillMaxWidth()) {
+                AlarmGroupHeaderCard(
+                  group = group,
+                  modifier = Modifier.fillMaxWidth().clip(shape).clickable { onGroupClick(group) },
+                  shape = shape,
+                  trailing = {
+                    Checkbox(
+                      checked = state.groupId == group.id,
+                      onCheckedChange = { onGroupClick(group) },
+                      modifier = Modifier.padding(end = 8.dp),
+                    )
+                  },
+                )
+
+                if (index != 0) {
+                  HorizontalDivider(
+                    modifier =
+                      Modifier.fillMaxWidth().padding(horizontal = 16.dp).align(Alignment.TopCenter)
                   )
-                },
-              )
+                }
+              }
             }
           }
         }
