@@ -1,6 +1,7 @@
 package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -11,7 +12,7 @@ class EditAlarmUseCase(
 ) {
   suspend operator fun invoke(
     id: Long,
-    groupId: Long?,
+    groupId: Long,
     fireAtTime: LocalTime,
     name: String?,
     isOn: Boolean,
@@ -22,7 +23,7 @@ class EditAlarmUseCase(
   ) {
     repository.editAlarm(
       id = id,
-      groupId = groupId,
+      groupId = groupId.takeIf { it != AlarmGroupModel.UNGROUPED_ID },
       fireAtTime = fireAtTime,
       name = name,
       isOn = isOn,
