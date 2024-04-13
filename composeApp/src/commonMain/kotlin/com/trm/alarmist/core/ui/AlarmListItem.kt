@@ -41,7 +41,7 @@ fun AlarmListItem(
     AlarmLabel(
       item = item,
       group = group,
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+      modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
     )
 
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
@@ -74,7 +74,7 @@ private fun AlarmLabel(
   if (item.name != null || group != null) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
       if (group != null) {
-        AlarmGroupIcon(group.color)
+        AlarmGroupIcon(color = group.color, size = 25.dp)
         Spacer(Modifier.width(16.dp))
       }
 

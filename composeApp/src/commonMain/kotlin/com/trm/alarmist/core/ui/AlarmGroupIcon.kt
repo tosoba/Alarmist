@@ -9,20 +9,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AlarmGroupIcon(color: Long, modifier: Modifier = Modifier) {
+fun AlarmGroupIcon(color: Long, size: Dp, modifier: Modifier = Modifier) {
   Box(modifier = modifier) {
     Icon(
       imageVector = Icons.Default.Folder,
       contentDescription = null,
-      modifier = Modifier.size(35.dp).align(Alignment.Center),
+      modifier = Modifier.size(size).align(Alignment.Center),
     )
     Icon(
       imageVector = Icons.Default.Folder,
       contentDescription = null,
-      modifier = Modifier.size(34.dp).align(Alignment.Center),
+      modifier = Modifier.size(size - 2.dp).align(Alignment.Center),
       tint = Color(color),
     )
   }
