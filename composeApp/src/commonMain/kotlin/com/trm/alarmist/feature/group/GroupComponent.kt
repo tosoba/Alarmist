@@ -44,7 +44,7 @@ class DefaultGroupComponent(
   }
 
   override fun onConfirmClick() {
-    feature.onConfirmClick().invokeOnCompletion { pop() }
+    feature.onConfirmClick()?.invokeOnCompletion { pop() }
   }
 
   companion object {

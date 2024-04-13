@@ -10,13 +10,12 @@ import kotlinx.serialization.Serializable
 data class GroupState(
   val name: String = "",
   val color: Int = Color.Transparent.toArgb(),
+  val blankNameError: Boolean = false,
   val alarms: Map<Long, List<AlarmListModel>> = emptyMap(),
   val groups: Map<Long, AlarmGroupModel> = emptyMap(),
   val selectedAlarmIds: Set<Long> = emptySet(),
 ) {
-  constructor(
-    groupModel: AlarmGroupModel
-  ) : this(name = groupModel.name, color = groupModel.color.toInt())
+  constructor(group: AlarmGroupModel) : this(name = group.name, color = group.color.toInt())
 
   fun alarmsInGroup(id: Long): List<AlarmListModel> = alarms[id].orEmpty()
 }

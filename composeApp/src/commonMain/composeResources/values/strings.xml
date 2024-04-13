@@ -44,4 +44,6 @@
     <string name="time_dial">Time dial</string>
     <string name="notification_permission_rationale">A permission to post notifications is required to create an alarm. Permission dialog will appear again after clicking OK.</string>
     <string name="notification_permission_settings">A permission to post notifications which you have denied is required to create an alarm. Use application settings to grant that permission.</string>
+    <string name="invalid_input">Invalid input</string>
+    <string name="group_name_blank_validation_error">Group name cannot be blank.</string>
 </resources>

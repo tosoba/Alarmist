@@ -41,9 +41,14 @@ class GroupFeature(
       .launchIn(coroutineScope)
   }
 
-  fun onConfirmClick(): Job =
-    coroutineScope.launch {
-      with(_state.value) {
+  fun onConfirmClick(): Job? =
+    with(_state.value) {
+      if (name.isBlank()) {
+        _state.update { it.copy(blankNameError = true) }
+        return null
+      }
+
+      coroutineScope.launch {
         when (mode) {
           GroupComponent.Mode.Add -> {
             repository.addGroup(name = name, color = color, alarmIds = selectedAlarmIds)
@@ -61,7 +66,7 @@ class GroupFeature(
     }
 
   fun onNameChange(name: String) {
-    _state.update { it.copy(name = name.ifBlank { "" }) }
+    _state.update { it.copy(name = name.ifBlank { "" }, blankNameError = name.isBlank()) }
   }
 
   fun onColorChange(color: Color) {

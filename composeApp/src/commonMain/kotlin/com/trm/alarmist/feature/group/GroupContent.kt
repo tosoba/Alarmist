@@ -2,10 +2,14 @@ package com.trm.alarmist.feature.group
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.confirm
+import alarmist.composeapp.generated.resources.group_name_blank_validation_error
+import alarmist.composeapp.generated.resources.invalid_input
 import alarmist.composeapp.generated.resources.name
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -25,10 +29,12 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +61,7 @@ import com.trm.alarmist.core.ui.AlarmFireOnDateTimeCountdown
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.AlarmScheduleDescription
 import com.trm.alarmist.core.ui.ExpandableIcon
+import com.trm.alarmist.core.ui.NoRippleInteractionSource
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.core.ui.keyboardAsState
 import com.trm.alarmist.core.ui.theme.onOffCardColors
@@ -152,12 +159,18 @@ fun GroupContent(
           onValueChange = onNameChange,
           label = { Text(stringResource(Res.string.name)) },
           singleLine = true,
+          isError = state.blankNameError,
+          supportingText = {
+            AnimatedVisibility(state.blankNameError) {
+              Text(stringResource(Res.string.group_name_blank_validation_error))
+            }
+          },
         )
       }
 
       item {
         GroupColors(
-          modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+          modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
           selectedColor = Color(state.color),
           onColorClick = onColorChange,
         )
@@ -191,15 +204,30 @@ fun GroupContent(
       floatingActionButtonSpacerItem()
     }
 
-    FloatingActionButton(
+    val interactionSource = remember(::MutableInteractionSource)
+    val noRippleInteractionSource = remember(::NoRippleInteractionSource)
+    ExtendedFloatingActionButton(
       modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+      expanded = state.name.isBlank(),
+      containerColor =
+        if (state.name.isBlank()) MaterialTheme.colorScheme.errorContainer
+        else FloatingActionButtonDefaults.containerColor,
+      elevation =
+        if (state.name.isBlank()) FloatingActionButtonDefaults.bottomAppBarFabElevation()
+        else FloatingActionButtonDefaults.elevation(),
       onClick = onConfirmClick,
-    ) {
-      Icon(
-        imageVector = Icons.Default.Check,
-        contentDescription = stringResource(Res.string.confirm),
-      )
-    }
+      icon = {
+        Icon(
+          imageVector = if (state.name.isBlank()) Icons.Default.Error else Icons.Default.Check,
+          contentDescription = stringResource(Res.string.confirm),
+        )
+      },
+      interactionSource =
+        if (state.name.isBlank()) noRippleInteractionSource else interactionSource,
+      text = {
+        AnimatedVisibility(state.name.isBlank()) { Text(stringResource(Res.string.invalid_input)) }
+      },
+    )
   }
 }
 
