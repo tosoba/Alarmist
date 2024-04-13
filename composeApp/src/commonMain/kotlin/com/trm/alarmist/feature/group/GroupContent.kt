@@ -257,7 +257,7 @@ private fun GroupedAlarmCard(
     }
 
     Row(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+      modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
       AlarmFireAtTime(alarm)

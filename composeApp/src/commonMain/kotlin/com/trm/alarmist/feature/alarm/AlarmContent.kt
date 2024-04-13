@@ -347,6 +347,7 @@ fun AlarmContent(
                   Checkbox(
                     checked = state.groupId == group.id,
                     onCheckedChange = { onGroupClick(group) },
+                    modifier = Modifier.padding(end = 8.dp),
                   )
                 },
               )
