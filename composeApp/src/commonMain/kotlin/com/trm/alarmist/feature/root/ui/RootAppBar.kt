@@ -1,11 +1,18 @@
 package com.trm.alarmist.feature.root.ui
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.alarms
 import alarmist.composeapp.generated.resources.back
+import alarmist.composeapp.generated.resources.clock
+import alarmist.composeapp.generated.resources.edit_alarm
+import alarmist.composeapp.generated.resources.edit_group
 import alarmist.composeapp.generated.resources.menu
+import alarmist.composeapp.generated.resources.new_alarm
+import alarmist.composeapp.generated.resources.new_group
+import alarmist.composeapp.generated.resources.stopwatch
+import alarmist.composeapp.generated.resources.timer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,32 +33,34 @@ fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenu
     title = {
       Text(
         text =
-          when (activeChild) {
-            is RootComponent.Child.Alarms -> {
-              "Alarms"
-            }
-            is RootComponent.Child.Alarm -> {
-              when (activeChild.component.mode) {
-                AlarmComponent.Mode.Add -> "New alarm"
-                is AlarmComponent.Mode.Edit -> "Edit alarm"
+          stringResource(
+            when (activeChild) {
+              is RootComponent.Child.Alarms -> {
+                Res.string.alarms
+              }
+              is RootComponent.Child.Alarm -> {
+                when (activeChild.component.mode) {
+                  AlarmComponent.Mode.Add -> Res.string.new_alarm
+                  is AlarmComponent.Mode.Edit -> Res.string.edit_alarm
+                }
+              }
+              is RootComponent.Child.Group -> {
+                when (activeChild.component.mode) {
+                  GroupComponent.Mode.Add -> Res.string.new_group
+                  is GroupComponent.Mode.Edit -> Res.string.edit_group
+                }
+              }
+              is RootComponent.Child.Clock -> {
+                Res.string.clock
+              }
+              is RootComponent.Child.Timer -> {
+                Res.string.timer
+              }
+              is RootComponent.Child.Stopwatch -> {
+                Res.string.stopwatch
               }
             }
-            is RootComponent.Child.Group -> {
-              when (activeChild.component.mode) {
-                GroupComponent.Mode.Add -> "New group"
-                is GroupComponent.Mode.Edit -> "Edit group"
-              }
-            }
-            is RootComponent.Child.Clock -> {
-              "Clock"
-            }
-            is RootComponent.Child.Timer -> {
-              "Timer"
-            }
-            is RootComponent.Child.Stopwatch -> {
-              "Stopwatch"
-            }
-          }
+          )
       )
     },
     navigationIcon = {

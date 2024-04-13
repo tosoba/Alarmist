@@ -23,6 +23,10 @@
     <string name="stopwatch">Stopwatch</string>
     <string name="timer">Timer</string>
     <string name="alarms">Alarms</string>
+    <string name="new_alarm">New alarm</string>
+    <string name="edit_group">Edit group</string>
+    <string name="new_group">New group</string>
+    <string name="edit_alarm">Edit alarm</string>
     <string name="next_month">Next month</string>
     <string name="previous_month">Previous month</string>
     <string name="back">Back</string>
