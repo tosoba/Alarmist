@@ -202,6 +202,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onScheduleOnDateClick = child.component.feature::onScheduleOnDateClick,
               onGroupClick = child.component.feature::onGroupClick,
               onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
+              onSnoozeLimitChange = child.component.feature::onSnoozeLimitChange,
               onConfirmClick = child.component::onConfirmClick,
             )
           }

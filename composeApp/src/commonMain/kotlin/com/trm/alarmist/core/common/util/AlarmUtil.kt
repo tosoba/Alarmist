@@ -101,6 +101,7 @@ fun Alarm.toModel(): AlarmModel =
     lastNotificationDate = lastNotificationDate,
     snoozeDurationMinutes = snoozeDurationMinutes,
     snoozeCount = snoozeCount,
+    snoozeLimit = snoozeLimit,
     lastSnoozedAt = lastSnoozedAt,
   )
 

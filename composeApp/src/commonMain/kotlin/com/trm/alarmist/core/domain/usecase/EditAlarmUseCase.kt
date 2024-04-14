@@ -20,6 +20,7 @@ class EditAlarmUseCase(
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
     snoozeDurationMinutes: Long,
+    snoozeLimit: Long,
   ) {
     repository.editAlarm(
       id = id,
@@ -31,6 +32,7 @@ class EditAlarmUseCase(
       scheduledOnDates = scheduledOnDates,
       offOnDates = offOnDates,
       snoozeDurationMinutes = snoozeDurationMinutes,
+      snoozeLimit = snoozeLimit,
     )
     updateAlarmScheduleUseCase(
       isOn = isOn,

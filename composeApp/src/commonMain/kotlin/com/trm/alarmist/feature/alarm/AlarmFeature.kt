@@ -76,6 +76,7 @@ class AlarmFeature(
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
               snoozeDurationMinutes = snoozeDuration.minutes,
+              snoozeLimit = snoozeLimitOrZero,
             )
           }
           is AlarmComponent.Mode.Edit -> {
@@ -89,6 +90,7 @@ class AlarmFeature(
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
               snoozeDurationMinutes = snoozeDuration.minutes,
+              snoozeLimit = snoozeLimitOrZero,
             )
           }
         }
@@ -146,8 +148,12 @@ class AlarmFeature(
     _state.update { it.copy(scheduledOnDates = it.scheduledOnDates + date) }
   }
 
-  fun onSnoozeDurationChange(alarmSnoozeDuration: AlarmSnoozeDuration) {
-    _state.update { it.copy(snoozeDuration = alarmSnoozeDuration) }
+  fun onSnoozeDurationChange(duration: AlarmSnoozeDuration) {
+    _state.update { it.copy(snoozeDuration = duration) }
+  }
+
+  fun onSnoozeLimitChange(limit: Long) {
+    _state.update { it.copy(snoozeLimit = limit) }
   }
 
   fun onGroupClick(group: AlarmGroupModel) {

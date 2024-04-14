@@ -18,6 +18,7 @@ import alarmist.composeapp.generated.resources.repeat_on_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.scheduled
 import alarmist.composeapp.generated.resources.snooze_duration_label
+import alarmist.composeapp.generated.resources.snooze_limit_label
 import alarmist.composeapp.generated.resources.time_dial
 import alarmist.composeapp.generated.resources.time_input
 import androidx.compose.animation.AnimatedVisibility
@@ -134,6 +135,7 @@ fun AlarmContent(
   onDeleteOnDateClick: (LocalDate) -> Unit = {},
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
   onSnoozeDurationChange: (AlarmSnoozeDuration) -> Unit = {},
+  onSnoozeLimitChange: (Long) -> Unit = {},
   onGroupClick: (AlarmGroupModel) -> Unit = {},
   onConfirmClick: () -> Unit = {},
 ) {
@@ -273,7 +275,9 @@ fun AlarmContent(
 
       OutlinedCard(
         modifier =
-          Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+          Modifier.fillMaxWidth()
+            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+            .animateContentSize()
       ) {
         Column(modifier = Modifier.padding(16.dp)) {
           Text(
@@ -283,29 +287,37 @@ fun AlarmContent(
           )
 
           val snoozeDurationValues = remember { AlarmSnoozeDuration.entries.toTypedArray() }
-          val snoozeSliderInteractionSource = remember(::MutableInteractionSource)
           Slider(
             value = state.snoozeDuration.ordinal.toFloat(),
             valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
             onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
-            thumb = {
-              Box {
-                SliderDefaults.Thumb(
-                  interactionSource = snoozeSliderInteractionSource,
-                  colors = SliderDefaults.colors(),
-                  enabled = true,
-                  modifier = Modifier.align(Alignment.Center),
-                )
-                Text(
-                  text = state.snoozeDuration.minutes.toString(),
-                  fontSize = 12.sp,
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  modifier = Modifier.align(Alignment.Center),
-                )
-              }
-            },
+            thumb = { AlarmSliderThumb(text = state.snoozeDuration.minutes.toString()) },
             modifier = Modifier.fillMaxWidth(),
           )
+
+          AnimatedVisibility(
+            visible = state.snoozeDuration != AlarmSnoozeDuration.ZERO,
+            enter = fadeIn(),
+            exit = fadeOut(),
+          ) {
+            Column {
+              Text(
+                text = stringResource(Res.string.snooze_limit_label),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+              )
+
+              Slider(
+                value = state.snoozeLimit.toFloat(),
+                valueRange =
+                  AlarmState.MIN_SNOOZE_LIMIT.toFloat()..AlarmState.MAX_SNOOZE_LIMIT.toFloat(),
+                steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - 1,
+                onValueChange = { onSnoozeLimitChange(it.toLong()) },
+                thumb = { AlarmSliderThumb(text = state.snoozeLimit.toString()) },
+                modifier = Modifier.fillMaxWidth(),
+              )
+            }
+          }
         }
       }
 
@@ -409,6 +421,24 @@ fun AlarmContent(
         contentDescription = stringResource(Res.string.confirm),
       )
     }
+  }
+}
+
+@Composable
+private fun AlarmSliderThumb(text: String, modifier: Modifier = Modifier) {
+  Box(modifier = modifier) {
+    SliderDefaults.Thumb(
+      interactionSource = remember(::MutableInteractionSource),
+      colors = SliderDefaults.colors(),
+      enabled = true,
+      modifier = Modifier.align(Alignment.Center),
+    )
+    Text(
+      text = text,
+      fontSize = 12.sp,
+      color = MaterialTheme.colorScheme.onPrimary,
+      modifier = Modifier.align(Alignment.Center),
+    )
   }
 }
 

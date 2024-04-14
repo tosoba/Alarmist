@@ -21,6 +21,7 @@ data class AlarmState(
   val scheduledOnDates: Set<LocalDate> = emptySet(),
   val offOnDates: Set<LocalDate> = emptySet(),
   val snoozeDuration: AlarmSnoozeDuration = AlarmSnoozeDuration.MIN_10,
+  val snoozeLimit: Long = DEFAULT_SNOOZE_LIMIT,
 ) {
   constructor(
     alarm: AlarmModel
@@ -32,6 +33,7 @@ data class AlarmState(
     scheduledOnDates = alarm.scheduledOnDates.toSet(),
     offOnDates = alarm.offOnDates.toSet(),
     snoozeDuration = AlarmSnoozeDuration.fromMinutes(alarm.snoozeDurationMinutes),
+    snoozeLimit = alarm.snoozeLimit.takeIf { it > 0L } ?: DEFAULT_SNOOZE_LIMIT,
   )
 
   constructor(
@@ -41,4 +43,13 @@ data class AlarmState(
     groupId = alarm.groupId ?: AlarmGroupModel.UNGROUPED_ID,
     name = alarm.name,
   )
+
+  val snoozeLimitOrZero: Long
+    get() = if (snoozeDuration != AlarmSnoozeDuration.ZERO) snoozeLimit else 0L
+
+  companion object {
+    const val MIN_SNOOZE_LIMIT = 1L
+    const val DEFAULT_SNOOZE_LIMIT = 2L
+    const val MAX_SNOOZE_LIMIT = 10L
+  }
 }

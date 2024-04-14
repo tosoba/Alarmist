@@ -46,6 +46,7 @@ class AlarmLocalRepository(
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
     snoozeDurationMinutes: Long,
+    snoozeLimit: Long
   ): Long =
     withContext(dispatcher) {
       queries.transactionWithResult {
@@ -62,7 +63,8 @@ class AlarmLocalRepository(
           lastModificationDateTime = LocalDateTime.now(),
           lastNotificationDate = null,
           snoozeDurationMinutes = snoozeDurationMinutes,
-          snoozeCount = 0,
+          snoozeCount = 0L,
+          snoozeLimit = snoozeLimit,
           lastSnoozedAt = null,
         )
         queries.selectLastInsertedRowId().executeAsOne()
@@ -79,6 +81,7 @@ class AlarmLocalRepository(
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
     snoozeDurationMinutes: Long,
+    snoozeLimit: Long,
   ) {
     withContext(dispatcher) {
       queries.updateAlarmById(
@@ -93,6 +96,7 @@ class AlarmLocalRepository(
         offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
         lastModificationDateTime = LocalDateTime.now(),
         snoozeDurationMinutes = snoozeDurationMinutes,
+        snoozeLimit = snoozeLimit,
       )
     }
   }

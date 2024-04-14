@@ -20,6 +20,7 @@ interface AlarmRepository {
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
     snoozeDurationMinutes: Long,
+    snoozeLimit: Long
   ): Long
 
   suspend fun editAlarm(
@@ -32,6 +33,7 @@ interface AlarmRepository {
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
     snoozeDurationMinutes: Long,
+    snoozeLimit: Long
   )
 
   suspend fun getAlarmById(id: Long): AlarmModel
