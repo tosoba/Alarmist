@@ -10,6 +10,8 @@
     <string name="permission_required">Permission required</string>
     <string name="name">Name</string>
     <string name="delete">Delete</string>
+    <string name="delete_alarm">Delete alarm</string>
+    <string name="delete_group">Delete group</string>
     <string name="schedule_alarm">Schedule alarm</string>
     <string name="delete_all_weekdays">Delete on all %1$ss</string>
     <string name="one_time">One time</string>

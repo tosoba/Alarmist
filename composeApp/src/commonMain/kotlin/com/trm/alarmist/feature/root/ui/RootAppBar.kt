@@ -4,6 +4,8 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.alarms
 import alarmist.composeapp.generated.resources.back
 import alarmist.composeapp.generated.resources.clock
+import alarmist.composeapp.generated.resources.delete_alarm
+import alarmist.composeapp.generated.resources.delete_group
 import alarmist.composeapp.generated.resources.edit_alarm
 import alarmist.composeapp.generated.resources.edit_group
 import alarmist.composeapp.generated.resources.menu
@@ -13,6 +15,7 @@ import alarmist.composeapp.generated.resources.stopwatch
 import alarmist.composeapp.generated.resources.timer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +31,13 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
-fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenuClick: () -> Unit) {
+fun RootAppBar(
+  activeChild: RootComponent.Child,
+  onBackClick: () -> Unit = {},
+  onMenuClick: () -> Unit = {},
+  onDeleteAlarmClick: () -> Unit = {},
+  onDeleteGroupClick: () -> Unit = {},
+) {
   CenterAlignedTopAppBar(
     title = {
       Text(
@@ -63,6 +72,29 @@ fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenu
           )
       )
     },
+    actions = {
+      when (activeChild) {
+        is RootComponent.Child.Alarm -> {
+          if (activeChild.component.mode is AlarmComponent.Mode.Edit) {
+            DeleteActionButton(
+              contentDescription = stringResource(Res.string.delete_alarm),
+              onClick = onDeleteAlarmClick,
+            )
+          }
+        }
+        is RootComponent.Child.Group -> {
+          if (activeChild.component.mode is GroupComponent.Mode.Edit) {
+            DeleteActionButton(
+              contentDescription = stringResource(Res.string.delete_group),
+              onClick = onDeleteGroupClick,
+            )
+          }
+        }
+        else -> {
+          return@CenterAlignedTopAppBar
+        }
+      }
+    },
     navigationIcon = {
       IconButton(
         onClick = {
@@ -95,4 +127,11 @@ fun RootAppBar(activeChild: RootComponent.Child, onBackClick: () -> Unit, onMenu
       }
     },
   )
+}
+
+@Composable
+private fun DeleteActionButton(contentDescription: String, onClick: () -> Unit) {
+  IconButton(onClick = onClick) {
+    Icon(imageVector = Icons.Default.Delete, contentDescription = contentDescription)
+  }
 }
