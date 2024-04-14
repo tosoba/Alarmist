@@ -13,6 +13,8 @@ interface GroupComponent {
 
   fun onConfirmClick()
 
+  fun onDeleteActionClick()
+
   @Serializable
   sealed interface Mode {
     @Serializable data object Add : Mode
@@ -45,6 +47,10 @@ class DefaultGroupComponent(
 
   override fun onConfirmClick() {
     feature.onConfirmClick()?.invokeOnCompletion { pop() }
+  }
+
+  override fun onDeleteActionClick() {
+    feature.onDeleteActionClick().invokeOnCompletion { pop() }
   }
 
   companion object {

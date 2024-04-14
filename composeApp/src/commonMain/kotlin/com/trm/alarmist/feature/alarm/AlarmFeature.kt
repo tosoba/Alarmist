@@ -56,6 +56,12 @@ class AlarmFeature(
     }
   }
 
+  fun onDeleteActionClick(): Job =
+    coroutineScope.launch {
+      check(mode is AlarmComponent.Mode.Edit)
+      repository.deleteAlarm(mode.alarm.id)
+    }
+
   fun onConfirmClick(): Job =
     coroutineScope.launch {
       with(_state.value) {

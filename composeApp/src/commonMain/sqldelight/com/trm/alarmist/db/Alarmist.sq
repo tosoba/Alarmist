@@ -140,6 +140,9 @@ selectCountOneTimeAlarmsAfterTime:
 SELECT COUNT(*) FROM alarm
 WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime > :fireAtTime;
 
+deleteAlarmById:
+DELETE FROM alarm WHERE id = ?;
+
 insertGroup:
 INSERT OR REPLACE INTO alarmGroup VALUES (?,?,?);
 
@@ -157,6 +160,12 @@ CASE
 END AS isOn
 FROM alarmGroup
 ORDER BY id;
+
+updateResetAlarmsGroupByGroupId:
+UPDATE alarm SET groupId = NULL WHERE groupId = ?;
+
+deleteGroupById:
+DELETE FROM alarmGroup WHERE id = ?;
 
 updateAlarmsOnOffByGroupId:
 UPDATE alarm SET isOn = ?, lastModificationDateTime = ? WHERE groupId = ?;

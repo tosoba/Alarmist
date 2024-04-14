@@ -70,7 +70,11 @@ interface AlarmRepository {
 
   suspend fun updateAlarmOnSnooze(id: Long): AlarmModel
 
+  suspend fun deleteAlarm(id: Long)
+
   suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>)
 
   suspend fun editGroup(id: Long, name: String, color: Int, alarmIds: Collection<Long>)
+
+  suspend fun deleteGroup(id: Long)
 }

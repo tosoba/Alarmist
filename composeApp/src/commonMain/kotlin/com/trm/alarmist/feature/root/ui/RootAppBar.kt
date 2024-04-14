@@ -35,8 +35,6 @@ fun RootAppBar(
   activeChild: RootComponent.Child,
   onBackClick: () -> Unit = {},
   onMenuClick: () -> Unit = {},
-  onDeleteAlarmClick: () -> Unit = {},
-  onDeleteGroupClick: () -> Unit = {},
 ) {
   CenterAlignedTopAppBar(
     title = {
@@ -78,7 +76,7 @@ fun RootAppBar(
           if (activeChild.component.mode is AlarmComponent.Mode.Edit) {
             DeleteActionButton(
               contentDescription = stringResource(Res.string.delete_alarm),
-              onClick = onDeleteAlarmClick,
+              onClick = activeChild.component::onDeleteActionClick,
             )
           }
         }
@@ -86,7 +84,7 @@ fun RootAppBar(
           if (activeChild.component.mode is GroupComponent.Mode.Edit) {
             DeleteActionButton(
               contentDescription = stringResource(Res.string.delete_group),
-              onClick = onDeleteGroupClick,
+              onClick = activeChild.component::onDeleteActionClick,
             )
           }
         }

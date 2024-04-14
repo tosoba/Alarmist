@@ -97,6 +97,10 @@ class AlarmLocalRepository(
     }
   }
 
+  override suspend fun deleteAlarm(id: Long) {
+    withContext(dispatcher) { queries.deleteAlarmById(id) }
+  }
+
   override fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>> =
     queries.selectAllAlarms().asAlarmsListFlow()
 
@@ -288,7 +292,7 @@ class AlarmLocalRepository(
 
   override suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>) {
     withContext(dispatcher) {
-      queries.transactionWithResult {
+      queries.transaction {
         queries.insertGroup(id = null, name = name, color = color.toLong())
         if (alarmIds.isNotEmpty()) {
           val groupId = queries.selectLastInsertedRowId().executeAsOne()
@@ -300,11 +304,20 @@ class AlarmLocalRepository(
 
   override suspend fun editGroup(id: Long, name: String, color: Int, alarmIds: Collection<Long>) {
     withContext(dispatcher) {
-      queries.transactionWithResult {
+      queries.transaction {
         queries.updateGroupById(name = name, color = color.toLong(), id = id)
         if (alarmIds.isNotEmpty()) {
           queries.updateAlarmsGroups(groupId = id, alarmIds = alarmIds)
         }
+      }
+    }
+  }
+
+  override suspend fun deleteGroup(id: Long) {
+    withContext(dispatcher) {
+      queries.transaction {
+        queries.updateResetAlarmsGroupByGroupId(id)
+        queries.deleteGroupById(id)
       }
     }
   }
