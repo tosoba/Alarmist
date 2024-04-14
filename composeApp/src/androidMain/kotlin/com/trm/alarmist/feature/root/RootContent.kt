@@ -41,6 +41,7 @@ import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.clock.ClockContent
 import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.root.ui.RootAppBar
+import com.trm.alarmist.feature.root.ui.RootDialog
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
 import kotlinx.coroutines.launch
@@ -175,6 +176,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         activeChild = childStack.active.instance,
         onBackClick = component::onBackClick,
         onMenuClick = ::openDrawer,
+        onDeleteActionClick = component::onDeleteActionClick,
       )
 
       Children(
@@ -230,6 +232,9 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         }
       }
     }
+
+    val dialog by component.dialog.subscribeAsState()
+    dialog.child?.instance?.let { RootDialog(it) }
   }
 }
 

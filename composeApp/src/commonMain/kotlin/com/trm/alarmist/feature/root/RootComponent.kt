@@ -1,8 +1,14 @@
 package com.trm.alarmist.feature.root
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.slot.ChildSlot
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.activate
+import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
@@ -27,6 +33,8 @@ import kotlinx.serialization.Serializable
 interface RootComponent {
   val childStack: Value<ChildStack<*, Child>>
 
+  val dialog: Value<ChildSlot<*, RootDialogComponent>>
+
   fun onAlarmsDrawerItemClick()
 
   fun onClockDrawerItemClick()
@@ -34,6 +42,8 @@ interface RootComponent {
   fun onTimerDrawerItemClick()
 
   fun onStopwatchDrawerItemClick()
+
+  fun onDeleteActionClick()
 
   fun onAddAlarmClick()
 
@@ -73,6 +83,29 @@ class DefaultRootComponent(componentContext: ComponentContext) :
       childFactory = ::createChild,
     )
 
+  private val dialogNavigation = SlotNavigation<RootDialogComponent.Config>()
+
+  override val dialog: Value<ChildSlot<*, RootDialogComponent>> =
+    childSlot(
+      source = dialogNavigation,
+      serializer = RootDialogComponent.Config.serializer(),
+      handleBackButton = true,
+    ) { config, childComponentContext ->
+      DefaultRootDialogComponent(
+        componentContext = childComponentContext,
+        title = config.title,
+        message = config.message,
+        onConfirm = {
+          dialogNavigation.dismiss()
+          deleteActionParameter(
+            alarmParameter = { it::onDeleteActionClick },
+            groupParameter = { it::onDeleteActionClick },
+          )()
+        },
+        onDismiss = dialogNavigation::dismiss,
+      )
+    }
+
   private fun createChild(
     config: ChildConfig,
     componentContext: ComponentContext,
@@ -85,7 +118,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
             onAddAlarmClick = ::onAddAlarmClick,
             onEditAlarmClick = ::onEditAlarmClick,
             onAddGroupClick = ::onAddGroupClick,
-            onEditGroupClick = ::onEditGroupClick
+            onEditGroupClick = ::onEditGroupClick,
           )
         )
       }
@@ -133,6 +166,48 @@ class DefaultRootComponent(componentContext: ComponentContext) :
   override fun onStopwatchDrawerItemClick() {
     navigation.replaceAll(ChildConfig.Stopwatch)
   }
+
+  override fun onDeleteActionClick() {
+    dialogNavigation.activate(
+      RootDialogComponent.Config(
+        title =
+          deleteActionParameter(
+            alarmParameter = { "Delete alarm" },
+            groupParameter = { "Delete group" },
+          ),
+        message =
+          deleteActionParameter(
+            alarmParameter = { "Are you sure you want to delete this alarm?" },
+            groupParameter = { "Are you sure you want to delete this group?" },
+          ),
+      )
+    )
+  }
+
+  private fun <T> deleteActionParameter(
+    alarmParameter: (AlarmComponent) -> T,
+    groupParameter: (GroupComponent) -> T,
+    fallback: () -> T = { throw IllegalStateException() },
+  ) =
+    when (val active = childStack.active.instance) {
+      is RootComponent.Child.Alarm -> {
+        if (active.component.mode is AlarmComponent.Mode.Edit) {
+          alarmParameter(active.component)
+        } else {
+          fallback()
+        }
+      }
+      is RootComponent.Child.Group -> {
+        if (active.component.mode is GroupComponent.Mode.Edit) {
+          groupParameter(active.component)
+        } else {
+          fallback()
+        }
+      }
+      else -> {
+        fallback()
+      }
+    }
 
   override fun onAddAlarmClick() {
     navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Add))
