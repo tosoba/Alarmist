@@ -39,6 +39,7 @@ class AddAlarmUseCase(
       scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
       scheduledOnDates = scheduledOnDates,
       offOnDates = offOnDates,
+      snoozeAvailable = snoozeDurationMinutes > 0L,
     )
   }
 }

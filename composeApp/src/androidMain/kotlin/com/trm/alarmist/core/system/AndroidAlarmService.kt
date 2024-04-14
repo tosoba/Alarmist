@@ -46,7 +46,7 @@ class AndroidAlarmService : Service(), KoinComponent {
         when (
           requireNotNull(
             intent.getSerializable<NotificationInteractionType>(
-              EXTRA_ALARM_NOTIFICATION_INTERACTION
+              EXTRA_ALARM_NOTIFICATION_INTERACTION_TYPE
             )
           ) {
             "Missing NotificationInteractionType."
@@ -127,13 +127,17 @@ class AndroidAlarmService : Service(), KoinComponent {
         getStringBlocking(Res.string.dismiss),
         getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.DISMISS),
       )
-      // TODO: make snooze action conditional based on alarm snooze settings:
-      // (snoozeDurationMinutes > 0L && snoozeCount < SNOOZE_LIMIT)
-      .addAction(
-        R.drawable.ic_launcher_foreground,
-        getStringBlocking(Res.string.snooze),
-        getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.SNOOZE),
-      )
+      .run {
+        if (isSnoozeAvailable(intent)) {
+          addAction(
+            R.drawable.ic_launcher_foreground,
+            getStringBlocking(Res.string.snooze),
+            getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.SNOOZE),
+          )
+        } else {
+          this
+        }
+      }
       .build()
 
   private fun getAlarmBroadcastPendingIntent(
@@ -146,7 +150,7 @@ class AndroidAlarmService : Service(), KoinComponent {
       Intent(ACTION_FIRED_ALARM_NOTIFICATION)
         .putExtra(EXTRA_ALARM_ID, getAlarmId(intent))
         .putExtra(EXTRA_FIRE_ON_DATE_TIME, getAlarmFireOnDateTime(intent).toString())
-        .putExtra(EXTRA_ALARM_NOTIFICATION_INTERACTION, action),
+        .putExtra(EXTRA_ALARM_NOTIFICATION_INTERACTION_TYPE, action),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -206,6 +210,7 @@ class AndroidAlarmService : Service(), KoinComponent {
   companion object {
     private const val ACTION_FIRED_ALARM_NOTIFICATION = "ACTION_FIRED_ALARM_NOTIFICATION"
 
-    private const val EXTRA_ALARM_NOTIFICATION_INTERACTION = "ALARM_NOTIFICATION_INTERACTION"
+    private const val EXTRA_ALARM_NOTIFICATION_INTERACTION_TYPE =
+      "ALARM_NOTIFICATION_INTERACTION_TYPE"
   }
 }

@@ -46,7 +46,7 @@ class AlarmLocalRepository(
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
     snoozeDurationMinutes: Long,
-    snoozeLimit: Long
+    snoozeLimit: Long,
   ): Long =
     withContext(dispatcher) {
       queries.transactionWithResult {
@@ -261,7 +261,11 @@ class AlarmLocalRepository(
   ): AlarmModel =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateAlarmLastNotificationDateById(notificationDateTime.date, id)
+        queries.updateAlarmLastNotificationDateAndResetSnoozeCountById(
+          notificationDateTime.date,
+          id,
+        )
+
         val alarm = queries.selectAlarmById(id).executeAsOne().toModel()
         if (
           alarm.scheduledOnDaysOfWeek.isEmpty() &&

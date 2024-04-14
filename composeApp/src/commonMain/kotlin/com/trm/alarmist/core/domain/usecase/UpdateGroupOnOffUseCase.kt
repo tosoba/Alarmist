@@ -17,7 +17,11 @@ class UpdateGroupOnOffUseCase(
       }
     updatedAlarms.forEach { alarm ->
       calculateAlarmNextFireOnDateTime(alarm)?.let {
-        scheduler.scheduleAlarm(id = alarm.id, fireOnDateTime = it)
+        scheduler.scheduleAlarm(
+          id = alarm.id,
+          fireOnDateTime = it,
+          snoozeAvailable = alarm.snoozeDurationMinutes > 0L,
+        )
       } ?: run { scheduler.cancelAlarm(alarm.id) }
     }
   }

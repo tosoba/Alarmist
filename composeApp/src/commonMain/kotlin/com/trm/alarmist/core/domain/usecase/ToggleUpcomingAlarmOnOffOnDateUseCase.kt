@@ -18,7 +18,11 @@ class ToggleUpcomingAlarmOnOffOnDateUseCase(
         ?.takeIf { it.date == date }
         ?.let {
           if (toggledAlarm.isOn) {
-            scheduler.scheduleAlarm(id = id, fireOnDateTime = it)
+            scheduler.scheduleAlarm(
+              id = id,
+              fireOnDateTime = it,
+              snoozeAvailable = toggledAlarm.snoozeDurationMinutes > 0L,
+            )
           } else {
             scheduler.cancelAlarm(id)
           }

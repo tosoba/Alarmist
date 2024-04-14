@@ -9,8 +9,10 @@ import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTime
 import com.trm.alarmist.core.system.AndroidAlarmService
 import com.trm.alarmist.core.system.EXTRA_ALARM_ID
 import com.trm.alarmist.core.system.EXTRA_FIRE_ON_DATE_TIME
+import com.trm.alarmist.core.system.EXTRA_SNOOZE_AVAILABLE
 import com.trm.alarmist.core.system.getAlarmFireOnDateTime
 import com.trm.alarmist.core.system.getAlarmId
+import com.trm.alarmist.core.system.isSnoozeAvailable
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -32,7 +34,8 @@ class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
           context,
           Intent(context, AndroidAlarmService::class.java)
             .putExtra(EXTRA_ALARM_ID, getAlarmId(intent))
-            .putExtra(EXTRA_FIRE_ON_DATE_TIME, getAlarmFireOnDateTime(intent).toString()),
+            .putExtra(EXTRA_FIRE_ON_DATE_TIME, getAlarmFireOnDateTime(intent).toString())
+            .putExtra(EXTRA_SNOOZE_AVAILABLE, isSnoozeAvailable(intent)),
         )
       }
     }
@@ -44,9 +47,15 @@ class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     fun intent(context: Context): Intent =
       Intent(context, AlarmFiredBroadcastReceiver::class.java).setAction(ACTION_ALARM_FIRED)
 
-    fun intent(context: Context, id: Long, fireOnDateTime: LocalDateTime): Intent =
+    fun intent(
+      context: Context,
+      id: Long,
+      fireOnDateTime: LocalDateTime,
+      snoozeAvailable: Boolean,
+    ): Intent =
       intent(context)
         .putExtra(EXTRA_ALARM_ID, id)
         .putExtra(EXTRA_FIRE_ON_DATE_TIME, fireOnDateTime.toString())
+        .putExtra(EXTRA_SNOOZE_AVAILABLE, snoozeAvailable)
   }
 }

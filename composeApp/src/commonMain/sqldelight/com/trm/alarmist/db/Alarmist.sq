@@ -43,12 +43,13 @@ SET
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
     snoozeDurationMinutes = ?,
+    snoozeCount = 0,
     snoozeLimit = ?,
     lastSnoozedAt = NULL
 WHERE id = ?;
 
-updateAlarmLastNotificationDateById:
-UPDATE alarm SET lastNotificationDate = ? WHERE id = ?;
+updateAlarmLastNotificationDateAndResetSnoozeCountById:
+UPDATE alarm SET lastNotificationDate = ?, snoozeCount = 0 WHERE id = ?;
 
 updateToggleAlarmOnOffById:
 UPDATE alarm

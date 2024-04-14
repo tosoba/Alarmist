@@ -23,6 +23,12 @@ class UpdateAlarmOnSnoozeUseCase(
           offOnDates = emptyList(),
         )
       }
-      ?.let { scheduler.scheduleAlarm(id, it) }
+      ?.let {
+        scheduler.scheduleAlarm(
+          id = id,
+          fireOnDateTime = it,
+          snoozeAvailable = alarm.snoozeCount < alarm.snoozeLimit,
+        )
+      }
   }
 }

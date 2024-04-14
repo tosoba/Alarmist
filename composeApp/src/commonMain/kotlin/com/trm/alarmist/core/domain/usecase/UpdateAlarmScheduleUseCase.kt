@@ -10,13 +10,15 @@ import kotlinx.datetime.LocalTime
 
 class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
   operator fun invoke(alarmModel: AlarmModel, afterDateTime: LocalDateTime = LocalDateTime.now()) {
-    invoke(
+    this(
       isOn = alarmModel.isOn,
       id = alarmModel.id,
       fireAtTime = alarmModel.fireAtTime,
       scheduledOnDaysOfWeek = alarmModel.scheduledOnDaysOfWeek,
       scheduledOnDates = alarmModel.scheduledOnDates,
       offOnDates = alarmModel.offOnDates,
+      snoozeAvailable =
+        alarmModel.snoozeDurationMinutes > 0L && alarmModel.snoozeCount < alarmModel.snoozeLimit,
       afterDateTime = afterDateTime,
     )
   }
@@ -28,6 +30,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
+    snoozeAvailable: Boolean,
     afterDateTime: LocalDateTime = LocalDateTime.now(),
   ) {
     calculateAlarmNextFireOnDateTime(
@@ -38,7 +41,8 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
         isOn = isOn,
         afterDateTime = afterDateTime,
       )
-      ?.let { scheduler.scheduleAlarm(id = id, fireOnDateTime = it) }
-      ?: run { scheduler.cancelAlarm(id) }
+      ?.let {
+        scheduler.scheduleAlarm(id = id, fireOnDateTime = it, snoozeAvailable = snoozeAvailable)
+      } ?: run { scheduler.cancelAlarm(id) }
   }
 }
