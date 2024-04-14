@@ -44,18 +44,21 @@ class AndroidAlarmService : Service(), KoinComponent {
         stopSelf()
 
         when (
-          intent.getSerializable<NotificationInteraction>(EXTRA_ALARM_NOTIFICATION_INTERACTION)
+          requireNotNull(
+            intent.getSerializable<NotificationInteractionType>(
+              EXTRA_ALARM_NOTIFICATION_INTERACTION
+            )
+          ) {
+            "Missing NotificationInteractionType."
+          }
         ) {
-          NotificationInteraction.DISMISS -> {
+          NotificationInteractionType.DISMISS -> {
             launch {
               updateAlarmOnDismissUseCase(getAlarmId(intent), getAlarmFireOnDateTime(intent))
             }
           }
-          NotificationInteraction.SNOOZE -> {
+          NotificationInteractionType.SNOOZE -> {
             launch { updateAlarmOnSnoozeUseCase(getAlarmId(intent)) }
-          }
-          null -> {
-            throw IllegalArgumentException()
           }
         }
       }
@@ -71,43 +74,21 @@ class AndroidAlarmService : Service(), KoinComponent {
     )
   }
 
-  @OptIn(ExperimentalResourceApi::class)
+  override fun onDestroy() {
+    super.onDestroy()
+    stopPlaying()
+    unregisterReceiver(firedAlarmNotificationReceiver)
+  }
+
+  override fun onBind(intent: Intent?): IBinder? = null
+
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     if (intent == null) return START_NOT_STICKY
 
     ServiceCompat.startForeground(
       this,
       getAlarmId(intent).toInt(),
-      NotificationCompat.Builder(this, ALARM_FIRED_NOTIFICATION_CHANNEL_ID)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
-        .setContentTitle("Alarm was fired")
-        .setCategory(NotificationCompat.CATEGORY_ALARM)
-        .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-        .setOngoing(true)
-        .setFullScreenIntent(
-          PendingIntent.getActivity(
-            this,
-            0,
-            Intent(this, MainActivity::class.java) // TODO: replace with AlarmActivity
-              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-          ),
-          true,
-        )
-        .setDeleteIntent(getAlarmBroadcastPendingIntent(intent, NotificationInteraction.DISMISS))
-        .addAction(
-          R.drawable.ic_launcher_foreground,
-          getStringBlocking(Res.string.dismiss),
-          getAlarmBroadcastPendingIntent(intent, NotificationInteraction.DISMISS),
-        )
-        // TODO: make snooze action conditional based on alarm snooze settings:
-        // (snoozeDurationMinutes > 0L && snoozeCount < SNOOZE_LIMIT)
-        .addAction(
-          R.drawable.ic_launcher_foreground,
-          getStringBlocking(Res.string.snooze),
-          getAlarmBroadcastPendingIntent(intent, NotificationInteraction.SNOOZE),
-        )
-        .build(),
+      buildNotification(intent),
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED
       } else {
@@ -122,9 +103,42 @@ class AndroidAlarmService : Service(), KoinComponent {
     return START_REDELIVER_INTENT
   }
 
+  @OptIn(ExperimentalResourceApi::class)
+  private fun buildNotification(intent: Intent) =
+    NotificationCompat.Builder(this, ALARM_FIRED_NOTIFICATION_CHANNEL_ID)
+      .setSmallIcon(R.drawable.ic_launcher_foreground)
+      .setContentTitle("Alarm was fired")
+      .setCategory(NotificationCompat.CATEGORY_ALARM)
+      .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+      .setOngoing(true)
+      .setFullScreenIntent(
+        PendingIntent.getActivity(
+          this,
+          0,
+          Intent(this, MainActivity::class.java) // TODO: replace with AlarmActivity
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION),
+          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        ),
+        true,
+      )
+      .setDeleteIntent(getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.DISMISS))
+      .addAction(
+        R.drawable.ic_launcher_foreground,
+        getStringBlocking(Res.string.dismiss),
+        getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.DISMISS),
+      )
+      // TODO: make snooze action conditional based on alarm snooze settings:
+      // (snoozeDurationMinutes > 0L && snoozeCount < SNOOZE_LIMIT)
+      .addAction(
+        R.drawable.ic_launcher_foreground,
+        getStringBlocking(Res.string.snooze),
+        getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.SNOOZE),
+      )
+      .build()
+
   private fun getAlarmBroadcastPendingIntent(
     intent: Intent,
-    action: NotificationInteraction,
+    action: NotificationInteractionType,
   ): PendingIntent =
     PendingIntent.getBroadcast(
       this,
@@ -171,21 +185,13 @@ class AndroidAlarmService : Service(), KoinComponent {
     // TODO: cancel vibration
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    stopPlaying()
-    unregisterReceiver(firedAlarmNotificationReceiver)
-  }
-
-  override fun onBind(intent: Intent?): IBinder? = null
-
   private fun MediaPlayer.stopAndRelease() {
     stop()
     release()
     mediaPlayer = null
   }
 
-  private enum class NotificationInteraction {
+  private enum class NotificationInteractionType {
     DISMISS,
     SNOOZE;
 
