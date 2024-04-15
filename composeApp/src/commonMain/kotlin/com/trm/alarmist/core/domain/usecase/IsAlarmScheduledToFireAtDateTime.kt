@@ -16,7 +16,6 @@ class IsAlarmScheduledToFireAtDateTime(private val repository: AlarmRepository) 
         (snoozedFireAtTime(
           lastSnoozedAt = alarm.lastSnoozedAt,
           snoozeDurationMinutes = alarm.snoozeDurationMinutes,
-          snoozeCount = alarm.snoozeCount,
         ) ?: alarm.fireAtTime) == fireAtDateTime.time
     }
   }

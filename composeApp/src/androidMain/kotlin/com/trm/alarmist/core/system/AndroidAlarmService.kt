@@ -4,7 +4,6 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.dismiss
 import alarmist.composeapp.generated.resources.snooze
 import android.app.PendingIntent
-import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -14,23 +13,26 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.os.Build
-import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.getSerializable
 import com.trm.alarmist.core.common.util.getStringBlocking
-import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import io.github.aakira.napier.Napier
+import java.util.Timer
+import java.util.TimerTask
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class AndroidAlarmService : Service(), KoinComponent {
+class AndroidAlarmService : LifecycleService(), KoinComponent {
   private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
   private val updateAlarmOnSnoozeUseCase: UpdateAlarmOnSnoozeUseCase by inject()
 
@@ -39,30 +41,19 @@ class AndroidAlarmService : Service(), KoinComponent {
   private val firedAlarmNotificationReceiver: BroadcastReceiver =
     object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent?.action != ACTION_FIRED_ALARM_NOTIFICATION) return
-
-        stopSelf()
-
-        when (
-          requireNotNull(
-            intent.getSerializable<NotificationInteractionType>(
-              EXTRA_ALARM_NOTIFICATION_INTERACTION_TYPE
-            )
-          ) {
-            "Missing NotificationInteractionType."
-          }
-        ) {
-          NotificationInteractionType.DISMISS -> {
-            launch {
-              updateAlarmOnDismissUseCase(getAlarmId(intent), getAlarmFireOnDateTime(intent))
-            }
-          }
-          NotificationInteractionType.SNOOZE -> {
-            launch { updateAlarmOnSnoozeUseCase(getAlarmId(intent)) }
-          }
+        if (intent?.action == ACTION_FIRED_ALARM_NOTIFICATION) {
+          performAlarmActionAndStopSelf(
+            actionType =
+              requireNotNull(intent.getSerializable<AlarmActionType>(EXTRA_ALARM_ACTION_TYPE)) {
+                "Missing AlarmActionType."
+              },
+            intent = intent,
+          )
         }
       }
     }
+
+  private val alarmDurationTimer = Timer()
 
   override fun onCreate() {
     super.onCreate()
@@ -77,12 +68,12 @@ class AndroidAlarmService : Service(), KoinComponent {
   override fun onDestroy() {
     super.onDestroy()
     stopPlaying()
+    alarmDurationTimer.cancel()
     unregisterReceiver(firedAlarmNotificationReceiver)
   }
 
-  override fun onBind(intent: Intent?): IBinder? = null
-
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    super.onStartCommand(intent, flags, startId)
     if (intent == null) return START_NOT_STICKY
 
     ServiceCompat.startForeground(
@@ -95,10 +86,8 @@ class AndroidAlarmService : Service(), KoinComponent {
         0
       },
     )
-
     startPlaying()
-
-    // TODO: auto snooze timer like in ClockYou
+    startAlarmDurationTimer(intent)
 
     return START_REDELIVER_INTENT
   }
@@ -121,18 +110,18 @@ class AndroidAlarmService : Service(), KoinComponent {
         ),
         true,
       )
-      .setDeleteIntent(getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.DISMISS))
+      .setDeleteIntent(getAlarmBroadcastPendingIntent(intent, AlarmActionType.DISMISS))
       .addAction(
         R.drawable.ic_launcher_foreground,
         getStringBlocking(Res.string.dismiss),
-        getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.DISMISS),
+        getAlarmBroadcastPendingIntent(intent, AlarmActionType.DISMISS),
       )
       .run {
         if (isSnoozeAvailable(intent)) {
           addAction(
             R.drawable.ic_launcher_foreground,
             getStringBlocking(Res.string.snooze),
-            getAlarmBroadcastPendingIntent(intent, NotificationInteractionType.SNOOZE),
+            getAlarmBroadcastPendingIntent(intent, AlarmActionType.SNOOZE),
           )
         } else {
           this
@@ -142,7 +131,7 @@ class AndroidAlarmService : Service(), KoinComponent {
 
   private fun getAlarmBroadcastPendingIntent(
     intent: Intent,
-    action: NotificationInteractionType,
+    action: AlarmActionType,
   ): PendingIntent =
     PendingIntent.getBroadcast(
       this,
@@ -150,13 +139,11 @@ class AndroidAlarmService : Service(), KoinComponent {
       Intent(ACTION_FIRED_ALARM_NOTIFICATION)
         .putExtra(EXTRA_ALARM_ID, getAlarmId(intent))
         .putExtra(EXTRA_FIRE_ON_DATE_TIME, getAlarmFireOnDateTime(intent).toString())
-        .putExtra(EXTRA_ALARM_NOTIFICATION_INTERACTION_TYPE, action),
+        .putExtra(EXTRA_ALARM_ACTION_TYPE, action),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
   private fun startPlaying() {
-    stopPlaying()
-
     mediaPlayer =
       MediaPlayer().apply {
         setOnErrorListener { player, what, extra ->
@@ -180,6 +167,7 @@ class AndroidAlarmService : Service(), KoinComponent {
         prepare()
         start()
       }
+
     // TODO: start vibration
   }
 
@@ -195,7 +183,35 @@ class AndroidAlarmService : Service(), KoinComponent {
     mediaPlayer = null
   }
 
-  private enum class NotificationInteractionType {
+  private fun startAlarmDurationTimer(intent: Intent) {
+    alarmDurationTimer.schedule(
+      object : TimerTask() {
+        override fun run() {
+          performAlarmActionAndStopSelf(
+            actionType =
+              if (isSnoozeAvailable(intent)) AlarmActionType.SNOOZE else AlarmActionType.DISMISS,
+            intent = intent,
+          )
+        }
+      },
+      60_000, // TODO: alarm duration from intent
+    )
+  }
+
+  private fun performAlarmActionAndStopSelf(actionType: AlarmActionType, intent: Intent) {
+    when (actionType) {
+      AlarmActionType.DISMISS -> {
+        lifecycleScope.launch {
+          updateAlarmOnDismissUseCase(getAlarmId(intent), getAlarmFireOnDateTime(intent))
+        }
+      }
+      AlarmActionType.SNOOZE -> {
+        lifecycleScope.launch { updateAlarmOnSnoozeUseCase(getAlarmId(intent)) }
+      }
+    }.invokeOnCompletion { stopSelf() }
+  }
+
+  private enum class AlarmActionType {
     DISMISS,
     SNOOZE;
 
@@ -210,7 +226,6 @@ class AndroidAlarmService : Service(), KoinComponent {
   companion object {
     private const val ACTION_FIRED_ALARM_NOTIFICATION = "ACTION_FIRED_ALARM_NOTIFICATION"
 
-    private const val EXTRA_ALARM_NOTIFICATION_INTERACTION_TYPE =
-      "ALARM_NOTIFICATION_INTERACTION_TYPE"
+    private const val EXTRA_ALARM_ACTION_TYPE = "ALARM_NOTIFICATION_INTERACTION_TYPE"
   }
 }
