@@ -31,6 +31,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".AlarmFiredActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
+            android:exported="false" />
+
         <receiver android:name=".core.system.receiver.AlarmDismissedBroadcastReceiver" />
         <receiver android:name=".core.system.receiver.AlarmFiredBroadcastReceiver" />
         <receiver android:name=".core.system.receiver.AlarmUpcomingBroadcastReceiver" />
