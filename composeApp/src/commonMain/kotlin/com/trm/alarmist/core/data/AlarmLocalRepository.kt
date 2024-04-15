@@ -162,7 +162,7 @@ class AlarmLocalRepository(
         date = date.toString(),
         dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
       )
-      .asAlarmsListFlow { it.toUpcomingListModelScheduledAtDate(date) }
+      .asAlarmsListFlow { alarm, _ -> alarm.toUpcomingListModelScheduledAtDate(date) }
 
   override fun getOnAlarmSchedulesForDates(
     dates: ClosedRange<LocalDate>
@@ -188,11 +188,12 @@ class AlarmLocalRepository(
     queries.selectCountOneTimeAlarmsAfterTime(time).asFlow().mapToOne(dispatcher).map(Long::toInt)
 
   private fun Query<Alarm>.asAlarmsListFlow(
-    now: LocalDateTime = LocalDateTime.now(),
-    mapper: (Alarm) -> AlarmListModel = { it.toListModel(now) },
-  ): Flow<List<AlarmListModel>> {
-    return asFlow().mapToList(dispatcher).map { it.map(mapper) }
-  }
+    mapper: (Alarm, LocalDateTime) -> AlarmListModel = { alarm, now -> alarm.toListModel(now) }
+  ): Flow<List<AlarmListModel>> =
+    asFlow().mapToList(dispatcher).map {
+      val now = LocalDateTime.now()
+      it.map { alarm -> mapper(alarm, now) }
+    }
 
   override suspend fun toggleAlarmOnOff(id: Long): AlarmModel =
     withContext(dispatcher) {
