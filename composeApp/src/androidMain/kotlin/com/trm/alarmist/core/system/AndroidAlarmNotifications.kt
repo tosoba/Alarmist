@@ -67,10 +67,11 @@ private fun Application.createAlarmFiredNotificationChannel() {
   getSystemService(NotificationManager::class.java)
     .createNotificationChannel(
       NotificationChannel(
-        ALARM_FIRED_NOTIFICATION_CHANNEL_ID,
-        ALARM_FIRED_NOTIFICATION_CHANNEL_NAME,
-        NotificationManager.IMPORTANCE_HIGH,
-      )
+          ALARM_FIRED_NOTIFICATION_CHANNEL_ID,
+          ALARM_FIRED_NOTIFICATION_CHANNEL_NAME,
+          NotificationManager.IMPORTANCE_HIGH,
+        )
+        .apply { setSound(null, null) }
     )
 }
 
