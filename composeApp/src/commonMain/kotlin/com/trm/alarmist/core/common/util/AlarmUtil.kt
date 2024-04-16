@@ -98,6 +98,7 @@ fun Alarm.toModel(): AlarmModel =
     snoozeCount = snoozeCount,
     snoozeLimit = snoozeLimit,
     lastSnoozedAt = lastSnoozedAt,
+    ringDurationMinutes = ringDurationMinutes
   )
 
 fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =

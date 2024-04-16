@@ -20,6 +20,7 @@ class AddAlarmUseCase(
     offOnDates: Collection<LocalDate>,
     snoozeDurationMinutes: Long,
     snoozeLimit: Long,
+    ringDurationMinutes: Long,
   ) {
     updateAlarmScheduleUseCase(
       isOn = isOn,
@@ -34,6 +35,7 @@ class AddAlarmUseCase(
           offOnDates = offOnDates,
           snoozeDurationMinutes = snoozeDurationMinutes,
           snoozeLimit = snoozeLimit,
+          ringDurationMinutes = ringDurationMinutes,
         ),
       fireAtTime = fireAtTime,
       scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,

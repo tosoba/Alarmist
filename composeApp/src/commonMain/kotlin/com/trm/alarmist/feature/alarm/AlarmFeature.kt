@@ -77,6 +77,7 @@ class AlarmFeature(
               offOnDates = offOnDates,
               snoozeDurationMinutes = snoozeDuration.minutes,
               snoozeLimit = snoozeLimitOrZero,
+              ringDurationMinutes = ringDuration,
             )
           }
           is AlarmComponent.Mode.Edit -> {
@@ -91,6 +92,7 @@ class AlarmFeature(
               offOnDates = offOnDates,
               snoozeDurationMinutes = snoozeDuration.minutes,
               snoozeLimit = snoozeLimitOrZero,
+              ringDurationMinutes = ringDuration,
             )
           }
         }
@@ -154,6 +156,10 @@ class AlarmFeature(
 
   fun onSnoozeLimitChange(limit: Long) {
     _state.update { it.copy(snoozeLimit = limit) }
+  }
+
+  fun onRingDurationChange(duration: Long) {
+    _state.update { it.copy(ringDuration = duration) }
   }
 
   fun onGroupClick(group: AlarmGroupModel) {

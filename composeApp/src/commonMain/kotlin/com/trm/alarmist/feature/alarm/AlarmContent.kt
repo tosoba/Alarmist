@@ -15,6 +15,7 @@ import alarmist.composeapp.generated.resources.ok
 import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.permission_required
 import alarmist.composeapp.generated.resources.repeat_on_label
+import alarmist.composeapp.generated.resources.ring_duration_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.scheduled
 import alarmist.composeapp.generated.resources.snooze_duration_label
@@ -136,6 +137,7 @@ fun AlarmContent(
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
   onSnoozeDurationChange: (AlarmSnoozeDuration) -> Unit = {},
   onSnoozeLimitChange: (Long) -> Unit = {},
+  onRingDurationChange: (Long) -> Unit = {},
   onGroupClick: (AlarmGroupModel) -> Unit = {},
   onConfirmClick: () -> Unit = {},
 ) {
@@ -281,6 +283,25 @@ fun AlarmContent(
       ) {
         Column(modifier = Modifier.padding(16.dp)) {
           Text(
+            text = stringResource(Res.string.ring_duration_label),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+
+          Slider(
+            value = state.ringDuration.toFloat(),
+            valueRange =
+              AlarmState.MIN_RING_DURATION_MINUTES.toFloat()..AlarmState.MAX_RING_DURATION_MINUTES
+                  .toFloat(),
+            steps =
+              AlarmState.MAX_RING_DURATION_MINUTES.toInt() -
+                AlarmState.MIN_RING_DURATION_MINUTES.toInt(),
+            onValueChange = { onRingDurationChange(it.toLong()) },
+            thumb = { AlarmSliderThumb(text = state.ringDuration.toString()) },
+            modifier = Modifier.fillMaxWidth(),
+          )
+
+          Text(
             text = stringResource(Res.string.snooze_duration_label),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -311,7 +332,7 @@ fun AlarmContent(
                 value = state.snoozeLimit.toFloat(),
                 valueRange =
                   AlarmState.MIN_SNOOZE_LIMIT.toFloat()..AlarmState.MAX_SNOOZE_LIMIT.toFloat(),
-                steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - 1,
+                steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - AlarmState.MIN_SNOOZE_LIMIT.toInt(),
                 onValueChange = { onSnoozeLimitChange(it.toLong()) },
                 thumb = { AlarmSliderThumb(text = state.snoozeLimit.toString()) },
                 modifier = Modifier.fillMaxWidth(),

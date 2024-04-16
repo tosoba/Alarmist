@@ -22,4 +22,5 @@ data class AlarmModel(
   val snoozeCount: Long,
   val snoozeLimit: Long,
   val lastSnoozedAt: LocalDateTime?,
+  val ringDurationMinutes: Long
 )

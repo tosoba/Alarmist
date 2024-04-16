@@ -18,7 +18,8 @@ CREATE TABLE alarm(
 	snoozeDurationMinutes INTEGER NOT NULL DEFAULT 0,
 	snoozeCount INTEGER NOT NULL DEFAULT 0,
 	snoozeLimit INTEGER NOT NULL DEFAULT 2,
-	lastSnoozedAt TEXT AS LocalDateTime
+	lastSnoozedAt TEXT AS LocalDateTime,
+	ringDurationMinutes INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE TABLE alarmGroup(
@@ -28,7 +29,7 @@ CREATE TABLE alarmGroup(
 );
 
 insertAlarm:
-INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateAlarmById:
 UPDATE alarm
@@ -45,7 +46,8 @@ SET
     snoozeDurationMinutes = ?,
     snoozeCount = 0,
     snoozeLimit = ?,
-    lastSnoozedAt = NULL
+    lastSnoozedAt = NULL,
+    ringDurationMinutes = ?
 WHERE id = ?;
 
 updateAlarmLastNotificationDateAndResetSnoozeCountById:

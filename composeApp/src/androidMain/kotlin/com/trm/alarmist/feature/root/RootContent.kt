@@ -203,6 +203,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onGroupClick = child.component.feature::onGroupClick,
               onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
               onSnoozeLimitChange = child.component.feature::onSnoozeLimitChange,
+              onRingDurationChange = child.component.feature::onRingDurationChange,
               onConfirmClick = child.component::onConfirmClick,
             )
           }

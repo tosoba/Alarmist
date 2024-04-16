@@ -22,6 +22,7 @@ data class AlarmState(
   val offOnDates: Set<LocalDate> = emptySet(),
   val snoozeDuration: AlarmSnoozeDuration = AlarmSnoozeDuration.MIN_10,
   val snoozeLimit: Long = DEFAULT_SNOOZE_LIMIT,
+  val ringDuration: Long = DEFAULT_RING_DURATION_MINUTES,
 ) {
   constructor(
     alarm: AlarmModel
@@ -34,6 +35,7 @@ data class AlarmState(
     offOnDates = alarm.offOnDates.toSet(),
     snoozeDuration = AlarmSnoozeDuration.fromMinutes(alarm.snoozeDurationMinutes),
     snoozeLimit = alarm.snoozeLimit.takeIf { it > 0L } ?: DEFAULT_SNOOZE_LIMIT,
+    ringDuration = alarm.ringDurationMinutes,
   )
 
   constructor(
@@ -51,5 +53,9 @@ data class AlarmState(
     const val MIN_SNOOZE_LIMIT = 1L
     const val DEFAULT_SNOOZE_LIMIT = 2L
     const val MAX_SNOOZE_LIMIT = 10L
+
+    const val MIN_RING_DURATION_MINUTES = 1L
+    const val DEFAULT_RING_DURATION_MINUTES = 1L
+    const val MAX_RING_DURATION_MINUTES = 10L
   }
 }

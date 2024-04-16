@@ -45,6 +45,7 @@
     <string name="repeat_on_label">Repeat on:</string>
     <string name="snooze_duration_label">Snooze duration (minutes):</string>
     <string name="snooze_limit_label">Snooze at most ... (times):</string>
+    <string name="ring_duration_label">Ring for ... (minutes):</string>
     <string name="custom_schedule_label">Custom schedule:</string>
     <string name="groups_label">Groups:</string>
     <string name="time_input">Time input</string>
