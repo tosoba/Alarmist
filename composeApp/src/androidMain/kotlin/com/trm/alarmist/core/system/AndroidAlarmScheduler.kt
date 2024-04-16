@@ -14,7 +14,12 @@ import kotlinx.datetime.toInstant
 class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
   private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-  override fun scheduleAlarm(id: Long, fireOnDateTime: LocalDateTime, snoozeAvailable: Boolean) {
+  override fun scheduleAlarm(
+    id: Long,
+    fireOnDateTime: LocalDateTime,
+    snoozeAvailable: Boolean,
+    ringDurationMinutes: Long,
+  ) {
     context.cancelNotification(id.toInt())
 
     alarmManager.setExact(
@@ -29,7 +34,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
       fireOnDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
-      alarmFiredPendingIntent(id, fireOnDateTime, snoozeAvailable),
+      alarmFiredPendingIntent(id, fireOnDateTime, snoozeAvailable, ringDurationMinutes),
     )
   }
 
@@ -43,11 +48,18 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     id: Long,
     fireOnDateTime: LocalDateTime,
     snoozeAvailable: Boolean,
+    ringDurationMinutes: Long,
   ): PendingIntent =
     PendingIntent.getBroadcast(
       context,
       id.toInt(),
-      AlarmFiredBroadcastReceiver.intent(context, id, fireOnDateTime, snoozeAvailable),
+      AlarmFiredBroadcastReceiver.intent(
+        context = context,
+        id = id,
+        fireOnDateTime = fireOnDateTime,
+        snoozeAvailable = snoozeAvailable,
+        ringDurationMinutes = ringDurationMinutes,
+      ),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 

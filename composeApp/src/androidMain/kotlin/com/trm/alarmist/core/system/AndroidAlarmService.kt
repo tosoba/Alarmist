@@ -194,7 +194,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
           )
         }
       },
-      60_000, // TODO: alarm duration from intent
+      60_000 * getRingDurationMinutes(intent),
     )
   }
 

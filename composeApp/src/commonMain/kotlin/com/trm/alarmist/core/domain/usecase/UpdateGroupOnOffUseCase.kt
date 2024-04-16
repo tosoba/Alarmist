@@ -9,20 +9,20 @@ class UpdateGroupOnOffUseCase(
   private val scheduler: AlarmScheduler,
 ) {
   suspend operator fun invoke(id: Long, isOn: Boolean) {
-    val updatedAlarms =
-      if (id == AlarmGroupModel.UNGROUPED_ID) {
+    if (id == AlarmGroupModel.UNGROUPED_ID) {
         repository.updateUngroupedAlarmsOnOff(isOn)
       } else {
         repository.updateGroupAlarmsOnOff(id, isOn)
       }
-    updatedAlarms.forEach { alarm ->
-      calculateAlarmNextFireOnDateTime(alarm)?.let {
-        scheduler.scheduleAlarm(
-          id = alarm.id,
-          fireOnDateTime = it,
-          snoozeAvailable = alarm.snoozeDurationMinutes > 0L,
-        )
-      } ?: run { scheduler.cancelAlarm(alarm.id) }
-    }
+      .forEach { alarm ->
+        calculateAlarmNextFireOnDateTime(alarm)?.let {
+          scheduler.scheduleAlarm(
+            id = alarm.id,
+            fireOnDateTime = it,
+            snoozeAvailable = alarm.snoozeDurationMinutes > 0L,
+            ringDurationMinutes = alarm.ringDurationMinutes,
+          )
+        } ?: run { scheduler.cancelAlarm(alarm.id) }
+      }
   }
 }

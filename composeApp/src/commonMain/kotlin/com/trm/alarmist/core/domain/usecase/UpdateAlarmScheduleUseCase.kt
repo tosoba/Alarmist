@@ -9,16 +9,16 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
 class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
-  operator fun invoke(alarmModel: AlarmModel, afterDateTime: LocalDateTime = LocalDateTime.now()) {
+  operator fun invoke(alarm: AlarmModel, afterDateTime: LocalDateTime = LocalDateTime.now()) {
     this(
-      isOn = alarmModel.isOn,
-      id = alarmModel.id,
-      fireAtTime = alarmModel.fireAtTime,
-      scheduledOnDaysOfWeek = alarmModel.scheduledOnDaysOfWeek,
-      scheduledOnDates = alarmModel.scheduledOnDates,
-      offOnDates = alarmModel.offOnDates,
-      snoozeAvailable =
-        alarmModel.snoozeDurationMinutes > 0L && alarmModel.snoozeCount < alarmModel.snoozeLimit,
+      isOn = alarm.isOn,
+      id = alarm.id,
+      fireAtTime = alarm.fireAtTime,
+      scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek,
+      scheduledOnDates = alarm.scheduledOnDates,
+      offOnDates = alarm.offOnDates,
+      snoozeAvailable = alarm.snoozeDurationMinutes > 0L && alarm.snoozeCount < alarm.snoozeLimit,
+      ringDurationMinutes = alarm.ringDurationMinutes,
       afterDateTime = afterDateTime,
     )
   }
@@ -31,6 +31,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
     snoozeAvailable: Boolean,
+    ringDurationMinutes: Long,
     afterDateTime: LocalDateTime = LocalDateTime.now(),
   ) {
     calculateAlarmNextFireOnDateTime(
@@ -42,7 +43,12 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
         afterDateTime = afterDateTime,
       )
       ?.let {
-        scheduler.scheduleAlarm(id = id, fireOnDateTime = it, snoozeAvailable = snoozeAvailable)
+        scheduler.scheduleAlarm(
+          id = id,
+          fireOnDateTime = it,
+          snoozeAvailable = snoozeAvailable,
+          ringDurationMinutes = ringDurationMinutes,
+        )
       } ?: run { scheduler.cancelAlarm(id) }
   }
 }

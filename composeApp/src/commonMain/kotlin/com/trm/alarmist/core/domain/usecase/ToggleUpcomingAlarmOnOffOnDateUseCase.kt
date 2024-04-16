@@ -22,6 +22,7 @@ class ToggleUpcomingAlarmOnOffOnDateUseCase(
               id = id,
               fireOnDateTime = it,
               snoozeAvailable = toggledAlarm.snoozeDurationMinutes > 0L,
+              ringDurationMinutes = toggledAlarm.ringDurationMinutes,
             )
           } else {
             scheduler.cancelAlarm(id)

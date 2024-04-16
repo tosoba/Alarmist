@@ -9,7 +9,7 @@ class UpdateAlarmOnDismissUseCase(
 ) {
   suspend operator fun invoke(id: Long, notificationDateTime: LocalDateTime) {
     updateAlarmScheduleUseCase(
-      alarmModel = repository.updateAlarmOnDismiss(id, notificationDateTime),
+      alarm = repository.updateAlarmOnDismiss(id, notificationDateTime),
       afterDateTime = notificationDateTime,
     )
   }
