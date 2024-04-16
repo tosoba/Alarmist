@@ -7,6 +7,7 @@ import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
+import com.trm.alarmist.core.domain.usecase.DeleteAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +26,10 @@ class AlarmFeature(
   private val mode: AlarmComponent.Mode,
 ) : CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
+
   private val addAlarmUseCase: AddAlarmUseCase by inject()
   private val editAlarmUseCase: EditAlarmUseCase by inject()
+  private val deleteAlarmUseCase: DeleteAlarmUseCase by inject()
 
   private val _state: MutableStateFlow<AlarmState> =
     MutableStateFlow(
@@ -59,7 +62,7 @@ class AlarmFeature(
   fun onDeleteActionClick(): Job =
     coroutineScope.launch {
       check(mode is AlarmComponent.Mode.Edit)
-      repository.deleteAlarm(mode.alarm.id)
+      deleteAlarmUseCase(mode.alarm.id)
     }
 
   fun onConfirmClick(): Job =

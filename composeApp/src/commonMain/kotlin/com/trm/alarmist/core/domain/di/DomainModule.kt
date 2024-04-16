@@ -1,6 +1,7 @@
 package com.trm.alarmist.core.domain.di
 
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
+import com.trm.alarmist.core.domain.usecase.DeleteAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.GetAlarmsInGroupFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateUseCase
@@ -19,6 +20,7 @@ import org.koin.dsl.module
 val domainModule = module {
   factory { AddAlarmUseCase(get(), get()) }
   factory { EditAlarmUseCase(get(), get()) }
+  factory { DeleteAlarmUseCase(get(), get()) }
   factory { ToggleAlarmOnOffUseCase(get(), get()) }
   factory { UpdateGroupOnOffUseCase(get(), get()) }
   factory { UpdateAlarmScheduleUseCase(get()) }
