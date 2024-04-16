@@ -13,6 +13,9 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
@@ -37,6 +40,14 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
   private val updateAlarmOnSnoozeUseCase: UpdateAlarmOnSnoozeUseCase by inject()
 
   private var mediaPlayer: MediaPlayer? = null
+  private val vibrator: Vibrator by
+    lazy(LazyThreadSafetyMode.NONE) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        getSystemService(VibratorManager::class.java).defaultVibrator
+      } else {
+        getSystemService(Vibrator::class.java)
+      }
+    }
 
   private val firedAlarmNotificationReceiver: BroadcastReceiver =
     object : BroadcastReceiver() {
@@ -151,30 +162,28 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
           player.stopAndRelease()
           true
         }
-
         setDataSource(
           this@AndroidAlarmService,
           RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM), // TODO: custom alarm sounds
         )
-
-        isLooping = true
         setAudioAttributes(
           AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
         )
+        isLooping = true
+
         prepare()
         start()
       }
 
-    // TODO: start vibration
+    vibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0L, 1000L, 1000L), 0))
   }
 
   private fun stopPlaying() {
     mediaPlayer?.stopAndRelease()
-
-    // TODO: cancel vibration
+    vibrator.cancel()
   }
 
   private fun MediaPlayer.stopAndRelease() {
