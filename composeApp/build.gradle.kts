@@ -3,6 +3,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.kotlinx.serialization)
+  alias(libs.plugins.kotlinx.parcelize)
   alias(libs.plugins.sqlDelight)
   alias(libs.plugins.mokkery)
 }
