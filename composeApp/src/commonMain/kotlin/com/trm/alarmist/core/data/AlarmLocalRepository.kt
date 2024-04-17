@@ -48,6 +48,8 @@ class AlarmLocalRepository(
     snoozeDurationMinutes: Long,
     snoozeLimit: Long,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean,
   ): Long =
     withContext(dispatcher) {
       queries.transactionWithResult {
@@ -56,7 +58,7 @@ class AlarmLocalRepository(
           groupId = groupId,
           fireAtTime = fireAtTime,
           name = name,
-          isOn = if (isOn) 1L else 0L,
+          isOn = if (isOn) DB_ON else DB_OFF,
           scheduledOnDaysOfWeek =
             scheduledOnDaysOfWeek.takeIf(Collection<DayOfWeek>::isNotEmpty)?.toList(),
           scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
@@ -64,10 +66,12 @@ class AlarmLocalRepository(
           lastModificationDateTime = LocalDateTime.now(),
           lastNotificationDate = null,
           snoozeDurationMinutes = snoozeDurationMinutes,
-          snoozeCount = 0L,
+          snoozeCount = DB_OFF,
           snoozeLimit = snoozeLimit,
           lastSnoozedAt = null,
           ringDurationMinutes = ringDurationMinutes,
+          soundEnabled = if (soundEnabled) DB_ON else DB_OFF,
+          vibrationEnabled = if (vibrationEnabled) DB_ON else DB_OFF,
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
@@ -85,6 +89,8 @@ class AlarmLocalRepository(
     snoozeDurationMinutes: Long,
     snoozeLimit: Long,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean,
   ) {
     withContext(dispatcher) {
       queries.updateAlarmById(
@@ -92,7 +98,7 @@ class AlarmLocalRepository(
         groupId = groupId,
         fireAtTime = fireAtTime,
         name = name,
-        isOn = if (isOn) 1L else 0L,
+        isOn = if (isOn) DB_ON else DB_OFF,
         scheduledOnDaysOfWeek =
           scheduledOnDaysOfWeek.takeIf(Collection<DayOfWeek>::isNotEmpty)?.toList(),
         scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
@@ -101,6 +107,8 @@ class AlarmLocalRepository(
         snoozeDurationMinutes = snoozeDurationMinutes,
         snoozeLimit = snoozeLimit,
         ringDurationMinutes = ringDurationMinutes,
+        soundEnabled = if (soundEnabled) DB_ON else DB_OFF,
+        vibrationEnabled = if (vibrationEnabled) DB_ON else DB_OFF,
       )
     }
   }

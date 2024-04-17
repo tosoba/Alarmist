@@ -204,6 +204,8 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
               onSnoozeLimitChange = child.component.feature::onSnoozeLimitChange,
               onRingDurationChange = child.component.feature::onRingDurationChange,
+              onToggleSoundEnabled = child.component.feature::onToggleSoundEnabled,
+              onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
               onConfirmClick = child.component::onConfirmClick,
             )
           }

@@ -23,6 +23,8 @@ data class AlarmState(
   val snoozeDuration: AlarmSnoozeDuration = AlarmSnoozeDuration.MIN_10,
   val snoozeLimit: Long = DEFAULT_SNOOZE_LIMIT,
   val ringDuration: Long = DEFAULT_RING_DURATION_MINUTES,
+  val soundEnabled: Boolean = true,
+  val vibrationEnabled: Boolean = true,
 ) {
   constructor(
     alarm: AlarmModel
@@ -36,6 +38,8 @@ data class AlarmState(
     snoozeDuration = AlarmSnoozeDuration.fromMinutes(alarm.snoozeDurationMinutes),
     snoozeLimit = alarm.snoozeLimit.takeIf { it > 0L } ?: DEFAULT_SNOOZE_LIMIT,
     ringDuration = alarm.ringDurationMinutes,
+    soundEnabled = alarm.soundEnabled,
+    vibrationEnabled = alarm.vibrationEnabled,
   )
 
   constructor(

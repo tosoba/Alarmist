@@ -81,6 +81,8 @@ class AlarmFeature(
               snoozeDurationMinutes = snoozeDuration.minutes,
               snoozeLimit = snoozeLimitOrZero,
               ringDurationMinutes = ringDuration,
+              soundEnabled = soundEnabled,
+              vibrationEnabled = vibrationEnabled,
             )
           }
           is AlarmComponent.Mode.Edit -> {
@@ -96,6 +98,8 @@ class AlarmFeature(
               snoozeDurationMinutes = snoozeDuration.minutes,
               snoozeLimit = snoozeLimitOrZero,
               ringDurationMinutes = ringDuration,
+              soundEnabled = soundEnabled,
+              vibrationEnabled = vibrationEnabled,
             )
           }
         }
@@ -163,6 +167,14 @@ class AlarmFeature(
 
   fun onRingDurationChange(duration: Long) {
     _state.update { it.copy(ringDuration = duration) }
+  }
+
+  fun onToggleSoundEnabled() {
+    _state.update { it.copy(soundEnabled = !it.soundEnabled) }
+  }
+
+  fun onToggleVibrationEnabled() {
+    _state.update { it.copy(vibrationEnabled = !it.vibrationEnabled) }
   }
 
   fun onGroupClick(group: AlarmGroupModel) {

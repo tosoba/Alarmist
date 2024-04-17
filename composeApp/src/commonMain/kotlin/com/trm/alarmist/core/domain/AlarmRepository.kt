@@ -22,6 +22,8 @@ interface AlarmRepository {
     snoozeDurationMinutes: Long,
     snoozeLimit: Long,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean,
   ): Long
 
   suspend fun editAlarm(
@@ -36,6 +38,8 @@ interface AlarmRepository {
     snoozeDurationMinutes: Long,
     snoozeLimit: Long,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean,
   )
 
   suspend fun getAlarmById(id: Long): AlarmModel

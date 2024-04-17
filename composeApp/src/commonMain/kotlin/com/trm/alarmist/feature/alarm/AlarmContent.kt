@@ -20,8 +20,10 @@ import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.scheduled
 import alarmist.composeapp.generated.resources.snooze_duration_label
 import alarmist.composeapp.generated.resources.snooze_limit_label
+import alarmist.composeapp.generated.resources.sound_enabled_label
 import alarmist.composeapp.generated.resources.time_dial
 import alarmist.composeapp.generated.resources.time_input
+import alarmist.composeapp.generated.resources.vibration_enabled_label
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
@@ -41,6 +43,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -138,6 +141,8 @@ fun AlarmContent(
   onSnoozeDurationChange: (AlarmSnoozeDuration) -> Unit = {},
   onSnoozeLimitChange: (Long) -> Unit = {},
   onRingDurationChange: (Long) -> Unit = {},
+  onToggleSoundEnabled: () -> Unit = {},
+  onToggleVibrationEnabled: () -> Unit = {},
   onGroupClick: (AlarmGroupModel) -> Unit = {},
   onConfirmClick: () -> Unit = {},
 ) {
@@ -282,6 +287,26 @@ fun AlarmContent(
             .animateContentSize()
       ) {
         Column(modifier = Modifier.padding(16.dp)) {
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(Res.string.sound_enabled_label))
+            Spacer(Modifier.weight(1f))
+            Switch(
+              checked = state.soundEnabled,
+              onCheckedChange = remember { { onToggleSoundEnabled() } },
+            )
+          }
+
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(Res.string.vibration_enabled_label))
+            Spacer(Modifier.weight(1f))
+            Switch(
+              checked = state.vibrationEnabled,
+              onCheckedChange = remember { { onToggleVibrationEnabled() } },
+            )
+          }
+
+          Spacer(Modifier.height(8.dp))
+
           Text(
             text = stringResource(Res.string.ring_duration_label),
             style = MaterialTheme.typography.bodyLarge,

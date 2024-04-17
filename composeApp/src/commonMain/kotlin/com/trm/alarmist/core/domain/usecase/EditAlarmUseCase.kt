@@ -22,6 +22,8 @@ class EditAlarmUseCase(
     snoozeDurationMinutes: Long,
     snoozeLimit: Long,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean,
   ) {
     repository.editAlarm(
       id = id,
@@ -35,6 +37,8 @@ class EditAlarmUseCase(
       snoozeDurationMinutes = snoozeDurationMinutes,
       snoozeLimit = snoozeLimit,
       ringDurationMinutes = ringDurationMinutes,
+      soundEnabled = soundEnabled,
+      vibrationEnabled = vibrationEnabled,
     )
     updateAlarmScheduleUseCase(
       isOn = isOn,

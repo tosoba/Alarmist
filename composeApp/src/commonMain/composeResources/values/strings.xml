@@ -47,6 +47,8 @@
     <string name="snooze_limit_label">Snooze at most ... (times):</string>
     <string name="ring_duration_label">Ring for ... (minutes):</string>
     <string name="custom_schedule_label">Custom schedule:</string>
+    <string name="sound_enabled_label">Sound enabled:</string>
+    <string name="vibration_enabled_label">Vibration enabled:</string>
     <string name="groups_label">Groups:</string>
     <string name="time_input">Time input</string>
     <string name="time_dial">Time dial</string>

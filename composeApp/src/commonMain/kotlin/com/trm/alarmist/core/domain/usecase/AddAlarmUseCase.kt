@@ -21,6 +21,8 @@ class AddAlarmUseCase(
     snoozeDurationMinutes: Long,
     snoozeLimit: Long,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean,
   ) {
     updateAlarmScheduleUseCase(
       isOn = isOn,
@@ -36,6 +38,8 @@ class AddAlarmUseCase(
           snoozeDurationMinutes = snoozeDurationMinutes,
           snoozeLimit = snoozeLimit,
           ringDurationMinutes = ringDurationMinutes,
+          soundEnabled = soundEnabled,
+          vibrationEnabled = vibrationEnabled,
         ),
       fireAtTime = fireAtTime,
       scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
