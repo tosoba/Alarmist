@@ -40,6 +40,21 @@ fun Context.notifyAlarmUpcoming(
     )
 }
 
+fun Context.notifyAlarmMissed(
+  id: Long,
+  fireOnDateTime: LocalDateTime,
+) { // TODO: show formatted fireOnDateTime in notification
+  getSystemService(NotificationManager::class.java)
+    .notify(
+      id.toInt(),
+      NotificationCompat.Builder(this, ALARM_MISSED_NOTIFICATION_CHANNEL_ID)
+        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setContentTitle("Alarm was missed")
+        .setSilent(true)
+        .build(),
+    )
+}
+
 fun Context.cancelNotification(id: Int) {
   getSystemService(NotificationManager::class.java).cancel(id)
 }
@@ -47,6 +62,7 @@ fun Context.cancelNotification(id: Int) {
 fun Application.createAlarmNotificationChannels() {
   createAlarmUpcomingNotificationChannel()
   createAlarmFiredNotificationChannel()
+  createAlarmMissedNotificationChannel()
 }
 
 private fun Application.createAlarmUpcomingNotificationChannel() {
@@ -77,3 +93,17 @@ private fun Application.createAlarmFiredNotificationChannel() {
 
 internal const val ALARM_FIRED_NOTIFICATION_CHANNEL_ID = "ALARM_FIRED_CHANNEL"
 private const val ALARM_FIRED_NOTIFICATION_CHANNEL_NAME = "Fired alarms"
+
+private fun Application.createAlarmMissedNotificationChannel() {
+  getSystemService(NotificationManager::class.java)
+    .createNotificationChannel(
+      NotificationChannel(
+        ALARM_MISSED_NOTIFICATION_CHANNEL_ID,
+        ALARM_MISSED_NOTIFICATION_CHANNEL_NAME,
+        NotificationManager.IMPORTANCE_HIGH,
+      )
+    )
+}
+
+internal const val ALARM_MISSED_NOTIFICATION_CHANNEL_ID = "ALARM_MISSED_CHANNEL"
+private const val ALARM_MISSED_NOTIFICATION_CHANNEL_NAME = "Missed alarms"
