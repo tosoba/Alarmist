@@ -19,6 +19,8 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     fireOnDateTime: LocalDateTime,
     snoozeAvailable: Boolean,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean,
   ) {
     context.cancelNotification(id.toInt())
 
@@ -34,7 +36,14 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
       fireOnDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
-      alarmFiredPendingIntent(id, fireOnDateTime, snoozeAvailable, ringDurationMinutes),
+      alarmFiredPendingIntent(
+        id = id,
+        fireOnDateTime = fireOnDateTime,
+        snoozeAvailable = snoozeAvailable,
+        ringDurationMinutes = ringDurationMinutes,
+        soundEnabled = soundEnabled,
+        vibrationEnabled = vibrationEnabled,
+      ),
     )
   }
 
@@ -49,6 +58,8 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     fireOnDateTime: LocalDateTime,
     snoozeAvailable: Boolean,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean,
   ): PendingIntent =
     PendingIntent.getBroadcast(
       context,
@@ -59,6 +70,8 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
         fireOnDateTime = fireOnDateTime,
         snoozeAvailable = snoozeAvailable,
         ringDurationMinutes = ringDurationMinutes,
+        soundEnabled = soundEnabled,
+        vibrationEnabled = vibrationEnabled,
       ),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )

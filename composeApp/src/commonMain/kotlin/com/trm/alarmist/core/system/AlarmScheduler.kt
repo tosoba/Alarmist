@@ -8,6 +8,8 @@ interface AlarmScheduler {
     fireOnDateTime: LocalDateTime,
     snoozeAvailable: Boolean,
     ringDurationMinutes: Long,
+    soundEnabled: Boolean,
+    vibrationEnabled: Boolean
   )
 
   fun cancelAlarm(id: Long)

@@ -49,6 +49,8 @@ class EditAlarmUseCase(
       offOnDates = offOnDates,
       snoozeAvailable = snoozeDurationMinutes > 0L,
       ringDurationMinutes = ringDurationMinutes,
+      soundEnabled = soundEnabled,
+      vibrationEnabled = vibrationEnabled,
     )
   }
 }

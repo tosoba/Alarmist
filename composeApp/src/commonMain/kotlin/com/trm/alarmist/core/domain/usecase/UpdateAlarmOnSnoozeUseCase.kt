@@ -28,6 +28,8 @@ class UpdateAlarmOnSnoozeUseCase(
           fireOnDateTime = it,
           snoozeAvailable = alarm.snoozeCount < alarm.snoozeLimit,
           ringDurationMinutes = alarm.ringDurationMinutes,
+          soundEnabled = alarm.soundEnabled,
+          vibrationEnabled = alarm.vibrationEnabled,
         )
       }
   }

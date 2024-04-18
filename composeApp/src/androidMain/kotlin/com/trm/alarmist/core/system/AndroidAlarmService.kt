@@ -40,14 +40,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
   private val updateAlarmOnSnoozeUseCase: UpdateAlarmOnSnoozeUseCase by inject()
 
   private var mediaPlayer: MediaPlayer? = null
-  private val vibrator: Vibrator by
-    lazy(LazyThreadSafetyMode.NONE) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        getSystemService(VibratorManager::class.java).defaultVibrator
-      } else {
-        getSystemService(Vibrator::class.java)
-      }
-    }
+  private var vibrator: Vibrator? = null
 
   private val firedAlarmNotificationReceiver: BroadcastReceiver =
     object : BroadcastReceiver() {
@@ -97,7 +90,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
         0
       },
     )
-    startPlaying()
+    startPlaying(intent)
     startAlarmDurationTimer(intent)
 
     return START_REDELIVER_INTENT
@@ -154,36 +147,46 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
-  private fun startPlaying() {
-    mediaPlayer =
-      MediaPlayer().apply {
-        setOnErrorListener { player, what, extra ->
-          Napier.e("Error occurred while playing audio - $what:$extra")
-          player.stopAndRelease()
-          true
+  private fun startPlaying(intent: Intent) {
+    if (isSoundEnabled(intent)) {
+      mediaPlayer =
+        MediaPlayer().apply {
+          setOnErrorListener { player, what, extra ->
+            Napier.e("Error occurred while playing audio - $what:$extra")
+            player.stopAndRelease()
+            true
+          }
+          setDataSource(
+            this@AndroidAlarmService,
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM), // TODO: custom alarm sounds
+          )
+          setAudioAttributes(
+            AudioAttributes.Builder()
+              .setUsage(AudioAttributes.USAGE_ALARM)
+              .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+              .build()
+          )
+          isLooping = true
+
+          prepare()
+          start()
         }
-        setDataSource(
-          this@AndroidAlarmService,
-          RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM), // TODO: custom alarm sounds
-        )
-        setAudioAttributes(
-          AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_ALARM)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build()
-        )
-        isLooping = true
+    }
 
-        prepare()
-        start()
-      }
-
-    vibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0L, 1000L, 1000L), 0))
+    if (isVibrationEnabled(intent)) {
+      vibrator =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            getSystemService(VibratorManager::class.java).defaultVibrator
+          } else {
+            getSystemService(Vibrator::class.java)
+          }
+          .apply { vibrate(VibrationEffect.createWaveform(longArrayOf(0L, 1000L, 1000L), 0)) }
+    }
   }
 
   private fun stopPlaying() {
     mediaPlayer?.stopAndRelease()
-    vibrator.cancel()
+    vibrator?.cancel()
   }
 
   private fun MediaPlayer.stopAndRelease() {

@@ -21,6 +21,8 @@ class UpdateGroupOnOffUseCase(
             fireOnDateTime = it,
             snoozeAvailable = alarm.snoozeDurationMinutes > 0L,
             ringDurationMinutes = alarm.ringDurationMinutes,
+            soundEnabled = alarm.soundEnabled,
+            vibrationEnabled = alarm.vibrationEnabled,
           )
         } ?: run { scheduler.cancelAlarm(alarm.id) }
       }
