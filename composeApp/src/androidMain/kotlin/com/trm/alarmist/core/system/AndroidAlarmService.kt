@@ -22,7 +22,7 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.trm.alarmist.MainActivity
+import com.trm.alarmist.AlarmFiredActivity
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.getSerializable
 import com.trm.alarmist.core.common.util.getStringBlocking
@@ -134,8 +134,9 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
       .setFullScreenIntent(
         PendingIntent.getActivity(
           this,
-          0,
-          Intent(this, MainActivity::class.java) // TODO: replace with AlarmActivity
+          ALARM_FIRED_ACTIVITY_REQUEST_CODE,
+          Intent(this, AlarmFiredActivity::class.java)
+            .putExtras(intent)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION),
           PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         ),
@@ -266,5 +267,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     private const val ACTION_FIRED_ALARM_NOTIFICATION = "ACTION_FIRED_ALARM_NOTIFICATION"
 
     private const val EXTRA_ALARM_ACTION_TYPE = "ALARM_NOTIFICATION_INTERACTION_TYPE"
+
+    private const val ALARM_FIRED_ACTIVITY_REQUEST_CODE = 300
   }
 }
