@@ -32,12 +32,10 @@ class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
           fireAtDateTime = getAlarmFireOnDateTime(intent),
         )
       ) {
-        val serviceIntent = Intent(context, AndroidAlarmService::class.java)
-        //        if (context.stopService(serviceIntent)) {
-        // TODO: no obvious way of getting already running service's intent so that alarm can be
-        // dismissed and proper notification can be shown
-        //        }
-        ContextCompat.startForegroundService(context, serviceIntent.putExtras(intent))
+        ContextCompat.startForegroundService(
+          context,
+          Intent(context, AndroidAlarmService::class.java).putExtras(intent),
+        )
       }
     }
   }

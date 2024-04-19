@@ -3,6 +3,7 @@ package com.trm.alarmist.core.system
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.dismiss
 import alarmist.composeapp.generated.resources.snooze
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -42,6 +43,9 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
   private var mediaPlayer: MediaPlayer? = null
   private var vibrator: Vibrator? = null
 
+  private var isPlaying = false
+  private val missedAlarms = mutableListOf<Intent>()
+
   private val firedAlarmNotificationReceiver: BroadcastReceiver =
     object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent?) {
@@ -71,14 +75,27 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
 
   override fun onDestroy() {
     super.onDestroy()
+
     stopPlaying()
     alarmDurationTimer.cancel()
+
     unregisterReceiver(firedAlarmNotificationReceiver)
+
+    missedAlarms.forEach {
+      notifyAlarmMissed(id = getAlarmId(it), fireOnDateTime = getAlarmFireOnDateTime(it))
+    }
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     super.onStartCommand(intent, flags, startId)
     if (intent == null) return START_NOT_STICKY
+
+    if (isPlaying) {
+      onAlreadyPlaying(intent)
+      return START_NOT_STICKY
+    }
+
+    isPlaying = true
 
     ServiceCompat.startForeground(
       this,
@@ -96,8 +113,18 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     return START_REDELIVER_INTENT
   }
 
+  private fun onAlreadyPlaying(intent: Intent) {
+    lifecycleScope.launch {
+      updateAlarmOnDismissUseCase(
+        id = getAlarmId(intent),
+        notificationDateTime = getAlarmFireOnDateTime(intent),
+      )
+    }
+    missedAlarms.add(intent)
+  }
+
   @OptIn(ExperimentalResourceApi::class)
-  private fun buildNotification(intent: Intent) =
+  private fun buildNotification(intent: Intent): Notification =
     NotificationCompat.Builder(this, ALARM_FIRED_NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setContentTitle("Alarm was fired")
