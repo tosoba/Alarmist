@@ -31,7 +31,6 @@ fun AlarmFireAtTime(item: AlarmListModel, modifier: Modifier = Modifier) {
         }
 
         item.nextFireAtTime.amPmString().takeIf(String::isNotEmpty)?.let {
-          append(" ")
           withStyle(
             SpanStyle(
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
