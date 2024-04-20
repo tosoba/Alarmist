@@ -90,6 +90,8 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     super.onStartCommand(intent, flags, startId)
     if (intent == null) return START_NOT_STICKY
 
+    cancelNotification(getAlarmId(intent).toInt())
+
     if (isPlaying) {
       onAlreadyPlaying(intent)
       return START_NOT_STICKY

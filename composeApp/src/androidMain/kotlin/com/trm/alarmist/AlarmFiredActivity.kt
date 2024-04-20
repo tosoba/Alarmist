@@ -3,15 +3,23 @@ package com.trm.alarmist
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.dismiss
 import alarmist.composeapp.generated.resources.snooze
+import android.app.Activity
+import android.app.KeyguardManager
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -23,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
+import com.trm.alarmist.core.system.AndroidAlarmService
 import com.trm.alarmist.core.system.getAlarmFireOnDateTime
 import com.trm.alarmist.core.system.getAlarmId
 import com.trm.alarmist.core.ui.theme.AppTheme
@@ -38,17 +47,21 @@ class AlarmFiredActivity : ComponentActivity() {
   @OptIn(ExperimentalResourceApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    requestWindowFeature(Window.FEATURE_NO_TITLE)
+    turnScreenOnAndKeyguardOff()
+
     setContent {
       AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
           Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
+            modifier = Modifier.fillMaxSize().padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
           ) {
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-              text = getAlarmFireOnDateTime(intent).toString(),
+              text = getAlarmFireOnDateTime(intent).time.toString(),
               style = MaterialTheme.typography.displayLarge,
             )
 
@@ -58,20 +71,26 @@ class AlarmFiredActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.fillMaxWidth()) {
               OutlinedButton(
                 onClick = {
                   lifecycleScope
                     .launch { updateAlarmOnSnoozeUseCase(getAlarmId(intent)) }
-                    .invokeOnCompletion { finish() }
+                    .invokeOnCompletion {
+                      stopService(Intent(this@AlarmFiredActivity, AndroidAlarmService::class.java))
+                      finish()
+                    }
                 },
                 modifier = Modifier.weight(1f),
               ) {
                 Text(
                   text = stringResource(Res.string.snooze),
-                  style = MaterialTheme.typography.displayMedium,
+                  style = MaterialTheme.typography.displaySmall,
                 )
               }
+
+              Spacer(modifier = Modifier.width(10.dp))
+
               Button(
                 onClick = {
                   lifecycleScope
@@ -81,13 +100,16 @@ class AlarmFiredActivity : ComponentActivity() {
                         getAlarmFireOnDateTime(intent),
                       )
                     }
-                    .invokeOnCompletion { finish() }
+                    .invokeOnCompletion {
+                      stopService(Intent(this@AlarmFiredActivity, AndroidAlarmService::class.java))
+                      finish()
+                    }
                 },
                 modifier = Modifier.weight(1f),
               ) {
                 Text(
                   text = stringResource(Res.string.dismiss),
-                  style = MaterialTheme.typography.displayMedium,
+                  style = MaterialTheme.typography.displaySmall,
                 )
               }
             }
@@ -95,5 +117,37 @@ class AlarmFiredActivity : ComponentActivity() {
         }
       }
     }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    turnScreenOffAndKeyguardOn()
+  }
+}
+
+fun Activity.turnScreenOnAndKeyguardOff() {
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+    setShowWhenLocked(true)
+    setTurnScreenOn(true)
+  } else {
+    window.addFlags(
+      WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+        WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+    )
+  }
+
+  getSystemService(KeyguardManager::class.java)
+    .requestDismissKeyguard(this@turnScreenOnAndKeyguardOff, null)
+}
+
+fun Activity.turnScreenOffAndKeyguardOn() {
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+    setShowWhenLocked(false)
+    setTurnScreenOn(false)
+  } else {
+    window.clearFlags(
+      WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+        WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+    )
   }
 }

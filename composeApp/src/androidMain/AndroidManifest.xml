@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
         android:name=".AlarmistApp"
@@ -35,7 +36,9 @@
         <activity
             android:name=".AlarmFiredActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
-            android:exported="false" />
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleInstance" />
 
         <receiver android:name=".core.system.receiver.AlarmDismissedBroadcastReceiver" />
         <receiver android:name=".core.system.receiver.AlarmFiredBroadcastReceiver" />
