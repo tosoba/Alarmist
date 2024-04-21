@@ -11,17 +11,15 @@ import androidx.core.app.NotificationCompat
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.system.receiver.AlarmDismissedBroadcastReceiver
-import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
 fun Context.notifyAlarmUpcoming(
-  id: Long,
-  fireOnDateTime: LocalDateTime,
+  settings: AlarmFireSettings
 ) { // TODO: show formatted fireOnDateTime in notification
   getSystemService(NotificationManager::class.java)
     .notify(
-      id.toInt(),
+      settings.id.toInt(),
       NotificationCompat.Builder(this, ALARM_UPCOMING_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle("Alarm is upcoming")
@@ -31,8 +29,8 @@ fun Context.notifyAlarmUpcoming(
           getStringBlocking(Res.string.dismiss),
           PendingIntent.getBroadcast(
             this,
-            id.toInt(),
-            AlarmDismissedBroadcastReceiver.intent(this, id, fireOnDateTime),
+            settings.id.toInt(),
+            AlarmDismissedBroadcastReceiver.intent(this, settings),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
           ),
         )
@@ -41,12 +39,11 @@ fun Context.notifyAlarmUpcoming(
 }
 
 fun Context.notifyAlarmMissed(
-  id: Long,
-  fireOnDateTime: LocalDateTime,
-) { // TODO: show formatted fireOnDateTime in notification
+  settings: AlarmFireSettings
+) { // TODO: show formatted fireOnDateTime in notification + name + group name
   getSystemService(NotificationManager::class.java)
     .notify(
-      id.toInt(),
+      settings.id.toInt(),
       NotificationCompat.Builder(this, ALARM_MISSED_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle("Alarm was missed")

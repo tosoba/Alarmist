@@ -24,60 +24,48 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
   ) {
     context.cancelNotification(id.toInt())
 
+    val settings =
+      AlarmFireSettings(
+        id = id,
+        fireOnDateTime = fireOnDateTime,
+        snoozeAvailable = snoozeAvailable,
+        ringDurationMinutes = ringDurationMinutes,
+        soundEnabled = soundEnabled,
+        vibrationEnabled = vibrationEnabled,
+      )
+
     alarmManager.setExact(
       AlarmManager.RTC,
       fireOnDateTime
         .toInstant(TimeZone.currentSystemDefault())
         .minus(1, DateTimeUnit.HOUR) // TODO: this should be in alarm settings
         .toEpochMilliseconds(),
-      alarmUpcomingPendingIntent(id, fireOnDateTime),
+      alarmUpcomingPendingIntent(settings),
     )
 
     alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
       fireOnDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
-      alarmFiredPendingIntent(
-        id = id,
-        fireOnDateTime = fireOnDateTime,
-        snoozeAvailable = snoozeAvailable,
-        ringDurationMinutes = ringDurationMinutes,
-        soundEnabled = soundEnabled,
-        vibrationEnabled = vibrationEnabled,
-      ),
+      alarmFiredPendingIntent(settings),
     )
   }
 
   override fun cancelAlarm(id: Long) {
     context.cancelNotification(id.toInt())
 
-    alarmManager.cancel(alarmFiredPendingIntent(id))
+    alarmManager.cancel(cancelAlarmFiredPendingIntent(id))
   }
 
-  private fun alarmFiredPendingIntent(
-    id: Long,
-    fireOnDateTime: LocalDateTime,
-    snoozeAvailable: Boolean,
-    ringDurationMinutes: Long,
-    soundEnabled: Boolean,
-    vibrationEnabled: Boolean,
-  ): PendingIntent =
+  private fun alarmFiredPendingIntent(settings: AlarmFireSettings): PendingIntent =
     PendingIntent.getBroadcast(
       context,
-      id.toInt(),
-      AlarmFiredBroadcastReceiver.intent(
-        context = context,
-        id = id,
-        fireOnDateTime = fireOnDateTime,
-        snoozeAvailable = snoozeAvailable,
-        ringDurationMinutes = ringDurationMinutes,
-        soundEnabled = soundEnabled,
-        vibrationEnabled = vibrationEnabled,
-      ),
+      settings.id.toInt(),
+      AlarmFiredBroadcastReceiver.intent(context, settings),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
   // used only for alarm cancellation - no need to pass extras
-  private fun alarmFiredPendingIntent(id: Long): PendingIntent =
+  private fun cancelAlarmFiredPendingIntent(id: Long): PendingIntent =
     PendingIntent.getBroadcast(
       context,
       id.toInt(),
@@ -85,11 +73,11 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
-  private fun alarmUpcomingPendingIntent(id: Long, fireOnDateTime: LocalDateTime): PendingIntent =
+  private fun alarmUpcomingPendingIntent(settings: AlarmFireSettings): PendingIntent =
     PendingIntent.getBroadcast(
       context,
-      id.toInt(),
-      AlarmUpcomingBroadcastReceiver.intent(context, id, fireOnDateTime),
+      settings.id.toInt(),
+      AlarmUpcomingBroadcastReceiver.intent(context, settings),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 }

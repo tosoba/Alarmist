@@ -25,15 +25,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
+import com.trm.alarmist.core.system.AlarmFireSettings
 import com.trm.alarmist.core.system.AndroidAlarmService
-import com.trm.alarmist.core.system.getAlarmFireOnDateTime
-import com.trm.alarmist.core.system.getAlarmId
+import com.trm.alarmist.core.system.getAlarmFireSettings
 import com.trm.alarmist.core.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -44,7 +45,6 @@ class AlarmFiredActivity : ComponentActivity() {
   private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
   private val updateAlarmOnSnoozeUseCase: UpdateAlarmOnSnoozeUseCase by inject()
 
-  @OptIn(ExperimentalResourceApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -54,66 +54,27 @@ class AlarmFiredActivity : ComponentActivity() {
     setContent {
       AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-          Column(
+          val settings = getAlarmFireSettings(intent)
+          AlarmFiredView(
+            settings = settings,
             modifier = Modifier.fillMaxSize().padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-          ) {
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-              text = getAlarmFireOnDateTime(intent).time.toString(),
-              style = MaterialTheme.typography.displayLarge,
-            )
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            Text(text = "Alarm", style = MaterialTheme.typography.displaySmall)
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-              OutlinedButton(
-                onClick = {
-                  lifecycleScope
-                    .launch { updateAlarmOnSnoozeUseCase(getAlarmId(intent)) }
-                    .invokeOnCompletion {
-                      stopService(Intent(this@AlarmFiredActivity, AndroidAlarmService::class.java))
-                      finish()
-                    }
-                },
-                modifier = Modifier.weight(1f),
-              ) {
-                Text(
-                  text = stringResource(Res.string.snooze),
-                  style = MaterialTheme.typography.displaySmall,
-                )
-              }
-
-              Spacer(modifier = Modifier.width(10.dp))
-
-              Button(
-                onClick = {
-                  lifecycleScope
-                    .launch {
-                      updateAlarmOnDismissUseCase(
-                        getAlarmId(intent),
-                        getAlarmFireOnDateTime(intent),
-                      )
-                    }
-                    .invokeOnCompletion {
-                      stopService(Intent(this@AlarmFiredActivity, AndroidAlarmService::class.java))
-                      finish()
-                    }
-                },
-                modifier = Modifier.weight(1f),
-              ) {
-                Text(
-                  text = stringResource(Res.string.dismiss),
-                  style = MaterialTheme.typography.displaySmall,
-                )
-              }
-            }
-          }
+            onSnoozeClick = {
+              lifecycleScope
+                .launch { updateAlarmOnSnoozeUseCase(settings.id) }
+                .invokeOnCompletion {
+                  stopService(Intent(this@AlarmFiredActivity, AndroidAlarmService::class.java))
+                  finish()
+                }
+            },
+            onDismissClick = {
+              lifecycleScope
+                .launch { updateAlarmOnDismissUseCase(settings.id, settings.fireOnDateTime) }
+                .invokeOnCompletion {
+                  stopService(Intent(this@AlarmFiredActivity, AndroidAlarmService::class.java))
+                  finish()
+                }
+            },
+          )
         }
       }
     }
@@ -122,6 +83,48 @@ class AlarmFiredActivity : ComponentActivity() {
   override fun onDestroy() {
     super.onDestroy()
     turnScreenOffAndKeyguardOn()
+  }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+private fun AlarmFiredView(
+  settings: AlarmFireSettings,
+  modifier: Modifier = Modifier,
+  onSnoozeClick: () -> Unit = {},
+  onDismissClick: () -> Unit = {},
+) {
+  Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Spacer(modifier = Modifier.weight(1f))
+
+    Text(
+      text = settings.fireOnDateTime.time.toString(),
+      style = MaterialTheme.typography.displayLarge,
+    )
+
+    Spacer(modifier = Modifier.height(15.dp))
+
+    Text(text = "Alarm", style = MaterialTheme.typography.displaySmall)
+
+    Spacer(modifier = Modifier.weight(1f))
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+      OutlinedButton(onClick = onSnoozeClick, modifier = Modifier.weight(1f)) {
+        Text(
+          text = stringResource(Res.string.snooze),
+          style = MaterialTheme.typography.displaySmall,
+        )
+      }
+
+      Spacer(modifier = Modifier.width(10.dp))
+
+      Button(onClick = onDismissClick, modifier = Modifier.weight(1f)) {
+        Text(
+          text = stringResource(Res.string.dismiss),
+          style = MaterialTheme.typography.displaySmall,
+        )
+      }
+    }
   }
 }
 

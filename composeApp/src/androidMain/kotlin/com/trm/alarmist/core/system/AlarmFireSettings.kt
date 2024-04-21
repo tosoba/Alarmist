@@ -12,4 +12,6 @@ data class AlarmFireSettings(
   @TypeParceler<LocalDateTime, LocalDateTimeParceler> val fireOnDateTime: LocalDateTime,
   val snoozeAvailable: Boolean,
   val ringDurationMinutes: Long,
+  val soundEnabled: Boolean,
+  val vibrationEnabled: Boolean,
 ) : Parcelable

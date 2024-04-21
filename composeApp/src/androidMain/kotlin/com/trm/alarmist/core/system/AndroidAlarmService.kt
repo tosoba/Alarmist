@@ -44,18 +44,18 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
   private var vibrator: Vibrator? = null
 
   private var isPlaying = false
-  private val missedAlarms = mutableListOf<Intent>()
+  private val missedAlarms = mutableListOf<AlarmFireSettings>()
 
-  private val firedAlarmNotificationReceiver: BroadcastReceiver =
+  private val alarmFiredNotificationReceiver: BroadcastReceiver =
     object : BroadcastReceiver() {
       override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent?.action == ACTION_FIRED_ALARM_NOTIFICATION) {
+        if (intent?.action == ACTION_ALARM_FIRED_NOTIFICATION) {
           performAlarmActionAndStopSelf(
             actionType =
               requireNotNull(intent.getSerializable<AlarmActionType>(EXTRA_ALARM_ACTION_TYPE)) {
                 "Missing AlarmActionType."
               },
-            intent = intent,
+            settings = getAlarmFireSettings(intent),
           )
         }
       }
@@ -67,8 +67,8 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     super.onCreate()
     ContextCompat.registerReceiver(
       this,
-      firedAlarmNotificationReceiver,
-      IntentFilter(ACTION_FIRED_ALARM_NOTIFICATION),
+      alarmFiredNotificationReceiver,
+      IntentFilter(ACTION_ALARM_FIRED_NOTIFICATION),
       ContextCompat.RECEIVER_EXPORTED,
     )
   }
@@ -79,21 +79,20 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     stopPlaying()
     alarmDurationTimer.cancel()
 
-    unregisterReceiver(firedAlarmNotificationReceiver)
+    unregisterReceiver(alarmFiredNotificationReceiver)
 
-    missedAlarms.forEach {
-      notifyAlarmMissed(id = getAlarmId(it), fireOnDateTime = getAlarmFireOnDateTime(it))
-    }
+    missedAlarms.forEach(::notifyAlarmMissed)
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     super.onStartCommand(intent, flags, startId)
     if (intent == null) return START_NOT_STICKY
 
-    cancelNotification(getAlarmId(intent).toInt())
+    val settings = getAlarmFireSettings(intent)
+    cancelNotification(settings.id.toInt())
 
     if (isPlaying) {
-      onAlreadyPlaying(intent)
+      onAlreadyPlaying(settings)
       return START_NOT_STICKY
     }
 
@@ -101,32 +100,27 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
 
     ServiceCompat.startForeground(
       this,
-      getAlarmId(intent).toInt(),
-      buildNotification(intent),
+      settings.id.toInt(),
+      buildNotification(settings),
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED
       } else {
         0
       },
     )
-    startPlaying(intent)
-    startAlarmDurationTimer(intent)
+    startPlaying(settings)
+    startAlarmDurationTimer(settings)
 
     return START_REDELIVER_INTENT
   }
 
-  private fun onAlreadyPlaying(intent: Intent) {
-    lifecycleScope.launch {
-      updateAlarmOnDismissUseCase(
-        id = getAlarmId(intent),
-        notificationDateTime = getAlarmFireOnDateTime(intent),
-      )
-    }
-    missedAlarms.add(intent)
+  private fun onAlreadyPlaying(settings: AlarmFireSettings) {
+    lifecycleScope.launch { updateAlarmOnDismissUseCase(settings.id, settings.fireOnDateTime) }
+    missedAlarms.add(settings)
   }
 
   @OptIn(ExperimentalResourceApi::class)
-  private fun buildNotification(intent: Intent): Notification =
+  private fun buildNotification(settings: AlarmFireSettings): Notification =
     NotificationCompat.Builder(this, ALARM_FIRED_NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setContentTitle("Alarm was fired")
@@ -138,24 +132,24 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
           this,
           ALARM_FIRED_ACTIVITY_REQUEST_CODE,
           Intent(this, AlarmFiredActivity::class.java)
-            .putExtras(intent)
+            .putExtra(EXTRA_ALARM_FIRE_SETTINGS, settings)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION),
           PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         ),
         true,
       )
-      .setDeleteIntent(getAlarmBroadcastPendingIntent(intent, AlarmActionType.DISMISS))
+      .setDeleteIntent(getAlarmFiredBroadcastPendingIntent(settings, AlarmActionType.DISMISS))
       .addAction(
         R.drawable.ic_launcher_foreground,
         getStringBlocking(Res.string.dismiss),
-        getAlarmBroadcastPendingIntent(intent, AlarmActionType.DISMISS),
+        getAlarmFiredBroadcastPendingIntent(settings, AlarmActionType.DISMISS),
       )
       .run {
-        if (isSnoozeAvailable(intent)) {
+        if (settings.snoozeAvailable) {
           addAction(
             R.drawable.ic_launcher_foreground,
             getStringBlocking(Res.string.snooze),
-            getAlarmBroadcastPendingIntent(intent, AlarmActionType.SNOOZE),
+            getAlarmFiredBroadcastPendingIntent(settings, AlarmActionType.SNOOZE),
           )
         } else {
           this
@@ -163,22 +157,21 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
       }
       .build()
 
-  private fun getAlarmBroadcastPendingIntent(
-    intent: Intent,
+  private fun getAlarmFiredBroadcastPendingIntent(
+    settings: AlarmFireSettings,
     action: AlarmActionType,
   ): PendingIntent =
     PendingIntent.getBroadcast(
       this,
       action.requestCode,
-      Intent(ACTION_FIRED_ALARM_NOTIFICATION)
-        .putExtra(EXTRA_ALARM_ID, getAlarmId(intent))
-        .putExtra(EXTRA_FIRE_ON_DATE_TIME, getAlarmFireOnDateTime(intent).toString())
+      Intent(ACTION_ALARM_FIRED_NOTIFICATION)
+        .putExtra(EXTRA_ALARM_FIRE_SETTINGS, settings)
         .putExtra(EXTRA_ALARM_ACTION_TYPE, action),
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
-  private fun startPlaying(intent: Intent) {
-    if (isSoundEnabled(intent)) {
+  private fun startPlaying(settings: AlarmFireSettings) {
+    if (settings.soundEnabled) {
       mediaPlayer =
         MediaPlayer().apply {
           setOnErrorListener { player, what, extra ->
@@ -203,7 +196,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
         }
     }
 
-    if (isVibrationEnabled(intent)) {
+    if (settings.vibrationEnabled) {
       vibrator =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             getSystemService(VibratorManager::class.java).defaultVibrator
@@ -225,30 +218,31 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     mediaPlayer = null
   }
 
-  private fun startAlarmDurationTimer(intent: Intent) {
+  private fun startAlarmDurationTimer(settings: AlarmFireSettings) {
     alarmDurationTimer.schedule(
       object : TimerTask() {
         override fun run() {
           performAlarmActionAndStopSelf(
             actionType =
-              if (isSnoozeAvailable(intent)) AlarmActionType.SNOOZE else AlarmActionType.DISMISS,
-            intent = intent,
+              if (settings.snoozeAvailable) AlarmActionType.SNOOZE else AlarmActionType.DISMISS,
+            settings = settings,
           )
         }
       },
-      60_000 * getRingDurationMinutes(intent),
+      60_000 * settings.ringDurationMinutes,
     )
   }
 
-  private fun performAlarmActionAndStopSelf(actionType: AlarmActionType, intent: Intent) {
+  private fun performAlarmActionAndStopSelf(
+    actionType: AlarmActionType,
+    settings: AlarmFireSettings,
+  ) {
     when (actionType) {
       AlarmActionType.DISMISS -> {
-        lifecycleScope.launch {
-          updateAlarmOnDismissUseCase(getAlarmId(intent), getAlarmFireOnDateTime(intent))
-        }
+        lifecycleScope.launch { updateAlarmOnDismissUseCase(settings.id, settings.fireOnDateTime) }
       }
       AlarmActionType.SNOOZE -> {
-        lifecycleScope.launch { updateAlarmOnSnoozeUseCase(getAlarmId(intent)) }
+        lifecycleScope.launch { updateAlarmOnSnoozeUseCase(settings.id) }
       }
     }.invokeOnCompletion { stopSelf() }
   }
@@ -266,7 +260,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
   }
 
   companion object {
-    private const val ACTION_FIRED_ALARM_NOTIFICATION = "ACTION_FIRED_ALARM_NOTIFICATION"
+    private const val ACTION_ALARM_FIRED_NOTIFICATION = "ACTION_FIRED_ALARM_NOTIFICATION"
 
     private const val EXTRA_ALARM_ACTION_TYPE = "ALARM_NOTIFICATION_INTERACTION_TYPE"
 
