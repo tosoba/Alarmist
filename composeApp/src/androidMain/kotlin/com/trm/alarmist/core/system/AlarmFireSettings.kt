@@ -14,4 +14,5 @@ data class AlarmFireSettings(
   val ringDurationMinutes: Long,
   val soundEnabled: Boolean,
   val vibrationEnabled: Boolean,
+  val reminderOffsetHours: Long,
 ) : Parcelable

@@ -21,6 +21,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
       ringDurationMinutes = alarm.ringDurationMinutes,
       soundEnabled = alarm.soundEnabled,
       vibrationEnabled = alarm.vibrationEnabled,
+      reminderOffsetHours = alarm.reminderOffsetHours,
       afterDateTime = afterDateTime,
     )
   }
@@ -36,6 +37,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
     ringDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
+    reminderOffsetHours: Long,
     afterDateTime: LocalDateTime = LocalDateTime.now(),
   ) {
     calculateAlarmNextFireOnDateTime(
@@ -54,6 +56,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
           ringDurationMinutes = ringDurationMinutes,
           soundEnabled = soundEnabled,
           vibrationEnabled = vibrationEnabled,
+          reminderOffsetHours = reminderOffsetHours,
         )
       } ?: run { scheduler.cancelAlarm(id) }
   }

@@ -25,6 +25,7 @@ data class AlarmState(
   val ringDuration: Long = DEFAULT_RING_DURATION_MINUTES,
   val soundEnabled: Boolean = true,
   val vibrationEnabled: Boolean = true,
+  val reminderOffset: AlarmReminderOffset = AlarmReminderOffset.HOUR_1,
 ) {
   constructor(
     alarm: AlarmModel
@@ -40,6 +41,7 @@ data class AlarmState(
     ringDuration = alarm.ringDurationMinutes,
     soundEnabled = alarm.soundEnabled,
     vibrationEnabled = alarm.vibrationEnabled,
+    reminderOffset = AlarmReminderOffset.fromHours(alarm.reminderOffsetHours),
   )
 
   constructor(

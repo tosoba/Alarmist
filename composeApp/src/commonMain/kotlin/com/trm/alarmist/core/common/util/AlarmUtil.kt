@@ -101,6 +101,7 @@ fun Alarm.toModel(): AlarmModel =
     ringDurationMinutes = ringDurationMinutes,
     soundEnabled = soundEnabled == DB_ON,
     vibrationEnabled = vibrationEnabled == DB_ON,
+    reminderOffsetHours = reminderOffsetHours,
   )
 
 fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =

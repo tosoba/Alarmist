@@ -14,6 +14,7 @@ import alarmist.composeapp.generated.resources.notification_permission_settings
 import alarmist.composeapp.generated.resources.ok
 import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.permission_required
+import alarmist.composeapp.generated.resources.reminder_offset_label
 import alarmist.composeapp.generated.resources.repeat_on_label
 import alarmist.composeapp.generated.resources.ring_duration_label
 import alarmist.composeapp.generated.resources.schedule_alarm
@@ -143,6 +144,7 @@ fun AlarmContent(
   onRingDurationChange: (Long) -> Unit = {},
   onToggleSoundEnabled: () -> Unit = {},
   onToggleVibrationEnabled: () -> Unit = {},
+  onReminderOffsetChange: (AlarmReminderOffset) -> Unit = {},
   onGroupClick: (AlarmGroupModel) -> Unit = {},
   onConfirmClick: () -> Unit = {},
 ) {
@@ -364,6 +366,23 @@ fun AlarmContent(
               )
             }
           }
+
+          Spacer(Modifier.height(8.dp))
+
+          Text(
+            text = stringResource(Res.string.reminder_offset_label),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+
+          val reminderOffsetValues = remember { AlarmReminderOffset.entries.toTypedArray() }
+          Slider(
+            value = state.reminderOffset.ordinal.toFloat(),
+            valueRange = 0f..reminderOffsetValues.lastIndex.toFloat(),
+            onValueChange = { onReminderOffsetChange(reminderOffsetValues[it.toInt()]) },
+            thumb = { AlarmSliderThumb(text = state.reminderOffset.hours.toString()) },
+            modifier = Modifier.fillMaxWidth(),
+          )
         }
       }
 

@@ -206,6 +206,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onRingDurationChange = child.component.feature::onRingDurationChange,
               onToggleSoundEnabled = child.component.feature::onToggleSoundEnabled,
               onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
+              onReminderOffsetChange = child.component.feature::onReminderOffsetChange,
               onConfirmClick = child.component::onConfirmClick,
             )
           }

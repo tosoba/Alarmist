@@ -21,6 +21,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     ringDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
+    reminderOffsetHours: Long,
   ) {
     context.cancelNotification(id.toInt())
 
@@ -32,13 +33,14 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
         ringDurationMinutes = ringDurationMinutes,
         soundEnabled = soundEnabled,
         vibrationEnabled = vibrationEnabled,
+        reminderOffsetHours = reminderOffsetHours,
       )
 
     alarmManager.setExact(
       AlarmManager.RTC,
       fireOnDateTime
         .toInstant(TimeZone.currentSystemDefault())
-        .minus(1, DateTimeUnit.HOUR) // TODO: this should be in alarm settings
+        .minus(reminderOffsetHours, DateTimeUnit.HOUR)
         .toEpochMilliseconds(),
       alarmUpcomingPendingIntent(settings),
     )

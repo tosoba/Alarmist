@@ -25,6 +25,7 @@ class ToggleUpcomingAlarmOnOffOnDateUseCase(
               ringDurationMinutes = toggledAlarm.ringDurationMinutes,
               soundEnabled = toggledAlarm.soundEnabled,
               vibrationEnabled = toggledAlarm.vibrationEnabled,
+              reminderOffsetHours = toggledAlarm.reminderOffsetHours,
             )
           } else {
             scheduler.cancelAlarm(id)

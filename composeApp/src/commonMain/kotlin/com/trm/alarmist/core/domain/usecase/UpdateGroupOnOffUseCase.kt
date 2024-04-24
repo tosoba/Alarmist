@@ -23,6 +23,7 @@ class UpdateGroupOnOffUseCase(
             ringDurationMinutes = alarm.ringDurationMinutes,
             soundEnabled = alarm.soundEnabled,
             vibrationEnabled = alarm.vibrationEnabled,
+            reminderOffsetHours = alarm.reminderOffsetHours,
           )
         } ?: run { scheduler.cancelAlarm(alarm.id) }
       }

@@ -50,6 +50,7 @@ class AlarmLocalRepository(
     ringDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
+    reminderOffsetHours: Long,
   ): Long =
     withContext(dispatcher) {
       queries.transactionWithResult {
@@ -72,6 +73,7 @@ class AlarmLocalRepository(
           ringDurationMinutes = ringDurationMinutes,
           soundEnabled = if (soundEnabled) DB_ON else DB_OFF,
           vibrationEnabled = if (vibrationEnabled) DB_ON else DB_OFF,
+          reminderOffsetHours = reminderOffsetHours
         )
         queries.selectLastInsertedRowId().executeAsOne()
       }
@@ -91,6 +93,7 @@ class AlarmLocalRepository(
     ringDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
+    reminderOffsetHours: Long,
   ) {
     withContext(dispatcher) {
       queries.updateAlarmById(
@@ -109,6 +112,7 @@ class AlarmLocalRepository(
         ringDurationMinutes = ringDurationMinutes,
         soundEnabled = if (soundEnabled) DB_ON else DB_OFF,
         vibrationEnabled = if (vibrationEnabled) DB_ON else DB_OFF,
+        reminderOffsetHours = reminderOffsetHours
       )
     }
   }

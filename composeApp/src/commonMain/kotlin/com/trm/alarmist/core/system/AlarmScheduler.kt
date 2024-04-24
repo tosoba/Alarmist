@@ -9,7 +9,8 @@ interface AlarmScheduler {
     snoozeAvailable: Boolean,
     ringDurationMinutes: Long,
     soundEnabled: Boolean,
-    vibrationEnabled: Boolean
+    vibrationEnabled: Boolean,
+    reminderOffsetHours: Long
   )
 
   fun cancelAlarm(id: Long)

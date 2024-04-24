@@ -24,6 +24,7 @@ class EditAlarmUseCase(
     ringDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
+    reminderOffsetHours: Long,
   ) {
     repository.editAlarm(
       id = id,
@@ -39,6 +40,7 @@ class EditAlarmUseCase(
       ringDurationMinutes = ringDurationMinutes,
       soundEnabled = soundEnabled,
       vibrationEnabled = vibrationEnabled,
+      reminderOffsetHours = reminderOffsetHours,
     )
     updateAlarmScheduleUseCase(
       isOn = isOn,
@@ -51,6 +53,7 @@ class EditAlarmUseCase(
       ringDurationMinutes = ringDurationMinutes,
       soundEnabled = soundEnabled,
       vibrationEnabled = vibrationEnabled,
+      reminderOffsetHours = reminderOffsetHours,
     )
   }
 }

@@ -83,6 +83,7 @@ class AlarmFeature(
               ringDurationMinutes = ringDuration,
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
+              reminderOffsetHours = reminderOffset.hours,
             )
           }
           is AlarmComponent.Mode.Edit -> {
@@ -100,6 +101,7 @@ class AlarmFeature(
               ringDurationMinutes = ringDuration,
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
+              reminderOffsetHours = reminderOffset.hours,
             )
           }
         }
@@ -175,6 +177,10 @@ class AlarmFeature(
 
   fun onToggleVibrationEnabled() {
     _state.update { it.copy(vibrationEnabled = !it.vibrationEnabled) }
+  }
+
+  fun onReminderOffsetChange(offset: AlarmReminderOffset) {
+    _state.update { it.copy(reminderOffset = offset) }
   }
 
   fun onGroupClick(group: AlarmGroupModel) {

@@ -30,6 +30,7 @@ class UpdateAlarmOnSnoozeUseCase(
           ringDurationMinutes = alarm.ringDurationMinutes,
           soundEnabled = alarm.soundEnabled,
           vibrationEnabled = alarm.vibrationEnabled,
+          reminderOffsetHours = alarm.reminderOffsetHours
         )
       }
   }

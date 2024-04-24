@@ -23,6 +23,7 @@ class AddAlarmUseCase(
     ringDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
+    reminderOffsetHours: Long,
   ) {
     updateAlarmScheduleUseCase(
       isOn = isOn,
@@ -40,6 +41,7 @@ class AddAlarmUseCase(
           ringDurationMinutes = ringDurationMinutes,
           soundEnabled = soundEnabled,
           vibrationEnabled = vibrationEnabled,
+          reminderOffsetHours = reminderOffsetHours
         ),
       fireAtTime = fireAtTime,
       scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
@@ -49,6 +51,7 @@ class AddAlarmUseCase(
       ringDurationMinutes = ringDurationMinutes,
       soundEnabled = soundEnabled,
       vibrationEnabled = vibrationEnabled,
+      reminderOffsetHours = reminderOffsetHours
     )
   }
 }
