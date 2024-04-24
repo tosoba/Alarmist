@@ -27,7 +27,6 @@ import alarmist.composeapp.generated.resources.time_input
 import alarmist.composeapp.generated.resources.vibration_enabled_label
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -68,7 +67,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Slider
@@ -149,299 +147,297 @@ fun AlarmContent(
   onConfirmClick: () -> Unit = {},
 ) {
   Box(modifier = modifier) {
-    Column(
-      modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
       val isKeyboardOpen by keyboardAsState()
       val focusManager = LocalFocusManager.current
       LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
       OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
         value = state.name.orEmpty(),
         onValueChange = onNameChange,
         label = { Text(stringResource(Res.string.name)) },
         singleLine = true,
       )
 
-      OutlinedCard(
-        modifier =
-          Modifier.fillMaxWidth()
-            .animateContentSize()
-            .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-      ) {
-        Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-          Text(
-            text = stringResource(Res.string.fire_at_time_label),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+      Spacer(modifier = Modifier.height(16.dp))
+
+      Text(
+        text = stringResource(Res.string.fire_at_time_label),
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+      )
+
+      var timePickerMode by rememberSaveable { mutableStateOf(TimePickerMode.DIAL) }
+
+      Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+        val timePickerState =
+          rememberTimePickerState(
+            initialHour = state.fireAtTime.hour,
+            initialMinute = state.fireAtTime.minute,
           )
-
-          var timePickerMode by rememberSaveable { mutableStateOf(TimePickerMode.DIAL) }
-
-          Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-            val timePickerState =
-              rememberTimePickerState(
-                initialHour = state.fireAtTime.hour,
-                initialMinute = state.fireAtTime.minute,
-              )
-            LaunchedEffect(timePickerState.hour, timePickerState.minute) {
-              onFireAtChange(LocalTime(timePickerState.hour, timePickerState.minute))
-            }
-            Crossfade(timePickerMode, modifier = Modifier.align(Alignment.Center)) {
-              when (it) {
-                TimePickerMode.DIAL -> TimePicker(state = timePickerState)
-                TimePickerMode.INPUT -> TimeInput(state = timePickerState)
-              }
-            }
+        LaunchedEffect(timePickerState.hour, timePickerState.minute) {
+          onFireAtChange(LocalTime(timePickerState.hour, timePickerState.minute))
+        }
+        Crossfade(timePickerMode, modifier = Modifier.align(Alignment.Center)) {
+          when (it) {
+            TimePickerMode.DIAL -> TimePicker(state = timePickerState)
+            TimePickerMode.INPUT -> TimeInput(state = timePickerState)
           }
+        }
+      }
 
-          IconButton(
-            onClick = {
-              timePickerMode =
-                when (timePickerMode) {
-                  TimePickerMode.DIAL -> TimePickerMode.INPUT
-                  TimePickerMode.INPUT -> TimePickerMode.DIAL
-                }
+      IconButton(
+        onClick = {
+          timePickerMode =
+            when (timePickerMode) {
+              TimePickerMode.DIAL -> TimePickerMode.INPUT
+              TimePickerMode.INPUT -> TimePickerMode.DIAL
             }
-          ) {
-            Crossfade(timePickerMode) {
-              when (it) {
-                TimePickerMode.DIAL -> {
-                  Icon(
-                    imageVector = Icons.Outlined.Keyboard,
-                    contentDescription = stringResource(Res.string.time_input),
-                  )
-                }
-                TimePickerMode.INPUT -> {
-                  Icon(
-                    imageVector = Icons.Outlined.Timer,
-                    contentDescription = stringResource(Res.string.time_dial),
-                  )
-                }
-              }
+        },
+        modifier = Modifier.padding(horizontal = 16.dp),
+      ) {
+        Crossfade(timePickerMode) {
+          when (it) {
+            TimePickerMode.DIAL -> {
+              Icon(
+                imageVector = Icons.Outlined.Keyboard,
+                contentDescription = stringResource(Res.string.time_input),
+              )
+            }
+            TimePickerMode.INPUT -> {
+              Icon(
+                imageVector = Icons.Outlined.Timer,
+                contentDescription = stringResource(Res.string.time_dial),
+              )
             }
           }
         }
       }
 
-      OutlinedCard(
+      Text(
+        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        text = stringResource(Res.string.repeat_on_label),
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+      )
+
+      DaysOfWeekRow(
+        modifier = Modifier.fillMaxWidth().padding(16.dp).horizontalScroll(rememberScrollState()),
+        selectedDaysOfWeek = state.scheduledOnDaysOfWeek,
+        onDayOfWeekClick = onDayOfWeekClick,
+      )
+
+      var isCustomScheduleExpanded by remember { mutableStateOf(false) }
+      Row(
         modifier =
           Modifier.fillMaxWidth()
-            .animateContentSize()
-            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+            .clickable { isCustomScheduleExpanded = !isCustomScheduleExpanded }
+            .padding(horizontal = 32.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Text(
+          text = stringResource(Res.string.custom_schedule_label),
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+
+        Spacer(Modifier.width(32.dp))
+
+        ExpandableIcon(
+          isExpanded = isCustomScheduleExpanded,
+          transitionLabel = "ExpandableCustomSchedule",
+        )
+      }
+
+      ExpandableCalendar(
+        calendarModifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp, vertical = 16.dp),
+        fireAtTime = state.fireAtTime,
+        isExpanded = isCustomScheduleExpanded,
+        scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
+        scheduledOnDates = state.scheduledOnDates,
+        offOnDates = state.offOnDates,
+        onDateOnOffSwitchCheckedChange = onDateOnOffSwitchCheckedChange,
+        onDeleteOnAllDaysWeekClick = onDeleteOnAllDaysWeekClick,
+        onDeleteOnDateClick = onDeleteOnDateClick,
+        onScheduleOnDateClick = onScheduleOnDateClick,
+      )
+
+      Row(
+        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Text(
+          text = stringResource(Res.string.sound_enabled_label),
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        Switch(
+          checked = state.soundEnabled,
+          onCheckedChange = remember { { onToggleSoundEnabled() } },
+        )
+      }
+
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+          Modifier.padding(horizontal = 32.dp, vertical = 16.dp)
+            .clickable(onClick = onToggleVibrationEnabled),
+      ) {
+        Text(
+          text = stringResource(Res.string.vibration_enabled_label),
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        Switch(
+          checked = state.vibrationEnabled,
+          onCheckedChange = remember { { onToggleVibrationEnabled() } },
+        )
+      }
+
+      Spacer(Modifier.height(16.dp))
+
+      Text(
+        text = stringResource(Res.string.alarm_duration_label),
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+      )
+
+      Slider(
+        value = state.alarmDuration.toFloat(),
+        valueRange =
+          AlarmState.MIN_ALARM_DURATION_MINUTES.toFloat()..AlarmState.MAX_ALARM_DURATION_MINUTES
+              .toFloat(),
+        steps =
+          AlarmState.MAX_ALARM_DURATION_MINUTES.toInt() -
+            AlarmState.MIN_ALARM_DURATION_MINUTES.toInt(),
+        onValueChange = { onAlarmDurationChange(it.toLong()) },
+        thumb = { AlarmSliderThumb(text = state.alarmDuration.toString()) },
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+      )
+
+      Text(
+        text = stringResource(Res.string.snooze_duration_label),
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+      )
+
+      val snoozeDurationValues = remember { AlarmSnoozeDuration.entries.toTypedArray() }
+      Slider(
+        value = state.snoozeDuration.ordinal.toFloat(),
+        valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
+        onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
+        thumb = { AlarmSliderThumb(text = state.snoozeDuration.minutes.toString()) },
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+      )
+
+      AnimatedVisibility(
+        visible = state.snoozeDuration != AlarmSnoozeDuration.ZERO,
+        enter = fadeIn(),
+        exit = fadeOut(),
       ) {
         Column {
           Text(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(Res.string.repeat_on_label),
-            style = MaterialTheme.typography.bodyLarge,
+            text = stringResource(Res.string.snooze_limit_label),
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
-          )
-
-          DaysOfWeekRow(
-            modifier =
-              Modifier.fillMaxWidth().padding(8.dp).horizontalScroll(rememberScrollState()),
-            selectedDaysOfWeek = state.scheduledOnDaysOfWeek,
-            onDayOfWeekClick = onDayOfWeekClick,
-          )
-
-          var isCustomScheduleExpanded by remember { mutableStateOf(false) }
-          Row(
-            modifier =
-              Modifier.fillMaxWidth()
-                .clickable { isCustomScheduleExpanded = !isCustomScheduleExpanded }
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-          ) {
-            Text(
-              text = stringResource(Res.string.custom_schedule_label),
-              style = MaterialTheme.typography.bodyLarge,
-              color = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-            Spacer(Modifier.width(16.dp))
-            ExpandableIcon(
-              isExpanded = isCustomScheduleExpanded,
-              transitionLabel = "ExpandableCustomSchedule",
-            )
-          }
-          ExpandableCalendar(
-            calendarModifier = Modifier.fillMaxWidth(),
-            fireAtTime = state.fireAtTime,
-            isExpanded = isCustomScheduleExpanded,
-            scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
-            scheduledOnDates = state.scheduledOnDates,
-            offOnDates = state.offOnDates,
-            onDateOnOffSwitchCheckedChange = onDateOnOffSwitchCheckedChange,
-            onDeleteOnAllDaysWeekClick = onDeleteOnAllDaysWeekClick,
-            onDeleteOnDateClick = onDeleteOnDateClick,
-            onScheduleOnDateClick = onScheduleOnDateClick,
-          )
-        }
-      }
-
-      OutlinedCard(
-        modifier =
-          Modifier.fillMaxWidth()
-            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-            .animateContentSize()
-      ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(Res.string.sound_enabled_label))
-            Spacer(Modifier.weight(1f))
-            Switch(
-              checked = state.soundEnabled,
-              onCheckedChange = remember { { onToggleSoundEnabled() } },
-            )
-          }
-
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(Res.string.vibration_enabled_label))
-            Spacer(Modifier.weight(1f))
-            Switch(
-              checked = state.vibrationEnabled,
-              onCheckedChange = remember { { onToggleVibrationEnabled() } },
-            )
-          }
-
-          Spacer(Modifier.height(8.dp))
-
-          Text(
-            text = stringResource(Res.string.alarm_duration_label),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
           )
 
           Slider(
-            value = state.alarmDuration.toFloat(),
+            value = state.snoozeLimit.toFloat(),
             valueRange =
-              AlarmState.MIN_ALARM_DURATION_MINUTES.toFloat()..AlarmState.MAX_ALARM_DURATION_MINUTES
-                  .toFloat(),
-            steps =
-              AlarmState.MAX_ALARM_DURATION_MINUTES.toInt() -
-                AlarmState.MIN_ALARM_DURATION_MINUTES.toInt(),
-            onValueChange = { onAlarmDurationChange(it.toLong()) },
-            thumb = { AlarmSliderThumb(text = state.alarmDuration.toString()) },
-            modifier = Modifier.fillMaxWidth(),
-          )
-
-          Text(
-            text = stringResource(Res.string.snooze_duration_label),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-          )
-
-          val snoozeDurationValues = remember { AlarmSnoozeDuration.entries.toTypedArray() }
-          Slider(
-            value = state.snoozeDuration.ordinal.toFloat(),
-            valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
-            onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
-            thumb = { AlarmSliderThumb(text = state.snoozeDuration.minutes.toString()) },
-            modifier = Modifier.fillMaxWidth(),
-          )
-
-          AnimatedVisibility(
-            visible = state.snoozeDuration != AlarmSnoozeDuration.ZERO,
-            enter = fadeIn(),
-            exit = fadeOut(),
-          ) {
-            Column {
-              Text(
-                text = stringResource(Res.string.snooze_limit_label),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-              )
-
-              Slider(
-                value = state.snoozeLimit.toFloat(),
-                valueRange =
-                  AlarmState.MIN_SNOOZE_LIMIT.toFloat()..AlarmState.MAX_SNOOZE_LIMIT.toFloat(),
-                steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - AlarmState.MIN_SNOOZE_LIMIT.toInt(),
-                onValueChange = { onSnoozeLimitChange(it.toLong()) },
-                thumb = { AlarmSliderThumb(text = state.snoozeLimit.toString()) },
-                modifier = Modifier.fillMaxWidth(),
-              )
-            }
-          }
-
-          Spacer(Modifier.height(8.dp))
-
-          Text(
-            text = stringResource(Res.string.reminder_offset_label),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-          )
-
-          val reminderOffsetValues = remember { AlarmReminderOffset.entries.toTypedArray() }
-          Slider(
-            value = state.reminderOffset.ordinal.toFloat(),
-            valueRange = 0f..reminderOffsetValues.lastIndex.toFloat(),
-            onValueChange = { onReminderOffsetChange(reminderOffsetValues[it.toInt()]) },
-            thumb = { AlarmSliderThumb(text = state.reminderOffset.hours.toString()) },
-            modifier = Modifier.fillMaxWidth(),
+              AlarmState.MIN_SNOOZE_LIMIT.toFloat()..AlarmState.MAX_SNOOZE_LIMIT.toFloat(),
+            steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - AlarmState.MIN_SNOOZE_LIMIT.toInt(),
+            onValueChange = { onSnoozeLimitChange(it.toLong()) },
+            thumb = { AlarmSliderThumb(text = state.snoozeLimit.toString()) },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
           )
         }
       }
+
+      Text(
+        text = stringResource(Res.string.reminder_offset_label),
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+      )
+
+      val reminderOffsetValues = remember { AlarmReminderOffset.entries.toTypedArray() }
+      Slider(
+        value = state.reminderOffset.ordinal.toFloat(),
+        valueRange = 0f..reminderOffsetValues.lastIndex.toFloat(),
+        onValueChange = { onReminderOffsetChange(reminderOffsetValues[it.toInt()]) },
+        thumb = { AlarmSliderThumb(text = state.reminderOffset.hours.toString()) },
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+      )
 
       if (groups.isNotEmpty()) {
-        OutlinedCard(
-          modifier =
-            Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
-        ) {
-          Column {
-            Text(
-              text = stringResource(Res.string.groups_label),
-              modifier = Modifier.padding(16.dp),
-              style = MaterialTheme.typography.bodyLarge,
-              color = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
+        Text(
+          text = stringResource(Res.string.groups_label),
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+          modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        )
 
-            groups.forEachIndexed { index, group ->
-              val shape =
-                when (index) {
-                  0 -> {
-                    ShapeDefaults.Medium.copy(
-                      bottomStart = CornerSize(0.dp),
-                      bottomEnd = CornerSize(0.dp),
-                    )
-                  }
-                  groups.lastIndex -> {
-                    ShapeDefaults.Medium.copy(
-                      topStart = CornerSize(0.dp),
-                      topEnd = CornerSize(0.dp),
-                    )
-                  }
-                  else -> {
-                    RectangleShape
-                  }
-                }
-
-              Box(modifier = Modifier.fillMaxWidth()) {
-                AlarmGroupHeaderCard(
-                  group = group,
-                  modifier = Modifier.fillMaxWidth().clip(shape).clickable { onGroupClick(group) },
-                  shape = shape,
-                  trailing = {
-                    Checkbox(
-                      checked = state.groupId == group.id,
-                      onCheckedChange = { onGroupClick(group) },
-                      modifier = Modifier.padding(end = 8.dp),
-                    )
-                  },
-                )
-
-                if (index != 0) {
-                  HorizontalDivider(
-                    modifier =
-                      Modifier.fillMaxWidth().padding(horizontal = 16.dp).align(Alignment.TopCenter)
+        groups.forEachIndexed { index, group ->
+          val shape =
+            when (index) {
+              0 -> {
+                if (groups.size > 1) {
+                  ShapeDefaults.Medium.copy(
+                    bottomStart = CornerSize(0.dp),
+                    bottomEnd = CornerSize(0.dp),
                   )
+                } else {
+                  ShapeDefaults.Medium
                 }
               }
+              groups.lastIndex -> {
+                if (groups.size > 1) {
+                  ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
+                } else {
+                  ShapeDefaults.Medium
+                }
+              }
+              else -> {
+                RectangleShape
+              }
+            }
+
+          Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)) {
+            AlarmGroupHeaderCard(
+              group = group,
+              modifier = Modifier.fillMaxWidth().clip(shape).clickable { onGroupClick(group) },
+              shape = shape,
+              trailing = {
+                Checkbox(
+                  checked = state.groupId == group.id,
+                  onCheckedChange = { onGroupClick(group) },
+                  modifier = Modifier.padding(end = 16.dp),
+                )
+              },
+            )
+
+            if (index != 0) {
+              HorizontalDivider(
+                modifier =
+                  Modifier.fillMaxWidth().padding(horizontal = 32.dp).align(Alignment.TopCenter)
+              )
             }
           }
+
+          Spacer(modifier = Modifier.height(16.dp))
         }
       }
 
@@ -615,7 +611,7 @@ private fun ColumnScope.ExpandableCalendar(
           val selectedDateAlarmsLayoutExtraHeightPx = with(LocalDensity.current) { 72.dp.toPx() }
           Column(
             modifier =
-              Modifier.padding(horizontal = 16.dp)
+              Modifier.padding(horizontal = 32.dp)
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onGloballyPositioned {
                   layoutRect =
@@ -673,12 +669,12 @@ private fun CalendarDateAlarmOnOffSwitch(
 ) {
   Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
     Text(
-      modifier = Modifier.padding(end = 8.dp),
+      modifier = Modifier.padding(end = 16.dp),
       text = stringResource(if (isOn) Res.string.scheduled else Res.string.paused),
     )
     Spacer(modifier = Modifier.weight(1f))
     Switch(
-      modifier = Modifier.padding(start = 8.dp),
+      modifier = Modifier.padding(start = 16.dp),
       checked = isOn,
       onCheckedChange = onCheckedChange,
     )
