@@ -1,14 +1,13 @@
 package com.trm.alarmist.feature.alarm
 
 import alarmist.composeapp.generated.resources.Res
-import alarmist.composeapp.generated.resources.alarm_duration_label
 import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
-import alarmist.composeapp.generated.resources.custom_schedule_label
 import alarmist.composeapp.generated.resources.delete
 import alarmist.composeapp.generated.resources.delete_all_weekdays
-import alarmist.composeapp.generated.resources.fire_at_time_label
-import alarmist.composeapp.generated.resources.groups_label
+import alarmist.composeapp.generated.resources.duration_label
+import alarmist.composeapp.generated.resources.fire_at_label
+import alarmist.composeapp.generated.resources.group_label
 import alarmist.composeapp.generated.resources.name
 import alarmist.composeapp.generated.resources.notification_permission_rationale
 import alarmist.composeapp.generated.resources.notification_permission_settings
@@ -16,15 +15,16 @@ import alarmist.composeapp.generated.resources.ok
 import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.permission_required
 import alarmist.composeapp.generated.resources.reminder_offset_label
-import alarmist.composeapp.generated.resources.repeat_on_label
+import alarmist.composeapp.generated.resources.repeat_label
 import alarmist.composeapp.generated.resources.schedule_alarm
+import alarmist.composeapp.generated.resources.schedule_label
 import alarmist.composeapp.generated.resources.scheduled
 import alarmist.composeapp.generated.resources.snooze_duration_label
 import alarmist.composeapp.generated.resources.snooze_limit_label
-import alarmist.composeapp.generated.resources.sound_enabled_label
+import alarmist.composeapp.generated.resources.sound_label
 import alarmist.composeapp.generated.resources.time_dial
 import alarmist.composeapp.generated.resources.time_input
-import alarmist.composeapp.generated.resources.vibration_enabled_label
+import alarmist.composeapp.generated.resources.vibration_label
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
@@ -153,17 +153,15 @@ fun AlarmContent(
       LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
       OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp, vertical = 16.dp),
         value = state.name.orEmpty(),
         onValueChange = onNameChange,
         label = { Text(stringResource(Res.string.name)) },
         singleLine = true,
       )
 
-      Spacer(modifier = Modifier.height(16.dp))
-
       Text(
-        text = stringResource(Res.string.fire_at_time_label),
+        text = stringResource(Res.string.fire_at_label),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
         modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
@@ -218,7 +216,7 @@ fun AlarmContent(
 
       Text(
         modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
-        text = stringResource(Res.string.repeat_on_label),
+        text = stringResource(Res.string.repeat_label),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
       )
@@ -239,7 +237,7 @@ fun AlarmContent(
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
-          text = stringResource(Res.string.custom_schedule_label),
+          text = stringResource(Res.string.schedule_label),
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
@@ -270,7 +268,7 @@ fun AlarmContent(
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
-          text = stringResource(Res.string.sound_enabled_label),
+          text = stringResource(Res.string.sound_label),
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
@@ -290,7 +288,7 @@ fun AlarmContent(
             .clickable(onClick = onToggleVibrationEnabled),
       ) {
         Text(
-          text = stringResource(Res.string.vibration_enabled_label),
+          text = stringResource(Res.string.vibration_label),
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
@@ -303,10 +301,8 @@ fun AlarmContent(
         )
       }
 
-      Spacer(Modifier.height(16.dp))
-
       Text(
-        text = stringResource(Res.string.alarm_duration_label),
+        text = stringResource(Res.string.duration_label),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
         modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
@@ -384,7 +380,7 @@ fun AlarmContent(
 
       if (groups.isNotEmpty()) {
         Text(
-          text = stringResource(Res.string.groups_label),
+          text = stringResource(Res.string.group_label),
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
           modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
