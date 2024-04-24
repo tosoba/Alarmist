@@ -184,7 +184,9 @@ class AlarmFeature(
   }
 
   fun onGroupClick(group: AlarmGroupModel) {
-    _state.update { it.copy(groupId = group.id) }
+    _state.update {
+      it.copy(groupId = if (it.groupId == group.id) AlarmGroupModel.UNGROUPED_ID else group.id)
+    }
   }
 
   fun saveState(): SerializableContainer =
