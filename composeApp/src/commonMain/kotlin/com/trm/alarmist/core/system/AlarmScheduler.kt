@@ -7,7 +7,7 @@ interface AlarmScheduler {
     id: Long,
     fireOnDateTime: LocalDateTime,
     snoozeAvailable: Boolean,
-    ringDurationMinutes: Long,
+    alarmDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long

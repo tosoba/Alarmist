@@ -22,7 +22,7 @@ data class AlarmState(
   val offOnDates: Set<LocalDate> = emptySet(),
   val snoozeDuration: AlarmSnoozeDuration = AlarmSnoozeDuration.MIN_10,
   val snoozeLimit: Long = DEFAULT_SNOOZE_LIMIT,
-  val ringDuration: Long = DEFAULT_RING_DURATION_MINUTES,
+  val alarmDuration: Long = DEFAULT_ALARM_DURATION_MINUTES,
   val soundEnabled: Boolean = true,
   val vibrationEnabled: Boolean = true,
   val reminderOffset: AlarmReminderOffset = AlarmReminderOffset.HOUR_1,
@@ -38,7 +38,7 @@ data class AlarmState(
     offOnDates = alarm.offOnDates.toSet(),
     snoozeDuration = AlarmSnoozeDuration.fromMinutes(alarm.snoozeDurationMinutes),
     snoozeLimit = alarm.snoozeLimit.takeIf { it > 0L } ?: DEFAULT_SNOOZE_LIMIT,
-    ringDuration = alarm.ringDurationMinutes,
+    alarmDuration = alarm.alarmDurationMinutes,
     soundEnabled = alarm.soundEnabled,
     vibrationEnabled = alarm.vibrationEnabled,
     reminderOffset = AlarmReminderOffset.fromHours(alarm.reminderOffsetHours),
@@ -60,8 +60,8 @@ data class AlarmState(
     const val DEFAULT_SNOOZE_LIMIT = 2L
     const val MAX_SNOOZE_LIMIT = 10L
 
-    const val MIN_RING_DURATION_MINUTES = 1L
-    const val DEFAULT_RING_DURATION_MINUTES = 1L
-    const val MAX_RING_DURATION_MINUTES = 10L
+    const val MIN_ALARM_DURATION_MINUTES = 1L
+    const val DEFAULT_ALARM_DURATION_MINUTES = 1L
+    const val MAX_ALARM_DURATION_MINUTES = 10L
   }
 }

@@ -11,7 +11,7 @@ data class AlarmFireSettings(
   val id: Long,
   @TypeParceler<LocalDateTime, LocalDateTimeParceler> val fireOnDateTime: LocalDateTime,
   val snoozeAvailable: Boolean,
-  val ringDurationMinutes: Long,
+  val alarmDurationMinutes: Long,
   val soundEnabled: Boolean,
   val vibrationEnabled: Boolean,
   val reminderOffsetHours: Long,

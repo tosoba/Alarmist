@@ -98,7 +98,7 @@ fun Alarm.toModel(): AlarmModel =
     snoozeCount = snoozeCount,
     snoozeLimit = snoozeLimit,
     lastSnoozedAt = lastSnoozedAt,
-    ringDurationMinutes = ringDurationMinutes,
+    alarmDurationMinutes = alarmDurationMinutes,
     soundEnabled = soundEnabled == DB_ON,
     vibrationEnabled = vibrationEnabled == DB_ON,
     reminderOffsetHours = reminderOffsetHours,

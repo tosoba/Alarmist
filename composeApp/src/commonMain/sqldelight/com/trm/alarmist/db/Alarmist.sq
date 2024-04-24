@@ -19,7 +19,7 @@ CREATE TABLE alarm(
 	snoozeCount INTEGER NOT NULL DEFAULT 0,
 	snoozeLimit INTEGER NOT NULL DEFAULT 2,
 	lastSnoozedAt TEXT AS LocalDateTime,
-	ringDurationMinutes INTEGER NOT NULL DEFAULT 1,
+	alarmDurationMinutes INTEGER NOT NULL DEFAULT 1,
 	soundEnabled INTEGER NOT NULL DEFAULT 1,
 	vibrationEnabled INTEGER NOT NULL DEFAULT 1,
 	reminderOffsetHours INTEGER NOT NULL DEFAULT 1
@@ -50,7 +50,7 @@ SET
     snoozeCount = 0,
     snoozeLimit = ?,
     lastSnoozedAt = NULL,
-    ringDurationMinutes = ?,
+    alarmDurationMinutes = ?,
     soundEnabled = ?,
     vibrationEnabled = ?,
     reminderOffsetHours = ?

@@ -20,7 +20,7 @@ class UpdateGroupOnOffUseCase(
             id = alarm.id,
             fireOnDateTime = it,
             snoozeAvailable = alarm.snoozeDurationMinutes > 0L,
-            ringDurationMinutes = alarm.ringDurationMinutes,
+            alarmDurationMinutes = alarm.alarmDurationMinutes,
             soundEnabled = alarm.soundEnabled,
             vibrationEnabled = alarm.vibrationEnabled,
             reminderOffsetHours = alarm.reminderOffsetHours,

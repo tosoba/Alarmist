@@ -80,7 +80,7 @@ class AlarmFeature(
               offOnDates = offOnDates,
               snoozeDurationMinutes = snoozeDuration.minutes,
               snoozeLimit = snoozeLimitOrZero,
-              ringDurationMinutes = ringDuration,
+              alarmDurationMinutes = alarmDuration,
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
               reminderOffsetHours = reminderOffset.hours,
@@ -98,7 +98,7 @@ class AlarmFeature(
               offOnDates = offOnDates,
               snoozeDurationMinutes = snoozeDuration.minutes,
               snoozeLimit = snoozeLimitOrZero,
-              ringDurationMinutes = ringDuration,
+              alarmDurationMinutes = alarmDuration,
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
               reminderOffsetHours = reminderOffset.hours,
@@ -167,8 +167,8 @@ class AlarmFeature(
     _state.update { it.copy(snoozeLimit = limit) }
   }
 
-  fun onRingDurationChange(duration: Long) {
-    _state.update { it.copy(ringDuration = duration) }
+  fun onAlarmDurationChange(duration: Long) {
+    _state.update { it.copy(alarmDuration = duration) }
   }
 
   fun onToggleSoundEnabled() {

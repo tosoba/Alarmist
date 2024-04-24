@@ -229,7 +229,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
           )
         }
       },
-      60_000 * settings.ringDurationMinutes,
+      60_000 * settings.alarmDurationMinutes,
     )
   }
 

@@ -20,7 +20,7 @@ class AddAlarmUseCase(
     offOnDates: Collection<LocalDate>,
     snoozeDurationMinutes: Long,
     snoozeLimit: Long,
-    ringDurationMinutes: Long,
+    alarmDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long,
@@ -38,7 +38,7 @@ class AddAlarmUseCase(
           offOnDates = offOnDates,
           snoozeDurationMinutes = snoozeDurationMinutes,
           snoozeLimit = snoozeLimit,
-          ringDurationMinutes = ringDurationMinutes,
+          alarmDurationMinutes = alarmDurationMinutes,
           soundEnabled = soundEnabled,
           vibrationEnabled = vibrationEnabled,
           reminderOffsetHours = reminderOffsetHours
@@ -48,7 +48,7 @@ class AddAlarmUseCase(
       scheduledOnDates = scheduledOnDates,
       offOnDates = offOnDates,
       snoozeAvailable = snoozeDurationMinutes > 0L,
-      ringDurationMinutes = ringDurationMinutes,
+      alarmDurationMinutes = alarmDurationMinutes,
       soundEnabled = soundEnabled,
       vibrationEnabled = vibrationEnabled,
       reminderOffsetHours = reminderOffsetHours

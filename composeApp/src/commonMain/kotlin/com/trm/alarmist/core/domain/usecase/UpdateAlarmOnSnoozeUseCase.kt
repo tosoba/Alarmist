@@ -27,7 +27,7 @@ class UpdateAlarmOnSnoozeUseCase(
           id = id,
           fireOnDateTime = it,
           snoozeAvailable = alarm.snoozeCount < alarm.snoozeLimit,
-          ringDurationMinutes = alarm.ringDurationMinutes,
+          alarmDurationMinutes = alarm.alarmDurationMinutes,
           soundEnabled = alarm.soundEnabled,
           vibrationEnabled = alarm.vibrationEnabled,
           reminderOffsetHours = alarm.reminderOffsetHours

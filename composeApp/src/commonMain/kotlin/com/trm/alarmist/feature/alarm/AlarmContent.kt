@@ -1,6 +1,7 @@
 package com.trm.alarmist.feature.alarm
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.alarm_duration_label
 import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.custom_schedule_label
@@ -16,7 +17,6 @@ import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.permission_required
 import alarmist.composeapp.generated.resources.reminder_offset_label
 import alarmist.composeapp.generated.resources.repeat_on_label
-import alarmist.composeapp.generated.resources.ring_duration_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.scheduled
 import alarmist.composeapp.generated.resources.snooze_duration_label
@@ -141,7 +141,7 @@ fun AlarmContent(
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
   onSnoozeDurationChange: (AlarmSnoozeDuration) -> Unit = {},
   onSnoozeLimitChange: (Long) -> Unit = {},
-  onRingDurationChange: (Long) -> Unit = {},
+  onAlarmDurationChange: (Long) -> Unit = {},
   onToggleSoundEnabled: () -> Unit = {},
   onToggleVibrationEnabled: () -> Unit = {},
   onReminderOffsetChange: (AlarmReminderOffset) -> Unit = {},
@@ -310,21 +310,21 @@ fun AlarmContent(
           Spacer(Modifier.height(8.dp))
 
           Text(
-            text = stringResource(Res.string.ring_duration_label),
+            text = stringResource(Res.string.alarm_duration_label),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
 
           Slider(
-            value = state.ringDuration.toFloat(),
+            value = state.alarmDuration.toFloat(),
             valueRange =
-              AlarmState.MIN_RING_DURATION_MINUTES.toFloat()..AlarmState.MAX_RING_DURATION_MINUTES
+              AlarmState.MIN_ALARM_DURATION_MINUTES.toFloat()..AlarmState.MAX_ALARM_DURATION_MINUTES
                   .toFloat(),
             steps =
-              AlarmState.MAX_RING_DURATION_MINUTES.toInt() -
-                AlarmState.MIN_RING_DURATION_MINUTES.toInt(),
-            onValueChange = { onRingDurationChange(it.toLong()) },
-            thumb = { AlarmSliderThumb(text = state.ringDuration.toString()) },
+              AlarmState.MAX_ALARM_DURATION_MINUTES.toInt() -
+                AlarmState.MIN_ALARM_DURATION_MINUTES.toInt(),
+            onValueChange = { onAlarmDurationChange(it.toLong()) },
+            thumb = { AlarmSliderThumb(text = state.alarmDuration.toString()) },
             modifier = Modifier.fillMaxWidth(),
           )
 
