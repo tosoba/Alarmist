@@ -44,6 +44,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,6 +53,7 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -231,8 +233,9 @@ fun AlarmContent(
       Row(
         modifier =
           Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
             .clickable { isCustomScheduleExpanded = !isCustomScheduleExpanded }
-            .padding(horizontal = 32.dp, vertical = 16.dp),
+            .padding(horizontal = 32.dp, vertical = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
       ) {
@@ -244,10 +247,13 @@ fun AlarmContent(
 
         Spacer(Modifier.width(32.dp))
 
-        ExpandableIcon(
-          isExpanded = isCustomScheduleExpanded,
-          transitionLabel = "ExpandableCustomSchedule",
-        )
+        Box(modifier = Modifier.heightIn(min = 32.dp)) {
+          ExpandableIcon(
+            isExpanded = isCustomScheduleExpanded,
+            modifier = Modifier.align(Alignment.Center),
+            transitionLabel = "ExpandableCustomSchedule",
+          )
+        }
       }
 
       ExpandableCalendar(
@@ -264,7 +270,10 @@ fun AlarmContent(
       )
 
       Row(
-        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        modifier =
+          Modifier.clip(RoundedCornerShape(24.dp))
+            .clickable(onClick = onToggleSoundEnabled)
+            .padding(horizontal = 32.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
@@ -284,8 +293,9 @@ fun AlarmContent(
       Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier =
-          Modifier.padding(horizontal = 32.dp, vertical = 16.dp)
-            .clickable(onClick = onToggleVibrationEnabled),
+          Modifier.clip(RoundedCornerShape(24.dp))
+            .clickable(onClick = onToggleVibrationEnabled)
+            .padding(horizontal = 32.dp, vertical = 16.dp),
       ) {
         Text(
           text = stringResource(Res.string.vibration_label),

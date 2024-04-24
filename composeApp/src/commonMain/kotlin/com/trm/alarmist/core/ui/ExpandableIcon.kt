@@ -11,7 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 
 @Composable
-fun ExpandableIcon(isExpanded: Boolean = false, transitionLabel: String = "ExpandableIcon") {
+fun ExpandableIcon(
+  isExpanded: Boolean,
+  modifier: Modifier = Modifier,
+  transitionLabel: String = "ExpandableIcon",
+) {
   val expandedTransition =
     updateTransition(
       targetState = isExpanded,
@@ -22,7 +26,7 @@ fun ExpandableIcon(isExpanded: Boolean = false, transitionLabel: String = "Expan
       if (state) 180f else 0f
     }
   Image(
-    modifier = Modifier.rotate(expandImageRotation),
+    modifier = modifier.rotate(expandImageRotation),
     imageVector = Icons.Outlined.ExpandMore,
     contentDescription = null,
   )
