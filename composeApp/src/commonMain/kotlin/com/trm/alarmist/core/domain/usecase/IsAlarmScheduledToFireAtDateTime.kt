@@ -9,14 +9,20 @@ import kotlinx.datetime.LocalDateTime
 class IsAlarmScheduledToFireAtDateTime(private val repository: AlarmRepository) {
   suspend operator fun invoke(id: Long, fireAtDateTime: LocalDateTime): Boolean {
     val alarm = repository.getAlarmById(id)
-    return if (alarm.scheduledOnDaysOfWeek.isEmpty() && alarm.scheduledOnDates.isEmpty()) {
-      fireAtDateTime == alarm.expectedOneTimeNotificationDateTime()
-    } else {
-      alarm.isScheduledToFireOn(fireAtDateTime.date) &&
-        (snoozedFireAtTime(
-          lastSnoozedAt = alarm.lastSnoozedAt,
-          snoozeDurationMinutes = alarm.snoozeDurationMinutes,
-        ) ?: alarm.fireAtTime) == fireAtDateTime.time
+    return when {
+      !alarm.isOn -> {
+        false
+      }
+      alarm.scheduledOnDaysOfWeek.isEmpty() && alarm.scheduledOnDates.isEmpty() -> {
+        fireAtDateTime == alarm.expectedOneTimeNotificationDateTime()
+      }
+      else -> {
+        alarm.isScheduledToFireOn(fireAtDateTime.date) &&
+          (snoozedFireAtTime(
+            lastSnoozedAt = alarm.lastSnoozedAt,
+            snoozeDurationMinutes = alarm.snoozeDurationMinutes,
+          ) ?: alarm.fireAtTime) == fireAtDateTime.time
+      }
     }
   }
 }
