@@ -57,9 +57,11 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Timer
@@ -167,14 +169,51 @@ fun AlarmContent(
         singleLine = true,
       )
 
-      Text(
-        text = stringResource(Res.string.fire_at_label),
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-      )
-
       var timePickerMode by rememberSaveable { mutableStateOf(TimePickerMode.DIAL) }
+
+      Row(
+        modifier = Modifier.padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Icon(
+          imageVector = Icons.Default.Alarm,
+          contentDescription = stringResource(Res.string.fire_at_label),
+        )
+
+        Text(
+          text = stringResource(Res.string.fire_at_label),
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+          modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
+        )
+
+        IconButton(
+          onClick = {
+            timePickerMode =
+              when (timePickerMode) {
+                TimePickerMode.DIAL -> TimePickerMode.INPUT
+                TimePickerMode.INPUT -> TimePickerMode.DIAL
+              }
+          }
+        ) {
+          Crossfade(timePickerMode) {
+            when (it) {
+              TimePickerMode.DIAL -> {
+                Icon(
+                  imageVector = Icons.Outlined.Keyboard,
+                  contentDescription = stringResource(Res.string.time_input),
+                )
+              }
+              TimePickerMode.INPUT -> {
+                Icon(
+                  imageVector = Icons.Outlined.Timer,
+                  contentDescription = stringResource(Res.string.time_dial),
+                )
+              }
+            }
+          }
+        }
+      }
 
       Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
         val timePickerState =
@@ -193,40 +232,19 @@ fun AlarmContent(
         }
       }
 
-      IconButton(
-        onClick = {
-          timePickerMode =
-            when (timePickerMode) {
-              TimePickerMode.DIAL -> TimePickerMode.INPUT
-              TimePickerMode.INPUT -> TimePickerMode.DIAL
-            }
-        },
-        modifier = Modifier.padding(horizontal = 16.dp),
-      ) {
-        Crossfade(timePickerMode) {
-          when (it) {
-            TimePickerMode.DIAL -> {
-              Icon(
-                imageVector = Icons.Outlined.Keyboard,
-                contentDescription = stringResource(Res.string.time_input),
-              )
-            }
-            TimePickerMode.INPUT -> {
-              Icon(
-                imageVector = Icons.Outlined.Timer,
-                contentDescription = stringResource(Res.string.time_dial),
-              )
-            }
-          }
-        }
-      }
+      Row(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
+        Icon(
+          imageVector = Icons.Default.Repeat,
+          contentDescription = stringResource(Res.string.repeat_label),
+          modifier = Modifier.padding(end = 12.dp),
+        )
 
-      Text(
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-        text = stringResource(Res.string.repeat_label),
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onPrimaryContainer,
-      )
+        Text(
+          text = stringResource(Res.string.repeat_label),
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+      }
 
       DaysOfWeekRow(
         modifier = Modifier.fillMaxWidth().padding(16.dp).horizontalScroll(rememberScrollState()),
