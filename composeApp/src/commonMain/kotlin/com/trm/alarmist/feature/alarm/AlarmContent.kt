@@ -9,6 +9,8 @@ import alarmist.composeapp.generated.resources.delete_all_weekdays
 import alarmist.composeapp.generated.resources.duration_label
 import alarmist.composeapp.generated.resources.fire_at_label
 import alarmist.composeapp.generated.resources.group_label
+import alarmist.composeapp.generated.resources.hours_before_alarm_label
+import alarmist.composeapp.generated.resources.minutes_label
 import alarmist.composeapp.generated.resources.name
 import alarmist.composeapp.generated.resources.notification_permission_rationale
 import alarmist.composeapp.generated.resources.notification_permission_settings
@@ -379,7 +381,7 @@ fun AlarmContent(
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
           Text(
-            text = "${state.alarmDuration} minute(s)",
+            text = stringResource(Res.string.minutes_label, "${state.alarmDuration}"),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
@@ -458,7 +460,8 @@ fun AlarmContent(
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
           Text(
-            text = "${state.reminderOffset.hours} hours(s) before alarm",
+            text =
+              stringResource(Res.string.hours_before_alarm_label, "${state.reminderOffset.hours}"),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )

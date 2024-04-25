@@ -58,4 +58,6 @@
     <string name="notification_permission_settings">A permission to post notifications which you have denied is required to create an alarm. Use application settings to grant that permission.</string>
     <string name="invalid_input">Invalid input</string>
     <string name="group_name_blank_validation_error">Group name cannot be blank.</string>
+    <string name="minutes_label">%1$s minute(s)</string>
+    <string name="hours_before_alarm_label">%1$s hour(s) before alarm</string>
 </resources>
