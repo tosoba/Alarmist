@@ -35,6 +35,7 @@
     <string name="add">Add</string>
     <string name="confirm">Confirm</string>
     <string name="menu">Menu</string>
+    <string name="default">Default</string>
     <string name="previous_week">Previous week</string>
     <string name="next_week">Next week</string>
     <string name="no_upcoming_alarms">No upcoming alarms</string>

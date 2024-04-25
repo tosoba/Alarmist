@@ -26,4 +26,5 @@ data class AlarmModel(
   val soundEnabled: Boolean,
   val vibrationEnabled: Boolean,
   val reminderOffsetHours: Long,
+  val soundId: String?,
 )

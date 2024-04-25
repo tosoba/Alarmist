@@ -26,6 +26,7 @@ data class AlarmState(
   val soundEnabled: Boolean = true,
   val vibrationEnabled: Boolean = true,
   val reminderOffset: AlarmReminderOffset = AlarmReminderOffset.HOUR_1,
+  val soundId: String? = null,
 ) {
   constructor(
     alarm: AlarmModel
@@ -42,6 +43,7 @@ data class AlarmState(
     soundEnabled = alarm.soundEnabled,
     vibrationEnabled = alarm.vibrationEnabled,
     reminderOffset = AlarmReminderOffset.fromHours(alarm.reminderOffsetHours),
+    soundId = alarm.soundId,
   )
 
   constructor(

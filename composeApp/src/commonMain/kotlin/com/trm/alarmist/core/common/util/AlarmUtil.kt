@@ -102,6 +102,7 @@ fun Alarm.toModel(): AlarmModel =
     soundEnabled = soundEnabled == DB_ON,
     vibrationEnabled = vibrationEnabled == DB_ON,
     reminderOffsetHours = reminderOffsetHours,
+    soundId = soundId,
   )
 
 fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =

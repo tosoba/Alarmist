@@ -3,6 +3,7 @@ package com.trm.alarmist.feature.alarm
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
+import alarmist.composeapp.generated.resources.default
 import alarmist.composeapp.generated.resources.delete
 import alarmist.composeapp.generated.resources.delete_all_weekdays
 import alarmist.composeapp.generated.resources.duration_label
@@ -57,6 +58,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.AlertDialog
@@ -78,6 +82,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -155,7 +160,7 @@ fun AlarmContent(
       LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
       OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp, vertical = 16.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
         value = state.name.orEmpty(),
         onValueChange = onNameChange,
         label = { Text(stringResource(Res.string.name)) },
@@ -166,7 +171,7 @@ fun AlarmContent(
         text = stringResource(Res.string.fire_at_label),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
       )
 
       var timePickerMode by rememberSaveable { mutableStateOf(TimePickerMode.DIAL) }
@@ -217,7 +222,7 @@ fun AlarmContent(
       }
 
       Text(
-        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
         text = stringResource(Res.string.repeat_label),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -235,19 +240,25 @@ fun AlarmContent(
           Modifier.fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
             .clickable { isCustomScheduleExpanded = !isCustomScheduleExpanded }
-            .padding(horizontal = 32.dp, vertical = 24.dp),
+            .padding(horizontal = 24.dp, vertical = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
       ) {
+        Icon(
+          imageVector = Icons.Default.EditCalendar,
+          contentDescription = stringResource(Res.string.schedule_label),
+          modifier = Modifier.padding(end = 12.dp),
+        )
+
         Text(
           text = stringResource(Res.string.schedule_label),
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
 
-        Spacer(Modifier.width(32.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
-        Box(modifier = Modifier.heightIn(min = 32.dp)) {
+        Box(modifier = Modifier.heightIn(min = 24.dp).padding(start = 12.dp)) {
           ExpandableIcon(
             isExpanded = isCustomScheduleExpanded,
             modifier = Modifier.align(Alignment.Center),
@@ -257,7 +268,7 @@ fun AlarmContent(
       }
 
       ExpandableCalendar(
-        calendarModifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp, vertical = 16.dp),
+        calendarModifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
         fireAtTime = state.fireAtTime,
         isExpanded = isCustomScheduleExpanded,
         scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
@@ -273,16 +284,29 @@ fun AlarmContent(
         modifier =
           Modifier.clip(RoundedCornerShape(24.dp))
             .clickable(onClick = onToggleSoundEnabled)
-            .padding(horizontal = 32.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
       ) {
-        Text(
-          text = stringResource(Res.string.sound_label),
-          style = MaterialTheme.typography.titleLarge,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
+        Icon(
+          imageVector = Icons.Default.MusicNote,
+          contentDescription = stringResource(Res.string.sound_label),
+          modifier = Modifier.padding(end = 12.dp),
         )
 
-        Spacer(Modifier.weight(1f))
+        Column(modifier = Modifier.weight(1f)) {
+          Text(
+            text = stringResource(Res.string.sound_label),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+          Text(
+            text = stringResource(Res.string.default),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+        }
+
+        VerticalDivider(modifier = Modifier.height(32.dp).padding(start = 8.dp, end = 16.dp))
 
         Switch(
           checked = state.soundEnabled,
@@ -295,8 +319,14 @@ fun AlarmContent(
         modifier =
           Modifier.clip(RoundedCornerShape(24.dp))
             .clickable(onClick = onToggleVibrationEnabled)
-            .padding(horizontal = 32.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 16.dp),
       ) {
+        Icon(
+          imageVector = Icons.Default.Vibration,
+          contentDescription = stringResource(Res.string.vibration_label),
+          modifier = Modifier.padding(end = 12.dp),
+        )
+
         Text(
           text = stringResource(Res.string.vibration_label),
           style = MaterialTheme.typography.titleLarge,
@@ -315,7 +345,7 @@ fun AlarmContent(
         text = stringResource(Res.string.duration_label),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
       )
 
       Slider(
@@ -328,14 +358,14 @@ fun AlarmContent(
             AlarmState.MIN_ALARM_DURATION_MINUTES.toInt(),
         onValueChange = { onAlarmDurationChange(it.toLong()) },
         thumb = { AlarmSliderThumb(text = state.alarmDuration.toString()) },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
       )
 
       Text(
         text = stringResource(Res.string.snooze_duration_label),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
       )
 
       val snoozeDurationValues = remember { AlarmSnoozeDuration.entries.toTypedArray() }
@@ -344,7 +374,7 @@ fun AlarmContent(
         valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
         onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
         thumb = { AlarmSliderThumb(text = state.snoozeDuration.minutes.toString()) },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
       )
 
       AnimatedVisibility(
@@ -357,7 +387,7 @@ fun AlarmContent(
             text = stringResource(Res.string.snooze_limit_label),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
           )
 
           Slider(
@@ -367,7 +397,7 @@ fun AlarmContent(
             steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - AlarmState.MIN_SNOOZE_LIMIT.toInt(),
             onValueChange = { onSnoozeLimitChange(it.toLong()) },
             thumb = { AlarmSliderThumb(text = state.snoozeLimit.toString()) },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
           )
         }
       }
@@ -376,7 +406,7 @@ fun AlarmContent(
         text = stringResource(Res.string.reminder_offset_label),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
       )
 
       val reminderOffsetValues = remember { AlarmReminderOffset.entries.toTypedArray() }
@@ -385,7 +415,7 @@ fun AlarmContent(
         valueRange = 0f..reminderOffsetValues.lastIndex.toFloat(),
         onValueChange = { onReminderOffsetChange(reminderOffsetValues[it.toInt()]) },
         thumb = { AlarmSliderThumb(text = state.reminderOffset.hours.toString()) },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
       )
 
       if (groups.isNotEmpty()) {
@@ -393,7 +423,7 @@ fun AlarmContent(
           text = stringResource(Res.string.group_label),
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
-          modifier = Modifier.padding(horizontal = 32.dp, vertical = 16.dp),
+          modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
         )
 
         groups.forEachIndexed { index, group ->
@@ -421,7 +451,7 @@ fun AlarmContent(
               }
             }
 
-          Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)) {
+          Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
             AlarmGroupHeaderCard(
               group = group,
               modifier = Modifier.fillMaxWidth().clip(shape).clickable { onGroupClick(group) },
@@ -438,7 +468,7 @@ fun AlarmContent(
             if (index != 0) {
               HorizontalDivider(
                 modifier =
-                  Modifier.fillMaxWidth().padding(horizontal = 32.dp).align(Alignment.TopCenter)
+                  Modifier.fillMaxWidth().padding(horizontal = 24.dp).align(Alignment.TopCenter)
               )
             }
           }
@@ -617,7 +647,7 @@ private fun ColumnScope.ExpandableCalendar(
           val selectedDateAlarmsLayoutExtraHeightPx = with(LocalDensity.current) { 72.dp.toPx() }
           Column(
             modifier =
-              Modifier.padding(horizontal = 32.dp)
+              Modifier.padding(horizontal = 24.dp)
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onGloballyPositioned {
                   layoutRect =

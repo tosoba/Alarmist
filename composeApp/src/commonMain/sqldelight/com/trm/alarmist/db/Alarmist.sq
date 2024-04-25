@@ -22,7 +22,8 @@ CREATE TABLE alarm(
 	alarmDurationMinutes INTEGER NOT NULL DEFAULT 1,
 	soundEnabled INTEGER NOT NULL DEFAULT 1,
 	vibrationEnabled INTEGER NOT NULL DEFAULT 1,
-	reminderOffsetHours INTEGER NOT NULL DEFAULT 1
+	reminderOffsetHours INTEGER NOT NULL DEFAULT 1,
+	soundId TEXT
 );
 
 CREATE TABLE alarmGroup(
@@ -32,7 +33,7 @@ CREATE TABLE alarmGroup(
 );
 
 insertAlarm:
-INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateAlarmById:
 UPDATE alarm
@@ -53,7 +54,8 @@ SET
     alarmDurationMinutes = ?,
     soundEnabled = ?,
     vibrationEnabled = ?,
-    reminderOffsetHours = ?
+    reminderOffsetHours = ?,
+    soundId = ?
 WHERE id = ?;
 
 updateAlarmLastNotificationDateAndResetSnoozeCountById:

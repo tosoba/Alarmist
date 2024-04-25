@@ -25,6 +25,7 @@ interface AlarmRepository {
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long,
+    soundId: String?,
   ): Long
 
   suspend fun editAlarm(
@@ -42,6 +43,7 @@ interface AlarmRepository {
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long,
+    soundId: String?,
   )
 
   suspend fun getAlarmById(id: Long): AlarmModel

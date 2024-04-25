@@ -84,6 +84,7 @@ class AlarmFeature(
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
               reminderOffsetHours = reminderOffset.hours,
+              soundId = soundId,
             )
           }
           is AlarmComponent.Mode.Edit -> {
@@ -102,6 +103,7 @@ class AlarmFeature(
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
               reminderOffsetHours = reminderOffset.hours,
+              soundId = soundId,
             )
           }
         }
