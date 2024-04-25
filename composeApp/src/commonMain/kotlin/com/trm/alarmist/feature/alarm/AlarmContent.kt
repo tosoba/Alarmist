@@ -58,10 +58,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.AvTimer
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Timer
@@ -359,12 +361,29 @@ fun AlarmContent(
         )
       }
 
-      Text(
-        text = stringResource(Res.string.duration_label),
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-      )
+      Row(
+        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Icon(
+          imageVector = Icons.Default.AvTimer,
+          contentDescription = stringResource(Res.string.duration_label),
+          modifier = Modifier.padding(end = 12.dp),
+        )
+
+        Column {
+          Text(
+            text = stringResource(Res.string.duration_label),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+          Text(
+            text = "${state.alarmDuration} minute(s)",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+        }
+      }
 
       Slider(
         value = state.alarmDuration.toFloat(),
@@ -373,7 +392,8 @@ fun AlarmContent(
               .toFloat(),
         steps =
           AlarmState.MAX_ALARM_DURATION_MINUTES.toInt() -
-            AlarmState.MIN_ALARM_DURATION_MINUTES.toInt(),
+            AlarmState.MIN_ALARM_DURATION_MINUTES.toInt() -
+            1,
         onValueChange = { onAlarmDurationChange(it.toLong()) },
         thumb = { AlarmSliderThumb(text = state.alarmDuration.toString()) },
         modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
