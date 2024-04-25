@@ -15,7 +15,7 @@ import alarmist.composeapp.generated.resources.notification_permission_settings
 import alarmist.composeapp.generated.resources.ok
 import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.permission_required
-import alarmist.composeapp.generated.resources.reminder_offset_label
+import alarmist.composeapp.generated.resources.reminder_label
 import alarmist.composeapp.generated.resources.repeat_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.schedule_label
@@ -61,6 +61,7 @@ import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.AvTimer
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Timer
@@ -440,12 +441,29 @@ fun AlarmContent(
         }
       }
 
-      Text(
-        text = stringResource(Res.string.reminder_offset_label),
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-      )
+      Row(
+        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Icon(
+          imageVector = Icons.Default.IncompleteCircle,
+          contentDescription = stringResource(Res.string.reminder_label),
+          modifier = Modifier.padding(end = 12.dp),
+        )
+
+        Column {
+          Text(
+            text = stringResource(Res.string.reminder_label),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+          Text(
+            text = "${state.reminderOffset.hours} hours(s) before alarm",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+          )
+        }
+      }
 
       val reminderOffsetValues = remember { AlarmReminderOffset.entries.toTypedArray() }
       Slider(

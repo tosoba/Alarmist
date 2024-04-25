@@ -47,7 +47,7 @@
     <string name="snooze_duration_label">Snooze for ... minutes</string>
     <string name="snooze_limit_label">Snooze at most ... times</string>
     <string name="duration_label">Duration</string>
-    <string name="reminder_offset_label">Remind ... hours before</string>
+    <string name="reminder_label">Reminder</string>
     <string name="schedule_label">Schedule</string>
     <string name="sound_label">Sound</string>
     <string name="vibration_label">Vibration</string>
