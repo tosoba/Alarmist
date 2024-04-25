@@ -22,14 +22,14 @@ import alarmist.composeapp.generated.resources.repeat_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.schedule_label
 import alarmist.composeapp.generated.resources.scheduled
-import alarmist.composeapp.generated.resources.snooze_duration_label
-import alarmist.composeapp.generated.resources.snooze_limit_label
+import alarmist.composeapp.generated.resources.snooze_label
 import alarmist.composeapp.generated.resources.sound_label
 import alarmist.composeapp.generated.resources.time_dial
 import alarmist.composeapp.generated.resources.time_input
 import alarmist.composeapp.generated.resources.vibration_label
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -50,7 +50,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -66,7 +65,7 @@ import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Timer
@@ -151,6 +150,7 @@ fun AlarmContent(
   onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
   onDeleteOnDateClick: (LocalDate) -> Unit = {},
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
+  onToggleSnoozeEnabled: () -> Unit = {},
   onSnoozeDurationChange: (AlarmSnoozeDuration) -> Unit = {},
   onSnoozeLimitChange: (Long) -> Unit = {},
   onAlarmDurationChange: (Long) -> Unit = {},
@@ -161,7 +161,9 @@ fun AlarmContent(
   onConfirmClick: () -> Unit = {},
 ) {
   Box(modifier = modifier) {
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    Column(
+      modifier = Modifier.fillMaxSize().animateContentSize().verticalScroll(rememberScrollState())
+    ) {
       val isKeyboardOpen by keyboardAsState()
       val focusManager = LocalFocusManager.current
       LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
@@ -263,7 +265,7 @@ fun AlarmContent(
           Modifier.fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
             .clickable { isCustomScheduleExpanded = !isCustomScheduleExpanded }
-            .padding(horizontal = 24.dp, vertical = 24.dp),
+            .padding(24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
       ) {
@@ -365,7 +367,7 @@ fun AlarmContent(
       }
 
       Row(
-        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Icon(
@@ -402,40 +404,59 @@ fun AlarmContent(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
       )
 
-      Text(
-        text = stringResource(Res.string.snooze_duration_label),
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-      )
-
-      val snoozeDurationValues = remember { AlarmSnoozeDuration.entries.toTypedArray() }
-      Slider(
-        value = state.snoozeDuration.ordinal.toFloat(),
-        valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
-        onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
-        thumb = { AlarmSliderThumb(text = state.snoozeDuration.minutes.toString()) },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-      )
-
-      AnimatedVisibility(
-        visible = state.snoozeDuration != AlarmSnoozeDuration.ZERO,
-        enter = fadeIn(),
-        exit = fadeOut(),
+      Row(
+        modifier =
+          Modifier.clip(RoundedCornerShape(24.dp))
+            .clickable(onClick = onToggleSnoozeEnabled)
+            .padding(horizontal = 24.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
       ) {
+        Icon(
+          imageVector = Icons.Default.Snooze,
+          contentDescription = stringResource(Res.string.snooze_label),
+          modifier = Modifier.padding(end = 12.dp),
+        )
+
         Column {
           Text(
-            text = stringResource(Res.string.snooze_limit_label),
+            text = stringResource(Res.string.snooze_label),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+          )
+          AnimatedVisibility(visible = state.snoozeEnabled) {
+            Text(
+              text =
+                "${state.snoozeDuration.minutes} minute(s), at most ${state.snoozeLimit} time(s)",
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+          }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Switch(
+          checked = state.snoozeEnabled,
+          onCheckedChange = remember { { onToggleSnoozeEnabled() } },
+        )
+      }
+
+      AnimatedVisibility(visible = state.snoozeEnabled, enter = fadeIn(), exit = fadeOut()) {
+        Column {
+          val snoozeDurationValues = remember { AlarmSnoozeDuration.entries.toTypedArray() }
+          Slider(
+            value = state.snoozeDuration.ordinal.toFloat(),
+            valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
+            onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
+            thumb = { AlarmSliderThumb(text = state.snoozeDuration.minutes.toString()) },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
           )
 
           Slider(
             value = state.snoozeLimit.toFloat(),
             valueRange =
               AlarmState.MIN_SNOOZE_LIMIT.toFloat()..AlarmState.MAX_SNOOZE_LIMIT.toFloat(),
-            steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - AlarmState.MIN_SNOOZE_LIMIT.toInt(),
+            steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - AlarmState.MIN_SNOOZE_LIMIT.toInt() - 1,
             onValueChange = { onSnoozeLimitChange(it.toLong()) },
             thumb = { AlarmSliderThumb(text = state.snoozeLimit.toString()) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
@@ -444,7 +465,7 @@ fun AlarmContent(
       }
 
       Row(
-        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Icon(

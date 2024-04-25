@@ -1,7 +1,6 @@
 package com.trm.alarmist.feature.alarm
 
 enum class AlarmSnoozeDuration(val minutes: Long) {
-  ZERO(0L),
   MIN_1(1L),
   MIN_2(2L),
   MIN_5(5L),
@@ -13,6 +12,6 @@ enum class AlarmSnoozeDuration(val minutes: Long) {
 
   companion object {
     fun fromMinutes(minutes: Long): AlarmSnoozeDuration =
-      AlarmSnoozeDuration.entries.first { it.minutes == minutes }
+      AlarmSnoozeDuration.entries.firstOrNull { it.minutes == minutes } ?: MIN_10
   }
 }

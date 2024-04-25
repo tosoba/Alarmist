@@ -44,8 +44,7 @@
     <string name="no_alarms_created">No alarms created</string>
     <string name="fire_at_label">Fire at</string>
     <string name="repeat_label">Repeat</string>
-    <string name="snooze_duration_label">Snooze for ... minutes</string>
-    <string name="snooze_limit_label">Snooze at most ... times</string>
+    <string name="snooze_label">Snooze</string>
     <string name="duration_label">Duration</string>
     <string name="reminder_label">Reminder</string>
     <string name="schedule_label">Schedule</string>

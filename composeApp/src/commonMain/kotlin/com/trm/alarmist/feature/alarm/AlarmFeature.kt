@@ -78,7 +78,7 @@ class AlarmFeature(
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
-              snoozeDurationMinutes = snoozeDuration.minutes,
+              snoozeDurationMinutes = snoozeDurationOrZero,
               snoozeLimit = snoozeLimitOrZero,
               alarmDurationMinutes = alarmDuration,
               soundEnabled = soundEnabled,
@@ -97,7 +97,7 @@ class AlarmFeature(
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
-              snoozeDurationMinutes = snoozeDuration.minutes,
+              snoozeDurationMinutes = snoozeDurationOrZero,
               snoozeLimit = snoozeLimitOrZero,
               alarmDurationMinutes = alarmDuration,
               soundEnabled = soundEnabled,
@@ -159,6 +159,10 @@ class AlarmFeature(
 
   fun onScheduleOnDateClick(date: LocalDate) {
     _state.update { it.copy(scheduledOnDates = it.scheduledOnDates + date) }
+  }
+
+  fun onToggleSnoozeEnabled() {
+    _state.update { it.copy(snoozeEnabled = !it.snoozeEnabled) }
   }
 
   fun onSnoozeDurationChange(duration: AlarmSnoozeDuration) {
