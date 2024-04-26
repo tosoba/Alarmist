@@ -195,7 +195,6 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             val state by child.component.feature.state.collectAsState()
             val groups by child.component.feature.groups.collectAsState()
             AlarmContent(
-              modifier = Modifier.fillMaxSize(),
               state = state,
               groups = groups,
               onBackClick = ::hideBottomSheet,
@@ -230,7 +229,6 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           is RootComponent.BottomSheetChild.Group -> {
             val state by child.component.feature.state.collectAsState()
             GroupContent(
-              modifier = Modifier.fillMaxSize(),
               mode = child.component.mode,
               state = state,
               onBackClick = ::hideBottomSheet,
