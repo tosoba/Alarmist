@@ -222,7 +222,9 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
               onToggleReminderEnabled = child.component.feature::onToggleReminderEnabled,
               onReminderOffsetChange = child.component.feature::onReminderOffsetChange,
-              onConfirmClick = child.component::onConfirmClick,
+              onConfirmClick = {
+                child.component.feature.onConfirmClick().invokeOnCompletion { hideBottomSheet() }
+              },
             )
           }
           is RootComponent.BottomSheetChild.Group -> {
@@ -274,7 +276,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
     }
 
     val dialog by component.dialog.subscribeAsState()
-    dialog.child?.instance?.let { RootDialog(it) }
+    dialog.child?.instance?.let { RootDialog(component = it, onConfirmClick = ::hideBottomSheet) }
   }
 }
 

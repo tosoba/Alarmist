@@ -14,13 +14,24 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun RootDialog(component: RootDialogComponent, modifier: Modifier = Modifier) {
+fun RootDialog(
+  component: RootDialogComponent,
+  onConfirmClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
   AlertDialog(
     onDismissRequest = component.onDismiss,
     title = { Text(text = component.title) },
     text = { Text(text = component.message) },
     confirmButton = {
-      TextButton(onClick = component.onConfirm) { Text(stringResource(Res.string.confirm)) }
+      TextButton(
+        onClick = {
+          component.onConfirm()
+          onConfirmClick()
+        }
+      ) {
+        Text(stringResource(Res.string.confirm))
+      }
     },
     dismissButton = {
       TextButton(onClick = component.onDismiss) { Text(stringResource(Res.string.dismiss)) }

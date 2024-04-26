@@ -103,7 +103,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
         onConfirm = {
           dialogNavigation.dismiss()
           deleteActionParameter(
-            alarmParameter = { it::onDeleteActionClick },
+            alarmParameter = { it.feature::onDeleteClick },
             groupParameter = { it::onDeleteActionClick },
           )()
         },
@@ -123,14 +123,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
       when (config) {
         is BottomSheetChildConfig.Alarm -> {
           RootComponent.BottomSheetChild.Alarm(
-            DefaultAlarmComponent(
-              componentContext = childComponentContext,
-              mode = config.mode,
-              dismiss =
-                ::
-                  onBottomSheetDismissRequest, // TODO: this results in no bottom sheet dismiss
-                                              // animation
-            )
+            DefaultAlarmComponent(componentContext = childComponentContext, mode = config.mode)
           )
         }
         is BottomSheetChildConfig.Group -> {
@@ -139,9 +132,8 @@ class DefaultRootComponent(componentContext: ComponentContext) :
               componentContext = childComponentContext,
               mode = config.mode,
               dismiss =
-                ::
-                  onBottomSheetDismissRequest, // TODO: this results in no bottom sheet dismiss
-                                              // animation
+                ::onBottomSheetDismissRequest, // TODO: this results in no bottom sheet dismiss
+              // animation
             )
           )
         }

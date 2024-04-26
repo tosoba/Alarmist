@@ -11,10 +11,6 @@ interface AlarmComponent {
 
   val feature: AlarmFeature
 
-  fun onConfirmClick()
-
-  fun onDeleteActionClick()
-
   @Serializable
   sealed interface Mode {
     @Serializable data object Add : Mode
@@ -26,7 +22,6 @@ interface AlarmComponent {
 class DefaultAlarmComponent(
   componentContext: ComponentContext,
   override val mode: AlarmComponent.Mode,
-  private val dismiss: () -> Unit,
 ) : AlarmComponent, ComponentContext by componentContext {
   override val feature =
     instanceKeeper.getOrCreate {
@@ -43,14 +38,6 @@ class DefaultAlarmComponent(
       strategy = SerializableContainer.serializer(),
       supplier = feature::saveState,
     )
-  }
-
-  override fun onConfirmClick() {
-    feature.onConfirmClick().invokeOnCompletion { dismiss() }
-  }
-
-  override fun onDeleteActionClick() {
-    feature.onDeleteClick().invokeOnCompletion { dismiss() }
   }
 
   companion object {
