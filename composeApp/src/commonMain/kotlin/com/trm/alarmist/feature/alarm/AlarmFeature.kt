@@ -59,7 +59,7 @@ class AlarmFeature(
     }
   }
 
-  fun onDeleteActionClick(): Job =
+  fun onDeleteClick(): Job =
     coroutineScope.launch {
       check(mode is AlarmComponent.Mode.Edit)
       deleteAlarmUseCase(mode.alarm.id)

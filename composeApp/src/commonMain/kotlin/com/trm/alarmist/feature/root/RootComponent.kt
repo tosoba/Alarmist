@@ -8,10 +8,8 @@ import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
@@ -35,6 +33,8 @@ interface RootComponent {
 
   val dialog: Value<ChildSlot<*, RootDialogComponent>>
 
+  val bottomSheet: Value<ChildSlot<*, BottomSheetChild>>
+
   fun onAlarmsDrawerItemClick()
 
   fun onClockDrawerItemClick()
@@ -55,12 +55,16 @@ interface RootComponent {
 
   fun onBackClick()
 
+  fun onBottomSheetDismissRequest()
+
+  sealed interface BottomSheetChild {
+    class Alarm(val component: AlarmComponent) : BottomSheetChild
+
+    class Group(val component: GroupComponent) : BottomSheetChild
+  }
+
   sealed interface Child {
     class Alarms(val component: AlarmsComponent) : Child
-
-    class Alarm(val component: AlarmComponent) : Child
-
-    class Group(val component: GroupComponent) : Child
 
     class Clock(val component: ClockComponent) : Child
 
@@ -87,6 +91,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
 
   override val dialog: Value<ChildSlot<*, RootDialogComponent>> =
     childSlot(
+      key = "DialogSlot",
       source = dialogNavigation,
       serializer = RootDialogComponent.Config.serializer(),
       handleBackButton = true,
@@ -106,6 +111,37 @@ class DefaultRootComponent(componentContext: ComponentContext) :
       )
     }
 
+  private val bottomSheetNavigation = SlotNavigation<BottomSheetChildConfig>()
+
+  override val bottomSheet: Value<ChildSlot<*, RootComponent.BottomSheetChild>> =
+    childSlot(
+      key = "BottomSheetSlot",
+      source = bottomSheetNavigation,
+      serializer = BottomSheetChildConfig.serializer(),
+      handleBackButton = true,
+    ) { config, childComponentContext ->
+      when (config) {
+        is BottomSheetChildConfig.Alarm -> {
+          RootComponent.BottomSheetChild.Alarm(
+            DefaultAlarmComponent(
+              componentContext = childComponentContext,
+              mode = config.mode,
+              pop = ::onBackClick,
+            )
+          )
+        }
+        is BottomSheetChildConfig.Group -> {
+          RootComponent.BottomSheetChild.Group(
+            DefaultGroupComponent(
+              componentContext = childComponentContext,
+              mode = config.mode,
+              pop = ::onBackClick,
+            )
+          )
+        }
+      }
+    }
+
   private fun createChild(
     config: ChildConfig,
     componentContext: ComponentContext,
@@ -119,24 +155,6 @@ class DefaultRootComponent(componentContext: ComponentContext) :
             onEditAlarmClick = ::onEditAlarmClick,
             onAddGroupClick = ::onAddGroupClick,
             onEditGroupClick = ::onEditGroupClick,
-          )
-        )
-      }
-      is ChildConfig.Alarm -> {
-        RootComponent.Child.Alarm(
-          DefaultAlarmComponent(
-            componentContext = componentContext,
-            mode = config.mode,
-            pop = ::onBackClick,
-          )
-        )
-      }
-      is ChildConfig.Group -> {
-        RootComponent.Child.Group(
-          DefaultGroupComponent(
-            componentContext = componentContext,
-            mode = config.mode,
-            pop = ::onBackClick,
           )
         )
       }
@@ -189,15 +207,15 @@ class DefaultRootComponent(componentContext: ComponentContext) :
     groupParameter: (GroupComponent) -> T,
     fallback: () -> T = { throw IllegalStateException() },
   ) =
-    when (val active = childStack.active.instance) {
-      is RootComponent.Child.Alarm -> {
+    when (val active = bottomSheet.value.child?.instance) {
+      is RootComponent.BottomSheetChild.Alarm -> {
         if (active.component.mode is AlarmComponent.Mode.Edit) {
           alarmParameter(active.component)
         } else {
           fallback()
         }
       }
-      is RootComponent.Child.Group -> {
+      is RootComponent.BottomSheetChild.Group -> {
         if (active.component.mode is GroupComponent.Mode.Edit) {
           groupParameter(active.component)
         } else {
@@ -210,32 +228,39 @@ class DefaultRootComponent(componentContext: ComponentContext) :
     }
 
   override fun onAddAlarmClick() {
-    navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Add))
+    bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Add))
   }
 
   override fun onEditAlarmClick(alarm: AlarmListModel) {
-    navigation.push(ChildConfig.Alarm(AlarmComponent.Mode.Edit(alarm)))
+    bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(alarm)))
   }
 
   override fun onAddGroupClick() {
-    navigation.push(ChildConfig.Group(GroupComponent.Mode.Add))
+    bottomSheetNavigation.activate(BottomSheetChildConfig.Group(GroupComponent.Mode.Add))
   }
 
   override fun onEditGroupClick(group: AlarmGroupModel) {
-    navigation.push(ChildConfig.Group(GroupComponent.Mode.Edit(group)))
+    bottomSheetNavigation.activate(BottomSheetChildConfig.Group(GroupComponent.Mode.Edit(group)))
   }
 
   override fun onBackClick() {
     navigation.pop()
   }
 
+  override fun onBottomSheetDismissRequest() {
+    bottomSheetNavigation.dismiss()
+  }
+
+  @Serializable
+  private sealed interface BottomSheetChildConfig {
+    @Serializable data class Alarm(val mode: AlarmComponent.Mode) : BottomSheetChildConfig
+
+    @Serializable data class Group(val mode: GroupComponent.Mode) : BottomSheetChildConfig
+  }
+
   @Serializable
   private sealed interface ChildConfig {
     @Serializable data object Alarms : ChildConfig
-
-    @Serializable data class Alarm(val mode: AlarmComponent.Mode) : ChildConfig
-
-    @Serializable data class Group(val mode: GroupComponent.Mode) : ChildConfig
 
     @Serializable data object Clock : ChildConfig
 

@@ -5,6 +5,7 @@ import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.default
 import alarmist.composeapp.generated.resources.delete
+import alarmist.composeapp.generated.resources.delete_alarm
 import alarmist.composeapp.generated.resources.delete_all_weekdays
 import alarmist.composeapp.generated.resources.duration_label
 import alarmist.composeapp.generated.resources.fire_at_label
@@ -50,6 +51,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -58,9 +60,11 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.AvTimer
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.MusicNote
@@ -143,7 +147,9 @@ fun AlarmContent(
   modifier: Modifier = Modifier,
   state: AlarmState = AlarmState(),
   groups: List<AlarmGroupModel> = emptyList(),
+  onBackClick: () -> Unit = {},
   onNameChange: (String) -> Unit = {},
+  onDeleteClick: (() -> Unit)? = null,
   onFireAtChange: (LocalTime) -> Unit = {},
   onDayOfWeekClick: (DayOfWeek) -> Unit = {},
   onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
@@ -169,13 +175,35 @@ fun AlarmContent(
       val focusManager = LocalFocusManager.current
       LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
-      OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
-        value = state.name.orEmpty(),
-        onValueChange = onNameChange,
-        label = { Text(stringResource(Res.string.name)) },
-        singleLine = true,
-      )
+      Row(
+        modifier =
+          Modifier.fillMaxWidth().padding(start = 8.dp, top = 16.dp, bottom = 16.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        IconButton(onClick = onBackClick) {
+          Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = stringResource(Res.string.delete_alarm),
+          )
+        }
+
+        OutlinedTextField(
+          value = state.name.orEmpty(),
+          onValueChange = onNameChange,
+          label = { Text(stringResource(Res.string.name)) },
+          singleLine = true,
+          modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
+        )
+
+        onDeleteClick?.let {
+          IconButton(onClick = it) {
+            Icon(
+              imageVector = Icons.Default.Delete,
+              contentDescription = stringResource(Res.string.delete_alarm),
+            )
+          }
+        } ?: run { Spacer(modifier = Modifier.width(16.dp)) }
+      }
 
       var timePickerMode by rememberSaveable { mutableStateOf(TimePickerMode.DIAL) }
 

@@ -50,7 +50,7 @@ class DefaultAlarmComponent(
   }
 
   override fun onDeleteActionClick() {
-    feature.onDeleteActionClick().invokeOnCompletion { pop() }
+    feature.onDeleteClick().invokeOnCompletion { pop() }
   }
 
   companion object {

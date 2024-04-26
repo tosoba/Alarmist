@@ -17,13 +17,16 @@ import androidx.compose.material.icons.filled.MoreTime
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +39,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.router.stack.ChildStack
+import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.clock.ClockContent
@@ -48,7 +52,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   val childStack by component.childStack.subscribeAsState()
@@ -171,28 +175,33 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       }
     },
   ) {
-    Column(modifier = modifier) {
-      RootAppBar(
-        activeChild = childStack.active.instance,
-        onBackClick = component::onBackClick,
-        onMenuClick = ::openDrawer,
-        onDeleteActionClick = component::onDeleteActionClick,
-      )
-
-      Children(
-        modifier = Modifier.fillMaxWidth().weight(1f),
-        stack = childStack,
-        animation = stackAnimation(fade()),
+    val bottomSheet by component.bottomSheet.subscribeAsState()
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    bottomSheet.child?.instance?.let { child ->
+      ModalBottomSheet(
+        onDismissRequest = component::onBottomSheetDismissRequest,
+        sheetState = bottomSheetState,
       ) {
-        when (val child = it.instance) {
-          is RootComponent.Child.Alarm -> {
+        when (child) {
+          is RootComponent.BottomSheetChild.Alarm -> {
             val state by child.component.feature.state.collectAsState()
             val groups by child.component.feature.groups.collectAsState()
             AlarmContent(
               modifier = Modifier.fillMaxSize(),
               state = state,
               groups = groups,
+              onBackClick = component::onBottomSheetDismissRequest,
               onNameChange = child.component.feature::onNameChange,
+              onDeleteClick =
+                if (child.component.mode is AlarmComponent.Mode.Edit) {
+                  {
+                    child.component.feature.onDeleteClick().invokeOnCompletion {
+                      component.onBottomSheetDismissRequest()
+                    }
+                  }
+                } else {
+                  null
+                },
               onFireAtChange = child.component.feature::onFireAtChange,
               onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
               onDateOnOffSwitchCheckedChange =
@@ -212,10 +221,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onConfirmClick = child.component::onConfirmClick,
             )
           }
-          is RootComponent.Child.Alarms -> {
-            AlarmsContent(modifier = Modifier.fillMaxSize(), component = child.component)
-          }
-          is RootComponent.Child.Group -> {
+          is RootComponent.BottomSheetChild.Group -> {
             val state by child.component.feature.state.collectAsState()
             GroupContent(
               modifier = Modifier.fillMaxSize(),
@@ -226,6 +232,22 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onToggleAlarmSelection = child.component.feature::onToggleAlarmSelection,
               onConfirmClick = child.component::onConfirmClick,
             )
+          }
+        }
+      }
+    }
+
+    Column(modifier = modifier) {
+      RootAppBar(activeChild = childStack.active.instance, onMenuClick = ::openDrawer)
+
+      Children(
+        modifier = Modifier.fillMaxWidth().weight(1f),
+        stack = childStack,
+        animation = stackAnimation(fade()),
+      ) {
+        when (val child = it.instance) {
+          is RootComponent.Child.Alarms -> {
+            AlarmsContent(modifier = Modifier.fillMaxSize(), component = child.component)
           }
           is RootComponent.Child.Clock -> {
             ClockContent(modifier = Modifier.fillMaxSize(), component = child.component)
