@@ -7,7 +7,6 @@ import alarmist.composeapp.generated.resources.menu
 import alarmist.composeapp.generated.resources.stopwatch
 import alarmist.composeapp.generated.resources.timer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,18 +27,10 @@ fun RootAppBar(activeChild: RootComponent.Child, onMenuClick: () -> Unit = {}) {
         text =
           stringResource(
             when (activeChild) {
-              is RootComponent.Child.Alarms -> {
-                Res.string.alarms
-              }
-              is RootComponent.Child.Clock -> {
-                Res.string.clock
-              }
-              is RootComponent.Child.Timer -> {
-                Res.string.timer
-              }
-              is RootComponent.Child.Stopwatch -> {
-                Res.string.stopwatch
-              }
+              is RootComponent.Child.Alarms -> Res.string.alarms
+              is RootComponent.Child.Clock -> Res.string.clock
+              is RootComponent.Child.Timer -> Res.string.timer
+              is RootComponent.Child.Stopwatch -> Res.string.stopwatch
             }
           )
       )
@@ -50,9 +41,4 @@ fun RootAppBar(activeChild: RootComponent.Child, onMenuClick: () -> Unit = {}) {
       }
     },
   )
-}
-
-@Composable
-private fun DeleteActionButton(contentDescription: String, onClick: () -> Unit) {
-
 }
