@@ -11,10 +11,6 @@ interface GroupComponent {
 
   val feature: GroupFeature
 
-  fun onConfirmClick()
-
-  fun onDeleteActionClick()
-
   @Serializable
   sealed interface Mode {
     @Serializable data object Add : Mode
@@ -26,7 +22,6 @@ interface GroupComponent {
 class DefaultGroupComponent(
   componentContext: ComponentContext,
   override val mode: GroupComponent.Mode,
-  private val dismiss: () -> Unit,
 ) : GroupComponent, ComponentContext by componentContext {
   override val feature =
     instanceKeeper.getOrCreate {
@@ -43,14 +38,6 @@ class DefaultGroupComponent(
       strategy = SerializableContainer.serializer(),
       supplier = feature::saveState,
     )
-  }
-
-  override fun onConfirmClick() {
-    feature.onConfirmClick()?.invokeOnCompletion { dismiss() }
-  }
-
-  override fun onDeleteActionClick() {
-    feature.onDeleteActionClick().invokeOnCompletion { dismiss() }
   }
 
   companion object {

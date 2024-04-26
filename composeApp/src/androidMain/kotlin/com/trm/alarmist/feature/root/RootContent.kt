@@ -243,7 +243,9 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
                 },
               onColorChange = child.component.feature::onColorChange,
               onToggleAlarmSelection = child.component.feature::onToggleAlarmSelection,
-              onConfirmClick = child.component::onConfirmClick,
+              onConfirmClick = {
+                child.component.feature.onConfirmClick()?.invokeOnCompletion { hideBottomSheet() }
+              },
             )
           }
         }

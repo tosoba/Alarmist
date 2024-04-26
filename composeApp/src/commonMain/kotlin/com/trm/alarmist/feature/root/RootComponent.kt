@@ -104,7 +104,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
           dialogNavigation.dismiss()
           deleteActionParameter(
             alarmParameter = { it.feature::onDeleteClick },
-            groupParameter = { it::onDeleteActionClick },
+            groupParameter = { it.feature::onDeleteClick },
           )()
         },
         onDismiss = dialogNavigation::dismiss,
@@ -128,13 +128,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
         }
         is BottomSheetChildConfig.Group -> {
           RootComponent.BottomSheetChild.Group(
-            DefaultGroupComponent(
-              componentContext = childComponentContext,
-              mode = config.mode,
-              dismiss =
-                ::onBottomSheetDismissRequest, // TODO: this results in no bottom sheet dismiss
-              // animation
-            )
+            DefaultGroupComponent(componentContext = childComponentContext, mode = config.mode)
           )
         }
       }

@@ -41,7 +41,7 @@ class GroupFeature(
       .launchIn(coroutineScope)
   }
 
-  fun onDeleteActionClick(): Job =
+  fun onDeleteClick(): Job =
     coroutineScope.launch {
       check(mode is GroupComponent.Mode.Edit)
       repository.deleteGroup(mode.group.id)
