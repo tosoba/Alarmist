@@ -207,6 +207,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onAlarmDurationChange = child.component.feature::onAlarmDurationChange,
               onToggleSoundEnabled = child.component.feature::onToggleSoundEnabled,
               onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
+              onToggleReminderEnabled = child.component.feature::onToggleReminderEnabled,
               onReminderOffsetChange = child.component.feature::onReminderOffsetChange,
               onConfirmClick = child.component::onConfirmClick,
             )

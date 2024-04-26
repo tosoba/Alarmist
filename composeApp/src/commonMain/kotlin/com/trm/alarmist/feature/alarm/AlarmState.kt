@@ -26,6 +26,7 @@ data class AlarmState(
   val alarmDuration: Long = DEFAULT_ALARM_DURATION_MINUTES,
   val soundEnabled: Boolean = true,
   val vibrationEnabled: Boolean = true,
+  val reminderEnabled: Boolean = true,
   val reminderOffset: AlarmReminderOffset = AlarmReminderOffset.HOUR_1,
   val soundId: String? = null,
 ) {
@@ -44,6 +45,7 @@ data class AlarmState(
     alarmDuration = alarm.alarmDurationMinutes,
     soundEnabled = alarm.soundEnabled,
     vibrationEnabled = alarm.vibrationEnabled,
+    reminderEnabled = alarm.reminderOffsetHours > 0L,
     reminderOffset = AlarmReminderOffset.fromHours(alarm.reminderOffsetHours),
     soundId = alarm.soundId,
   )
@@ -61,6 +63,9 @@ data class AlarmState(
 
   val snoozeLimitOrZero: Long
     get() = if (snoozeEnabled) snoozeLimit else 0L
+
+  val reminderOffsetOrZero: Long
+    get() = if (reminderEnabled) reminderOffset.hours else 0L
 
   companion object {
     const val MIN_SNOOZE_LIMIT = 1L

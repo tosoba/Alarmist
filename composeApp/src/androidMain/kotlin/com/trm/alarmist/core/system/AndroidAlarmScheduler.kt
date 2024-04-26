@@ -33,17 +33,18 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
         alarmDurationMinutes = alarmDurationMinutes,
         soundEnabled = soundEnabled,
         vibrationEnabled = vibrationEnabled,
-        reminderOffsetHours = reminderOffsetHours,
       )
 
-    alarmManager.setExact(
-      AlarmManager.RTC,
-      fireOnDateTime
-        .toInstant(TimeZone.currentSystemDefault())
-        .minus(reminderOffsetHours, DateTimeUnit.HOUR)
-        .toEpochMilliseconds(),
-      alarmUpcomingPendingIntent(settings),
-    )
+    if (reminderOffsetHours > 0L) {
+      alarmManager.setExact(
+        AlarmManager.RTC,
+        fireOnDateTime
+          .toInstant(TimeZone.currentSystemDefault())
+          .minus(reminderOffsetHours, DateTimeUnit.HOUR)
+          .toEpochMilliseconds(),
+        alarmUpcomingPendingIntent(settings),
+      )
+    }
 
     alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,

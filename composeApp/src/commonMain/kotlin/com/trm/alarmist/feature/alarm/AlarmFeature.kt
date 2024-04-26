@@ -83,7 +83,7 @@ class AlarmFeature(
               alarmDurationMinutes = alarmDuration,
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
-              reminderOffsetHours = reminderOffset.hours,
+              reminderOffsetHours = reminderOffsetOrZero,
               soundId = soundId,
             )
           }
@@ -102,7 +102,7 @@ class AlarmFeature(
               alarmDurationMinutes = alarmDuration,
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
-              reminderOffsetHours = reminderOffset.hours,
+              reminderOffsetHours = reminderOffsetOrZero,
               soundId = soundId,
             )
           }
@@ -183,6 +183,10 @@ class AlarmFeature(
 
   fun onToggleVibrationEnabled() {
     _state.update { it.copy(vibrationEnabled = !it.vibrationEnabled) }
+  }
+
+  fun onToggleReminderEnabled() {
+    _state.update { it.copy(reminderEnabled = !it.reminderEnabled) }
   }
 
   fun onReminderOffsetChange(offset: AlarmReminderOffset) {

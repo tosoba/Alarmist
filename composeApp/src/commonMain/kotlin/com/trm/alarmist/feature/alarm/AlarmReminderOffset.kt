@@ -10,6 +10,6 @@ enum class AlarmReminderOffset(val hours: Long) {
 
   companion object {
     fun fromHours(hours: Long): AlarmReminderOffset =
-      AlarmReminderOffset.entries.first { it.hours == hours }
+      AlarmReminderOffset.entries.firstOrNull { it.hours == hours } ?: HOUR_1
   }
 }

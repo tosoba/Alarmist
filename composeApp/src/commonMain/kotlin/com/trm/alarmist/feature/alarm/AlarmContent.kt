@@ -156,6 +156,7 @@ fun AlarmContent(
   onAlarmDurationChange: (Long) -> Unit = {},
   onToggleSoundEnabled: () -> Unit = {},
   onToggleVibrationEnabled: () -> Unit = {},
+  onToggleReminderEnabled: () -> Unit = {},
   onReminderOffsetChange: (AlarmReminderOffset) -> Unit = {},
   onGroupClick: (AlarmGroupModel) -> Unit = {},
   onConfirmClick: () -> Unit = {},
@@ -465,7 +466,10 @@ fun AlarmContent(
       }
 
       Row(
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+        modifier =
+          Modifier.clip(RoundedCornerShape(24.dp))
+            .clickable(onClick = onToggleReminderEnabled)
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Icon(
@@ -480,23 +484,38 @@ fun AlarmContent(
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
-          Text(
-            text =
-              stringResource(Res.string.hours_before_alarm_label, "${state.reminderOffset.hours}"),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-          )
+
+          AnimatedVisibility(visible = state.reminderEnabled) {
+            Text(
+              text =
+                stringResource(
+                  Res.string.hours_before_alarm_label,
+                  "${state.reminderOffset.hours}",
+                ),
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+          }
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Switch(
+          checked = state.reminderEnabled,
+          onCheckedChange = remember { { onToggleReminderEnabled() } },
+        )
       }
 
-      val reminderOffsetValues = remember { AlarmReminderOffset.entries.toTypedArray() }
-      Slider(
-        value = state.reminderOffset.ordinal.toFloat(),
-        valueRange = 0f..reminderOffsetValues.lastIndex.toFloat(),
-        onValueChange = { onReminderOffsetChange(reminderOffsetValues[it.toInt()]) },
-        thumb = { AlarmSliderThumb(text = state.reminderOffset.hours.toString()) },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-      )
+      AnimatedVisibility(visible = state.reminderEnabled, enter = fadeIn(), exit = fadeOut()) {
+        val reminderOffsetValues = remember { AlarmReminderOffset.entries.toTypedArray() }
+        Slider(
+          value = state.reminderOffset.ordinal.toFloat(),
+          valueRange = 0f..reminderOffsetValues.lastIndex.toFloat(),
+          onValueChange = { onReminderOffsetChange(reminderOffsetValues[it.toInt()]) },
+          thumb = { AlarmSliderThumb(text = state.reminderOffset.hours.toString()) },
+          modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+        )
+      }
 
       if (groups.isNotEmpty()) {
         Text(
