@@ -1,7 +1,9 @@
 package com.trm.alarmist.feature.group
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.back
 import alarmist.composeapp.generated.resources.confirm
+import alarmist.composeapp.generated.resources.delete_group
 import alarmist.composeapp.generated.resources.group_name_blank_validation_error
 import alarmist.composeapp.generated.resources.invalid_input
 import alarmist.composeapp.generated.resources.name
@@ -28,7 +30,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,6 +41,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ShapeDefaults
@@ -75,7 +80,9 @@ fun GroupContent(
   modifier: Modifier = Modifier,
   mode: GroupComponent.Mode = GroupComponent.Mode.Add,
   state: GroupState = GroupState(),
+  onBackClick: () -> Unit = {},
   onNameChange: (String) -> Unit = {},
+  onDeleteClick: (() -> Unit)? = null,
   onColorChange: (Color) -> Unit = {},
   onToggleAlarmSelection: (AlarmListModel) -> Unit = {},
   onConfirmClick: () -> Unit = {},
@@ -153,19 +160,37 @@ fun GroupContent(
         val focusManager = LocalFocusManager.current
         LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
-        OutlinedTextField(
-          modifier = Modifier.fillMaxWidth(),
-          value = state.name,
-          onValueChange = onNameChange,
-          label = { Text(stringResource(Res.string.name)) },
-          singleLine = true,
-          isError = state.blankNameError,
-          supportingText = {
-            AnimatedVisibility(state.blankNameError) {
-              Text(stringResource(Res.string.group_name_blank_validation_error))
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+          IconButton(onClick = onBackClick) {
+            Icon(
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = stringResource(Res.string.back),
+            )
+          }
+
+          OutlinedTextField(
+            modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
+            value = state.name,
+            onValueChange = onNameChange,
+            label = { Text(stringResource(Res.string.name)) },
+            singleLine = true,
+            isError = state.blankNameError,
+            supportingText = {
+              AnimatedVisibility(state.blankNameError) {
+                Text(stringResource(Res.string.group_name_blank_validation_error))
+              }
+            },
+          )
+
+          onDeleteClick?.let {
+            IconButton(onClick = it) {
+              Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(Res.string.delete_group),
+              )
             }
-          },
-        )
+          }
+        }
       }
 
       item {

@@ -43,6 +43,7 @@ import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.clock.ClockContent
+import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.root.ui.RootAppBar
 import com.trm.alarmist.feature.root.ui.RootDialog
@@ -177,6 +178,13 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   ) {
     val bottomSheet by component.bottomSheet.subscribeAsState()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    fun hideBottomSheet() {
+      scope
+        .launch { bottomSheetState.hide() }
+        .invokeOnCompletion { component.onBottomSheetDismissRequest() }
+    }
+
     bottomSheet.child?.instance?.let { child ->
       ModalBottomSheet(
         onDismissRequest = component::onBottomSheetDismissRequest,
@@ -190,15 +198,11 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               modifier = Modifier.fillMaxSize(),
               state = state,
               groups = groups,
-              onBackClick = component::onBottomSheetDismissRequest,
+              onBackClick = ::hideBottomSheet,
               onNameChange = child.component.feature::onNameChange,
               onDeleteClick =
                 if (child.component.mode is AlarmComponent.Mode.Edit) {
-                  {
-                    child.component.feature.onDeleteClick().invokeOnCompletion {
-                      component.onBottomSheetDismissRequest()
-                    }
-                  }
+                  { component.onDeleteActionClick() }
                 } else {
                   null
                 },
@@ -227,7 +231,14 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               modifier = Modifier.fillMaxSize(),
               mode = child.component.mode,
               state = state,
+              onBackClick = ::hideBottomSheet,
               onNameChange = child.component.feature::onNameChange,
+              onDeleteClick =
+                if (child.component.mode is GroupComponent.Mode.Edit) {
+                  { component.onDeleteActionClick() }
+                } else {
+                  null
+                },
               onColorChange = child.component.feature::onColorChange,
               onToggleAlarmSelection = child.component.feature::onToggleAlarmSelection,
               onConfirmClick = child.component::onConfirmClick,

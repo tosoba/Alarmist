@@ -26,7 +26,7 @@ interface GroupComponent {
 class DefaultGroupComponent(
   componentContext: ComponentContext,
   override val mode: GroupComponent.Mode,
-  private val pop: () -> Unit,
+  private val dismiss: () -> Unit,
 ) : GroupComponent, ComponentContext by componentContext {
   override val feature =
     instanceKeeper.getOrCreate {
@@ -46,11 +46,11 @@ class DefaultGroupComponent(
   }
 
   override fun onConfirmClick() {
-    feature.onConfirmClick()?.invokeOnCompletion { pop() }
+    feature.onConfirmClick()?.invokeOnCompletion { dismiss() }
   }
 
   override fun onDeleteActionClick() {
-    feature.onDeleteActionClick().invokeOnCompletion { pop() }
+    feature.onDeleteActionClick().invokeOnCompletion { dismiss() }
   }
 
   companion object {

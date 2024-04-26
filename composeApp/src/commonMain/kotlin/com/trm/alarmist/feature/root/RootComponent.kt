@@ -126,7 +126,10 @@ class DefaultRootComponent(componentContext: ComponentContext) :
             DefaultAlarmComponent(
               componentContext = childComponentContext,
               mode = config.mode,
-              pop = ::onBackClick,
+              dismiss =
+                ::
+                  onBottomSheetDismissRequest, // TODO: this results in no bottom sheet dismiss
+                                              // animation
             )
           )
         }
@@ -135,7 +138,10 @@ class DefaultRootComponent(componentContext: ComponentContext) :
             DefaultGroupComponent(
               componentContext = childComponentContext,
               mode = config.mode,
-              pop = ::onBackClick,
+              dismiss =
+                ::
+                  onBottomSheetDismissRequest, // TODO: this results in no bottom sheet dismiss
+                                              // animation
             )
           )
         }

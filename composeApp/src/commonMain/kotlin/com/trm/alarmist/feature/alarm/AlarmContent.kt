@@ -1,6 +1,7 @@
 package com.trm.alarmist.feature.alarm
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.back
 import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.default
@@ -183,7 +184,7 @@ fun AlarmContent(
         IconButton(onClick = onBackClick) {
           Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = stringResource(Res.string.delete_alarm),
+            contentDescription = stringResource(Res.string.back),
           )
         }
 

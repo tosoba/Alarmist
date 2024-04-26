@@ -26,7 +26,7 @@ interface AlarmComponent {
 class DefaultAlarmComponent(
   componentContext: ComponentContext,
   override val mode: AlarmComponent.Mode,
-  private val pop: () -> Unit,
+  private val dismiss: () -> Unit,
 ) : AlarmComponent, ComponentContext by componentContext {
   override val feature =
     instanceKeeper.getOrCreate {
@@ -46,11 +46,11 @@ class DefaultAlarmComponent(
   }
 
   override fun onConfirmClick() {
-    feature.onConfirmClick().invokeOnCompletion { pop() }
+    feature.onConfirmClick().invokeOnCompletion { dismiss() }
   }
 
   override fun onDeleteActionClick() {
-    feature.onDeleteClick().invokeOnCompletion { pop() }
+    feature.onDeleteClick().invokeOnCompletion { dismiss() }
   }
 
   companion object {
