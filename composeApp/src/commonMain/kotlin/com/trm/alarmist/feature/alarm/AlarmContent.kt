@@ -178,10 +178,10 @@ fun AlarmContent(
 
       Row(
         modifier =
-          Modifier.fillMaxWidth().padding(start = 8.dp, top = 16.dp, bottom = 16.dp, end = 8.dp),
+          Modifier.fillMaxWidth().padding(start = 8.dp, top = 8.dp, bottom = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
       ) {
-        IconButton(onClick = onBackClick) {
+        IconButton(onClick = onBackClick, modifier = Modifier.padding(top = 8.dp)) {
           Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = stringResource(Res.string.back),
@@ -197,7 +197,7 @@ fun AlarmContent(
         )
 
         onDeleteClick?.let {
-          IconButton(onClick = it) {
+          IconButton(onClick = it, modifier = Modifier.padding(top = 8.dp)) {
             Icon(
               imageVector = Icons.Default.Delete,
               contentDescription = stringResource(Res.string.delete_alarm),

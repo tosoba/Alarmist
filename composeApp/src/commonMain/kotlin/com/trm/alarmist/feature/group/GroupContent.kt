@@ -161,7 +161,7 @@ fun GroupContent(
         LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-          IconButton(onClick = onBackClick) {
+          IconButton(onClick = onBackClick, modifier = Modifier.padding(bottom = 8.dp)) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
               contentDescription = stringResource(Res.string.back),
@@ -183,7 +183,7 @@ fun GroupContent(
           )
 
           onDeleteClick?.let {
-            IconButton(onClick = it) {
+            IconButton(onClick = it, modifier = Modifier.padding(bottom = 8.dp)) {
               Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = stringResource(Res.string.delete_group),
