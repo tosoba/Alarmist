@@ -24,6 +24,7 @@ import alarmist.composeapp.generated.resources.repeat_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.schedule_label
 import alarmist.composeapp.generated.resources.scheduled
+import alarmist.composeapp.generated.resources.snooze_description
 import alarmist.composeapp.generated.resources.snooze_label
 import alarmist.composeapp.generated.resources.sound_label
 import alarmist.composeapp.generated.resources.time_dial
@@ -413,7 +414,7 @@ fun AlarmContent(
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
           Text(
-            text = stringResource(Res.string.minutes_label, "${state.alarmDuration}"),
+            text = stringResource(Res.string.minutes_label, state.alarmDuration),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
@@ -456,7 +457,11 @@ fun AlarmContent(
           AnimatedVisibility(visible = state.snoozeEnabled) {
             Text(
               text =
-                "${state.snoozeDuration.minutes} minute(s), at most ${state.snoozeLimit} time(s)",
+                stringResource(
+                  Res.string.snooze_description,
+                  state.snoozeDuration.minutes,
+                  state.snoozeLimit,
+                ),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
@@ -517,10 +522,7 @@ fun AlarmContent(
           AnimatedVisibility(visible = state.reminderEnabled) {
             Text(
               text =
-                stringResource(
-                  Res.string.hours_before_alarm_label,
-                  "${state.reminderOffset.hours}",
-                ),
+                stringResource(Res.string.hours_before_alarm_label, state.reminderOffset.hours),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
