@@ -51,7 +51,7 @@ fun AlarmSoundDialog(component: AlarmSoundDialogComponent, modifier: Modifier = 
 @Composable
 expect fun AlarmSoundLazyColumn(
   selectedId: String?,
-  onSoundSelected: (String, String) -> Unit,
+  onSoundSelected: (String) -> Unit,
   modifier: Modifier = Modifier,
 )
 

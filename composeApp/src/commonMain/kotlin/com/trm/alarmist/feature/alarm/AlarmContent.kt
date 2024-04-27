@@ -4,7 +4,6 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.back
 import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
-import alarmist.composeapp.generated.resources.default
 import alarmist.composeapp.generated.resources.delete
 import alarmist.composeapp.generated.resources.delete_alarm
 import alarmist.composeapp.generated.resources.delete_all_weekdays
@@ -136,6 +135,7 @@ import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
 import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
 import com.trm.alarmist.feature.alarm.model.AlarmState
 import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialog
+import com.trm.alarmist.feature.alarm.sound.alarmSoundTitle
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.contains
@@ -372,7 +372,7 @@ fun AlarmContent(
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
             Text(
-              text = stringResource(Res.string.default), // TODO: display alarm title
+              text = alarmSoundTitle(state.soundId),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )

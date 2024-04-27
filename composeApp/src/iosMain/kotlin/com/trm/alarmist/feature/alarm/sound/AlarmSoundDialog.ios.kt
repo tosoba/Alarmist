@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 @Composable
 actual fun AlarmSoundLazyColumn(
   selectedId: String?,
-  onSoundSelected: (String, String) -> Unit,
+  onSoundSelected: (String) -> Unit,
   modifier: Modifier,
 ) {
   // TODO:

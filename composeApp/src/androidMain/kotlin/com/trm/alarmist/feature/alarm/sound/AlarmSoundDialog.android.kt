@@ -20,27 +20,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 actual fun AlarmSoundLazyColumn(
   selectedId: String?,
-  onSoundSelected: (String, String) -> Unit,
+  onSoundSelected: (String) -> Unit,
   modifier: Modifier,
 ) {
   val context = LocalContext.current
   val ringtoneManager = remember {
     RingtoneManager(context).apply { setType(RingtoneManager.TYPE_ALARM) }
   }
-  val sounds = remember {
-    val cursor = ringtoneManager.cursor
-    buildList {
-      while (cursor.moveToNext()) {
-        add(
-          AndroidAlarmSound(
-            id = cursor.getString(RingtoneManager.ID_COLUMN_INDEX),
-            title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX),
-            uri = ringtoneManager.getRingtoneUri(cursor.position),
-          )
-        )
-      }
-    }
-  }
+  val sounds = rememberAlarmSounds(ringtoneManager)
 
   DisposableEffect(Unit) { onDispose { ringtoneManager.stopPreviousRingtone() } }
 
@@ -62,7 +49,7 @@ actual fun AlarmSoundLazyColumn(
         isPlaying = sound.id == playingSoundId,
         onClick = {
           selectedSoundId = sound.id
-          onSoundSelected(sound.id, sound.title)
+          onSoundSelected(sound.id)
         },
         onTogglePlayClick = {
           ringtoneManager.stopPreviousRingtone()

@@ -56,8 +56,8 @@ class DefaultAlarmComponent(
       DefaultAlarmSoundDialogComponent(
         componentContext = childComponentContext,
         selectedSoundId = feature.state.value.soundId,
-        onSoundSelected = { soundId, soundTitle ->
-          feature.onSoundChange(soundId, soundTitle)
+        onSoundSelected = { soundId ->
+          feature.onSoundChange(soundId)
           dialogNavigation.dismiss()
         },
         onDismiss = dialogNavigation::dismiss,

@@ -184,7 +184,7 @@ class AlarmFeature(
     _state.update { it.copy(soundEnabled = !it.soundEnabled) }
   }
 
-  fun onSoundChange(soundId: String, soundTitle: String?) {
+  fun onSoundChange(soundId: String) {
     _state.update { it.copy(soundId = soundId) }
   }
 
