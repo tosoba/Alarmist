@@ -195,6 +195,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             val state by child.component.feature.state.collectAsState()
             val groups by child.component.feature.groups.collectAsState()
             AlarmContent(
+              component = child.component,
               state = state,
               groups = groups,
               onBackClick = ::hideBottomSheet,
@@ -217,6 +218,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
               onSnoozeLimitChange = child.component.feature::onSnoozeLimitChange,
               onAlarmDurationChange = child.component.feature::onAlarmDurationChange,
+              onSoundClick = child.component::onSoundClick,
               onToggleSoundEnabled = child.component.feature::onToggleSoundEnabled,
               onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
               onToggleReminderEnabled = child.component.feature::onToggleReminderEnabled,

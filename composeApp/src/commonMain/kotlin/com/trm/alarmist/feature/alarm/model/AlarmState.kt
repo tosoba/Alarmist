@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.alarm
+package com.trm.alarmist.feature.alarm.model
 
 import androidx.compose.runtime.Immutable
 import com.trm.alarmist.core.common.util.nextFullHour

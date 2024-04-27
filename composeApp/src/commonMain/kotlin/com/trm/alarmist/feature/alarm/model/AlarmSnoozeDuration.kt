@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.alarm
+package com.trm.alarmist.feature.alarm.model
 
 enum class AlarmSnoozeDuration(val minutes: Long) {
   MIN_1(1L),

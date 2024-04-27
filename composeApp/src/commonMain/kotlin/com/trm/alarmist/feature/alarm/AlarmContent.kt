@@ -97,12 +97,16 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SnapshotMutationPolicy
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -118,6 +122,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import com.arkivanov.decompose.value.Value
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
@@ -127,6 +132,10 @@ import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.keyboardAsState
 import com.trm.alarmist.core.ui.theme.onOffCardColors
+import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
+import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
+import com.trm.alarmist.feature.alarm.model.AlarmState
+import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialog
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
 import epicarchitect.calendar.compose.basis.contains
@@ -147,6 +156,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
+  component: AlarmComponent,
   state: AlarmState = AlarmState(),
   groups: List<AlarmGroupModel> = emptyList(),
   onBackClick: () -> Unit = {},
@@ -162,6 +172,7 @@ fun AlarmContent(
   onSnoozeDurationChange: (AlarmSnoozeDuration) -> Unit = {},
   onSnoozeLimitChange: (Long) -> Unit = {},
   onAlarmDurationChange: (Long) -> Unit = {},
+  onSoundClick: () -> Unit = {},
   onToggleSoundEnabled: () -> Unit = {},
   onToggleVibrationEnabled: () -> Unit = {},
   onToggleReminderEnabled: () -> Unit = {},
@@ -337,29 +348,35 @@ fun AlarmContent(
       )
 
       Row(
-        modifier =
-          Modifier.clip(RoundedCornerShape(24.dp))
-            .clickable(onClick = onToggleSoundEnabled)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(end = 24.dp),
       ) {
-        Icon(
-          imageVector = Icons.Default.MusicNote,
-          contentDescription = stringResource(Res.string.sound_label),
-          modifier = Modifier.padding(end = 12.dp),
-        )
+        Row(
+          modifier =
+            Modifier.weight(1f)
+              .clip(RoundedCornerShape(24.dp))
+              .clickable(onClick = onSoundClick)
+              .padding(start = 24.dp, top = 16.dp, bottom = 16.dp),
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Icon(
+            imageVector = Icons.Default.MusicNote,
+            contentDescription = stringResource(Res.string.sound_label),
+            modifier = Modifier.padding(end = 12.dp),
+          )
 
-        Column(modifier = Modifier.weight(1f)) {
-          Text(
-            text = stringResource(Res.string.sound_label),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-          )
-          Text(
-            text = stringResource(Res.string.default),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-          )
+          Column {
+            Text(
+              text = stringResource(Res.string.sound_label),
+              style = MaterialTheme.typography.titleLarge,
+              color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+            Text(
+              text = stringResource(Res.string.default),
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+          }
         }
 
         VerticalDivider(modifier = Modifier.height(32.dp).padding(start = 8.dp, end = 16.dp))
@@ -610,6 +627,9 @@ fun AlarmContent(
       FloatingActionButtonSpacer()
     }
 
+    val dialog by component.dialog.subscribeAsState()
+    dialog.child?.instance?.let { AlarmSoundDialog(component = it) }
+
     var permissionDialogVisible by rememberSaveable { mutableStateOf(false) }
     var shouldShowRationale by rememberSaveable { mutableStateOf(false) }
 
@@ -649,6 +669,18 @@ fun AlarmContent(
       )
     }
   }
+}
+
+@Composable
+fun <T : Any> Value<T>.subscribeAsState(
+  policy: SnapshotMutationPolicy<T> = structuralEqualityPolicy()
+): State<T> {
+  val state = remember(this, policy) { mutableStateOf(value, policy) }
+  DisposableEffect(this) {
+    val disposable = subscribe { state.value = it }
+    onDispose { disposable.cancel() }
+  }
+  return state
 }
 
 @Composable

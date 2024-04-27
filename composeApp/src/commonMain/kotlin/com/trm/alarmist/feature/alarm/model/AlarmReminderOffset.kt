@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.alarm
+package com.trm.alarmist.feature.alarm.model
 
 enum class AlarmReminderOffset(val hours: Long) {
   HOUR_1(1L),
