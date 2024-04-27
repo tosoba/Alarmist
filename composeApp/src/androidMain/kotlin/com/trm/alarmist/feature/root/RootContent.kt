@@ -78,7 +78,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         Text(
           modifier = Modifier.fillMaxWidth().padding(28.dp),
           text = stringResource(Res.string.app_name),
-          style = MaterialTheme.typography.titleSmall,
+          style = MaterialTheme.typography.headlineSmall,
         )
 
         NavigationDrawerItem(
