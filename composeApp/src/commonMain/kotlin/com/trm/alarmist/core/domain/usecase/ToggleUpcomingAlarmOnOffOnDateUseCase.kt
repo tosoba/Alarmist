@@ -24,6 +24,7 @@ class ToggleUpcomingAlarmOnOffOnDateUseCase(
               snoozeAvailable = toggledAlarm.snoozeDurationMinutes > 0L,
               alarmDurationMinutes = toggledAlarm.alarmDurationMinutes,
               soundEnabled = toggledAlarm.soundEnabled,
+              soundId = toggledAlarm.soundId,
               vibrationEnabled = toggledAlarm.vibrationEnabled,
               reminderOffsetHours = toggledAlarm.reminderOffsetHours,
             )

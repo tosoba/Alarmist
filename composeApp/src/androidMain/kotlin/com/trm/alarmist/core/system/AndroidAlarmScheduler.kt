@@ -20,6 +20,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     snoozeAvailable: Boolean,
     alarmDurationMinutes: Long,
     soundEnabled: Boolean,
+    soundId: String?,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long,
   ) {
@@ -32,6 +33,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
         snoozeAvailable = snoozeAvailable,
         alarmDurationMinutes = alarmDurationMinutes,
         soundEnabled = soundEnabled,
+        soundId = soundId,
         vibrationEnabled = vibrationEnabled,
       )
 

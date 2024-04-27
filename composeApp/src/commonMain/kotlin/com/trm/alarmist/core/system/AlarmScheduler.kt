@@ -9,6 +9,7 @@ interface AlarmScheduler {
     snoozeAvailable: Boolean,
     alarmDurationMinutes: Long,
     soundEnabled: Boolean,
+    soundId: String?,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long
   )

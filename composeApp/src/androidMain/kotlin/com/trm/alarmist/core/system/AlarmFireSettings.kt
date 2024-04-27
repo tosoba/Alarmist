@@ -13,5 +13,6 @@ data class AlarmFireSettings(
   val snoozeAvailable: Boolean,
   val alarmDurationMinutes: Long,
   val soundEnabled: Boolean,
+  val soundId: String?,
   val vibrationEnabled: Boolean,
 ) : Parcelable

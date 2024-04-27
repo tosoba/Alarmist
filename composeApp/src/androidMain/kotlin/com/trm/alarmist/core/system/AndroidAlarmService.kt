@@ -179,10 +179,24 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
             player.stopAndRelease()
             true
           }
+
           setDataSource(
             this@AndroidAlarmService,
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM), // TODO: custom alarm sounds
+            settings.soundId?.let {
+              val ringtoneManager =
+                RingtoneManager(this@AndroidAlarmService).apply {
+                  setType(RingtoneManager.TYPE_ALARM)
+                }
+              val cursor = ringtoneManager.cursor
+              while (cursor.moveToNext()) {
+                if (cursor.getString(RingtoneManager.ID_COLUMN_INDEX) == it) {
+                  return@let ringtoneManager.getRingtoneUri(cursor.position)
+                }
+              }
+              null
+            } ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
           )
+
           setAudioAttributes(
             AudioAttributes.Builder()
               .setUsage(AudioAttributes.USAGE_ALARM)

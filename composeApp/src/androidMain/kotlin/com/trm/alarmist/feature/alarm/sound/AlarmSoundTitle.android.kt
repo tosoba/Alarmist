@@ -18,11 +18,12 @@ actual fun alarmSoundTitle(id: String?): String {
   }
   val sounds = rememberAlarmSounds(ringtoneManager)
   return if (id == null) {
-    RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_ALARM)
-      ?.let { defaultSoundUri -> sounds.find { sound -> sound.uri == defaultSoundUri } }
-      ?.title
-  } else {
-    sounds.find { it.id == id }?.title
-  } ?: stringResource(Res.string.default)
+      RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_ALARM)?.let {
+        defaultSoundUri ->
+        sounds.find { sound -> sound.uri == defaultSoundUri }
+      }
+    } else {
+      sounds.find { it.id == id }
+    }
+    ?.title ?: stringResource(Res.string.default)
 }
-

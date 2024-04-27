@@ -54,6 +54,7 @@ class EditAlarmUseCase(
       snoozeAvailable = snoozeDurationMinutes > 0L,
       alarmDurationMinutes = alarmDurationMinutes,
       soundEnabled = soundEnabled,
+      soundId = soundId,
       vibrationEnabled = vibrationEnabled,
       reminderOffsetHours = reminderOffsetHours,
     )

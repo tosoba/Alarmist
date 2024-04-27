@@ -20,6 +20,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
       snoozeAvailable = alarm.snoozeDurationMinutes > 0L && alarm.snoozeCount < alarm.snoozeLimit,
       alarmDurationMinutes = alarm.alarmDurationMinutes,
       soundEnabled = alarm.soundEnabled,
+      soundId = alarm.soundId,
       vibrationEnabled = alarm.vibrationEnabled,
       reminderOffsetHours = alarm.reminderOffsetHours,
       afterDateTime = afterDateTime,
@@ -36,6 +37,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
     snoozeAvailable: Boolean,
     alarmDurationMinutes: Long,
     soundEnabled: Boolean,
+    soundId: String?,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long,
     afterDateTime: LocalDateTime = LocalDateTime.now(),
@@ -55,6 +57,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
           snoozeAvailable = snoozeAvailable,
           alarmDurationMinutes = alarmDurationMinutes,
           soundEnabled = soundEnabled,
+          soundId = soundId,
           vibrationEnabled = vibrationEnabled,
           reminderOffsetHours = reminderOffsetHours,
         )
