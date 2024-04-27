@@ -60,4 +60,6 @@
     <string name="minutes_label">%1$s minute(s)</string>
     <string name="hours_before_alarm_label">%1$s hour(s) before alarm</string>
     <string name="snooze_description">%1$s minute(s), at most %2$s time(s)</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
 </resources>

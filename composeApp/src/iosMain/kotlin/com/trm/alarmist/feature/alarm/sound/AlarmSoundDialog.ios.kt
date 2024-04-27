@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-actual fun AlarmSoundLazyColumn(modifier: Modifier) {
+actual fun AlarmSoundLazyColumn(
+  selectedId: String?,
+  onSoundSelected: (String, String) -> Unit,
+  modifier: Modifier,
+) {
   // TODO:
 }

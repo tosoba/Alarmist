@@ -4,15 +4,16 @@ import com.arkivanov.decompose.ComponentContext
 import kotlinx.serialization.Serializable
 
 interface AlarmSoundDialogComponent {
-  val onConfirm: () -> Unit
+  val selectedSoundId: String?
+  val onSoundSelected: (String, String) -> Unit
   val onDismiss: () -> Unit
 
-  @Serializable
-  object Config
+  @Serializable data object Config
 }
 
 class DefaultAlarmSoundDialogComponent(
   private val componentContext: ComponentContext,
-  override val onConfirm: () -> Unit,
+  override val selectedSoundId: String?,
+  override val onSoundSelected: (String, String) -> Unit,
   override val onDismiss: () -> Unit,
 ) : AlarmSoundDialogComponent, ComponentContext by componentContext

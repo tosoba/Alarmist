@@ -184,6 +184,10 @@ class AlarmFeature(
     _state.update { it.copy(soundEnabled = !it.soundEnabled) }
   }
 
+  fun onSoundChange(soundId: String, soundTitle: String?) {
+    _state.update { it.copy(soundId = soundId) }
+  }
+
   fun onToggleVibrationEnabled() {
     _state.update { it.copy(vibrationEnabled = !it.vibrationEnabled) }
   }

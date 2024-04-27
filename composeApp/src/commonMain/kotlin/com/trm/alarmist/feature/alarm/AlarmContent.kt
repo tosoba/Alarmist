@@ -372,7 +372,7 @@ fun AlarmContent(
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
             Text(
-              text = stringResource(Res.string.default),
+              text = stringResource(Res.string.default), // TODO: display alarm title
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
@@ -628,7 +628,9 @@ fun AlarmContent(
     }
 
     val dialog by component.dialog.subscribeAsState()
-    dialog.child?.instance?.let { AlarmSoundDialog(component = it) }
+    dialog.child?.instance?.let {
+      AlarmSoundDialog(component = it, modifier = Modifier.heightIn(max = 500.dp))
+    }
 
     var permissionDialogVisible by rememberSaveable { mutableStateOf(false) }
     var shouldShowRationale by rememberSaveable { mutableStateOf(false) }

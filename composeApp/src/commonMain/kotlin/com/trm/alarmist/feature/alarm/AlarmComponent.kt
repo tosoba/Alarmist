@@ -15,13 +15,13 @@ import com.trm.alarmist.feature.alarm.sound.DefaultAlarmSoundDialogComponent
 import kotlinx.serialization.Serializable
 
 interface AlarmComponent {
-  fun onSoundClick()
-
   val mode: Mode
 
   val feature: AlarmFeature
 
   val dialog: Value<ChildSlot<*, AlarmSoundDialogComponent>>
+
+  fun onSoundClick()
 
   @Serializable
   sealed interface Mode {
@@ -55,7 +55,11 @@ class DefaultAlarmComponent(
     ) { _, childComponentContext ->
       DefaultAlarmSoundDialogComponent(
         componentContext = childComponentContext,
-        onConfirm = { dialogNavigation.dismiss() },
+        selectedSoundId = feature.state.value.soundId,
+        onSoundSelected = { soundId, soundTitle ->
+          feature.onSoundChange(soundId, soundTitle)
+          dialogNavigation.dismiss()
+        },
         onDismiss = dialogNavigation::dismiss,
       )
     }
