@@ -32,6 +32,9 @@ kotlin {
 
       implementation(libs.essenty.statekeeper.android)
 
+      implementation(libs.glance.appwidget)
+      implementation(libs.glance.material3)
+
       implementation(libs.koin.android)
 
       implementation(libs.sqldelight.android.driver)
