@@ -9,8 +9,8 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,13 +19,13 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun AlarmsNavigationBar(
+fun AlarmsNavigationRail(
   selectedIndex: Int,
   onPageSelected: (Int) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  NavigationBar(modifier = modifier) {
-    NavigationBarItem(
+  NavigationRail(modifier = modifier) {
+    NavigationRailItem(
       selected = selectedIndex == 0,
       onClick = { onPageSelected(0) },
       icon = {
@@ -37,7 +37,7 @@ fun AlarmsNavigationBar(
       label = { Text(stringResource(Res.string.all)) },
     )
 
-    NavigationBarItem(
+    NavigationRailItem(
       selected = selectedIndex == 1,
       onClick = { onPageSelected(1) },
       icon = {
@@ -49,7 +49,7 @@ fun AlarmsNavigationBar(
       label = { Text(stringResource(Res.string.upcoming)) },
     )
 
-    NavigationBarItem(
+    NavigationRailItem(
       selected = selectedIndex == 2,
       onClick = { onPageSelected(2) },
       icon = {
