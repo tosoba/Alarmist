@@ -233,24 +233,24 @@ fun GroupContent(
     val noRippleInteractionSource = remember(::NoRippleInteractionSource)
     ExtendedFloatingActionButton(
       modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-      expanded = state.name.isBlank(),
+      expanded = state.blankNameError,
       containerColor =
-        if (state.name.isBlank()) MaterialTheme.colorScheme.errorContainer
+        if (state.blankNameError) MaterialTheme.colorScheme.errorContainer
         else FloatingActionButtonDefaults.containerColor,
       elevation =
-        if (state.name.isBlank()) FloatingActionButtonDefaults.bottomAppBarFabElevation()
+        if (state.blankNameError) FloatingActionButtonDefaults.bottomAppBarFabElevation()
         else FloatingActionButtonDefaults.elevation(),
       onClick = onConfirmClick,
       icon = {
         Icon(
-          imageVector = if (state.name.isBlank()) Icons.Default.Error else Icons.Default.Check,
+          imageVector = if (state.blankNameError) Icons.Default.Error else Icons.Default.Check,
           contentDescription = stringResource(Res.string.confirm),
         )
       },
       interactionSource =
-        if (state.name.isBlank()) noRippleInteractionSource else interactionSource,
+        if (state.blankNameError) noRippleInteractionSource else interactionSource,
       text = {
-        AnimatedVisibility(state.name.isBlank()) { Text(stringResource(Res.string.invalid_input)) }
+        AnimatedVisibility(state.blankNameError) { Text(stringResource(Res.string.invalid_input)) }
       },
     )
   }
