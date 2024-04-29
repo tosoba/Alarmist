@@ -36,7 +36,7 @@ fun AlarmGroupHeaderCard(
     ) {
       Spacer(Modifier.width(16.dp))
 
-      AlarmGroupIcon(color = group.color, size = 35.dp)
+      AlarmGroupIcon(color = group.color, size = 45.dp)
 
       Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
