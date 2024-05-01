@@ -12,6 +12,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.feature.alarm.AlarmComponent
@@ -28,7 +29,7 @@ import com.trm.alarmist.feature.timer.DefaultTimerComponent
 import com.trm.alarmist.feature.timer.TimerComponent
 import kotlinx.serialization.Serializable
 
-interface RootComponent {
+interface RootComponent : BackHandlerOwner {
   val childStack: Value<ChildStack<*, Child>>
 
   val dialog: Value<ChildSlot<*, RootDialogComponent>>

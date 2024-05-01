@@ -38,6 +38,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.router.stack.ChildStack
+import com.trm.alarmist.core.common.util.BackHandler
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
@@ -66,6 +67,12 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   fun closeDrawer() {
     scope.launch { drawerState.close() }
   }
+
+  BackHandler(
+    backHandler = component.backHandler,
+    isEnabled = drawerState.isOpen,
+    onBack = ::closeDrawer,
+  )
 
   ModalNavigationDrawer(
     drawerState = drawerState,
