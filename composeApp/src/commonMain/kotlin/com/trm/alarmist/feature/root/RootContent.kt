@@ -6,7 +6,6 @@ import alarmist.composeapp.generated.resources.app_name
 import alarmist.composeapp.generated.resources.clock
 import alarmist.composeapp.generated.resources.stopwatch
 import alarmist.composeapp.generated.resources.timer
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,8 +66,6 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   fun closeDrawer() {
     scope.launch { drawerState.close() }
   }
-
-  BackHandler(enabled = drawerState.isOpen, onBack = ::closeDrawer)
 
   ModalNavigationDrawer(
     drawerState = drawerState,

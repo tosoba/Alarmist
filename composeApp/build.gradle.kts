@@ -28,8 +28,6 @@ kotlin {
       implementation(libs.compose.ui.tooling.preview)
 
       implementation(libs.decompose.extensions.android)
-      implementation(libs.decompose.extensions.compose)
-
       implementation(libs.essenty.statekeeper.android)
 
       implementation(libs.glance.appwidget)
@@ -50,6 +48,7 @@ kotlin {
       implementation(libs.epicCalendar)
 
       implementation(libs.decompose)
+      implementation(libs.decompose.extensions.compose)
       implementation(libs.essenty.lifecycle)
       implementation(libs.essenty.statekeeper)
 
