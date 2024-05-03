@@ -47,6 +47,7 @@ class EditAlarmUseCase(
     updateAlarmScheduleUseCase(
       isOn = isOn,
       id = id,
+      name = name,
       fireAtTime = fireAtTime,
       scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
       scheduledOnDates = scheduledOnDates,

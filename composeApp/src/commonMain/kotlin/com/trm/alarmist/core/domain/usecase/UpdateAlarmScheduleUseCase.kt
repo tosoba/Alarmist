@@ -13,6 +13,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
     this(
       isOn = alarm.isOn,
       id = alarm.id,
+      name = alarm.name,
       fireAtTime = alarm.fireAtTime,
       scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek,
       scheduledOnDates = alarm.scheduledOnDates,
@@ -30,6 +31,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
   operator fun invoke(
     isOn: Boolean,
     id: Long,
+    name: String?,
     fireAtTime: LocalTime,
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
@@ -53,6 +55,7 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
       ?.let {
         scheduler.scheduleAlarm(
           id = id,
+          name = name,
           fireOnDateTime = it,
           snoozeAvailable = snoozeAvailable,
           alarmDurationMinutes = alarmDurationMinutes,

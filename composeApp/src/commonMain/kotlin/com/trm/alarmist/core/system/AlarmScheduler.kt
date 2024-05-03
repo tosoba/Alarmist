@@ -5,6 +5,7 @@ import kotlinx.datetime.LocalDateTime
 interface AlarmScheduler {
   fun scheduleAlarm(
     id: Long,
+    name: String?,
     fireOnDateTime: LocalDateTime,
     snoozeAvailable: Boolean,
     alarmDurationMinutes: Long,

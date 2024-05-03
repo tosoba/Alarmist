@@ -45,6 +45,7 @@ class AddAlarmUseCase(
           reminderOffsetHours = reminderOffsetHours,
           soundId = soundId,
         ),
+      name = name,
       fireAtTime = fireAtTime,
       scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
       scheduledOnDates = scheduledOnDates,

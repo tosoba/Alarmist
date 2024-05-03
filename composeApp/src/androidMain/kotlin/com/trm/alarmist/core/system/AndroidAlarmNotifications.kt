@@ -31,7 +31,7 @@ fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
       NotificationCompat.Builder(this, ALARM_UPCOMING_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle(getStringBlocking(Res.string.upcoming_alarm))
-        .setContentText(settings.fireOnDateTime.formattedContentText(this))
+        .setContentText(settings.notificationContentText(this))
         .setSilent(true)
         .addAction(
           R.drawable.ic_launcher_foreground,
@@ -55,13 +55,21 @@ fun Context.notifyAlarmMissed(settings: AlarmFireSettings) {
       NotificationCompat.Builder(this, ALARM_MISSED_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle(getStringBlocking(Res.string.missed_alarm))
-        .setContentText(settings.fireOnDateTime.formattedContentText(this))
+        .setContentText(settings.notificationContentText(this))
         .setSilent(true)
         .build(),
     )
 }
 
-private fun LocalDateTime.formattedContentText(context: Context): String =
+private fun AlarmFireSettings.notificationContentText(context: Context): String = buildString {
+  append(fireOnDateTime.notificationContentText(context))
+  name?.let {
+    append(" - ")
+    append(it)
+  }
+}
+
+private fun LocalDateTime.notificationContentText(context: Context): String =
   "${dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${time.format(
     LocalTime.Format {
       if (!DateFormat.is24HourFormat(context)) amPmHour(padding = Padding.ZERO) else hour(padding = Padding.ZERO)

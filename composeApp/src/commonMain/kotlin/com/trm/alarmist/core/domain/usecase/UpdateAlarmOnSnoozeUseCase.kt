@@ -25,6 +25,7 @@ class UpdateAlarmOnSnoozeUseCase(
       ?.let {
         scheduler.scheduleAlarm(
           id = id,
+          name = alarm.name,
           fireOnDateTime = it,
           snoozeAvailable = alarm.snoozeCount < alarm.snoozeLimit,
           alarmDurationMinutes = alarm.alarmDurationMinutes,

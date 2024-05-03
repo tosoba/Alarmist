@@ -16,6 +16,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
 
   override fun scheduleAlarm(
     id: Long,
+    name: String?,
     fireOnDateTime: LocalDateTime,
     snoozeAvailable: Boolean,
     alarmDurationMinutes: Long,
@@ -29,6 +30,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     val settings =
       AlarmFireSettings(
         id = id,
+        name = name,
         fireOnDateTime = fireOnDateTime,
         snoozeAvailable = snoozeAvailable,
         alarmDurationMinutes = alarmDurationMinutes,

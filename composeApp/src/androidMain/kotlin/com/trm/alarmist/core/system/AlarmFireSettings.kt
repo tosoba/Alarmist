@@ -9,6 +9,7 @@ import kotlinx.parcelize.TypeParceler
 @Parcelize
 data class AlarmFireSettings(
   val id: Long,
+  val name: String?,
   @TypeParceler<LocalDateTime, LocalDateTimeParceler> val fireOnDateTime: LocalDateTime,
   val snoozeAvailable: Boolean,
   val alarmDurationMinutes: Long,
