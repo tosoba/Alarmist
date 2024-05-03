@@ -64,7 +64,7 @@ fun Context.notifyAlarmMissed(settings: AlarmFireSettings) {
 private fun AlarmFireSettings.notificationContentText(context: Context): String = buildString {
   append(fireOnDateTime.notificationContentText(context))
   name?.let {
-    append(" - ")
+    append(" · ")
     append(it)
   }
 }

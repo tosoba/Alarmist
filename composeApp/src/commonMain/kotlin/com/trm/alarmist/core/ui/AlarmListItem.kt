@@ -83,7 +83,7 @@ private fun AlarmLabel(
           if (item.name != null && group != null) {
             buildString {
               append(group.name)
-              append(" - ")
+              append(" · ")
               append(item.name)
             }
           } else {
