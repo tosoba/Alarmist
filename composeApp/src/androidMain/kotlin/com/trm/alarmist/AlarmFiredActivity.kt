@@ -1,6 +1,7 @@
 package com.trm.alarmist
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.alarm
 import alarmist.composeapp.generated.resources.dismiss
 import alarmist.composeapp.generated.resources.snooze
 import android.app.Activity
@@ -28,8 +29,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import com.trm.alarmist.core.common.util.formattedTime
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import com.trm.alarmist.core.system.AlarmFireSettings
@@ -98,13 +101,16 @@ private fun AlarmFiredView(
     Spacer(modifier = Modifier.weight(1f))
 
     Text(
-      text = settings.fireOnDateTime.time.toString(),
+      text = settings.fireOnDateTime.formattedTime(LocalContext.current),
       style = MaterialTheme.typography.displayLarge,
     )
 
     Spacer(modifier = Modifier.height(15.dp))
 
-    Text(text = "Alarm", style = MaterialTheme.typography.displaySmall)
+    Text(
+      text = settings.name ?: stringResource(Res.string.alarm),
+      style = MaterialTheme.typography.displaySmall,
+    )
 
     Spacer(modifier = Modifier.weight(1f))
 

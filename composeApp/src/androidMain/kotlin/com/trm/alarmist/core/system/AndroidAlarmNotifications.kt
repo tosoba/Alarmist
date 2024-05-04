@@ -9,18 +9,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.text.format.DateFormat
 import androidx.core.app.NotificationCompat
 import com.trm.alarmist.R
+import com.trm.alarmist.core.common.util.formattedTime
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.system.receiver.AlarmDismissedBroadcastReceiver
-import java.time.format.TextStyle
-import java.util.Locale
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.format
-import kotlinx.datetime.format.Padding
-import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
@@ -62,26 +55,12 @@ fun Context.notifyAlarmMissed(settings: AlarmFireSettings) {
 }
 
 private fun AlarmFireSettings.notificationContentText(context: Context): String = buildString {
-  append(fireOnDateTime.notificationContentText(context))
+  append(fireOnDateTime.formattedTime(context))
   name?.let {
     append(" · ")
     append(it)
   }
 }
-
-private fun LocalDateTime.notificationContentText(context: Context): String =
-  "${dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${time.format(
-    LocalTime.Format {
-      if (!DateFormat.is24HourFormat(context)) amPmHour(padding = Padding.ZERO) else hour(padding = Padding.ZERO)
-      char(':')
-      minute(padding = Padding.ZERO)
-      if (!DateFormat.is24HourFormat(context)) {
-        char(' ')
-        amPmMarker("AM", "PM")
-      }
-    }
-  )
-  }"
 
 fun Context.cancelNotification(id: Int) {
   getSystemService(NotificationManager::class.java).cancel(id)
