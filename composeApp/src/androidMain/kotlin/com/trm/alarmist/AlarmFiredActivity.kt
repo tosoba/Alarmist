@@ -4,13 +4,10 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.alarm
 import alarmist.composeapp.generated.resources.dismiss
 import alarmist.composeapp.generated.resources.snooze
-import android.app.Activity
-import android.app.KeyguardManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.Window
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -30,9 +27,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.trm.alarmist.core.common.util.formattedTime
+import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.common.util.turnScreenOffAndKeyguardOn
+import com.trm.alarmist.core.common.util.turnScreenOnAndKeyguardOff
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import com.trm.alarmist.core.system.AlarmFireSettings
@@ -40,6 +46,9 @@ import com.trm.alarmist.core.system.AndroidAlarmService
 import com.trm.alarmist.core.system.getAlarmFireSettings
 import com.trm.alarmist.core.ui.theme.AppTheme
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.format
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.android.ext.android.inject
@@ -60,7 +69,7 @@ class AlarmFiredActivity : ComponentActivity() {
           val settings = getAlarmFireSettings(intent)
           AlarmFiredView(
             settings = settings,
-            modifier = Modifier.fillMaxSize().padding(10.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             onSnoozeClick = {
               lifecycleScope
                 .launch { updateAlarmOnSnoozeUseCase(settings.id) }
@@ -101,62 +110,76 @@ private fun AlarmFiredView(
     Spacer(modifier = Modifier.weight(1f))
 
     Text(
-      text = settings.fireOnDateTime.formattedTime(LocalContext.current),
-      style = MaterialTheme.typography.displayLarge,
+      text =
+        buildAnnotatedString {
+          withStyle(SpanStyle(fontWeight = FontWeight.Bold, fontSize = 96.sp)) {
+            append(
+              settings.fireOnDateTime.formattedTime(
+                context = LocalContext.current,
+                showDayOfWeek = false,
+                showAmPmIf12HourFormat = false,
+              )
+            )
+          }
+          if (!DateFormat.is24HourFormat(LocalContext.current)) {
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold, fontSize = 48.sp)) {
+              append(' ')
+              append(
+                settings.fireOnDateTime.time.format(LocalTime.Format { amPmMarker("AM", "PM") })
+              )
+            }
+          }
+        }
     )
 
-    Spacer(modifier = Modifier.height(15.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
     Text(
       text = settings.name ?: stringResource(Res.string.alarm),
-      style = MaterialTheme.typography.displaySmall,
+      style = MaterialTheme.typography.headlineMedium,
     )
 
-    Spacer(modifier = Modifier.weight(1f))
+    Spacer(modifier = Modifier.weight(.5f))
 
     Row(modifier = Modifier.fillMaxWidth()) {
       OutlinedButton(onClick = onSnoozeClick, modifier = Modifier.weight(1f)) {
         Text(
           text = stringResource(Res.string.snooze),
-          style = MaterialTheme.typography.displaySmall,
+          style = MaterialTheme.typography.headlineLarge,
+          modifier = Modifier.padding(vertical = 16.dp),
         )
       }
 
-      Spacer(modifier = Modifier.width(10.dp))
+      Spacer(modifier = Modifier.width(16.dp))
 
       Button(onClick = onDismissClick, modifier = Modifier.weight(1f)) {
         Text(
           text = stringResource(Res.string.dismiss),
-          style = MaterialTheme.typography.displaySmall,
+          style = MaterialTheme.typography.headlineLarge,
+          modifier = Modifier.padding(vertical = 16.dp),
         )
       }
     }
+
+    Spacer(modifier = Modifier.weight(.5f))
   }
 }
 
-fun Activity.turnScreenOnAndKeyguardOff() {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-    setShowWhenLocked(true)
-    setTurnScreenOn(true)
-  } else {
-    window.addFlags(
-      WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-        WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-    )
-  }
-
-  getSystemService(KeyguardManager::class.java)
-    .requestDismissKeyguard(this@turnScreenOnAndKeyguardOff, null)
-}
-
-fun Activity.turnScreenOffAndKeyguardOn() {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-    setShowWhenLocked(false)
-    setTurnScreenOn(false)
-  } else {
-    window.clearFlags(
-      WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-        WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-    )
-  }
+@Composable
+@Preview
+private fun AlarmFiredPreview() {
+  AlarmFiredView(
+    settings =
+      AlarmFireSettings(
+        id = 1L,
+        name = "Get up",
+        fireOnDateTime = LocalDateTime.now(),
+        snoozeAvailable = true,
+        alarmDurationMinutes = 3L,
+        soundEnabled = true,
+        soundId = null,
+        vibrationEnabled = true,
+      ),
+    modifier = Modifier.fillMaxSize().padding(16.dp),
+  )
 }

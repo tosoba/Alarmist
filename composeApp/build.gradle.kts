@@ -26,6 +26,7 @@ kotlin {
       implementation(libs.androidx.lifecycle.lifecycleService)
 
       implementation(libs.compose.ui.tooling.preview)
+      implementation(libs.compose.ui.tooling)
 
       implementation(libs.decompose.extensions.android)
       implementation(libs.essenty.statekeeper.android)
