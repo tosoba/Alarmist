@@ -96,16 +96,12 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SnapshotMutationPolicy
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -121,7 +117,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
@@ -671,18 +667,6 @@ fun AlarmContent(
       )
     }
   }
-}
-
-@Composable
-fun <T : Any> Value<T>.subscribeAsState(
-  policy: SnapshotMutationPolicy<T> = structuralEqualityPolicy()
-): State<T> {
-  val state = remember(this, policy) { mutableStateOf(value, policy) }
-  DisposableEffect(this) {
-    val disposable = subscribe { state.value = it }
-    onDispose { disposable.cancel() }
-  }
-  return state
 }
 
 @Composable
