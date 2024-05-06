@@ -1,27 +1,50 @@
 package com.trm.alarmist.core.system.receiver
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTime
+import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.system.AlarmFireSettings
 import com.trm.alarmist.core.system.AndroidAlarmService
 import com.trm.alarmist.core.system.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.system.getAlarmFireSettings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   private val isAlarmScheduledToFireAtDateTime: IsAlarmScheduledToFireAtDateTime by inject()
+  private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
 
   override fun onReceive(context: Context, intent: Intent?) {
     if (intent?.action != ACTION_ALARM_FIRED) return
 
     val settings = getAlarmFireSettings(intent)
     launch {
-      if (isAlarmScheduledToFireAtDateTime(settings.id, settings.fireOnDateTime)) {
+      if (!isAlarmScheduledToFireAtDateTime(settings.id, settings.fireOnDateTime)) return@launch
+
+      if (
+        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+          PackageManager.PERMISSION_GRANTED
+      ) {
+        updateAlarmOnDismissUseCase(settings.id, settings.fireOnDateTime)
+
+        withContext(Dispatchers.Main) {
+          Toast.makeText(
+              context,
+              "Alarm was not fired due to denied notification permission.", // TODO: better message
+              Toast.LENGTH_LONG,
+            )
+            .show()
+        }
+      } else {
         ContextCompat.startForegroundService(
           context,
           Intent(context, AndroidAlarmService::class.java).putExtras(intent),

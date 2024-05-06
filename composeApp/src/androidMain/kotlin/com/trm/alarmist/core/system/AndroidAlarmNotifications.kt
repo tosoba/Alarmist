@@ -4,12 +4,15 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.dismiss
 import alarmist.composeapp.generated.resources.missed_alarm
 import alarmist.composeapp.generated.resources.upcoming_alarm
+import android.Manifest
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.pm.PackageManager
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.formattedTime
 import com.trm.alarmist.core.common.util.getStringBlocking
@@ -18,6 +21,13 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
 fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
+  if (
+    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+      PackageManager.PERMISSION_GRANTED
+  ) {
+    return
+  }
+
   getSystemService(NotificationManager::class.java)
     .notify(
       settings.id.toInt(),
@@ -42,6 +52,13 @@ fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
 
 @OptIn(ExperimentalResourceApi::class)
 fun Context.notifyAlarmMissed(settings: AlarmFireSettings) {
+  if (
+    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+      PackageManager.PERMISSION_GRANTED
+  ) {
+    return
+  }
+
   getSystemService(NotificationManager::class.java)
     .notify(
       settings.id.toInt(),
