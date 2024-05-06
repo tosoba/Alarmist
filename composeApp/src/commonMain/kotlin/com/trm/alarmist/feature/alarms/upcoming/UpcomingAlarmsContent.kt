@@ -11,7 +11,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -40,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
@@ -51,7 +54,6 @@ import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
 import com.trm.alarmist.core.ui.DaysOfWeekRow
 import com.trm.alarmist.core.ui.WeekArrowsRow
-import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import epicarchitect.calendar.compose.basis.EpicCalendarConstants
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.atDay
@@ -83,8 +85,9 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
 @Composable
 fun UpcomingAlarmsContent(
-  modifier: Modifier = Modifier,
   initialState: UpcomingAlarmsCalendarState,
+  modifier: Modifier = Modifier,
+  bottomSpacerHeightDp: Dp = 0.dp,
   alarmCounts: Map<LocalDate, Int> = emptyMap(),
   selectedDateAlarms: List<AlarmListModel> = emptyList(),
   onAlarmItemClick: (AlarmListModel) -> Unit = {},
@@ -143,7 +146,7 @@ fun UpcomingAlarmsContent(
       )
     }
 
-    floatingActionButtonSpacerItem()
+    item { Spacer(Modifier.height(bottomSpacerHeightDp)) }
   }
 }
 
@@ -336,7 +339,7 @@ private fun WeeklyMonthlyCalendar(
 
 private enum class CalendarMode {
   WEEKLY,
-  MONTHLY
+  MONTHLY,
 }
 
 private fun weeklyCalendarPagesCount(startDate: LocalDate, endDate: LocalDate): Int {

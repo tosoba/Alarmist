@@ -22,8 +22,12 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.pages.Pages
@@ -78,6 +82,8 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
 @Composable
 private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = Modifier) {
   Box(modifier = modifier) {
+    var bottomSpacerHeightPx by mutableStateOf(with(LocalDensity.current) { 72.dp.toPx() })
+
     Pages(
       pages = component.pages,
       onPageSelected = component::onPageSelected,
@@ -88,6 +94,8 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
           val state by page.component.state.collectAsState()
           AlarmGroupsContent(
             modifier = Modifier.fillMaxSize(),
+            bottomSpacerHeightDp =
+              with(LocalDensity.current) { bottomSpacerHeightPx.toDp() + 16.dp },
             state = state,
             onExpandGroup = page.component.feature::onExpandGroup,
             onCollapseGroup = page.component.feature::onCollapseGroup,
@@ -98,16 +106,23 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
           )
         }
         is AlarmsComponent.Page.AlarmsList -> {
-          AlarmListContent(modifier = Modifier.fillMaxSize(), component = page.component)
+          AlarmListContent(
+            component = page.component,
+            modifier = Modifier.fillMaxSize(),
+            bottomSpacerHeightDp =
+              with(LocalDensity.current) { bottomSpacerHeightPx.toDp() + 16.dp },
+          )
         }
         is AlarmsComponent.Page.UpcomingAlarms -> {
           val selectedDateAlarms by page.component.feature.selectedDateAlarmsFlow.collectAsState()
           val alarmCounts by page.component.feature.scheduledAlarmCountsFlow.collectAsState()
           UpcomingAlarmsContent(
-            modifier = Modifier.fillMaxSize(),
             initialState = page.component.feature.calendarState,
-            selectedDateAlarms = selectedDateAlarms,
+            modifier = Modifier.fillMaxSize(),
+            bottomSpacerHeightDp =
+              with(LocalDensity.current) { bottomSpacerHeightPx.toDp() + 16.dp },
             alarmCounts = alarmCounts,
+            selectedDateAlarms = selectedDateAlarms,
             onAlarmItemClick = page.component::onAlarmClick,
             onAlarmToggleOnOff = page.component.feature::onToggleAlarmOnOff,
             onSelectedDateChange = page.component.feature::onSelectedDateChange,
@@ -118,7 +133,10 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
     }
 
     Row(
-      modifier = Modifier.fillMaxWidth().align(Alignment.BottomEnd).padding(16.dp),
+      modifier =
+        Modifier.fillMaxWidth().align(Alignment.BottomEnd).padding(16.dp).onGloballyPositioned {
+          bottomSpacerHeightPx = it.size.height.toFloat()
+        },
       verticalAlignment = Alignment.Bottom,
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
