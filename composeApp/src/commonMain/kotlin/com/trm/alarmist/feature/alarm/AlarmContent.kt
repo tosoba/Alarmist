@@ -2,7 +2,6 @@ package com.trm.alarmist.feature.alarm
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.back
-import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.delete
 import alarmist.composeapp.generated.resources.delete_alarm
@@ -13,11 +12,7 @@ import alarmist.composeapp.generated.resources.group_label
 import alarmist.composeapp.generated.resources.hours_before_alarm_label
 import alarmist.composeapp.generated.resources.minutes_label
 import alarmist.composeapp.generated.resources.name
-import alarmist.composeapp.generated.resources.notification_permission_rationale
-import alarmist.composeapp.generated.resources.notification_permission_settings
-import alarmist.composeapp.generated.resources.ok
 import alarmist.composeapp.generated.resources.paused
-import alarmist.composeapp.generated.resources.permission_required
 import alarmist.composeapp.generated.resources.reminder_label
 import alarmist.composeapp.generated.resources.repeat_label
 import alarmist.composeapp.generated.resources.schedule_alarm
@@ -74,7 +69,6 @@ import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Timer
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -628,34 +622,7 @@ fun AlarmContent(
       AlarmSoundDialog(component = it, modifier = Modifier.heightIn(max = 500.dp))
     }
 
-    var permissionDialogVisible by rememberSaveable { mutableStateOf(false) }
-    var shouldShowRationale by rememberSaveable { mutableStateOf(false) }
-
-    val permissionsHandler =
-      alarmPermissionsHandler(
-        onDenied = {
-          shouldShowRationale = it
-          permissionDialogVisible = true
-        },
-        onGranted = onConfirmClick,
-      )
-
-    PostNotificationPermissionInfoDialog(
-      visible = permissionDialogVisible,
-      text =
-        if (shouldShowRationale) {
-          stringResource(Res.string.notification_permission_rationale)
-        } else {
-          stringResource(Res.string.notification_permission_settings)
-        },
-      onDismiss = { permissionDialogVisible = false },
-      onOkClick = {
-        permissionDialogVisible = false
-        if (shouldShowRationale) {
-          permissionsHandler()
-        }
-      },
-    )
+    val permissionsHandler = alarmPermissionsHandler(onGranted = onConfirmClick)
 
     FloatingActionButton(
       modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
@@ -904,34 +871,7 @@ private fun DaysOfWeekRow(
   }
 }
 
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-private fun PostNotificationPermissionInfoDialog(
-  modifier: Modifier = Modifier,
-  visible: Boolean,
-  text: String,
-  onOkClick: () -> Unit,
-  onDismiss: () -> Unit,
-) {
-  AnimatedVisibility(visible = visible, enter = fadeIn(), exit = fadeOut()) {
-    AlertDialog(
-      modifier = modifier,
-      onDismissRequest = onDismiss,
-      confirmButton = {
-        TextButton(onClick = onOkClick) { Text(text = stringResource(Res.string.ok)) }
-      },
-      dismissButton = {
-        TextButton(onClick = onDismiss) { Text(text = stringResource(Res.string.cancel)) }
-      },
-      title = {
-        Text(text = stringResource(Res.string.permission_required), textAlign = TextAlign.Center)
-      },
-      text = { Text(text = text) },
-    )
-  }
-}
-
 private enum class TimePickerMode {
   DIAL,
-  INPUT
+  INPUT,
 }

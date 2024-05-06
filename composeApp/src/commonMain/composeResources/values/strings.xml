@@ -2,6 +2,7 @@
     <string name="app_name">Alarmist</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="settings">Settings</string>
     <string name="dismiss">Dismiss</string>
     <string name="snooze">Snooze</string>
     <string name="ungrouped">Ungrouped</string>
@@ -54,8 +55,8 @@
     <string name="group_label">Group</string>
     <string name="time_input">Time input</string>
     <string name="time_dial">Time dial</string>
-    <string name="notification_permission_rationale">A permission to post notifications is required to create an alarm. Permission dialog will appear again after clicking OK.</string>
-    <string name="notification_permission_settings">A permission to post notifications which you have denied is required to create an alarm. Use application settings to grant that permission.</string>
+    <string name="notification_permission_rationale">A permission to post notifications is required to create an alarm. You may grant it after clicking OK.</string>
+    <string name="notification_permission_settings">A permission to post notifications is required to create an alarm. Go to settings to grant that permission.</string>
     <string name="invalid_input">Invalid input</string>
     <string name="group_name_blank_validation_error">Group name cannot be blank.</string>
     <string name="minutes_label">%1$s minute(s)</string>
