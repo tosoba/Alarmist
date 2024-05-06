@@ -3,6 +3,7 @@ package com.trm.alarmist.feature.alarms
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.add
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.pages.Pages
 import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
 import com.trm.alarmist.feature.alarms.groups.AlarmGroupsContent
 import com.trm.alarmist.feature.alarms.list.AlarmListContent
 import com.trm.alarmist.feature.alarms.ui.AlarmsNavigationBar
@@ -115,11 +117,16 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
       }
     }
 
-    FloatingActionButton(
-      modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-      onClick = component::onAddClick,
+    Row(
+      modifier = Modifier.fillMaxWidth().align(Alignment.BottomEnd).padding(16.dp),
+      verticalAlignment = Alignment.Bottom,
+      horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-      Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(Res.string.add))
+      AlarmPermissionStatusCard(modifier = Modifier.weight(1f).padding(end = 16.dp))
+
+      FloatingActionButton(onClick = component::onAddClick) {
+        Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(Res.string.add))
+      }
     }
   }
 }

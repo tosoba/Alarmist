@@ -23,6 +23,7 @@ kotlinx-datetime = "0.6.0-RC.2"
 kotlinx-serialization = "1.6.2"
 mokkery = "1.9.23-1.6.1"
 napier = "2.6.1"
+permissionFlowCompose = "2.0.0"
 sqlDelight = "2.0.1"
 windowSizeClass = "0.3.1"
 
@@ -59,6 +60,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 material3-windowSizeClass = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSizeClass" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
+permission-flow-compose = { module = "dev.shreyaspatil.permission-flow:permission-flow-compose", version.ref = "permissionFlowCompose" }
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }

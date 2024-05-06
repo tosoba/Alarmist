@@ -57,6 +57,8 @@
     <string name="time_dial">Time dial</string>
     <string name="notification_permission_rationale">A permission to post notifications is required to create an alarm. You may grant it after clicking OK.</string>
     <string name="notification_permission_settings">A permission to post notifications is required to create an alarm. Go to settings to grant that permission.</string>
+    <string name="alarms_disabled_title">Alarms are disabled</string>
+    <string name="alarms_disabled_description">Notification permission is denied. Go to settings to grant it.</string>
     <string name="invalid_input">Invalid input</string>
     <string name="group_name_blank_validation_error">Group name cannot be blank.</string>
     <string name="minutes_label">%1$s minute(s)</string>
