@@ -89,13 +89,13 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
       onPageSelected = component::onPageSelected,
       scrollAnimation = PagesScrollAnimation.Default,
     ) { _, page ->
+      val bottomSpacerHeightDp = with(LocalDensity.current) { bottomSpacerHeightPx.toDp() + 16.dp }
       when (page) {
         is AlarmsComponent.Page.AlarmGroups -> {
           val state by page.component.state.collectAsState()
           AlarmGroupsContent(
             modifier = Modifier.fillMaxSize(),
-            bottomSpacerHeightDp =
-              with(LocalDensity.current) { bottomSpacerHeightPx.toDp() + 16.dp },
+            bottomSpacerHeightDp = bottomSpacerHeightDp,
             state = state,
             onExpandGroup = page.component.feature::onExpandGroup,
             onCollapseGroup = page.component.feature::onCollapseGroup,
@@ -109,8 +109,7 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
           AlarmListContent(
             component = page.component,
             modifier = Modifier.fillMaxSize(),
-            bottomSpacerHeightDp =
-              with(LocalDensity.current) { bottomSpacerHeightPx.toDp() + 16.dp },
+            bottomSpacerHeightDp = bottomSpacerHeightDp,
           )
         }
         is AlarmsComponent.Page.UpcomingAlarms -> {
@@ -119,8 +118,7 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
           UpcomingAlarmsContent(
             initialState = page.component.feature.calendarState,
             modifier = Modifier.fillMaxSize(),
-            bottomSpacerHeightDp =
-              with(LocalDensity.current) { bottomSpacerHeightPx.toDp() + 16.dp },
+            bottomSpacerHeightDp = bottomSpacerHeightDp,
             alarmCounts = alarmCounts,
             selectedDateAlarms = selectedDateAlarms,
             onAlarmItemClick = page.component::onAlarmClick,
