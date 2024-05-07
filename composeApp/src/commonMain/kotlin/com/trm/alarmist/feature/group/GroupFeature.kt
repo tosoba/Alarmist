@@ -8,7 +8,7 @@ import com.trm.alarmist.core.common.model.AnyStateFlow
 import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsUseCase
+import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsFlowUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -22,7 +22,7 @@ class GroupFeature(
   savedStateContainer: SerializableContainer?,
   private val mode: GroupComponent.Mode,
 ) : CoroutineFeature(), KoinComponent {
-  private val getGroupedAlarmsUseCase: GetGroupedAlarmsUseCase by inject()
+  private val getGroupedAlarmsFlowUseCase: GetGroupedAlarmsFlowUseCase by inject()
   private val repository: AlarmRepository by inject()
 
   private val _state: MutableStateFlow<GroupState> =
@@ -36,7 +36,7 @@ class GroupFeature(
   val state: AnyStateFlow<GroupState> = _state.wrapToAny()
 
   init {
-    getGroupedAlarmsUseCase()
+    getGroupedAlarmsFlowUseCase()
       .onEach { (alarms, groups) -> _state.update { it.copy(alarms = alarms, groups = groups) } }
       .launchIn(coroutineScope)
   }

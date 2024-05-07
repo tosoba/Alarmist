@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.combine
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
 
-class GetGroupedAlarmsUseCase(private val repository: AlarmRepository) {
+class GetGroupedAlarmsFlowUseCase(private val repository: AlarmRepository) {
   @OptIn(ExperimentalResourceApi::class)
   operator fun invoke(): Flow<GroupedAlarmsModel> =
     repository.getAllAlarmGroupsFlow().combine(repository.getAllAlarmsListFlow()) { groups, alarms

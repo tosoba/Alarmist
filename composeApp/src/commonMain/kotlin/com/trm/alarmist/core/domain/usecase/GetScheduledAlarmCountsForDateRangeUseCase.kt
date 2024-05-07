@@ -14,34 +14,36 @@ import kotlinx.datetime.plus
 class GetScheduledAlarmCountsForDateRangeUseCase(private val repository: AlarmRepository) {
   operator fun invoke(range: ClosedRange<LocalDate>): Flow<Map<LocalDate, Int>> {
     val now = LocalDateTime.now()
-    val tommorow = now.date.plus(1, DateTimeUnit.DAY)
+    val tomorrow = now.date.plus(1, DateTimeUnit.DAY)
     val coalescedRange = if (range.start < now.date) now.date..range.endInclusive else range
     return combine(
       if (now.date in coalescedRange) {
-        repository.countOnOneTimeAlarmsAfterTime(now.time)
+        repository.countOnOneTimeAlarmsAfterTimeFlow(now.time)
       } else {
         flowOf(0)
       },
-      if (tommorow in coalescedRange) {
-        repository.countOnOneTimeAlarmsBeforeTime(now.time)
+      if (tomorrow in coalescedRange) {
+        repository.countOnOneTimeAlarmsBeforeTimeFlow(now.time)
       } else {
         flowOf(0)
       },
-      repository.getOnAlarmSchedulesForDates(coalescedRange).map { schedules ->
+      repository.getOnAlarmSchedulesForDatesFlow(coalescedRange).map { schedules ->
         List(coalescedRange.endInclusive.toEpochDays() - coalescedRange.start.toEpochDays() + 1) {
             coalescedRange.start.plus(it, DateTimeUnit.DAY)
           }
           .associateWith { date ->
             schedules.count {
-              date in it.scheduledOnDates || date.dayOfWeek in it.scheduledOnDaysOfWeek
+              date in it.scheduledOnDates ||
+                date.dayOfWeek in it.scheduledOnDaysOfWeek &&
+                  (date != now.date || it.fireAtTime > now.time)
             }
           }
       },
-    ) { oneTimeTodayCount, oneTimeTommorowCount, scheduledCounts ->
+    ) { oneTimeTodayCount, oneTimeTomorrowCount, scheduledCounts ->
       buildMap {
         putAll(scheduledCounts)
         scheduledCounts[now.date]?.let { this[now.date] = it + oneTimeTodayCount }
-        scheduledCounts[tommorow]?.let { this[tommorow] = it + oneTimeTommorowCount }
+        scheduledCounts[tomorrow]?.let { this[tomorrow] = it + oneTimeTomorrowCount }
       }
     }
   }

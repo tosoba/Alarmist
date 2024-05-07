@@ -4,9 +4,10 @@ import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.DeleteAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.GetAlarmsInGroupFlowUseCase
-import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateUseCase
+import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateFlowUseCase
+import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledTodayUseCase
 import com.trm.alarmist.core.domain.usecase.GetAndResetMissedAlarmsOnBootUseCase
-import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsUseCase
+import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
 import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTime
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
@@ -26,10 +27,11 @@ val domainModule = module {
   factory { UpdateAlarmScheduleUseCase(get()) }
   factory { UpdateAlarmOnDismissUseCase(get(), get()) }
   factory { UpdateAlarmOnSnoozeUseCase(get(), get()) }
-  factory { GetGroupedAlarmsUseCase(get()) }
+  factory { GetGroupedAlarmsFlowUseCase(get()) }
   factory { GetAlarmsInGroupFlowUseCase(get()) }
   factory { GetAndResetMissedAlarmsOnBootUseCase(get()) }
-  factory { GetAlarmsScheduledOnDateUseCase(get()) }
+  factory { GetAlarmsScheduledOnDateFlowUseCase(get()) }
+  factory { GetAlarmsScheduledTodayUseCase(get()) }
   factory { GetScheduledAlarmCountsForDateRangeUseCase(get()) }
   factory { IsAlarmScheduledToFireAtDateTime(get()) }
   factory { ToggleUpcomingAlarmOnOffOnDateUseCase(get(), get(), get()) }

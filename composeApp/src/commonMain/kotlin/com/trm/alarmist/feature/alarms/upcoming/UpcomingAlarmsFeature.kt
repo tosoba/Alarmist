@@ -4,7 +4,7 @@ import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateUseCase
+import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleUpcomingAlarmOnOffOnDateUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,7 +25,7 @@ import org.koin.core.component.inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
   CoroutineFeature(), KoinComponent {
-  private val getAlarmsScheduledOnDateUseCase: GetAlarmsScheduledOnDateUseCase by inject()
+  private val getAlarmsScheduledOnDateFlowUseCase: GetAlarmsScheduledOnDateFlowUseCase by inject()
   private val getScheduledAlarmCountsForDateRangeUseCase:
     GetScheduledAlarmCountsForDateRangeUseCase by
     inject()
@@ -46,7 +46,7 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
       .onStart { emit(calendarState.selectedDate) }
       .distinctUntilChanged()
       .flatMapLatest {
-        if (it == null) flowOf(emptyList()) else getAlarmsScheduledOnDateUseCase(it)
+        if (it == null) flowOf(emptyList()) else getAlarmsScheduledOnDateFlowUseCase(it)
       }
       .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 

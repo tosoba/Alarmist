@@ -126,8 +126,19 @@ AND
         scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
     );
 
+selectOnAlarmsScheduledToFireOnDateAfterTime:
+SELECT * FROM alarm
+WHERE isOn = 1
+AND fireAtTime > :fireAtTime
+AND
+    (
+        scheduledOnDates LIKE ('%' || :date || '%')
+        OR
+        scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
+    );
+
 selectOnAlarmSchedules:
-SELECT id, scheduledOnDaysOfWeek, scheduledOnDates, offOnDates
+SELECT id, fireAtTime, scheduledOnDaysOfWeek, scheduledOnDates, offOnDates
 FROM alarm
 WHERE isOn = 1
 AND

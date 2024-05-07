@@ -11,7 +11,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.plus
 
-class GetAlarmsScheduledOnDateUseCase(private val repository: AlarmRepository) {
+class GetAlarmsScheduledOnDateFlowUseCase(private val repository: AlarmRepository) {
   operator fun invoke(date: LocalDate): Flow<List<AlarmListModel>> {
     val now = LocalDateTime.now()
     return when {
@@ -20,20 +20,20 @@ class GetAlarmsScheduledOnDateUseCase(private val repository: AlarmRepository) {
       }
       date == now.date -> {
         combine(
-          repository.getOnOneTimeAlarmsAfterTime(now.time),
-          repository.getOnAlarmsScheduledToFireOnDate(date),
+          repository.getOnOneTimeAlarmsAfterTimeFlow(now.time),
+          repository.getOnAlarmsScheduledToFireOnDateAfterTimeFlow(date, now.time),
           ::concatSortedByFireAtTime,
         )
       }
       date == now.date.plus(1, DateTimeUnit.DAY) -> {
         combine(
-          repository.getOnOneTimeAlarmsBeforeTime(now.time),
-          repository.getOnAlarmsScheduledToFireOnDate(date),
+          repository.getOnOneTimeAlarmsBeforeTimeFlow(now.time),
+          repository.getOnAlarmsScheduledToFireOnDateFlow(date),
           ::concatSortedByFireAtTime,
         )
       }
       else -> {
-        repository.getOnAlarmsScheduledToFireOnDate(date)
+        repository.getOnAlarmsScheduledToFireOnDateFlow(date)
       }
     }
   }

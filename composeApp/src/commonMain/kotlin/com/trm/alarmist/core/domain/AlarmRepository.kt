@@ -56,17 +56,29 @@ interface AlarmRepository {
 
   fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>>
 
-  fun getOnAlarmsScheduledToFireOnDate(date: LocalDate): Flow<List<AlarmListModel>>
+  fun getOnAlarmsScheduledToFireOnDateFlow(date: LocalDate): Flow<List<AlarmListModel>>
 
-  fun getOnAlarmSchedulesForDates(dates: ClosedRange<LocalDate>): Flow<List<AlarmScheduleModel>>
+  fun getOnAlarmsScheduledToFireOnDateAfterTimeFlow(
+    date: LocalDate,
+    time: LocalTime,
+  ): Flow<List<AlarmListModel>>
 
-  fun getOnOneTimeAlarmsBeforeTime(time: LocalTime): Flow<List<AlarmListModel>>
+  suspend fun getOnAlarmsScheduledToFireOnDateAfterTime(
+    date: LocalDate,
+    time: LocalTime,
+  ): List<AlarmListModel>
 
-  fun getOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<List<AlarmListModel>>
+  fun getOnAlarmSchedulesForDatesFlow(dates: ClosedRange<LocalDate>): Flow<List<AlarmScheduleModel>>
 
-  fun countOnOneTimeAlarmsBeforeTime(time: LocalTime): Flow<Int>
+  fun getOnOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<AlarmListModel>>
 
-  fun countOnOneTimeAlarmsAfterTime(time: LocalTime): Flow<Int>
+  fun getOnOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<List<AlarmListModel>>
+
+  suspend fun getOnOneTimeAlarmsAfterTime(time: LocalTime): List<AlarmListModel>
+
+  fun countOnOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<Int>
+
+  fun countOnOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<Int>
 
   suspend fun getOnAlarmsAndResetMissedAlarms(): List<AlarmModel>
 

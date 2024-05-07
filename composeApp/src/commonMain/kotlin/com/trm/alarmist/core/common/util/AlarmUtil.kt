@@ -108,6 +108,7 @@ fun Alarm.toModel(): AlarmModel =
 fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =
   AlarmScheduleModel(
     id = id,
+    fireAtTime = fireAtTime,
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty().toSet(),
     scheduledOnDates = scheduledOnDates.orEmpty().toSet(),
     offOnDates = offOnDates.orEmpty().toSet(),
