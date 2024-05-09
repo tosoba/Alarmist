@@ -50,6 +50,8 @@ interface AlarmRepository {
 
   fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>>
 
+  suspend fun getAllOnAlarmsList(): List<AlarmListModel>
+
   fun getAllAlarmGroupsFlow(): Flow<List<AlarmGroupModel>>
 
   fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmListModel>>

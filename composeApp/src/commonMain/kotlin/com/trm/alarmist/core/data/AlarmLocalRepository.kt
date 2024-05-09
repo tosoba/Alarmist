@@ -128,6 +128,13 @@ class AlarmLocalRepository(
   override fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>> =
     queries.selectAllAlarms().asAlarmsListFlow()
 
+  override suspend fun getAllOnAlarmsList(): List<AlarmListModel> {
+    val now = LocalDateTime.now()
+    return withContext(dispatcher) {
+      queries.selectOnAlarms().executeAsList().map { it.toListModel(now) }
+    }
+  }
+
   override fun getAllAlarmGroupsFlow(): Flow<List<AlarmGroupModel>> =
     queries.selectAllGroups().asFlow().mapToList(dispatcher).map {
       it.map(SelectAllGroups::toModel)
