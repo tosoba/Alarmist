@@ -1,67 +1,20 @@
-package com.trm.alarmist.widget.util
+package com.trm.alarmist.widget.common.util
 
 import android.content.res.Resources
 import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
+import androidx.glance.LocalSize
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
-import androidx.glance.layout.Alignment
-import androidx.glance.layout.Box
-import androidx.glance.layout.Column
-import androidx.glance.layout.ColumnScope
-import androidx.glance.layout.Row
-import androidx.glance.layout.RowScope
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
-
-@Composable
-internal fun WidgetBox(
-  modifier: GlanceModifier = GlanceModifier,
-  contentAlignment: Alignment = Alignment.TopStart,
-  content: @Composable () -> Unit,
-) {
-  Box(
-    modifier = widgetBackgroundModifier().then(modifier),
-    contentAlignment = contentAlignment,
-    content = content,
-  )
-}
-
-@Composable
-internal fun WidgetColumn(
-  modifier: GlanceModifier = GlanceModifier,
-  verticalAlignment: Alignment.Vertical = Alignment.Top,
-  horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-  content: @Composable ColumnScope.() -> Unit,
-) {
-  Column(
-    modifier = widgetBackgroundModifier().then(modifier),
-    verticalAlignment = verticalAlignment,
-    horizontalAlignment = horizontalAlignment,
-    content = content,
-  )
-}
-
-@Composable
-internal fun WidgetRow(
-  modifier: GlanceModifier = GlanceModifier,
-  verticalAlignment: Alignment.Vertical = Alignment.Top,
-  horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-  content: @Composable RowScope.() -> Unit,
-) {
-  Row(
-    modifier = widgetBackgroundModifier().then(modifier),
-    verticalAlignment = verticalAlignment,
-    horizontalAlignment = horizontalAlignment,
-    content = content,
-  )
-}
 
 @Composable
 internal fun widgetBackgroundModifier() =
@@ -95,6 +48,40 @@ internal fun stringResource(@StringRes id: Int, args: List<Any> = emptyList()): 
 
 internal val Float.toPx: Float
   get() = this * Resources.getSystem().displayMetrics.density
-
 internal val Float.toDp: Float
   get() = this / Resources.getSystem().displayMetrics.density
+
+internal val smallFontSize: Float
+  @Composable
+  get() =
+    with(LocalSize.current) {
+      when {
+        width > 200.dp && height > 250.dp -> 16f
+        width > 175.dp && height > 200.dp -> 14f
+        else -> 12f
+      }
+    }
+
+internal val mediumFontSize: Float
+  @Composable
+  get() =
+    with(LocalSize.current) {
+      when {
+        width > 200.dp && height > 250.dp -> 22f
+        width > 175.dp && height > 200.dp -> 20f
+        else -> 18f
+      }
+    }
+
+internal val largeFontSize: Float
+  @Composable
+  get() =
+    with(LocalSize.current) {
+      when {
+        width > 200.dp && height > 250.dp -> 30f
+        width > 175.dp && height > 200.dp -> 26f
+        else -> 22f
+      }
+    }
+
+internal val LocalIsPreviewProvider = staticCompositionLocalOf { false }

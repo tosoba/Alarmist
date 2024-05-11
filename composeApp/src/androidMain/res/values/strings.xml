@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">alarmist</string>
+    <string name="today_alarms">Today alarms</string>
 </resources>

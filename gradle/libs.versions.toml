@@ -21,6 +21,7 @@ kotlin = "1.9.23"
 kotlinx-coroutines = "1.8.0"
 kotlinx-datetime = "0.6.0-RC.2"
 kotlinx-serialization = "1.6.2"
+material = "1.12.0"
 mokkery = "1.9.23-1.6.1"
 napier = "2.6.1"
 permissionFlowCompose = "2.0.0"
@@ -58,6 +59,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material3-windowSizeClass = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSizeClass" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 permission-flow-compose = { module = "dev.shreyaspatil.permission-flow:permission-flow-compose", version.ref = "permissionFlowCompose" }
