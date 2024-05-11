@@ -99,12 +99,14 @@ android {
 
   buildTypes { getByName("release") { isMinifyEnabled = false } }
 
+  buildFeatures { compose = true }
+
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
 
-  dependencies { debugImplementation(libs.compose.ui.tooling) }
+  composeOptions { kotlinCompilerExtensionVersion = "1.5.13" }
 }
 
 sqldelight { databases { create("AlarmistDb") { packageName.set("com.trm.alarmist.db") } } }
