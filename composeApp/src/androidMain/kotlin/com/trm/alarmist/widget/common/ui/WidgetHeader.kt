@@ -1,4 +1,4 @@
-package com.trm.alarmist.widget.common
+package com.trm.alarmist.widget.common.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
@@ -6,6 +6,9 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
@@ -22,7 +25,7 @@ import com.trm.alarmist.widget.common.util.smallFontSize
 import kotlinx.datetime.LocalDate
 
 @Composable
-internal fun WidgetHeader(modifier: GlanceModifier = GlanceModifier) {
+internal fun WidgetHeader(onRefreshClick: Action, modifier: GlanceModifier = GlanceModifier) {
   Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
     Image(
       provider = ImageProvider(R.mipmap.ic_launcher_round),
@@ -51,12 +54,8 @@ internal fun WidgetHeader(modifier: GlanceModifier = GlanceModifier) {
       provider = ImageProvider(R.drawable.refresh),
       contentDescription = "Refresh",
       modifier =
-        GlanceModifier.run {
-          if (LocalIsPreviewProvider.current) {
-            this
-          } else {
-            this // TODO: clickable send broadcast action
-          }
+        GlanceModifier.cornerRadius(8.dp).run {
+          if (LocalIsPreviewProvider.current) this else clickable(onRefreshClick)
         },
     )
   }

@@ -1,4 +1,4 @@
-package com.trm.alarmist.widget.common
+package com.trm.alarmist.widget.common.ui
 
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceModifier

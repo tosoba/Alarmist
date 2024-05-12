@@ -1,10 +1,11 @@
-package com.trm.alarmist.widget.common
+package com.trm.alarmist.widget.common.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.Button
 import androidx.glance.GlanceModifier
+import androidx.glance.action.Action
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Spacer
@@ -17,7 +18,7 @@ import com.trm.alarmist.widget.common.util.mediumFontSize
 internal fun WidgetActionButtonContent(
   infoText: String,
   buttonText: String,
-  // TODO: onClickAction
+  // onClick: Action, //TODO:
   modifier: GlanceModifier = GlanceModifier,
 ) {
   Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {

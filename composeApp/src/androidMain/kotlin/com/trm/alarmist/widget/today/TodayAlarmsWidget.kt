@@ -1,30 +1,38 @@
 package com.trm.alarmist.widget.today
 
 import android.content.Context
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
+import androidx.glance.currentState
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledTodayUseCase
-import com.trm.alarmist.widget.common.WidgetActionButtonContent
-import com.trm.alarmist.widget.common.WidgetAlarmListItem
-import com.trm.alarmist.widget.common.WidgetHeader
-import com.trm.alarmist.widget.common.WidgetLoadingIndicator
-import com.trm.alarmist.widget.common.WidgetOuterColumn
+import com.trm.alarmist.widget.common.ui.WidgetActionButtonContent
+import com.trm.alarmist.widget.common.ui.WidgetAlarmListItem
+import com.trm.alarmist.widget.common.ui.WidgetHeader
+import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
+import com.trm.alarmist.widget.common.ui.WidgetOuterColumn
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.common.util.widgetBackgroundCornerRadius
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -36,36 +44,49 @@ class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
 
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
+      val state = currentState<Preferences>()
       val alarms by
-        produceState(Initializable(emptyList())) {
+        produceState(Initializable(emptyList()), state) {
           value = Initializable(getAlarmsScheduledTodayUseCase(), true)
         }
-      CompositionLocalProvider(LocalIsPreviewProvider provides true) {
-        GlanceTheme {
-          WidgetOuterColumn(
-            modifier = GlanceModifier.fillMaxSize().widgetBackgroundCornerRadius()
-          ) {
-            WidgetHeader(modifier = GlanceModifier.fillMaxWidth())
+      CompositionLocalProvider(LocalIsPreviewProvider provides false) {
+        TodayAlarmsWidgetContent(id = id, alarms = alarms)
+      }
+    }
+  }
+}
 
-            when {
-              !alarms.initialized -> {
-                WidgetLoadingIndicator(
-                  modifier = GlanceModifier.defaultWeight().padding(vertical = 20.dp)
-                )
-              }
-              alarms.data.isEmpty() -> {
-                WidgetActionButtonContent(
-                  infoText = "No scheduled alarms",
-                  buttonText = "Schedule an alarm",
-                  modifier = GlanceModifier.fillMaxSize().padding(vertical = 20.dp),
-                )
-              }
-              else -> {
-                LazyColumn(modifier = GlanceModifier.defaultWeight().padding(vertical = 10.dp)) {
-                  items(alarms.data, itemId = AlarmListModel::id) { WidgetAlarmListItem(it) }
-                }
-              }
-            }
+@Composable
+private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<AlarmListModel>>) {
+  GlanceTheme {
+    WidgetOuterColumn(modifier = GlanceModifier.fillMaxSize().widgetBackgroundCornerRadius()) {
+      val context = LocalContext.current
+      val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
+
+      WidgetHeader(
+        onRefreshClick =
+          actionSendBroadcast(
+            context.updateWidgetIntent<TodayAlarmsWidgetReceiver>(widgetManager.getAppWidgetId(id))
+          ),
+        modifier = GlanceModifier.fillMaxWidth(),
+      )
+
+      when {
+        !alarms.initialized -> {
+          WidgetLoadingIndicator(
+            modifier = GlanceModifier.defaultWeight().padding(vertical = 20.dp)
+          )
+        }
+        alarms.data.isEmpty() -> {
+          WidgetActionButtonContent(
+            infoText = "No scheduled alarms",
+            buttonText = "Schedule an alarm",
+            modifier = GlanceModifier.fillMaxSize().padding(vertical = 20.dp),
+          )
+        }
+        else -> {
+          LazyColumn(modifier = GlanceModifier.defaultWeight().padding(vertical = 10.dp)) {
+            items(alarms.data, itemId = AlarmListModel::id) { WidgetAlarmListItem(it) }
           }
         }
       }
