@@ -49,15 +49,21 @@ private fun Context.getGlanceIdByWidgetId(widgetId: Int): GlanceId =
 internal object WidgetAction {
   const val UPDATE_ALL_WIDGETS = "ACTION_UPDATE_ALL_WIDGETS"
   const val UPDATE_WIDGET = "ACTION_UPDATE_WIDGET"
+  const val TURN_ALARM_OFF = "TURN_ALARM_OFF"
 }
 
 internal object WidgetExtra {
   const val WIDGET_ID = "WIDGET_ID"
+  const val ALARM_ID = "ALARM_ID"
 }
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateWidgetIntent(
   widgetId: Int
 ): Intent = actionIntent<T>(WidgetAction.UPDATE_WIDGET).putExtra(WidgetExtra.WIDGET_ID, widgetId)
+
+internal inline fun <reified T : GlanceAppWidgetReceiver> Context.turnAlarmOffIntent(
+  alarmId: Long
+): Intent = actionIntent<T>(WidgetAction.TURN_ALARM_OFF).putExtra(WidgetExtra.ALARM_ID, alarmId)
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateAllWidgetsIntent(): Intent =
   actionIntent<T>(WidgetAction.UPDATE_ALL_WIDGETS)

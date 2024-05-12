@@ -32,6 +32,7 @@ import com.trm.alarmist.widget.common.ui.WidgetHeader
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetOuterColumn
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.common.util.widgetBackgroundCornerRadius
 import org.koin.core.component.KoinComponent
@@ -74,19 +75,28 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
       when {
         !alarms.initialized -> {
           WidgetLoadingIndicator(
-            modifier = GlanceModifier.defaultWeight().padding(vertical = 20.dp)
+            modifier = GlanceModifier.fillMaxWidth().defaultWeight().padding(vertical = 20.dp)
           )
         }
         alarms.data.isEmpty() -> {
           WidgetActionButtonContent(
             infoText = "No scheduled alarms",
             buttonText = "Schedule an alarm",
-            modifier = GlanceModifier.fillMaxSize().padding(vertical = 20.dp),
+            modifier = GlanceModifier.fillMaxWidth().defaultWeight().padding(vertical = 20.dp),
           )
         }
         else -> {
-          LazyColumn(modifier = GlanceModifier.defaultWeight().padding(vertical = 10.dp)) {
-            items(alarms.data, itemId = AlarmListModel::id) { WidgetAlarmListItem(it) }
+          LazyColumn(
+            modifier = GlanceModifier.fillMaxWidth().defaultWeight().padding(vertical = 10.dp)
+          ) {
+            items(alarms.data, itemId = AlarmListModel::id) {
+              WidgetAlarmListItem(
+                alarm = it,
+                modifier = GlanceModifier.fillMaxWidth(),
+                onTurnAlarmOff =
+                  actionSendBroadcast(context.turnAlarmOffIntent<TodayAlarmsWidgetReceiver>(it.id)),
+              )
+            }
           }
         }
       }
