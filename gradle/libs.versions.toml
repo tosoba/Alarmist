@@ -15,6 +15,7 @@ decompose = "3.0.0"
 epicCalendar = "1.0.5"
 essenty = "2.0.0"
 glance = "1.0.0"
+glancePreview = "1.0.0-alpha06"
 junit = "4.13.2"
 koin = "3.5.0"
 kotlin = "1.9.23"
@@ -52,6 +53,7 @@ essenty-statekeeper = { module = "com.arkivanov.essenty:state-keeper", version.r
 essenty-statekeeper-android = { module = "com.arkivanov.essenty:state-keeper-android", version.ref = "essenty" }
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+glance-preview = { group = "androidx.glance", name = "glance-preview", version.ref = "glancePreview" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }

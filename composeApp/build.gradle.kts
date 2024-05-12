@@ -33,6 +33,7 @@ kotlin {
 
       implementation(libs.glance.appwidget)
       implementation(libs.glance.material3)
+      implementation(libs.glance.preview)
 
       implementation(libs.koin.android)
 
