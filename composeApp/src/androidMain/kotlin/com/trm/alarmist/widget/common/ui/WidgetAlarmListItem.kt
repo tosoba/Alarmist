@@ -2,6 +2,8 @@ package com.trm.alarmist.widget.common.ui
 
 import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -9,11 +11,14 @@ import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.action
 import androidx.glance.appwidget.Switch
+import androidx.glance.background
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.preview.Surfaces
@@ -105,6 +110,12 @@ internal fun WidgetAlarmListItem(
         }
       }
     }
+
+    Spacer(modifier = GlanceModifier.height(4.dp))
+
+    Box(modifier = GlanceModifier.fillMaxWidth().height(1.dp).background(Color.LightGray)) {}
+
+    Spacer(modifier = GlanceModifier.height(4.dp))
   }
 }
 
