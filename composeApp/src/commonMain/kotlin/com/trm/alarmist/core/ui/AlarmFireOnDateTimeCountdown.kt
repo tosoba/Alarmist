@@ -38,7 +38,7 @@ fun AlarmFireOnDateTimeCountdown(item: AlarmListModel, modifier: Modifier = Modi
 }
 
 @Composable
-private fun Countdown(targetEpochMillis: Long, content: @Composable (remainingTime: Long) -> Unit) {
+fun Countdown(targetEpochMillis: Long, content: @Composable (remainingTime: Long) -> Unit) {
   var remainingTime by
     remember(targetEpochMillis) {
       mutableStateOf(targetEpochMillis - Clock.System.now().toEpochMilliseconds())
