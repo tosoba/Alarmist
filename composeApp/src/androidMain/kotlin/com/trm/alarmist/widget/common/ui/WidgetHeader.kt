@@ -15,6 +15,7 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextDefaults
 import com.trm.alarmist.R
@@ -39,7 +40,11 @@ internal fun WidgetHeader(onRefreshClick: Action, modifier: GlanceModifier = Gla
       Text(
         text = "Today",
         maxLines = 1,
-        style = TextDefaults.defaultTextStyle.copy(fontSize = largeFontSize.sp),
+        style =
+          TextDefaults.defaultTextStyle.copy(
+            fontSize = largeFontSize.sp,
+            fontWeight = FontWeight.Medium,
+          ),
       )
       Text(
         text = LocalDate.now().toString(),

@@ -2,7 +2,6 @@ package com.trm.alarmist.widget.common.ui
 
 import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -15,10 +14,10 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
-import androidx.glance.layout.height
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.preview.Surfaces
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextDefaults
 import com.trm.alarmist.core.common.util.amPmString
@@ -29,6 +28,8 @@ import com.trm.alarmist.core.common.util.toLocalTimeDefault
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.Countdown
 import com.trm.alarmist.widget.common.util.mediumFontSize
+import java.time.format.TextStyle
+import java.util.Locale
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.datetime.Clock
@@ -48,14 +49,19 @@ internal fun WidgetAlarmListItem(
   is24HourFormat: @Composable () -> Boolean = { DateFormat.is24HourFormat(LocalContext.current) },
 ) {
   Column(modifier) {
-    // TODO: label if exists
+    alarm.name?.let { Text(text = it, maxLines = 1) }
+
     Row(verticalAlignment = Alignment.CenterVertically, modifier = GlanceModifier.fillMaxWidth()) {
       Text(
         text =
           """${alarm.nextFireAtTime.toFormattedString(is24HourFormat)} ${alarm.nextFireAtTime.amPmString(is24HourFormat)}"""
             .trim(),
         maxLines = 1,
-        style = TextDefaults.defaultTextStyle.copy(fontSize = mediumFontSize.sp),
+        style =
+          TextDefaults.defaultTextStyle.copy(
+            fontSize = mediumFontSize.sp,
+            fontWeight = FontWeight.Medium,
+          ),
       )
 
       Spacer(modifier = GlanceModifier.defaultWeight())
@@ -64,15 +70,29 @@ internal fun WidgetAlarmListItem(
     }
 
     alarm.fireOnDateTime?.let {
-      // TODO: schedule description
-
-      Spacer(modifier = GlanceModifier.height(8.dp))
-
       Row(
         modifier = GlanceModifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
       ) {
+        val now = LocalDateTime.now()
+
+        Text(
+          text =
+            when {
+              alarm.scheduledOnClosestDate == now.date -> {
+                "Scheduled on ${alarm.scheduledOnClosestDate}"
+              }
+              alarm.scheduledOnDaysOfWeek.contains(now.dayOfWeek) -> {
+                "Scheduled on ${now.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())}"
+              }
+              else -> {
+                "One time"
+              }
+            }
+        )
+
         Spacer(modifier = GlanceModifier.defaultWeight())
+
         Countdown(
           targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         ) { remainingMillis ->
