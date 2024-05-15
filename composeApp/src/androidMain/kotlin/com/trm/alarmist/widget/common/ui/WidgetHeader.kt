@@ -26,19 +26,24 @@ import com.trm.alarmist.widget.common.util.smallFontSize
 import kotlinx.datetime.LocalDate
 
 @Composable
-internal fun WidgetHeader(onRefreshClick: Action, modifier: GlanceModifier = GlanceModifier) {
+internal fun WidgetHeader(
+  text: String,
+  onRefreshClick: Action,
+  modifier: GlanceModifier = GlanceModifier,
+  subHeader: @Composable () -> Unit = {}
+) {
   Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
     Image(
       provider = ImageProvider(R.mipmap.ic_launcher_round),
-      contentDescription = "Today alarms",
-      modifier = GlanceModifier.size(32.dp),
+      contentDescription = text,
+      modifier = GlanceModifier.size(24.dp),
     )
 
     Spacer(modifier = GlanceModifier.width(10.dp))
 
     Column(modifier = GlanceModifier.defaultWeight()) {
       Text(
-        text = "Today",
+        text = text,
         maxLines = 1,
         style =
           TextDefaults.defaultTextStyle.copy(
@@ -46,11 +51,7 @@ internal fun WidgetHeader(onRefreshClick: Action, modifier: GlanceModifier = Gla
             fontWeight = FontWeight.Medium,
           ),
       )
-      Text(
-        text = LocalDate.now().toString(),
-        maxLines = 1,
-        style = TextDefaults.defaultTextStyle.copy(fontSize = smallFontSize.sp),
-      )
+      subHeader()
     }
 
     Spacer(modifier = GlanceModifier.width(10.dp))

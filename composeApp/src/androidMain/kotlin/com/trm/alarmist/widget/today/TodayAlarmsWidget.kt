@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -23,7 +24,10 @@ import androidx.glance.currentState
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
+import androidx.glance.text.Text
+import androidx.glance.text.TextDefaults
 import com.trm.alarmist.core.common.model.Initializable
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledTodayUseCase
 import com.trm.alarmist.widget.common.ui.WidgetActionButtonContent
@@ -32,9 +36,11 @@ import com.trm.alarmist.widget.common.ui.WidgetHeader
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetOuterColumn
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.smallFontSize
 import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.common.util.widgetBackgroundCornerRadius
+import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -65,12 +71,19 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
       val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
 
       WidgetHeader(
+        text = "Today",
         onRefreshClick =
           actionSendBroadcast(
             context.updateWidgetIntent<TodayAlarmsWidgetReceiver>(widgetManager.getAppWidgetId(id))
           ),
         modifier = GlanceModifier.fillMaxWidth(),
-      )
+      ) {
+        Text(
+          text = LocalDate.now().toString(),
+          maxLines = 1,
+          style = TextDefaults.defaultTextStyle.copy(fontSize = smallFontSize.sp),
+        )
+      }
 
       when {
         !alarms.initialized -> {
@@ -93,8 +106,7 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
               WidgetAlarmListItem(
                 alarm = it,
                 modifier = GlanceModifier.fillMaxWidth(),
-                onTurnAlarmOff =
-                  actionSendBroadcast(context.turnAlarmOffIntent<TodayAlarmsWidgetReceiver>(it.id)),
+                onTurnAlarmOff = actionSendBroadcast(context.turnAlarmOffIntent(it.id)),
               )
             }
           }

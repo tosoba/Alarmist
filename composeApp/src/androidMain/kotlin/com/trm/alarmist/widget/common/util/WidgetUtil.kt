@@ -10,6 +10,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
+import com.trm.alarmist.widget.common.TurnOffAlarmActionReceiver
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,9 +62,9 @@ internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateWidgetIn
   widgetId: Int
 ): Intent = actionIntent<T>(WidgetAction.UPDATE_WIDGET).putExtra(WidgetExtra.WIDGET_ID, widgetId)
 
-internal inline fun <reified T : GlanceAppWidgetReceiver> Context.turnAlarmOffIntent(
-  alarmId: Long
-): Intent = actionIntent<T>(WidgetAction.TURN_ALARM_OFF).putExtra(WidgetExtra.ALARM_ID, alarmId)
+internal fun Context.turnAlarmOffIntent(alarmId: Long): Intent =
+  actionIntent<TurnOffAlarmActionReceiver>(WidgetAction.TURN_ALARM_OFF)
+    .putExtra(WidgetExtra.ALARM_ID, alarmId)
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateAllWidgetsIntent(): Intent =
   actionIntent<T>(WidgetAction.UPDATE_ALL_WIDGETS)

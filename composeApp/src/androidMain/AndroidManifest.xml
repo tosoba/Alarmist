@@ -26,6 +26,7 @@
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,6 +51,7 @@
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.REBOOT" />
@@ -73,8 +75,23 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/today_alarms_widget" />
-
         </receiver>
+
+        <receiver
+            android:name=".widget.next.NextAlarmWidgetReceiver"
+            android:exported="false"
+            android:label="@string/next_alarm">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/next_alarm_widget" />
+        </receiver>
+
+        <receiver android:name=".widget.common.TurnOffAlarmActionReceiver" />
 
     </application>
 
