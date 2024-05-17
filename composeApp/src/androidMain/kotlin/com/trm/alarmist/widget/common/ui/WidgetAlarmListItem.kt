@@ -26,25 +26,19 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextDefaults
 import com.trm.alarmist.core.common.util.amPmString
-import com.trm.alarmist.core.common.util.formatCountdown
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.common.util.toLocalTimeDefault
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.ui.Countdown
 import com.trm.alarmist.widget.common.util.mediumFontSize
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
-import kotlinx.datetime.toInstant
 
 @Composable
 internal fun WidgetAlarmListItem(
@@ -75,38 +69,21 @@ internal fun WidgetAlarmListItem(
     }
 
     alarm.fireOnDateTime?.let {
-      Row(
-        modifier = GlanceModifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Text(
-          text =
-            when {
-              alarm.scheduledOnDaysOfWeek.contains(it.date.dayOfWeek) -> {
-                "Scheduled on ${it.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())}"
-              }
-              alarm.scheduledOnClosestDate == it.date -> {
-                "Scheduled on ${alarm.scheduledOnClosestDate}"
-              }
-              else -> {
-                "One time"
-              }
+      Text(
+        text =
+          when {
+            alarm.scheduledOnDaysOfWeek.contains(it.date.dayOfWeek) -> {
+              "Scheduled on ${it.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())}"
             }
-        )
-
-        Spacer(modifier = GlanceModifier.defaultWeight())
-
-        Countdown(
-          targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
-        ) { remainingMillis ->
-          if (remainingMillis >= 0L) {
-            Text(
-              text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown(),
-              maxLines = 1,
-            )
-          }
-        }
-      }
+            alarm.scheduledOnClosestDate == it.date -> {
+              "Scheduled on ${alarm.scheduledOnClosestDate}"
+            }
+            else -> {
+              "One time"
+            }
+          },
+        modifier = GlanceModifier.fillMaxWidth(),
+      )
     }
 
     Spacer(modifier = GlanceModifier.height(4.dp))

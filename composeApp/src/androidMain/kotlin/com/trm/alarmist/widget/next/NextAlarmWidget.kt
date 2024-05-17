@@ -36,11 +36,9 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextDefaults
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.util.amPmString
-import com.trm.alarmist.core.common.util.formatCountdown
 import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextAlarmUseCase
-import com.trm.alarmist.core.ui.Countdown
 import com.trm.alarmist.widget.common.ui.WidgetActionButtonContent
 import com.trm.alarmist.widget.common.ui.WidgetHeader
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
@@ -50,10 +48,6 @@ import com.trm.alarmist.widget.common.util.mediumFontSize
 import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.common.util.widgetBackgroundCornerRadius
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -151,32 +145,15 @@ private fun NextAlarm(
     }
 
     alarm.fireOnDateTime?.let {
-      Row(
+      Text(
+        text =
+          if (alarm.scheduledOnClosestDate != null || alarm.scheduledOnDaysOfWeek.isNotEmpty()) {
+            "Custom scheduled"
+          } else {
+            "One time"
+          },
         modifier = GlanceModifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Text(
-          text =
-            if (alarm.scheduledOnClosestDate != null || alarm.scheduledOnDaysOfWeek.isNotEmpty()) {
-              "Custom scheduled"
-            } else {
-              "One time"
-            }
-        )
-
-        Spacer(modifier = GlanceModifier.defaultWeight())
-
-        Countdown(
-          targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
-        ) { remainingMillis ->
-          if (remainingMillis >= 0L) {
-            Text(
-              text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown(),
-              maxLines = 1,
-            )
-          }
-        }
-      }
+      )
     }
   }
 }
