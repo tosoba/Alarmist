@@ -15,6 +15,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
+import androidx.glance.action.action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
@@ -36,7 +37,6 @@ import androidx.glance.text.TextDefaults
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.formatCountdown
-import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextAlarmUseCase
@@ -52,7 +52,6 @@ import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.common.util.widgetBackgroundCornerRadius
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import org.koin.core.component.KoinComponent
@@ -112,7 +111,10 @@ private fun NextAlarmWidgetContent(id: GlanceId, alarm: Initializable<AlarmListM
           NextAlarm(
             alarm = alarm.data,
             modifier = GlanceModifier.fillMaxWidth(),
-            onTurnAlarmOff = actionSendBroadcast(context.turnAlarmOffIntent(alarm.data.id)),
+            onTurnAlarmOff =
+              alarm.data.fireOnDateTime?.date?.let {
+                actionSendBroadcast(context.turnAlarmOffIntent(alarm.data.id, it))
+              } ?: action {},
           )
         }
       }
@@ -153,14 +155,9 @@ private fun NextAlarm(
         modifier = GlanceModifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
       ) {
-        val now = LocalDateTime.now()
-
         Text(
           text =
-            if (
-              alarm.scheduledOnClosestDate == now.date ||
-                alarm.scheduledOnDaysOfWeek.contains(now.dayOfWeek)
-            ) {
+            if (alarm.scheduledOnClosestDate != null || alarm.scheduledOnDaysOfWeek.isNotEmpty()) {
               "Custom scheduled"
             } else {
               "One time"

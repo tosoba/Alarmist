@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 
 internal fun GlanceAppWidget.updateWidget(
   widgetId: Int,
@@ -56,15 +57,17 @@ internal object WidgetAction {
 internal object WidgetExtra {
   const val WIDGET_ID = "WIDGET_ID"
   const val ALARM_ID = "ALARM_ID"
+  const val ALARM_FIRE_DATE = "ALARM_FIRE_DATE"
 }
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateWidgetIntent(
   widgetId: Int
 ): Intent = actionIntent<T>(WidgetAction.UPDATE_WIDGET).putExtra(WidgetExtra.WIDGET_ID, widgetId)
 
-internal fun Context.turnAlarmOffIntent(alarmId: Long): Intent =
+internal fun Context.turnAlarmOffIntent(alarmId: Long, alarmFireDate: LocalDate): Intent =
   actionIntent<TurnOffAlarmActionReceiver>(WidgetAction.TURN_ALARM_OFF)
     .putExtra(WidgetExtra.ALARM_ID, alarmId)
+    .putExtra(WidgetExtra.ALARM_FIRE_DATE, alarmFireDate.toEpochDays())
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateAllWidgetsIntent(): Intent =
   actionIntent<T>(WidgetAction.UPDATE_ALL_WIDGETS)

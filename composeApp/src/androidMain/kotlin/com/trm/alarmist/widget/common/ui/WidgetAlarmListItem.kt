@@ -79,16 +79,14 @@ internal fun WidgetAlarmListItem(
         modifier = GlanceModifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
       ) {
-        val now = LocalDateTime.now()
-
         Text(
           text =
             when {
-              alarm.scheduledOnClosestDate == now.date -> {
-                "Scheduled on ${alarm.scheduledOnClosestDate}"
+              alarm.scheduledOnDaysOfWeek.contains(it.date.dayOfWeek) -> {
+                "Scheduled on ${it.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())}"
               }
-              alarm.scheduledOnDaysOfWeek.contains(now.dayOfWeek) -> {
-                "Scheduled on ${now.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())}"
+              alarm.scheduledOnClosestDate == it.date -> {
+                "Scheduled on ${alarm.scheduledOnClosestDate}"
               }
               else -> {
                 "One time"

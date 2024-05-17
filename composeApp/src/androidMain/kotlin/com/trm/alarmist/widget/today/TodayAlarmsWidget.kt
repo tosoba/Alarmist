@@ -13,6 +13,7 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
+import androidx.glance.action.action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
@@ -102,11 +103,14 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
           LazyColumn(
             modifier = GlanceModifier.fillMaxWidth().defaultWeight().padding(vertical = 10.dp)
           ) {
-            items(alarms.data, itemId = AlarmListModel::id) {
+            items(alarms.data, itemId = AlarmListModel::id) { alarm ->
               WidgetAlarmListItem(
-                alarm = it,
+                alarm = alarm,
                 modifier = GlanceModifier.fillMaxWidth(),
-                onTurnAlarmOff = actionSendBroadcast(context.turnAlarmOffIntent(it.id)),
+                onTurnAlarmOff =
+                  alarm.fireOnDateTime?.date?.let {
+                    actionSendBroadcast(context.turnAlarmOffIntent(alarm.id, it))
+                  } ?: action {},
               )
             }
           }

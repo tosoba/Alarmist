@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.trm.alarmist.core.common.util.launch
-import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.usecase.ToggleUpcomingAlarmOnOffOnDateUseCase
 import com.trm.alarmist.widget.common.util.WidgetAction
 import com.trm.alarmist.widget.common.util.WidgetExtra
@@ -23,12 +22,12 @@ class TurnOffAlarmActionReceiver : BroadcastReceiver(), KoinComponent {
   override fun onReceive(context: Context, intent: Intent) {
     if (intent.action != WidgetAction.TURN_ALARM_OFF) return
 
+    val extras =
+      requireNotNull(intent.extras) { "Extras were not provided to TURN_ALARM_OFF action." }
     launch {
       toggleUpcomingAlarmOnOffOnDateUseCase(
-        id =
-          requireNotNull(intent.extras) { "Extras were not provided to TURN_ALARM_OFF action." }
-            .getLong(WidgetExtra.ALARM_ID),
-        date = LocalDate.now(), //TODO: figure out date for scheduled alarms
+        id = extras.getLong(WidgetExtra.ALARM_ID),
+        date = LocalDate.fromEpochDays(intent.getIntExtra(WidgetExtra.ALARM_FIRE_DATE, 0)),
       )
 
       context.sendBroadcast(context.updateAllWidgetsIntent<AlarmGroupWidgetReceiver>())
