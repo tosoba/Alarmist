@@ -1,9 +1,9 @@
 package com.trm.alarmist.feature.alarms.upcoming
 
 import alarmist.composeapp.generated.resources.Res
-import alarmist.composeapp.generated.resources.collapse_calendar
+import alarmist.composeapp.generated.resources.collapse
 import alarmist.composeapp.generated.resources.create_alarm_using_button
-import alarmist.composeapp.generated.resources.expand_calendar
+import alarmist.composeapp.generated.resources.expand
 import alarmist.composeapp.generated.resources.no_upcoming_alarms
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
@@ -278,7 +278,7 @@ private fun WeeklyMonthlyCalendar(
             modifier = Modifier.fillMaxWidth(),
             onClick = { calendarMode = CalendarMode.MONTHLY },
           ) {
-            Text(stringResource(Res.string.expand_calendar))
+            Text(stringResource(Res.string.expand))
           }
         }
         CalendarMode.MONTHLY -> {
@@ -329,7 +329,7 @@ private fun WeeklyMonthlyCalendar(
             modifier = Modifier.fillMaxWidth(),
             onClick = { calendarMode = CalendarMode.WEEKLY },
           ) {
-            Text(stringResource(Res.string.collapse_calendar))
+            Text(stringResource(Res.string.collapse))
           }
         }
       }

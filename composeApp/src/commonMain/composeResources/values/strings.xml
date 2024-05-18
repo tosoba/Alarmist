@@ -20,8 +20,8 @@
     <string name="all">All</string>
     <string name="upcoming">Upcoming</string>
     <string name="groups">Groups</string>
-    <string name="expand_calendar">Expand calendar</string>
-    <string name="collapse_calendar">Collapse calendar</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
     <string name="clock">Clock</string>
     <string name="stopwatch">Stopwatch</string>
     <string name="timer">Timer</string>
