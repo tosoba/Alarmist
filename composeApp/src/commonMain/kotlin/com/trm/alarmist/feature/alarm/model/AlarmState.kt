@@ -6,6 +6,7 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -52,6 +53,14 @@ data class AlarmState(
 
   constructor(
     alarm: AlarmListModel
+  ) : this(
+    fireAtTime = alarm.fireAtTime,
+    groupId = alarm.groupId ?: AlarmGroupModel.UNGROUPED_ID,
+    name = alarm.name,
+  )
+
+  constructor(
+    alarm: UpcomingAlarmListModel
   ) : this(
     fireAtTime = alarm.fireAtTime,
     groupId = alarm.groupId ?: AlarmGroupModel.UNGROUPED_ID,

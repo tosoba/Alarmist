@@ -285,7 +285,7 @@ private fun GroupedAlarmCard(
       modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      AlarmFireAtTime(alarm)
+      AlarmFireAtTime(fireAtTime = alarm.nextFireAtTime, isOn = alarm.isOn)
       Spacer(modifier = Modifier.weight(1f))
       Checkbox(checked = isSelected, onCheckedChange = { onToggleAlarmSelection() })
     }
@@ -296,9 +296,14 @@ private fun GroupedAlarmCard(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      AlarmScheduleDescription(alarm)
+      AlarmScheduleDescription(
+        isOn = alarm.isOn,
+        scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek,
+        scheduledOnDate = alarm.scheduledOnClosestDate,
+        scheduledOnMultipleDates = alarm.scheduledOnMultipleDates,
+      )
       Spacer(modifier = Modifier.weight(1f))
-      AlarmFireOnDateTimeCountdown(alarm)
+      AlarmFireOnDateTimeCountdown(fireOnDateTime = alarm.fireOnDateTime, isOn = alarm.isOn)
     }
 
     Spacer(modifier = Modifier.height(16.dp))

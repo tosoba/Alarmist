@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.theme.onOffCardColors
-import com.trm.alarmist.core.ui.theme.onOffContainer
 
 @Composable
 fun AlarmListItem(
@@ -39,13 +35,14 @@ fun AlarmListItem(
     Spacer(modifier = Modifier.height(16.dp))
 
     AlarmLabel(
-      item = item,
+      alarmName = item.name,
+      isOn = item.isOn,
       group = group,
       modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
     )
 
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-      AlarmFireAtTime(item)
+      AlarmFireAtTime(item.nextFireAtTime, item.isOn)
       Spacer(modifier = Modifier.weight(1f))
       Switch(checked = item.isOn, onCheckedChange = { _ -> onToggleOnOff(item) })
     }
@@ -56,42 +53,16 @@ fun AlarmListItem(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      AlarmScheduleDescription(item)
+      AlarmScheduleDescription(
+        isOn = item.isOn,
+        scheduledOnDaysOfWeek = item.scheduledOnDaysOfWeek,
+        scheduledOnDate = item.scheduledOnClosestDate,
+        scheduledOnMultipleDates = item.scheduledOnMultipleDates,
+      )
       Spacer(modifier = Modifier.weight(1f))
-      AlarmFireOnDateTimeCountdown(item)
+      AlarmFireOnDateTimeCountdown(fireOnDateTime = item.fireOnDateTime, isOn = item.isOn)
     }
 
     Spacer(modifier = Modifier.height(16.dp))
-  }
-}
-
-@Composable
-private fun AlarmLabel(
-  item: AlarmListModel,
-  group: AlarmGroupModel?,
-  modifier: Modifier = Modifier,
-) {
-  if (item.name != null || group != null) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-      if (group != null) {
-        AlarmGroupIcon(color = group.color, size = 32.dp)
-        Spacer(Modifier.width(12.dp))
-      }
-
-      Text(
-        text =
-          if (item.name != null && group != null) {
-            buildString {
-              append(group.name)
-              append(" · ")
-              append(item.name)
-            }
-          } else {
-            group?.name ?: item.name.orEmpty()
-          },
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onOffContainer(item.isOn),
-      )
-    }
   }
 }

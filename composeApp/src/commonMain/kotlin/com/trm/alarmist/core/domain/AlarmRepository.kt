@@ -4,6 +4,7 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.core.domain.model.AlarmScheduleModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -58,12 +59,12 @@ interface AlarmRepository {
 
   fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>>
 
-  fun getOnAlarmsScheduledToFireOnDateFlow(date: LocalDate): Flow<List<AlarmListModel>>
+  fun getAlarmsScheduledToFireOnDateFlow(date: LocalDate): Flow<List<UpcomingAlarmListModel>>
 
-  fun getOnAlarmsScheduledToFireOnDateAfterTimeFlow(
+  fun getAlarmsScheduledToFireOnDateAfterTimeFlow(
     date: LocalDate,
     time: LocalTime,
-  ): Flow<List<AlarmListModel>>
+  ): Flow<List<UpcomingAlarmListModel>>
 
   suspend fun getOnAlarmsScheduledToFireOnDateAfterTime(
     date: LocalDate,
@@ -72,9 +73,9 @@ interface AlarmRepository {
 
   fun getOnAlarmSchedulesForDatesFlow(dates: ClosedRange<LocalDate>): Flow<List<AlarmScheduleModel>>
 
-  fun getOnOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<AlarmListModel>>
+  fun getOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<UpcomingAlarmListModel>>
 
-  fun getOnOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<List<AlarmListModel>>
+  fun getOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<List<UpcomingAlarmListModel>>
 
   suspend fun getOnOneTimeAlarmsAfterTime(time: LocalTime): List<AlarmListModel>
 

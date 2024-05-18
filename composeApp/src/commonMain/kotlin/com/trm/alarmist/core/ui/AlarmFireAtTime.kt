@@ -10,11 +10,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.toFormattedString
-import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.theme.onOffContainer
+import kotlinx.datetime.LocalTime
 
 @Composable
-fun AlarmFireAtTime(item: AlarmListModel, modifier: Modifier = Modifier) {
+fun AlarmFireAtTime(fireAtTime: LocalTime, isOn: Boolean, modifier: Modifier = Modifier) {
   Text(
     text =
       buildAnnotatedString {
@@ -23,27 +23,26 @@ fun AlarmFireAtTime(item: AlarmListModel, modifier: Modifier = Modifier) {
             fontSize = MaterialTheme.typography.displayMedium.fontSize,
             fontStyle = MaterialTheme.typography.displayMedium.fontStyle,
             fontWeight =
-              if (item.isOn) FontWeight.Medium
-              else MaterialTheme.typography.displayMedium.fontWeight,
+              if (isOn) FontWeight.Medium else MaterialTheme.typography.displayMedium.fontWeight,
           )
         ) {
-          append(item.nextFireAtTime.toFormattedString())
+          append(fireAtTime.toFormattedString())
         }
 
-        item.nextFireAtTime.amPmString().takeIf(String::isNotEmpty)?.let {
+        fireAtTime.amPmString().takeIf(String::isNotEmpty)?.let {
           withStyle(
             SpanStyle(
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
               fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
               fontWeight =
-                if (item.isOn) FontWeight.Medium else MaterialTheme.typography.bodyLarge.fontWeight,
+                if (isOn) FontWeight.Medium else MaterialTheme.typography.bodyLarge.fontWeight,
             )
           ) {
             append(it)
           }
         }
       },
-    color = MaterialTheme.colorScheme.onOffContainer(item.isOn),
+    color = MaterialTheme.colorScheme.onOffContainer(isOn),
     modifier = modifier,
   )
 }

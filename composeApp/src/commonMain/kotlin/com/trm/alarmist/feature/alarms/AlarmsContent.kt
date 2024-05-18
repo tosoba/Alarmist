@@ -121,8 +121,10 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
             bottomSpacerHeightDp = bottomSpacerHeightDp,
             alarmCounts = alarmCounts,
             selectedDateAlarms = selectedDateAlarms,
-            onAlarmItemClick = page.component::onAlarmClick,
-            onAlarmToggleOnOff = page.component.feature::onToggleAlarmOnOff,
+            onAlarmItemClick = {}, // TODO: edit screen should accept UpcomingAlarmListModel
+            onOffButtonClick = page.component.feature::onTurnAlarmOff,
+            onOffOnDateButtonClick = page.component.feature::onTurnAlarmOn,
+            onOnButtonClick = page.component.feature::onTurnAlarmOn,
             onSelectedDateChange = page.component.feature::onSelectedDateChange,
             onMonthlyDateRangeChange = page.component.feature::onMonthlyDateRangeChange,
           )

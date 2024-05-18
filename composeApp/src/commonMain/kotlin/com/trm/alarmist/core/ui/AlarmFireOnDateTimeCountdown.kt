@@ -11,18 +11,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.trm.alarmist.core.common.util.formatCountdown
-import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.theme.onOffContainer
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 @Composable
-fun AlarmFireOnDateTimeCountdown(item: AlarmListModel, modifier: Modifier = Modifier) {
-  item.fireOnDateTime?.let {
+fun AlarmFireOnDateTimeCountdown(
+  fireOnDateTime: LocalDateTime?,
+  isOn: Boolean,
+  modifier: Modifier = Modifier,
+) {
+  fireOnDateTime?.let {
     Countdown(
       targetEpochMillis = it.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     ) { remainingMillis ->
@@ -30,7 +34,7 @@ fun AlarmFireOnDateTimeCountdown(item: AlarmListModel, modifier: Modifier = Modi
         Text(
           text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown(),
           style = MaterialTheme.typography.bodyLarge,
-          color = MaterialTheme.colorScheme.onOffContainer(item.isOn),
+          color = MaterialTheme.colorScheme.onOffContainer(isOn),
         )
       }
     }

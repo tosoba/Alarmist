@@ -3,6 +3,8 @@ package com.trm.alarmist.core.common.util
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.core.domain.model.AlarmScheduleModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import com.trm.alarmist.core.domain.usecase.calculateAlarmNextFireOnDateTime
 import com.trm.alarmist.db.Alarm
 import com.trm.alarmist.db.SelectOnAlarmSchedules
@@ -57,19 +59,43 @@ fun Alarm.toListModel(now: LocalDateTime): AlarmListModel {
   )
 }
 
-fun Alarm.toUpcomingListModelScheduledAtDate(date: LocalDate): AlarmListModel =
-  AlarmListModel(
+fun Alarm.toUpcomingListModelScheduledAtDate(
+  date: LocalDate?,
+  now: LocalDateTime,
+): UpcomingAlarmListModel =
+  UpcomingAlarmListModel(
     id = id,
     groupId = groupId,
     fireAtTime = fireAtTime,
     name = name,
-    isOn = offOnDates.isNullOrEmpty() || !offOnDates.contains(date),
+    status =
+      when {
+        isOn != DB_ON -> {
+          UpcomingAlarmListStatus.OFF
+        }
+        !offOnDates.isNullOrEmpty() && offOnDates.contains(date) -> {
+          UpcomingAlarmListStatus.OFF_ON_DATE
+        }
+        else -> {
+          UpcomingAlarmListStatus.ON
+        }
+      },
     fireOnDateTime =
-      if (offOnDates?.contains(date) == true) null else LocalDateTime(date, fireAtTime),
+      if (date != null) {
+        LocalDateTime(date, fireAtTime)
+      } else {
+        calculateAlarmNextFireOnDateTime(
+          fireAtTime = fireAtTime,
+          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
+          scheduledOnDates = scheduledOnDates.orEmpty(),
+          offOnDates = offOnDates.orEmpty(),
+          isOn = isOn == DB_ON,
+          afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
+        )
+      },
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
-    scheduledOnClosestDate = scheduledOnDates?.minOrNull(),
+    scheduledOnDate = if (date != null && scheduledOnDates?.contains(date) == true) date else null,
     scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
-    snoozedFireAtTime = null, // currently disregarding snooze info for upcoming alarms
   )
 
 fun snoozedFireAtTime(lastSnoozedAt: LocalDateTime?, snoozeDurationMinutes: Long): LocalTime? =

@@ -116,45 +116,40 @@ updateOnAlarmsLastModificationDateTime:
 UPDATE alarm SET lastModificationDateTime = :modificationDateTime
 WHERE id IN (SELECT id FROM alarm WHERE isOn = 1);
 
-selectOnAlarmsScheduledToFireOnDate:
+selectAlarmsScheduledToFireOnDate:
 SELECT * FROM alarm
-WHERE isOn = 1
-AND
-    (
-        scheduledOnDates LIKE ('%' || :date || '%')
-        OR
-        scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
-    );
+WHERE (
+    scheduledOnDates LIKE ('%' || :date || '%')
+    OR
+    scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
+);
 
-selectOnAlarmsScheduledToFireOnDateAfterTime:
+selectAlarmsScheduledToFireOnDateAfterTime:
 SELECT * FROM alarm
-WHERE isOn = 1
-AND fireAtTime > :fireAtTime
-AND
-    (
-        scheduledOnDates LIKE ('%' || :date || '%')
-        OR
-        scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
-    );
+WHERE fireAtTime > :fireAtTime
+AND (
+    scheduledOnDates LIKE ('%' || :date || '%')
+    OR
+    scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
+);
 
 selectOnAlarmSchedules:
 SELECT id, fireAtTime, scheduledOnDaysOfWeek, scheduledOnDates, offOnDates
 FROM alarm
 WHERE isOn = 1
-AND
-    (
-        scheduledOnDaysOfWeek IS NOT NULL
-        OR
-        scheduledOnDates REGEXP :dates
-    );
+AND (
+    scheduledOnDaysOfWeek IS NOT NULL
+    OR
+    scheduledOnDates REGEXP :dates
+);
 
-selectOnOneTimeAlarmsBeforeTime:
+selectOneTimeAlarmsBeforeTime:
 SELECT * FROM alarm
-WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime < :fireAtTime;
+WHERE scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime < :fireAtTime;
 
-selectOnOneTimeAlarmsAfterTime:
+selectOneTimeAlarmsAfterTime:
 SELECT * FROM alarm
-WHERE isOn = 1 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime > :fireAtTime;
+WHERE scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NULL AND fireAtTime > :fireAtTime;
 
 selectCountOneTimeAlarmsBeforeTime:
 SELECT COUNT(*) FROM alarm

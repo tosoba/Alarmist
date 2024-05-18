@@ -12,26 +12,32 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.theme.onOffContainer
 import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
 import epicarchitect.calendar.compose.basis.firstDayOfWeek
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = Modifier) {
-  val textColor = MaterialTheme.colorScheme.onOffContainer(item.isOn)
+fun AlarmScheduleDescription(
+  isOn: Boolean,
+  scheduledOnDaysOfWeek: List<DayOfWeek>,
+  scheduledOnDate: LocalDate?,
+  scheduledOnMultipleDates: Boolean,
+  modifier: Modifier = Modifier,
+) {
+  val textColor = MaterialTheme.colorScheme.onOffContainer(isOn)
 
-  if (item.scheduledOnDaysOfWeek.isNotEmpty() || item.scheduledOnClosestDate != null) {
+  if (scheduledOnDaysOfWeek.isNotEmpty() || scheduledOnDate != null) {
     Column(modifier = modifier) {
-      if (item.scheduledOnDaysOfWeek.isNotEmpty()) {
+      if (scheduledOnDaysOfWeek.isNotEmpty()) {
         Text(
           buildAnnotatedString {
             daysOfWeekSortedBy(firstDayOfWeek()).forEachIndexed { index, dayOfWeek ->
-              if (dayOfWeek in item.scheduledOnDaysOfWeek) {
+              if (dayOfWeek in scheduledOnDaysOfWeek) {
                 withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
                   append(dayOfWeek.name.take(2))
                 }
@@ -50,13 +56,13 @@ fun AlarmScheduleDescription(item: AlarmListModel, modifier: Modifier = Modifier
         )
       }
 
-      if (item.scheduledOnClosestDate != null) {
+      if (scheduledOnDate != null) {
         Text(
           buildAnnotatedString {
             withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
-              append(item.scheduledOnClosestDate.toString())
+              append(scheduledOnDate.toString())
             }
-            if (item.scheduledOnMultipleDates) {
+            if (scheduledOnMultipleDates) {
               append(" and others")
             }
           },

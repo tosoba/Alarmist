@@ -47,12 +47,12 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.previousDayOfWeek
-import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.ui.AlarmListItem
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
 import com.trm.alarmist.core.ui.DaysOfWeekRow
+import com.trm.alarmist.core.ui.UpcomingAlarmListItem
 import com.trm.alarmist.core.ui.WeekArrowsRow
 import epicarchitect.calendar.compose.basis.EpicCalendarConstants
 import epicarchitect.calendar.compose.basis.EpicMonth
@@ -89,9 +89,11 @@ fun UpcomingAlarmsContent(
   modifier: Modifier = Modifier,
   bottomSpacerHeightDp: Dp = 0.dp,
   alarmCounts: Map<LocalDate, Int> = emptyMap(),
-  selectedDateAlarms: List<AlarmListModel> = emptyList(),
-  onAlarmItemClick: (AlarmListModel) -> Unit = {},
-  onAlarmToggleOnOff: (AlarmListModel) -> Unit = {},
+  selectedDateAlarms: List<UpcomingAlarmListModel> = emptyList(),
+  onAlarmItemClick: (UpcomingAlarmListModel) -> Unit = {},
+  onOffButtonClick: (UpcomingAlarmListModel) -> Unit = {},
+  onOffOnDateButtonClick: (UpcomingAlarmListModel) -> Unit = {},
+  onOnButtonClick: (UpcomingAlarmListModel) -> Unit = {},
   onSelectedDateChange: (LocalDate?) -> Unit = {},
   onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit = {},
 ) {
@@ -123,11 +125,13 @@ fun UpcomingAlarmsContent(
             imageVector = Icons.Default.EditCalendar,
             contentDescription = stringResource(Res.string.no_upcoming_alarms),
           )
+
           Text(
             text = stringResource(Res.string.no_upcoming_alarms),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
           )
+
           Text(
             text = stringResource(Res.string.create_alarm_using_button),
             style = MaterialTheme.typography.bodyLarge,
@@ -138,11 +142,14 @@ fun UpcomingAlarmsContent(
     }
 
     items(selectedDateAlarms) {
-      AlarmListItem(
+      UpcomingAlarmListItem(
         item = it,
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItemPlacement(),
+        group = null, // TODO: groups in feature like alarms list
         onItemClick = onAlarmItemClick,
-        onToggleOnOff = onAlarmToggleOnOff,
+        onOffButtonClick = onOffButtonClick,
+        onOffOnDateButtonClick = onOffOnDateButtonClick,
+        onOnButtonClick = onOnButtonClick,
       )
     }
 

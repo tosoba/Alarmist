@@ -3,9 +3,10 @@ package com.trm.alarmist.feature.alarms.upcoming
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.now
-import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
+import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleUpcomingAlarmOnOffOnDateUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,6 +31,7 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
     GetScheduledAlarmCountsForDateRangeUseCase by
     inject()
 
+  private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
   private val toggleUpcomingAlarmOnOffOnDateUseCase: ToggleUpcomingAlarmOnOffOnDateUseCase by
     inject()
 
@@ -40,7 +42,7 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
 
   private val selectedDateFlow = MutableSharedFlow<LocalDate?>()
 
-  val selectedDateAlarmsFlow: StateFlow<List<AlarmListModel>> =
+  val selectedDateAlarmsFlow: StateFlow<List<UpcomingAlarmListModel>> =
     selectedDateFlow
       .onEach { calendarState = calendarState.copy(selectedDate = it) }
       .onStart { emit(calendarState.selectedDate) }
@@ -48,7 +50,11 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
       .flatMapLatest {
         if (it == null) flowOf(emptyList()) else getAlarmsScheduledOnDateFlowUseCase(it)
       }
-      .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
+      .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        initialValue = emptyList(),
+      )
 
   private val monthlyDateRangeFlow = MutableSharedFlow<ClosedRange<LocalDate>>()
 
@@ -64,7 +70,11 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
       }
       .distinctUntilChanged()
       .flatMapLatest(getScheduledAlarmCountsForDateRangeUseCase::invoke)
-      .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyMap())
+      .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        initialValue = emptyMap(),
+      )
 
   fun onSelectedDateChange(date: LocalDate?) {
     coroutineScope.launch { selectedDateFlow.emit(date) }
@@ -74,9 +84,15 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
     coroutineScope.launch { monthlyDateRangeFlow.emit(range) }
   }
 
-  fun onToggleAlarmOnOff(alarm: AlarmListModel) {
-    calendarState.selectedDate?.let {
-      coroutineScope.launch { toggleUpcomingAlarmOnOffOnDateUseCase(alarm.id, it) }
+  fun onTurnAlarmOff(alarm: UpcomingAlarmListModel) {
+    coroutineScope.launch { toggleAlarmOnOffUseCase(alarm.id) }
+  }
+
+  fun onTurnAlarmOn(alarm: UpcomingAlarmListModel) {
+    coroutineScope.launch {
+      calendarState.selectedDate?.let {
+        coroutineScope.launch { toggleUpcomingAlarmOnOffOnDateUseCase(alarm.id, it) }
+      }
     }
   }
 
