@@ -6,13 +6,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,7 +75,11 @@ fun UpcomingAlarmListItem(
         SingleChoiceSegmentedButtonRow {
           SegmentedButton(
             selected = item.status == UpcomingAlarmListStatus.OFF,
-            onClick = { onOffButtonClick(item) },
+            onClick = {
+              if (item.status != UpcomingAlarmListStatus.OFF) {
+                onOffButtonClick(item)
+              }
+            },
             shape =
               RoundedCornerShape(
                 topStart = 20.dp,
@@ -79,21 +87,27 @@ fun UpcomingAlarmListItem(
                 bottomEnd = 0.dp,
                 bottomStart = 20.dp,
               ),
-            label = { Text("Off") },
-            enabled = item.status != UpcomingAlarmListStatus.OFF,
+            label = { Icon(Icons.Default.Stop, "Off") },
           )
 
           SegmentedButton(
             selected = item.status == UpcomingAlarmListStatus.OFF_ON_DATE,
-            onClick = { onOffOnDateButtonClick(item) },
+            onClick = {
+              if (item.status != UpcomingAlarmListStatus.OFF_ON_DATE) {
+                onOffOnDateButtonClick(item)
+              }
+            },
             shape = RectangleShape,
-            label = { Text("Paused") },
-            enabled = item.status != UpcomingAlarmListStatus.OFF_ON_DATE,
+            label = { Icon(Icons.Default.Pause, "Pause") },
           )
 
           SegmentedButton(
             selected = item.status == UpcomingAlarmListStatus.ON,
-            onClick = { onOnButtonClick(item) },
+            onClick = {
+              if (item.status != UpcomingAlarmListStatus.ON) {
+                onOnButtonClick(item)
+              }
+            },
             shape =
               RoundedCornerShape(
                 topStart = 0.dp,
@@ -101,8 +115,7 @@ fun UpcomingAlarmListItem(
                 bottomEnd = 20.dp,
                 bottomStart = 0.dp,
               ),
-            label = { Text("On") },
-            enabled = item.status != UpcomingAlarmListStatus.ON,
+            label = { Icon(Icons.Default.PlayArrow, "On") },
           )
         }
       }
