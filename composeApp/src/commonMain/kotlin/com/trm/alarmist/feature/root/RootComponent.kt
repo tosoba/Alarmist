@@ -15,6 +15,8 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.domain.model.EditAlarmInputModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
 import com.trm.alarmist.feature.alarms.AlarmsComponent
@@ -49,6 +51,8 @@ interface RootComponent : BackHandlerOwner {
   fun onAddAlarmClick()
 
   fun onEditAlarmClick(alarm: AlarmListModel)
+
+  fun onEditUpcomingAlarmClick(alarm: UpcomingAlarmListModel)
 
   fun onAddGroupClick()
 
@@ -146,6 +150,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
             componentContext = componentContext,
             onAddAlarmClick = ::onAddAlarmClick,
             onEditAlarmClick = ::onEditAlarmClick,
+            onEditUpcomingAlarmClick = ::onEditUpcomingAlarmClick,
             onAddGroupClick = ::onAddGroupClick,
             onEditGroupClick = ::onEditGroupClick,
           )
@@ -225,7 +230,15 @@ class DefaultRootComponent(componentContext: ComponentContext) :
   }
 
   override fun onEditAlarmClick(alarm: AlarmListModel) {
-    bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(alarm)))
+    bottomSheetNavigation.activate(
+      BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(EditAlarmInputModel(alarm)))
+    )
+  }
+
+  override fun onEditUpcomingAlarmClick(alarm: UpcomingAlarmListModel) {
+    bottomSheetNavigation.activate(
+      BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(EditAlarmInputModel(alarm)))
+    )
   }
 
   override fun onAddGroupClick() {

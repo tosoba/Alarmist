@@ -4,9 +4,8 @@ import androidx.compose.runtime.Immutable
 import com.trm.alarmist.core.common.util.nextFullHour
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
-import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
-import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
+import com.trm.alarmist.core.domain.model.EditAlarmInputModel
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -52,15 +51,7 @@ data class AlarmState(
   )
 
   constructor(
-    alarm: AlarmListModel
-  ) : this(
-    fireAtTime = alarm.fireAtTime,
-    groupId = alarm.groupId ?: AlarmGroupModel.UNGROUPED_ID,
-    name = alarm.name,
-  )
-
-  constructor(
-    alarm: UpcomingAlarmListModel
+    alarm: EditAlarmInputModel
   ) : this(
     fireAtTime = alarm.fireAtTime,
     groupId = alarm.groupId ?: AlarmGroupModel.UNGROUPED_ID,

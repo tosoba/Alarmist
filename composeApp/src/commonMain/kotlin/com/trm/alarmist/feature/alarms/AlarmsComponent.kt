@@ -10,6 +10,7 @@ import com.arkivanov.decompose.router.pages.select
 import com.arkivanov.decompose.value.Value
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.feature.alarms.groups.AlarmGroupsComponent
 import com.trm.alarmist.feature.alarms.groups.DefaultAlarmGroupsComponent
 import com.trm.alarmist.feature.alarms.list.AlarmListComponent
@@ -40,6 +41,7 @@ class DefaultAlarmsComponent(
   componentContext: ComponentContext,
   private val onAddAlarmClick: () -> Unit,
   private val onEditAlarmClick: (AlarmListModel) -> Unit,
+  private val onEditUpcomingAlarmClick: (UpcomingAlarmListModel) -> Unit,
   private val onAddGroupClick: () -> Unit,
   private val onEditGroupClick: (AlarmGroupModel) -> Unit,
 ) : AlarmsComponent, ComponentContext by componentContext {
@@ -75,7 +77,7 @@ class DefaultAlarmsComponent(
         AlarmsComponent.Page.UpcomingAlarms(
           DefaultUpcomingAlarmsComponent(
             componentContext = componentContext,
-            onEditAlarmClick = onEditAlarmClick,
+            onEditAlarmClick = onEditUpcomingAlarmClick,
           )
         )
       }
