@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -284,9 +285,12 @@ private fun GroupedAlarmCard(
     Row(
       modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
       verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.SpaceBetween,
     ) {
       AlarmFireAtTime(fireAtTime = alarm.nextFireAtTime, isOn = alarm.isOn)
-      Spacer(modifier = Modifier.weight(1f))
+
+      Spacer(modifier = Modifier.width(8.dp))
+
       Checkbox(checked = isSelected, onCheckedChange = { onToggleAlarmSelection() })
     }
 

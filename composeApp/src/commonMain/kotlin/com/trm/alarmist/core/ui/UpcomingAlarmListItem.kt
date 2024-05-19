@@ -1,10 +1,12 @@
 package com.trm.alarmist.core.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
@@ -55,13 +57,17 @@ fun UpcomingAlarmListItem(
       modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
     )
 
-    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+    Row(
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
       AlarmFireAtTime(
         fireAtTime = item.fireAtTime,
         isOn = item.status == UpcomingAlarmListStatus.ON,
       )
 
-      Spacer(modifier = Modifier.weight(1f))
+      Spacer(modifier = Modifier.width(8.dp))
 
       if (item.scheduledOnDaysOfWeek.isEmpty() && item.scheduledOnDate == null) {
         Switch(
