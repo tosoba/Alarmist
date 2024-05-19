@@ -281,19 +281,18 @@ class AlarmLocalRepository(
       queries.transactionWithResult {
         val alarm = queries.selectAlarmById(id).executeAsOne()
         when {
-          (alarm.scheduledOnDaysOfWeek.isNullOrEmpty() && alarm.scheduledOnDates.isNullOrEmpty()) ||
-            alarm.isOn != DB_ON -> {
+          alarm.scheduledOnDaysOfWeek.isNullOrEmpty() && alarm.scheduledOnDates.isNullOrEmpty() -> {
             queries.updateToggleAlarmOnOffById(LocalDateTime.now(), id)
           }
           alarm.offOnDates?.contains(date) == true -> {
-            queries.updateOffOnDatesById(
+            queries.updateOffOnDatesAndToggleOnById(
               offOnDates = (alarm.offOnDates - date).takeIf(Collection<LocalDate>::isNotEmpty),
               lastModificationDateTime = LocalDateTime.now(),
               id = id,
             )
           }
           else -> {
-            queries.updateOffOnDatesById(
+            queries.updateOffOnDatesAndToggleOnById(
               offOnDates = alarm.offOnDates?.let { it + date } ?: listOf(date),
               lastModificationDateTime = LocalDateTime.now(),
               id = id,
@@ -302,6 +301,29 @@ class AlarmLocalRepository(
         }
         queries.selectAlarmById(id).executeAsOne().toModel()
       }
+    }
+
+  override suspend fun turnAlarmOnOnDate(id: Long, date: LocalDate): AlarmModel =
+    withContext(dispatcher) {
+      val alarm = queries.selectAlarmById(id).executeAsOne()
+      queries.updateOffOnDatesAndToggleOnById(
+        offOnDates =
+          alarm.offOnDates?.let { (it - date).takeIf(Collection<LocalDate>::isNotEmpty) },
+        lastModificationDateTime = LocalDateTime.now(),
+        id = id,
+      )
+      queries.selectAlarmById(id).executeAsOne().toModel()
+    }
+
+  override suspend fun turnAlarmOffOnDate(id: Long, date: LocalDate): AlarmModel =
+    withContext(dispatcher) {
+      val alarm = queries.selectAlarmById(id).executeAsOne()
+      queries.updateOffOnDatesAndToggleOnById(
+        offOnDates = alarm.offOnDates?.let { it + date } ?: listOf(date),
+        lastModificationDateTime = LocalDateTime.now(),
+        id = id,
+      )
+      alarm.toModel() // return pre-modification alarm so it can be cancelled properly in UseCase
     }
 
   override suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel> =

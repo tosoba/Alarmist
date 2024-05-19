@@ -13,7 +13,6 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
-import androidx.glance.action.action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
@@ -38,7 +37,6 @@ import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetOuterColumn
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.smallFontSize
-import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.common.util.widgetBackgroundCornerRadius
 import kotlinx.datetime.LocalDate
@@ -104,14 +102,7 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
             modifier = GlanceModifier.fillMaxWidth().defaultWeight().padding(vertical = 10.dp)
           ) {
             items(alarms.data, itemId = AlarmListModel::id) { alarm ->
-              WidgetAlarmListItem(
-                alarm = alarm,
-                modifier = GlanceModifier.fillMaxWidth(),
-                onTurnAlarmOff =
-                  alarm.fireOnDateTime?.date?.let {
-                    actionSendBroadcast(context.turnAlarmOffIntent(alarm.id, it))
-                  } ?: action {},
-              )
+              WidgetAlarmListItem(alarm = alarm, modifier = GlanceModifier.fillMaxWidth())
             }
           }
         }

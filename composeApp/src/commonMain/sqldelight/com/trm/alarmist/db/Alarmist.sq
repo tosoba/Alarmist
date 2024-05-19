@@ -79,9 +79,9 @@ SET
     END
 WHERE id = ?;
 
-updateOffOnDatesById:
+updateOffOnDatesAndToggleOnById:
 UPDATE alarm
-SET offOnDates = ?, lastModificationDateTime = ?
+SET offOnDates = ?, lastModificationDateTime = ?, isOn = 1
 WHERE id = ?;
 
 updateScheduledOnDatesById:

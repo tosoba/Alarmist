@@ -8,9 +8,6 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
-import androidx.glance.action.Action
-import androidx.glance.action.action
-import androidx.glance.appwidget.Switch
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -43,7 +40,6 @@ import kotlinx.datetime.plus
 @Composable
 internal fun WidgetAlarmListItem(
   alarm: AlarmListModel,
-  onTurnAlarmOff: Action,
   modifier: GlanceModifier = GlanceModifier,
   is24HourFormat: @Composable () -> Boolean = { DateFormat.is24HourFormat(LocalContext.current) },
 ) {
@@ -62,10 +58,6 @@ internal fun WidgetAlarmListItem(
             fontWeight = FontWeight.Medium,
           ),
       )
-
-      Spacer(modifier = GlanceModifier.defaultWeight())
-
-      Switch(checked = true, onCheckedChange = onTurnAlarmOff)
     }
 
     alarm.fireOnDateTime?.let {
@@ -118,7 +110,6 @@ private fun WidgetAlarmListItemPreview() {
           snoozedFireAtTime = null,
         ),
       is24HourFormat = { true },
-      onTurnAlarmOff = action {},
     )
   }
 }

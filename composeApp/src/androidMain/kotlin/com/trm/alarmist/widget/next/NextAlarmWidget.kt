@@ -14,12 +14,9 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
-import androidx.glance.action.Action
-import androidx.glance.action.action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.Switch
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
@@ -45,7 +42,6 @@ import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetOuterColumn
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.mediumFontSize
-import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.common.util.widgetBackgroundCornerRadius
 import org.koin.core.component.KoinComponent
@@ -102,14 +98,7 @@ private fun NextAlarmWidgetContent(id: GlanceId, alarm: Initializable<AlarmListM
           )
         }
         else -> {
-          NextAlarm(
-            alarm = alarm.data,
-            modifier = GlanceModifier.fillMaxWidth(),
-            onTurnAlarmOff =
-              alarm.data.fireOnDateTime?.date?.let {
-                actionSendBroadcast(context.turnAlarmOffIntent(alarm.data.id, it))
-              } ?: action {},
-          )
+          NextAlarm(alarm = alarm.data, modifier = GlanceModifier.fillMaxWidth())
         }
       }
     }
@@ -119,7 +108,6 @@ private fun NextAlarmWidgetContent(id: GlanceId, alarm: Initializable<AlarmListM
 @Composable
 private fun NextAlarm(
   alarm: AlarmListModel,
-  onTurnAlarmOff: Action,
   modifier: GlanceModifier = GlanceModifier,
   is24HourFormat: @Composable () -> Boolean = { DateFormat.is24HourFormat(LocalContext.current) },
 ) {
@@ -138,10 +126,6 @@ private fun NextAlarm(
             fontWeight = FontWeight.Medium,
           ),
       )
-
-      Spacer(modifier = GlanceModifier.defaultWeight())
-
-      Switch(checked = true, onCheckedChange = onTurnAlarmOff)
     }
 
     alarm.fireOnDateTime?.let {

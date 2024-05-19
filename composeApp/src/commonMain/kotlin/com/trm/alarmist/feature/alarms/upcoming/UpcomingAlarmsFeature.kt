@@ -7,7 +7,8 @@ import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
-import com.trm.alarmist.core.domain.usecase.ToggleUpcomingAlarmOnOffOnDateUseCase
+import com.trm.alarmist.core.domain.usecase.TurnAlarmOffOnDateUseCase
+import com.trm.alarmist.core.domain.usecase.TurnAlarmOnOnDateUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,8 +33,8 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
     inject()
 
   private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
-  private val toggleUpcomingAlarmOnOffOnDateUseCase: ToggleUpcomingAlarmOnOffOnDateUseCase by
-    inject()
+  private val turnAlarmOnOnDateUseCase: TurnAlarmOnOnDateUseCase by inject()
+  private val turnAlarmOffOnDateUseCase: TurnAlarmOffOnDateUseCase by inject()
 
   var calendarState: UpcomingAlarmsCalendarState =
     savedStateContainer?.consume(strategy = UpcomingAlarmsCalendarState.serializer())
@@ -88,11 +89,15 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
     coroutineScope.launch { toggleAlarmOnOffUseCase(alarm.id) }
   }
 
-  fun onTurnAlarmOn(alarm: UpcomingAlarmListModel) {
-    coroutineScope.launch {
-      calendarState.selectedDate?.let {
-        coroutineScope.launch { toggleUpcomingAlarmOnOffOnDateUseCase(alarm.id, it) }
-      }
+  fun onTurnAlarmOffOnSelectedDate(alarm: UpcomingAlarmListModel) {
+    calendarState.selectedDate?.let {
+      coroutineScope.launch { turnAlarmOffOnDateUseCase(alarm.id, it) }
+    }
+  }
+
+  fun onTurnAlarmOnOnSelectedDate(alarm: UpcomingAlarmListModel) {
+    calendarState.selectedDate?.let {
+      coroutineScope.launch { turnAlarmOnOnDateUseCase(alarm.id, it) }
     }
   }
 

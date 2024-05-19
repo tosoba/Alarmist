@@ -123,8 +123,8 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
             selectedDateAlarms = selectedDateAlarms,
             onAlarmItemClick = page.component::onAlarmClick,
             onOffButtonClick = page.component.feature::onTurnAlarmOff,
-            onOffOnDateButtonClick = page.component.feature::onTurnAlarmOn,
-            onOnButtonClick = page.component.feature::onTurnAlarmOn,
+            onOffOnDateButtonClick = page.component.feature::onTurnAlarmOffOnSelectedDate,
+            onOnButtonClick = page.component.feature::onTurnAlarmOnOnSelectedDate,
             onSelectedDateChange = page.component.feature::onSelectedDateChange,
             onMonthlyDateRangeChange = page.component.feature::onMonthlyDateRangeChange,
           )
