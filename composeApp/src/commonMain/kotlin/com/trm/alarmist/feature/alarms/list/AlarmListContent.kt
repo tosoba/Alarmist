@@ -9,10 +9,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,20 +21,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.EmptyPlaceholder
+import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
+import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun AlarmListContent(
-  component: AlarmListComponent,
-  modifier: Modifier = Modifier,
-  bottomSpacerHeightDp: Dp = 0.dp,
-) {
+fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifier) {
   val alarms by component.alarms.collectAsState()
   val groups by component.groups.collectAsState()
 
@@ -54,7 +49,7 @@ fun AlarmListContent(
             modifier = Modifier.fillMaxWidth().weight(1f),
           )
 
-          Spacer(Modifier.height(bottomSpacerHeightDp))
+          FloatingActionButtonSpacer()
         }
       } else {
         LazyColumn(
@@ -71,7 +66,7 @@ fun AlarmListContent(
             )
           }
 
-          item { Spacer(Modifier.height(bottomSpacerHeightDp)) }
+          floatingActionButtonSpacerItem()
         }
       }
     }

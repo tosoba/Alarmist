@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -41,6 +39,8 @@ import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.EmptyPlaceholder
 import com.trm.alarmist.core.ui.ExpandableIcon
+import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
+import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
@@ -48,7 +48,6 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AlarmGroupsContent(
   modifier: Modifier = Modifier,
-  bottomSpacerHeightDp: Dp = 0.dp,
   state: AlarmGroupsState = AlarmGroupsState(),
   onExpandGroup: (AlarmGroupModel) -> Unit = {},
   onCollapseGroup: () -> Unit = {},
@@ -72,7 +71,7 @@ fun AlarmGroupsContent(
           )
         }
 
-        Spacer(Modifier.height(bottomSpacerHeightDp))
+        FloatingActionButtonSpacer()
       }
     } else {
       LazyColumn(
@@ -171,7 +170,7 @@ fun AlarmGroupsContent(
           }
         }
 
-        item { Spacer(Modifier.height(bottomSpacerHeightDp)) }
+        floatingActionButtonSpacerItem()
       }
     }
   }

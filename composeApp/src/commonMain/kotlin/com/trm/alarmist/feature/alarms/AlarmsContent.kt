@@ -3,7 +3,6 @@ package com.trm.alarmist.feature.alarms
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.add
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,18 +21,13 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.pages.Pages
 import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
 import com.trm.alarmist.feature.alarms.groups.AlarmGroupsContent
 import com.trm.alarmist.feature.alarms.list.AlarmListContent
 import com.trm.alarmist.feature.alarms.ui.AlarmsNavigationBar
@@ -82,35 +76,14 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
 @Composable
 private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = Modifier) {
   Box(modifier = modifier) {
-    var bottomSpacerHeightPx by mutableStateOf(with(LocalDensity.current) { 72.dp.toPx() })
-
     Pages(
       pages = component.pages,
       onPageSelected = component::onPageSelected,
       scrollAnimation = PagesScrollAnimation.Default,
     ) { _, page ->
-      val bottomSpacerHeightDp = with(LocalDensity.current) { bottomSpacerHeightPx.toDp() + 16.dp }
       when (page) {
-        is AlarmsComponent.Page.AlarmGroups -> {
-          val state by page.component.state.collectAsState()
-          AlarmGroupsContent(
-            modifier = Modifier.fillMaxSize(),
-            bottomSpacerHeightDp = bottomSpacerHeightDp,
-            state = state,
-            onExpandGroup = page.component.feature::onExpandGroup,
-            onCollapseGroup = page.component.feature::onCollapseGroup,
-            onAlarmItemClick = page.component::onEditAlarmClick,
-            onEditGroupClick = page.component::onEditGroupClick,
-            onToggleAlarmOnOff = page.component.feature::onToggleAlarmOnOff,
-            onToggleGroupOnOff = page.component.feature::onToggleGroupOnOff,
-          )
-        }
         is AlarmsComponent.Page.AlarmsList -> {
-          AlarmListContent(
-            component = page.component,
-            modifier = Modifier.fillMaxSize(),
-            bottomSpacerHeightDp = bottomSpacerHeightDp,
-          )
+          AlarmListContent(component = page.component, modifier = Modifier.fillMaxSize())
         }
         is AlarmsComponent.Page.UpcomingAlarms -> {
           val selectedDateAlarms by page.component.feature.selectedDateAlarmsFlow.collectAsState()
@@ -118,7 +91,6 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
           UpcomingAlarmsContent(
             initialState = page.component.feature.calendarState,
             modifier = Modifier.fillMaxSize(),
-            bottomSpacerHeightDp = bottomSpacerHeightDp,
             alarmCounts = alarmCounts,
             selectedDateAlarms = selectedDateAlarms,
             onAlarmItemClick = page.component::onAlarmClick,
@@ -129,22 +101,27 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
             onMonthlyDateRangeChange = page.component.feature::onMonthlyDateRangeChange,
           )
         }
+        is AlarmsComponent.Page.AlarmGroups -> {
+          val state by page.component.state.collectAsState()
+          AlarmGroupsContent(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onExpandGroup = page.component.feature::onExpandGroup,
+            onCollapseGroup = page.component.feature::onCollapseGroup,
+            onAlarmItemClick = page.component::onEditAlarmClick,
+            onEditGroupClick = page.component::onEditGroupClick,
+            onToggleAlarmOnOff = page.component.feature::onToggleAlarmOnOff,
+            onToggleGroupOnOff = page.component.feature::onToggleGroupOnOff,
+          )
+        }
       }
     }
 
-    Row(
-      modifier =
-        Modifier.fillMaxWidth().align(Alignment.BottomEnd).padding(16.dp).onGloballyPositioned {
-          bottomSpacerHeightPx = it.size.height.toFloat()
-        },
-      verticalAlignment = Alignment.Bottom,
-      horizontalArrangement = Arrangement.SpaceBetween,
+    FloatingActionButton(
+      modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+      onClick = component::onAddClick,
     ) {
-      AlarmPermissionStatusCard(modifier = Modifier.weight(1f).padding(end = 16.dp))
-
-      FloatingActionButton(onClick = component::onAddClick) {
-        Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(Res.string.add))
-      }
+      Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(Res.string.add))
     }
   }
 }
