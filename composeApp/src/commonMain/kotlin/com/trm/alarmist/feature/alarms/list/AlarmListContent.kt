@@ -26,6 +26,8 @@ import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.EmptyPlaceholder
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
+import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
+import com.trm.alarmist.feature.alarm.isAlarmPermissionGranted
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
@@ -35,7 +37,12 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
   val alarms by component.alarms.collectAsState()
   val groups by component.groups.collectAsState()
 
-  AnimatedVisibility(alarms.initialized, enter = fadeIn(), exit = fadeOut(), modifier = modifier) {
+  AnimatedVisibility(
+    visible = alarms.initialized,
+    enter = fadeIn(),
+    exit = fadeOut(),
+    modifier = modifier,
+  ) {
     Crossfade(targetState = alarms.data.isEmpty()) { alarmsEmpty ->
       if (alarmsEmpty) {
         Column(
@@ -52,10 +59,18 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
           FloatingActionButtonSpacer()
         }
       } else {
+        val alarmPermissionGranted = isAlarmPermissionGranted()
+
         LazyColumn(
           modifier = Modifier.fillMaxSize(),
           contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         ) {
+          if (!alarmPermissionGranted) {
+            item {
+              AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
+            }
+          }
+
           items(alarms.data) {
             AlarmListItem(
               item = it,
