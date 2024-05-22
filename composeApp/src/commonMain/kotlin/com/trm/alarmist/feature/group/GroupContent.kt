@@ -6,7 +6,7 @@ import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.delete_group
 import alarmist.composeapp.generated.resources.group_name_blank_validation_error
 import alarmist.composeapp.generated.resources.invalid_input
-import alarmist.composeapp.generated.resources.name
+import alarmist.composeapp.generated.resources.group_name
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -173,7 +173,7 @@ fun GroupContent(
             modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
             value = state.name,
             onValueChange = onNameChange,
-            label = { Text(stringResource(Res.string.name)) },
+            label = { Text(stringResource(Res.string.group_name)) },
             singleLine = true,
             isError = state.blankNameError,
             supportingText = {

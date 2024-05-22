@@ -11,7 +11,7 @@ import alarmist.composeapp.generated.resources.fire_at_label
 import alarmist.composeapp.generated.resources.group_label
 import alarmist.composeapp.generated.resources.hours_before_alarm_label
 import alarmist.composeapp.generated.resources.minutes_label
-import alarmist.composeapp.generated.resources.name
+import alarmist.composeapp.generated.resources.alarm_name
 import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.reminder_label
 import alarmist.composeapp.generated.resources.repeat_label
@@ -193,7 +193,7 @@ fun AlarmContent(
         OutlinedTextField(
           value = state.name.orEmpty(),
           onValueChange = onNameChange,
-          label = { Text(stringResource(Res.string.name)) },
+          label = { Text(stringResource(Res.string.alarm_name)) },
           singleLine = true,
           modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
         )

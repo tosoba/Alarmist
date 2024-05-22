@@ -9,7 +9,8 @@
     <string name="scheduled">Scheduled</string>
     <string name="paused">Paused</string>
     <string name="permission_required">Permission required</string>
-    <string name="name">Name</string>
+    <string name="alarm_name">Alarm name</string>
+    <string name="group_name">Group name</string>
     <string name="delete">Delete</string>
     <string name="delete_alarm">Delete alarm</string>
     <string name="delete_group">Delete group</string>
