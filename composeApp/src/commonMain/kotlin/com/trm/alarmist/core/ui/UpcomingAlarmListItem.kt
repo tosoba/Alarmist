@@ -73,8 +73,8 @@ fun UpcomingAlarmListItem(
         Switch(
           checked = item.status == UpcomingAlarmListStatus.ON,
           onCheckedChange = { _ ->
-            if (item.status == UpcomingAlarmListStatus.ON) onOnButtonClick(item)
-            else onOffButtonClick(item)
+            if (item.status == UpcomingAlarmListStatus.ON) onOffButtonClick(item)
+            else onOnButtonClick(item)
           },
         )
       } else {

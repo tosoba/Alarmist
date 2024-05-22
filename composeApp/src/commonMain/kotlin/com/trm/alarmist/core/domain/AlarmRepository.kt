@@ -87,8 +87,6 @@ interface AlarmRepository {
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel
 
-  suspend fun toggleAlarmOnOffOnDate(id: Long, date: LocalDate): AlarmModel
-
   suspend fun turnAlarmOnOnDate(id: Long, date: LocalDate): AlarmModel
 
   suspend fun turnAlarmOffOnDate(id: Long, date: LocalDate): AlarmModel
