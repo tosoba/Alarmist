@@ -69,7 +69,7 @@ fun UpcomingAlarmListItem(
 
       Spacer(modifier = Modifier.width(8.dp))
 
-      if (item.scheduledOnDaysOfWeek.isEmpty() && item.scheduledOnDate == null) {
+      if (item.scheduledOnDaysOfWeek.isEmpty() && item.date == null) {
         Switch(
           checked = item.status == UpcomingAlarmListStatus.ON,
           onCheckedChange = { _ ->
@@ -136,7 +136,8 @@ fun UpcomingAlarmListItem(
       AlarmScheduleDescription(
         isOn = item.status == UpcomingAlarmListStatus.ON,
         scheduledOnDaysOfWeek = item.scheduledOnDaysOfWeek,
-        scheduledOnDate = item.scheduledOnDate,
+        scheduledOnDate = item.date,
+        offOnScheduledDate = item.status == UpcomingAlarmListStatus.OFF_ON_DATE,
         scheduledOnMultipleDates = item.scheduledOnMultipleDates,
       )
 

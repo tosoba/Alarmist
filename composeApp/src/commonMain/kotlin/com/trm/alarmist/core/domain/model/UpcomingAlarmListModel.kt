@@ -11,10 +11,10 @@ data class UpcomingAlarmListModel(
   val id: Long,
   val groupId: Long?,
   val fireAtTime: LocalTime,
+  val date: LocalDate?,
   val name: String?,
   val status: UpcomingAlarmListStatus,
   val fireOnDateTime: LocalDateTime?,
   val scheduledOnDaysOfWeek: List<DayOfWeek>,
-  val scheduledOnDate: LocalDate?,
   val scheduledOnMultipleDates: Boolean,
 )

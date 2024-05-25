@@ -69,4 +69,6 @@
     <string name="pause">Pause</string>
     <string name="upcoming_alarm">Upcoming alarm</string>
     <string name="missed_alarm">Missed alarm</string>
+    <string name="paused_on">Paused on %1$s</string>
+    <string name="and_others">and others</string>
 </resources>

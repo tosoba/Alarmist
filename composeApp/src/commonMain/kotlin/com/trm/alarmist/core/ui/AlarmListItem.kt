@@ -65,6 +65,7 @@ fun AlarmListItem(
         isOn = item.isOn,
         scheduledOnDaysOfWeek = item.scheduledOnDaysOfWeek,
         scheduledOnDate = item.scheduledOnClosestDate,
+        offOnScheduledDate = false,
         scheduledOnMultipleDates = item.scheduledOnMultipleDates,
       )
 

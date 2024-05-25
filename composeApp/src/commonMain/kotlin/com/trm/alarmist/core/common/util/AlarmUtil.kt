@@ -54,7 +54,7 @@ fun Alarm.toListModel(now: LocalDateTime): AlarmListModel {
       scheduledOnDates
         ?.run { if (offOnDates.isNullOrEmpty()) this else filter { it !in offOnDates } }
         ?.minOrNull(),
-    scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
+    scheduledOnMultipleDates = isScheduledOnMultipleDates(),
     snoozedFireAtTime = snoozedFireAtTime,
   )
 }
@@ -67,6 +67,7 @@ fun Alarm.toUpcomingListModelScheduledAtDate(
     id = id,
     groupId = groupId,
     fireAtTime = fireAtTime,
+    date = date,
     name = name,
     status =
       when {
@@ -94,9 +95,13 @@ fun Alarm.toUpcomingListModelScheduledAtDate(
         )
       },
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
-    scheduledOnDate = if (date != null && scheduledOnDates?.contains(date) == true) date else null,
-    scheduledOnMultipleDates = (scheduledOnDates?.size ?: 0) - (offOnDates?.size ?: 0) > 1,
+    scheduledOnMultipleDates = isScheduledOnMultipleDates(),
   )
+
+private fun Alarm.isScheduledOnMultipleDates(): Boolean =
+  (scheduledOnDates?.count(
+    if (offOnDates == null) { _ -> true } else { scheduledOnDate -> scheduledOnDate !in offOnDates }
+  ) ?: 0) > 1
 
 fun snoozedFireAtTime(lastSnoozedAt: LocalDateTime?, snoozeDurationMinutes: Long): LocalTime? =
   if (lastSnoozedAt != null && snoozeDurationMinutes > 0L) {

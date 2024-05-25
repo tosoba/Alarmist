@@ -304,6 +304,7 @@ private fun GroupedAlarmCard(
         isOn = alarm.isOn,
         scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek,
         scheduledOnDate = alarm.scheduledOnClosestDate,
+        offOnScheduledDate = false,
         scheduledOnMultipleDates = alarm.scheduledOnMultipleDates,
       )
       Spacer(modifier = Modifier.weight(1f))
