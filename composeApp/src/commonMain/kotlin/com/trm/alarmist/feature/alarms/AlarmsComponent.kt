@@ -2,6 +2,7 @@ package com.trm.alarmist.feature.alarms
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.router.children.ChildNavState
 import com.arkivanov.decompose.router.pages.ChildPages
 import com.arkivanov.decompose.router.pages.Pages
 import com.arkivanov.decompose.router.pages.PagesNavigation
@@ -56,6 +57,10 @@ class DefaultAlarmsComponent(
           items = listOf(PageConfig.AlarmsList, PageConfig.UpcomingAlarms, PageConfig.AlarmGroups),
           selectedIndex = 0,
         )
+      },
+      pageStatus = { index, pages ->
+        if (index == pages.selectedIndex) ChildNavState.Status.RESUMED
+        else ChildNavState.Status.CREATED
       },
       childFactory = ::createPage,
     )
