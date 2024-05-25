@@ -11,7 +11,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -127,11 +129,15 @@ fun UpcomingAlarmsContent(
             contentDescription = stringResource(Res.string.no_upcoming_alarms),
           )
 
+          Spacer(Modifier.height(16.dp))
+
           Text(
             text = stringResource(Res.string.no_upcoming_alarms),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
           )
+
+          Spacer(Modifier.height(8.dp))
 
           Text(
             text = stringResource(Res.string.create_alarm_using_button),
