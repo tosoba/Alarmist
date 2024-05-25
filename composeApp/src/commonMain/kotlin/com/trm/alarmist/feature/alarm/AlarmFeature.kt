@@ -2,8 +2,6 @@ package com.trm.alarmist.feature.alarm
 
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
-import com.trm.alarmist.core.common.model.AnyStateFlow
-import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
@@ -15,6 +13,8 @@ import com.trm.alarmist.feature.alarm.model.AlarmState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,9 +41,9 @@ class AlarmFeature(
         is AlarmComponent.Mode.Edit -> AlarmState(mode.alarm)
       }
     )
-  val state: AnyStateFlow<AlarmState> = _state.wrapToAny()
+  val state: StateFlow<AlarmState> = _state.asStateFlow()
 
-  val groups: AnyStateFlow<List<AlarmGroupModel>> =
+  val groups: StateFlow<List<AlarmGroupModel>> =
     repository
       .getAllAlarmGroupsFlow()
       .stateIn(
@@ -51,7 +51,6 @@ class AlarmFeature(
         started = SharingStarted.WhileSubscribed(5_000L),
         initialValue = emptyList(),
       )
-      .wrapToAny()
 
   init {
     val savedState = savedStateContainer?.consume(strategy = AlarmState.serializer())

@@ -3,12 +3,12 @@ package com.trm.alarmist.feature.alarms.groups
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
-import com.trm.alarmist.core.common.model.AnyStateFlow
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import kotlinx.coroutines.flow.StateFlow
 
 interface AlarmGroupsComponent {
-  val state: AnyStateFlow<AlarmGroupsState>
+  val state: StateFlow<AlarmGroupsState>
 
   val feature: AlarmGroupsFeature
 
@@ -29,7 +29,7 @@ class DefaultAlarmGroupsComponent(
       )
     }
 
-  override val state: AnyStateFlow<AlarmGroupsState> = feature.state
+  override val state: StateFlow<AlarmGroupsState> = feature.state
 
   init {
     stateKeeper.register(

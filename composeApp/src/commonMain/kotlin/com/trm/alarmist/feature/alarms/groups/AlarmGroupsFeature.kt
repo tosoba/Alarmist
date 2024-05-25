@@ -2,8 +2,6 @@ package com.trm.alarmist.feature.alarms.groups
 
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
-import com.trm.alarmist.core.common.model.AnyStateFlow
-import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -12,6 +10,8 @@ import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateGroupOnOffUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
@@ -33,7 +33,7 @@ class AlarmGroupsFeature(savedStateContainer: SerializableContainer?) :
     MutableStateFlow(
       savedStateContainer?.consume(AlarmGroupsState.serializer()) ?: AlarmGroupsState()
     )
-  val state: AnyStateFlow<AlarmGroupsState> = _state.wrapToAny()
+  val state: StateFlow<AlarmGroupsState> = _state.asStateFlow()
 
   init {
     repository

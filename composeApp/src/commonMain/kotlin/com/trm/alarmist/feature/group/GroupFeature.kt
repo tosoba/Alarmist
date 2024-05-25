@@ -4,13 +4,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
-import com.trm.alarmist.core.common.model.AnyStateFlow
-import com.trm.alarmist.core.common.model.wrapToAny
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsFlowUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -33,7 +33,7 @@ class GroupFeature(
           is GroupComponent.Mode.Edit -> GroupState(mode.group)
         }
     )
-  val state: AnyStateFlow<GroupState> = _state.wrapToAny()
+  val state: StateFlow<GroupState> = _state.asStateFlow()
 
   init {
     getGroupedAlarmsFlowUseCase()
