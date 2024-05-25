@@ -32,7 +32,11 @@ class AlarmListFeature : CoroutineFeature(), KoinComponent {
     repository
       .getAllAlarmGroupsFlow()
       .map { it.associateBy(AlarmGroupModel::id) }
-      .stateIn(coroutineScope, SharingStarted.WhileSubscribed(5_000L), emptyMap())
+      .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        initialValue = emptyMap(),
+      )
 
   fun onToggleAlarmOnOff(alarm: AlarmListModel) {
     coroutineScope.launch { toggleAlarmOnOffUseCase(alarm.id) }
