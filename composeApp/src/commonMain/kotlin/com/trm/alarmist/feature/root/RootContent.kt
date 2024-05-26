@@ -82,7 +82,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         Text(
           modifier = Modifier.fillMaxWidth().padding(28.dp),
           text = stringResource(Res.string.app_name),
-          style = MaterialTheme.typography.headlineSmall,
+          style = MaterialTheme.typography.headlineMedium,
         )
 
         NavigationDrawerItem(
@@ -96,7 +96,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           label = {
             Text(
               text = stringResource(Res.string.alarms),
-              style = MaterialTheme.typography.labelLarge,
+              style = MaterialTheme.typography.bodyLarge,
               fontWeight =
                 if (childStack.isItemSelected<RootComponent.Child.Alarms>()) FontWeight.Medium
                 else FontWeight.Normal,
@@ -119,7 +119,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           label = {
             Text(
               text = stringResource(Res.string.clock),
-              style = MaterialTheme.typography.labelLarge,
+              style = MaterialTheme.typography.bodyLarge,
               fontWeight =
                 if (childStack.isItemSelected<RootComponent.Child.Clock>()) FontWeight.Medium
                 else FontWeight.Normal,
@@ -142,7 +142,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           label = {
             Text(
               text = stringResource(Res.string.timer),
-              style = MaterialTheme.typography.labelLarge,
+              style = MaterialTheme.typography.bodyLarge,
               fontWeight =
                 if (childStack.isItemSelected<RootComponent.Child.Timer>()) FontWeight.Medium
                 else FontWeight.Normal,
@@ -165,7 +165,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           label = {
             Text(
               text = stringResource(Res.string.stopwatch),
-              style = MaterialTheme.typography.labelLarge,
+              style = MaterialTheme.typography.bodyLarge,
               fontWeight =
                 if (childStack.isItemSelected<RootComponent.Child.Stopwatch>()) FontWeight.Medium
                 else FontWeight.Normal,
