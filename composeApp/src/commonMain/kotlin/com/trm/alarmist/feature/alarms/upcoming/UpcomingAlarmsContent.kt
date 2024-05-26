@@ -71,13 +71,14 @@ import epicarchitect.calendar.compose.basis.localized
 import epicarchitect.calendar.compose.basis.next
 import epicarchitect.calendar.compose.basis.previous
 import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
-import epicarchitect.calendar.compose.datepicker.EpicDatePicker
 import epicarchitect.calendar.compose.datepicker.config.LocalEpicDatePickerConfig
 import epicarchitect.calendar.compose.datepicker.config.rememberEpicDatePickerConfig
 import epicarchitect.calendar.compose.datepicker.state.EpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.rememberEpicDatePickerState
+import epicarchitect.calendar.compose.pager.EpicCalendarPager
 import epicarchitect.calendar.compose.pager.config.rememberEpicCalendarPagerConfig
+import epicarchitect.calendar.compose.ranges.drawEpicRanges
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -269,6 +270,12 @@ private fun WeeklyMonthlyCalendar(
         )
       }
 
+      fun onDayOfMonthClick(date: LocalDate) {
+        if (date !in monthlyCalendarState.selectedDates) {
+          monthlyCalendarState.toggleDateSelection(date)
+        }
+      }
+
       when (mode) {
         CalendarMode.WEEKLY -> {
           CompositionLocalProvider(
@@ -302,7 +309,7 @@ private fun WeeklyMonthlyCalendar(
                   modifier = Modifier.fillMaxWidth(),
                   selectedDates = monthlyCalendarState.selectedDates,
                   alarmCounts = alarmCounts,
-                  onDayOfMonthClick = monthlyCalendarState::toggleDateSelection,
+                  onDayOfMonthClick = ::onDayOfMonthClick,
                 )
               }
             }
@@ -321,43 +328,71 @@ private fun WeeklyMonthlyCalendar(
             modifier = Modifier.fillMaxWidth(),
           )
 
-          EpicDatePicker(
-            state = monthlyCalendarState,
-            dayOfWeekContent = DayOfWeekEllipsizedContent,
-            dayOfMonthContent = { date ->
-              val basisState = LocalBasisEpicCalendarState.current!!
-              val pickerState = LocalEpicDatePickerState.current!!
-
-              val selectedDays = pickerState.selectedDates
-              val isSelected = remember(selectedDays, date) { date in selectedDays }
-
-              Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                @Composable
-                fun DayText() {
-                  Text(
-                    modifier =
-                      Modifier.alpha(
-                        when {
-                          date < LocalDate.now() -> 0.5f
-                          date in basisState.currentMonth -> 1.0f
-                          else -> 0.5f
-                        }
-                      ),
-                    text = date.dayOfMonth.toString(),
-                    textAlign = TextAlign.Center,
-                    color =
-                      if (isSelected) pickerState.config.selectionContentColor
-                      else pickerState.config.pagerConfig.basisConfig.contentColor,
-                  )
+          CompositionLocalProvider(
+            LocalEpicDatePickerConfig provides monthlyCalendarState.config,
+            LocalEpicDatePickerState provides monthlyCalendarState,
+          ) {
+            val selectionMode = monthlyCalendarState.selectionMode
+            val selectedDays = monthlyCalendarState.selectedDates
+            val ranges =
+              remember(selectionMode, selectedDays) {
+                when (selectionMode) {
+                  is EpicDatePickerState.SelectionMode.Range -> {
+                    if (selectedDays.isEmpty()) emptyList()
+                    else listOf(selectedDays.min()..selectedDays.max())
+                  }
+                  is EpicDatePickerState.SelectionMode.Single -> {
+                    selectedDays.map { it..it }
+                  }
                 }
-
-                alarmCounts[date]
-                  ?.takeIf { it > 0 }
-                  ?.let { BadgedBox(badge = { Badge { Text(it.toString()) } }) { DayText() } }
-                  ?: DayText()
               }
-            },
-          )
+
+            EpicCalendarPager(
+              modifier = modifier,
+              pageModifier = {
+                Modifier.drawEpicRanges(
+                  ranges = ranges,
+                  color = monthlyCalendarState.config.selectionContainerColor,
+                )
+              },
+              state = monthlyCalendarState.pagerState,
+              onDayOfMonthClick = ::onDayOfMonthClick,
+              dayOfWeekContent = DayOfWeekEllipsizedContent,
+              dayOfMonthContent = { date ->
+                val basisState = LocalBasisEpicCalendarState.current!!
+                val pickerState = LocalEpicDatePickerState.current!!
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                  @Composable
+                  fun DayText() {
+                    Text(
+                      modifier =
+                        Modifier.alpha(
+                          when {
+                            date < LocalDate.now() -> 0.5f
+                            date in basisState.currentMonth -> 1.0f
+                            else -> 0.5f
+                          }
+                        ),
+                      text = date.dayOfMonth.toString(),
+                      textAlign = TextAlign.Center,
+                      color =
+                        if (date in pickerState.selectedDates) {
+                          pickerState.config.selectionContentColor
+                        } else {
+                          pickerState.config.pagerConfig.basisConfig.contentColor
+                        },
+                    )
+                  }
+
+                  alarmCounts[date]
+                    ?.takeIf { it > 0 }
+                    ?.let { BadgedBox(badge = { Badge { Text(it.toString()) } }) { DayText() } }
+                    ?: DayText()
+                }
+              },
+            )
+          }
 
           TextButton(
             modifier = Modifier.fillMaxWidth(),
