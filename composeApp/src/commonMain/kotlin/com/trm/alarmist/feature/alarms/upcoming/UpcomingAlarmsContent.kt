@@ -41,7 +41,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
@@ -64,6 +67,7 @@ import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalen
 import epicarchitect.calendar.compose.basis.contains
 import epicarchitect.calendar.compose.basis.firstDayOfWeek
 import epicarchitect.calendar.compose.basis.lastDayOfWeek
+import epicarchitect.calendar.compose.basis.localized
 import epicarchitect.calendar.compose.basis.next
 import epicarchitect.calendar.compose.basis.previous
 import epicarchitect.calendar.compose.basis.state.LocalBasisEpicCalendarState
@@ -254,6 +258,17 @@ private fun WeeklyMonthlyCalendar(
 
   Crossfade(targetState = calendarMode, modifier = modifier) { mode ->
     Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
+      monthlyCalendarState.selectedDates.firstOrNull()?.let {
+        Text(
+          text =
+            "${it.dayOfWeek.localized()}, ${it.month.name.take(3).lowercase().capitalize(Locale.current)} ${it.dayOfMonth}",
+          style = MaterialTheme.typography.headlineMedium,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          modifier = Modifier.padding(start = 16.dp),
+        )
+      }
+
       when (mode) {
         CalendarMode.WEEKLY -> {
           CompositionLocalProvider(
