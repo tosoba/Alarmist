@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +34,7 @@ fun DatePickerYearMonthControls(pagerState: EpicCalendarPagerState, modifier: Mo
       modifier = Modifier.padding(start = 16.dp),
       text =
         "${pagerState.currentMonth.month.name.lowercase().capitalize(Locale.current)} ${pagerState.currentMonth.year}",
+      style = MaterialTheme.typography.titleMedium,
     ) // TODO: copy over year selection expandable menu from material DatePicker
 
     Spacer(Modifier.weight(1f))

@@ -281,6 +281,7 @@ private fun WeeklyMonthlyCalendar(
               pageIndex ->
               Column(modifier = Modifier.fillMaxWidth()) {
                 DaysOfWeekLabelsRow(modifier = Modifier.fillMaxWidth())
+
                 DaysOfWeekRow(
                   rowDates = weeklyCalendarRowDates(today, pageIndex),
                   modifier = Modifier.fillMaxWidth(),

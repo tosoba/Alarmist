@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -35,34 +36,36 @@ fun WeekArrowsRow(
   onNextWeekClick: () -> Unit = {},
 ) {
   Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-    val monthYearText =
-      remember(rowDates) {
-        buildString {
-          append(rowDates.first().month.name.lowercase().capitalize(Locale.current))
-          if (rowDates.first().month != rowDates.last().month) {
-            if (rowDates.first().year != rowDates.last().year) {
+    Text(
+      modifier = Modifier.padding(start = 16.dp),
+      text =
+        remember(rowDates) {
+          buildString {
+            append(rowDates.first().month.name.lowercase().capitalize(Locale.current))
+
+            if (rowDates.first().month != rowDates.last().month) {
+              if (rowDates.first().year != rowDates.last().year) {
+                append(" ")
+                append(rowDates.first().year)
+              }
+
+              append(" - ")
+              append(rowDates.last().month.name.lowercase().capitalize(Locale.current))
+              append(" ")
+
+              if (rowDates.first().year != rowDates.last().year) {
+                append(rowDates.last().year)
+              } else {
+                append(rowDates.first().year)
+              }
+            } else {
               append(" ")
               append(rowDates.first().year)
             }
-            append(" - ")
-            append(rowDates.last().month.name.lowercase().capitalize(Locale.current))
-            append(" ")
-            if (rowDates.first().year != rowDates.last().year) {
-              append(rowDates.last().year)
-            } else {
-              append(rowDates.first().year)
-            }
-          } else {
-            append(" ")
-            append(rowDates.first().year)
           }
-        }
-      }
-
-    Text(
-      modifier = Modifier.padding(start = 16.dp),
-      text = monthYearText,
+        },
       overflow = TextOverflow.Ellipsis,
+      style = MaterialTheme.typography.titleMedium,
       maxLines = 1,
     )
 
