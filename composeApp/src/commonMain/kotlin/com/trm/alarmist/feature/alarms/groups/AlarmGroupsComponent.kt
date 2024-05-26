@@ -12,15 +12,15 @@ interface AlarmGroupsComponent {
 
   val feature: AlarmGroupsFeature
 
-  fun onEditAlarmClick(alarm: AlarmListModel)
+  val onEditAlarmClick: (AlarmListModel) -> Unit
 
-  fun onEditGroupClick(group: AlarmGroupModel)
+  val onEditGroupClick: (AlarmGroupModel) -> Unit
 }
 
 class DefaultAlarmGroupsComponent(
   componentContext: ComponentContext,
-  private val onEditAlarmClick: (AlarmListModel) -> Unit,
-  private val onEditGroupClick: (AlarmGroupModel) -> Unit,
+  override val onEditAlarmClick: (AlarmListModel) -> Unit,
+  override val onEditGroupClick: (AlarmGroupModel) -> Unit,
 ) : AlarmGroupsComponent, ComponentContext by componentContext {
   override val feature: AlarmGroupsFeature =
     instanceKeeper.getOrCreate {
@@ -37,14 +37,6 @@ class DefaultAlarmGroupsComponent(
       strategy = SerializableContainer.serializer(),
       supplier = feature::saveState,
     )
-  }
-
-  override fun onEditAlarmClick(alarm: AlarmListModel) {
-    onEditAlarmClick.invoke(alarm)
-  }
-
-  override fun onEditGroupClick(group: AlarmGroupModel) {
-    onEditGroupClick.invoke(group)
   }
 
   companion object {
