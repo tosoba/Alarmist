@@ -140,7 +140,7 @@ fun GroupContent(
                   RectangleShape
                 },
               isSelected = alarm.id in state.selectedAlarmIds,
-              onToggleAlarmSelection = remember { { onToggleAlarmSelection(alarm) } },
+              onToggleAlarmSelection = remember(alarm) { { onToggleAlarmSelection(alarm) } },
             )
 
             HorizontalDivider(

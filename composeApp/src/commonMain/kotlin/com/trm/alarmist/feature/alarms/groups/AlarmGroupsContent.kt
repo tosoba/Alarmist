@@ -141,7 +141,7 @@ fun AlarmGroupsContent(
                   modifier = Modifier.fillMaxWidth(),
                   shape = RectangleShape,
                   onItemClick = onAlarmItemClick,
-                  onToggleOnOff = remember { { onToggleAlarmOnOff(alarm) } },
+                  onToggleOnOff = remember(alarm) { { onToggleAlarmOnOff(alarm) } },
                 )
 
                 HorizontalDivider(
@@ -172,7 +172,7 @@ fun AlarmGroupsContent(
               ) {
                 Box(Modifier.fillMaxWidth()) {
                   TextButton(
-                    onClick = remember { { onEditGroupClick(group) } },
+                    onClick = remember(group) { { onEditGroupClick(group) } },
                     modifier = Modifier.fillMaxWidth().align(Alignment.Center),
                   ) {
                     Text(stringResource(Res.string.edit_group))
