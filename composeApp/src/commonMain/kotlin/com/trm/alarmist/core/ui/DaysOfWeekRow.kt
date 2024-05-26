@@ -19,7 +19,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import com.trm.alarmist.core.common.util.now
 import epicarchitect.calendar.compose.basis.BasisDayOfMonthContent
+import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.DefaultBasisEpicCalendarConfig
+import epicarchitect.calendar.compose.basis.contains
 import epicarchitect.calendar.compose.datepicker.config.LocalEpicDatePickerConfig
 import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import kotlinx.datetime.LocalDate
@@ -36,7 +38,15 @@ fun DaysOfWeekRow(
       @Composable
       fun DayText() {
         Text(
-          modifier = Modifier.alpha(alpha = if (date >= LocalDate.now()) 1.0f else 0.5f),
+          modifier =
+            Modifier.alpha(
+              alpha =
+                when {
+                  date < LocalDate.now() -> 0.5f
+                  date in EpicMonth.now() -> 1.0f
+                  else -> 0.5f
+                }
+            ),
           text = date.dayOfMonth.toString(),
           textAlign = TextAlign.Center,
           color =
