@@ -3,6 +3,8 @@ package com.trm.alarmist.feature.alarms.upcoming
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -27,6 +30,8 @@ import org.koin.core.component.inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
   CoroutineFeature(), KoinComponent {
+  private val repository: AlarmRepository by inject()
+
   private val getAlarmsScheduledOnDateFlowUseCase: GetAlarmsScheduledOnDateFlowUseCase by inject()
   private val getScheduledAlarmCountsForDateRangeUseCase:
     GetScheduledAlarmCountsForDateRangeUseCase by
@@ -35,6 +40,16 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
   private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
   private val turnAlarmOnOnDateUseCase: TurnAlarmOnOnDateUseCase by inject()
   private val turnAlarmOffOnDateUseCase: TurnAlarmOffOnDateUseCase by inject()
+
+  val groups: StateFlow<Map<Long, AlarmGroupModel>> =
+    repository
+      .getAllAlarmGroupsFlow()
+      .map { it.associateBy(AlarmGroupModel::id) }
+      .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000L),
+        initialValue = emptyMap(),
+      )
 
   var calendarState: UpcomingAlarmsCalendarState =
     savedStateContainer?.consume(strategy = UpcomingAlarmsCalendarState.serializer())

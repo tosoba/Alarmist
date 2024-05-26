@@ -104,11 +104,14 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
       is AlarmsComponent.Page.UpcomingAlarms -> {
         val selectedDateAlarms by page.component.feature.selectedDateAlarmsFlow.collectAsState()
         val alarmCounts by page.component.feature.scheduledAlarmCountsFlow.collectAsState()
+        val groups by page.component.feature.groups.collectAsState()
+
         UpcomingAlarmsContent(
           initialState = page.component.feature.calendarState,
           modifier = Modifier.fillMaxSize(),
           alarmCounts = alarmCounts,
           selectedDateAlarms = selectedDateAlarms,
+          groups = groups,
           onAlarmItemClick = page.component::onAlarmClick,
           onOffButtonClick = page.component.feature::onTurnAlarmOff,
           onOffOnDateButtonClick = page.component.feature::onTurnAlarmOffOnSelectedDate,
@@ -119,6 +122,7 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
       }
       is AlarmsComponent.Page.AlarmGroups -> {
         val state by page.component.state.collectAsState()
+
         AlarmGroupsContent(
           modifier = Modifier.fillMaxSize(),
           state = state,

@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.nextDayOfWeek
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.previousDayOfWeek
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
@@ -96,6 +97,7 @@ fun UpcomingAlarmsContent(
   modifier: Modifier = Modifier,
   alarmCounts: Map<LocalDate, Int> = emptyMap(),
   selectedDateAlarms: List<UpcomingAlarmListModel> = emptyList(),
+  groups: Map<Long, AlarmGroupModel> = emptyMap(),
   onAlarmItemClick: (UpcomingAlarmListModel) -> Unit = {},
   onOffButtonClick: (UpcomingAlarmListModel) -> Unit = {},
   onOffOnDateButtonClick: (UpcomingAlarmListModel) -> Unit = {},
@@ -157,11 +159,11 @@ fun UpcomingAlarmsContent(
       }
     }
 
-    items(selectedDateAlarms) {
+    items(selectedDateAlarms) { alarm ->
       UpcomingAlarmListItem(
-        item = it,
+        item = alarm,
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItemPlacement(),
-        group = null, // TODO: groups in feature like alarms list
+        group = alarm.groupId?.let(groups::get),
         onItemClick = onAlarmItemClick,
         onOffButtonClick = onOffButtonClick,
         onOffOnDateButtonClick = onOffOnDateButtonClick,
