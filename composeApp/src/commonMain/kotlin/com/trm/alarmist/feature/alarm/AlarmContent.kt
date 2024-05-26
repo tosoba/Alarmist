@@ -1,6 +1,7 @@
 package com.trm.alarmist.feature.alarm
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.alarm_name
 import alarmist.composeapp.generated.resources.back
 import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.delete
@@ -11,7 +12,6 @@ import alarmist.composeapp.generated.resources.fire_at_label
 import alarmist.composeapp.generated.resources.group_label
 import alarmist.composeapp.generated.resources.hours_before_alarm_label
 import alarmist.composeapp.generated.resources.minutes_label
-import alarmist.composeapp.generated.resources.alarm_name
 import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.reminder_label
 import alarmist.composeapp.generated.resources.repeat_label
@@ -325,7 +325,8 @@ fun AlarmContent(
       }
 
       ExpandableCalendar(
-        calendarModifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
+        calendarModifier =
+          Modifier.fillMaxWidth().padding(start = 24.dp, end = 16.dp, bottom = 16.dp),
         fireAtTime = state.fireAtTime,
         isExpanded = isCustomScheduleExpanded,
         scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
