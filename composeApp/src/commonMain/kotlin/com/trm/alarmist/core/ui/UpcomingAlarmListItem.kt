@@ -46,6 +46,9 @@ fun UpcomingAlarmListItem(
     modifier = modifier,
     colors = CardDefaults.onOffCardColors(item.status == UpcomingAlarmListStatus.ON),
     shape = shape,
+    elevation =
+      if (item.status == UpcomingAlarmListStatus.ON) CardDefaults.elevatedCardElevation()
+      else CardDefaults.cardElevation(),
     onClick = { onItemClick(item) },
   ) {
     Spacer(modifier = Modifier.height(16.dp))

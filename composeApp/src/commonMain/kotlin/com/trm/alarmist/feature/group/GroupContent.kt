@@ -4,9 +4,9 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.back
 import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.delete_group
+import alarmist.composeapp.generated.resources.group_name
 import alarmist.composeapp.generated.resources.group_name_blank_validation_error
 import alarmist.composeapp.generated.resources.invalid_input
-import alarmist.composeapp.generated.resources.group_name
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -269,6 +269,8 @@ private fun GroupedAlarmCard(
     modifier = modifier,
     colors = CardDefaults.onOffCardColors(alarm.isOn),
     shape = shape,
+    elevation =
+      if (alarm.isOn) CardDefaults.elevatedCardElevation() else CardDefaults.cardElevation(),
     onClick = onToggleAlarmSelection,
   ) {
     Spacer(modifier = Modifier.height(16.dp))

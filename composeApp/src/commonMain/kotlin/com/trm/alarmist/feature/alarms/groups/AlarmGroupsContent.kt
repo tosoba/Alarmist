@@ -166,6 +166,9 @@ fun AlarmGroupsContent(
                   },
                 shape =
                   ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp)),
+                elevation =
+                  if (group.isOn) CardDefaults.elevatedCardElevation()
+                  else CardDefaults.cardElevation(),
               ) {
                 Box(Modifier.fillMaxWidth()) {
                   TextButton(

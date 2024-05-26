@@ -31,6 +31,8 @@ fun AlarmListItem(
   Card(
     modifier = modifier,
     colors = CardDefaults.onOffCardColors(item.isOn),
+    elevation =
+      if (item.isOn) CardDefaults.elevatedCardElevation() else CardDefaults.cardElevation(),
     shape = shape,
     onClick = { onItemClick(item) },
   ) {

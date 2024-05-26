@@ -29,7 +29,13 @@ fun AlarmGroupHeaderCard(
   shape: Shape = ShapeDefaults.Medium,
   trailing: @Composable () -> Unit = {},
 ) {
-  Card(modifier = modifier, shape = shape, colors = CardDefaults.onOffCardColors(group.isOn)) {
+  Card(
+    modifier = modifier,
+    shape = shape,
+    elevation =
+      if (group.isOn) CardDefaults.elevatedCardElevation() else CardDefaults.cardElevation(),
+    colors = CardDefaults.onOffCardColors(group.isOn),
+  ) {
     Row(
       modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
       verticalAlignment = Alignment.CenterVertically,
