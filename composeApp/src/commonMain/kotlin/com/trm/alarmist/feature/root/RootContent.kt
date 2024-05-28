@@ -203,21 +203,21 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               state = state,
               groups = groups,
               onBackClick = ::hideBottomSheet,
-              onNameChange = child.component.feature::onNameChange,
               onDeleteClick =
                 if (child.component.mode is AlarmComponent.Mode.Edit) {
                   { component.onDeleteActionClick() }
                 } else {
                   null
                 },
+              onNameChange = child.component.feature::onNameChange,
               onFireAtChange = child.component.feature::onFireAtChange,
+              onToggleIsOnChange = child.component.feature::onToggleIsOnChange,
               onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
               onDateOnOffSwitchCheckedChange =
                 child.component.feature::onDateOnOffSwitchCheckedChange,
               onDeleteOnAllDaysWeekClick = child.component.feature::onDeleteOnAllDaysWeekClick,
               onDeleteOnDateClick = child.component.feature::onDeleteOnDateClick,
               onScheduleOnDateClick = child.component.feature::onScheduleOnDateClick,
-              onGroupClick = child.component.feature::onGroupClick,
               onToggleSnoozeEnabled = child.component.feature::onToggleSnoozeEnabled,
               onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
               onSnoozeLimitChange = child.component.feature::onSnoozeLimitChange,
@@ -227,6 +227,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
               onToggleReminderEnabled = child.component.feature::onToggleReminderEnabled,
               onReminderOffsetChange = child.component.feature::onReminderOffsetChange,
+              onGroupClick = child.component.feature::onGroupClick,
               onConfirmClick = {
                 child.component.feature.onConfirmClick().invokeOnCompletion { hideBottomSheet() }
               },

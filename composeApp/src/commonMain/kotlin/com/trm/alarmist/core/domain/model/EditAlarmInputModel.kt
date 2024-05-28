@@ -9,10 +9,25 @@ data class EditAlarmInputModel(
   val groupId: Long?,
   val fireAtTime: LocalTime,
   val name: String?,
+  val isOn: Boolean,
 ) {
-  constructor(alarm: AlarmListModel) : this(alarm.id, alarm.groupId, alarm.fireAtTime, alarm.name)
+  constructor(
+    alarm: AlarmListModel
+  ) : this(
+    id = alarm.id,
+    groupId = alarm.groupId,
+    fireAtTime = alarm.fireAtTime,
+    name = alarm.name,
+    isOn = alarm.isOn,
+  )
 
   constructor(
     alarm: UpcomingAlarmListModel
-  ) : this(alarm.id, alarm.groupId, alarm.fireAtTime, alarm.name)
+  ) : this(
+    id = alarm.id,
+    groupId = alarm.groupId,
+    fireAtTime = alarm.fireAtTime,
+    name = alarm.name,
+    isOn = alarm.status != UpcomingAlarmListStatus.OFF,
+  )
 }

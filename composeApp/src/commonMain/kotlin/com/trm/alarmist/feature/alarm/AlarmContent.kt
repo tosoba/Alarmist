@@ -2,8 +2,10 @@ package com.trm.alarmist.feature.alarm
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.alarm_name
+import alarmist.composeapp.generated.resources.auto_schedule_label
 import alarmist.composeapp.generated.resources.back
 import alarmist.composeapp.generated.resources.confirm
+import alarmist.composeapp.generated.resources.custom_schedule_label
 import alarmist.composeapp.generated.resources.delete
 import alarmist.composeapp.generated.resources.delete_alarm
 import alarmist.composeapp.generated.resources.delete_all_weekdays
@@ -14,9 +16,8 @@ import alarmist.composeapp.generated.resources.hours_before_alarm_label
 import alarmist.composeapp.generated.resources.minutes_label
 import alarmist.composeapp.generated.resources.paused
 import alarmist.composeapp.generated.resources.reminder_label
-import alarmist.composeapp.generated.resources.repeat_label
+import alarmist.composeapp.generated.resources.repeat_weekly_label
 import alarmist.composeapp.generated.resources.schedule_alarm
-import alarmist.composeapp.generated.resources.schedule_label
 import alarmist.composeapp.generated.resources.scheduled
 import alarmist.composeapp.generated.resources.snooze_description
 import alarmist.composeapp.generated.resources.snooze_label
@@ -58,6 +59,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.AlarmOn
 import androidx.compose.material.icons.filled.AvTimer
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -150,9 +152,10 @@ fun AlarmContent(
   state: AlarmState = AlarmState(),
   groups: List<AlarmGroupModel> = emptyList(),
   onBackClick: () -> Unit = {},
-  onNameChange: (String) -> Unit = {},
   onDeleteClick: (() -> Unit)? = null,
+  onNameChange: (String) -> Unit = {},
   onFireAtChange: (LocalTime) -> Unit = {},
+  onToggleIsOnChange: () -> Unit = {},
   onDayOfWeekClick: (DayOfWeek) -> Unit = {},
   onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
   onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
@@ -271,15 +274,39 @@ fun AlarmContent(
         }
       }
 
-      Row(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+          Modifier.clip(RoundedCornerShape(24.dp))
+            .clickable(onClick = onToggleIsOnChange)
+            .padding(horizontal = 24.dp, vertical = 16.dp),
+      ) {
         Icon(
-          imageVector = Icons.Default.Repeat,
-          contentDescription = stringResource(Res.string.repeat_label),
+          imageVector = Icons.Default.AlarmOn,
+          contentDescription = stringResource(Res.string.auto_schedule_label),
           modifier = Modifier.padding(end = 12.dp),
         )
 
         Text(
-          text = stringResource(Res.string.repeat_label),
+          text = stringResource(Res.string.auto_schedule_label),
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        Switch(checked = state.isOn, onCheckedChange = remember { { onToggleIsOnChange() } })
+      }
+
+      Row(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
+        Icon(
+          imageVector = Icons.Default.Repeat,
+          contentDescription = stringResource(Res.string.repeat_weekly_label),
+          modifier = Modifier.padding(end = 12.dp),
+        )
+
+        Text(
+          text = stringResource(Res.string.repeat_weekly_label),
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
@@ -303,12 +330,12 @@ fun AlarmContent(
       ) {
         Icon(
           imageVector = Icons.Default.EditCalendar,
-          contentDescription = stringResource(Res.string.schedule_label),
+          contentDescription = stringResource(Res.string.custom_schedule_label),
           modifier = Modifier.padding(end = 12.dp),
         )
 
         Text(
-          text = stringResource(Res.string.schedule_label),
+          text = stringResource(Res.string.custom_schedule_label),
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
         )

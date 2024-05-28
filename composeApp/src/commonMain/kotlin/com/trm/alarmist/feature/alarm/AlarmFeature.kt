@@ -76,7 +76,7 @@ class AlarmFeature(
               groupId = groupId,
               name = name,
               fireAtTime = fireAtTime,
-              isOn = true,
+              isOn = isOn,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
@@ -95,7 +95,7 @@ class AlarmFeature(
               groupId = groupId,
               fireAtTime = fireAtTime,
               name = name,
-              isOn = true,
+              isOn = isOn,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
@@ -118,6 +118,10 @@ class AlarmFeature(
 
   fun onFireAtChange(fireAtTime: LocalTime) {
     _state.update { it.copy(fireAtTime = fireAtTime) }
+  }
+
+  fun onToggleIsOnChange() {
+    _state.update { it.copy(isOn = !it.isOn) }
   }
 
   fun onDayOfWeekClick(dayOfWeek: DayOfWeek) {

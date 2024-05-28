@@ -17,6 +17,7 @@ data class AlarmState(
   val fireAtTime: LocalTime = LocalTime(now().nextFullHour(), 0),
   val groupId: Long = AlarmGroupModel.UNGROUPED_ID,
   val name: String? = null,
+  val isOn: Boolean = true,
   val scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
   val scheduledOnDates: Set<LocalDate> = emptySet(),
   val offOnDates: Set<LocalDate> = emptySet(),
@@ -36,6 +37,7 @@ data class AlarmState(
     fireAtTime = alarm.fireAtTime,
     groupId = alarm.groupId ?: AlarmGroupModel.UNGROUPED_ID,
     name = alarm.name,
+    isOn = alarm.isOn,
     scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek.toSet(),
     scheduledOnDates = alarm.scheduledOnDates.toSet(),
     offOnDates = alarm.offOnDates.toSet(),
@@ -56,6 +58,7 @@ data class AlarmState(
     fireAtTime = alarm.fireAtTime,
     groupId = alarm.groupId ?: AlarmGroupModel.UNGROUPED_ID,
     name = alarm.name,
+    isOn = alarm.isOn,
   )
 
   val snoozeDurationOrZero: Long
