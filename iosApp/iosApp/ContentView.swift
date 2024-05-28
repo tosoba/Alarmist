@@ -2,20 +2,14 @@ import UIKit
 import SwiftUI
 import ComposeApp
 
-struct ComposeView: UIViewControllerRepresentable {
+struct RootView: UIViewControllerRepresentable {
+    let component: RootComponent
+    let backDispatcher: BackDispatcher
+
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController()
+        return RootViewControllerKt.rootViewController(component: component, backDispatcher: backDispatcher)
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-}
-
-struct ContentView: View {
-    var body: some View {
-        ComposeView()
-                .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
     }
 }
-
-
-

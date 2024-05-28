@@ -15,6 +15,12 @@ kotlin {
     iosTarget.binaries.framework {
       baseName = "ComposeApp"
       isStatic = true
+
+      export(libs.decompose)
+
+      export(libs.essenty.lifecycle)
+      export(libs.essenty.backHandler)
+      export(libs.essenty.statekeeper)
     }
   }
 
@@ -76,7 +82,16 @@ kotlin {
       implementation(libs.kotlinx.coroutines.test)
     }
 
-    iosMain.dependencies { implementation(libs.sqldelight.native.driver) }
+    iosMain.dependencies {
+      implementation(libs.sqldelight.native.driver)
+      implementation(libs.stately.common)
+
+      api(libs.decompose)
+
+      api(libs.essenty.lifecycle)
+      api(libs.essenty.backHandler)
+      api(libs.essenty.statekeeper)
+    }
   }
 }
 
@@ -110,4 +125,7 @@ android {
   composeOptions { kotlinCompilerExtensionVersion = "1.5.13" }
 }
 
-sqldelight { databases { create("AlarmistDb") { packageName.set("com.trm.alarmist.db") } } }
+sqldelight {
+  databases { create("AlarmistDb") { packageName.set("com.trm.alarmist.db") } }
+  linkSqlite = true
+}

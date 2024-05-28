@@ -27,6 +27,7 @@ mokkery = "1.9.23-1.6.1"
 napier = "2.6.1"
 permissionFlowCompose = "2.0.0"
 sqlDelight = "2.0.1"
+stately = "2.0.6"
 windowSizeClass = "0.3.1"
 
 [libraries]
@@ -51,6 +52,8 @@ epicCalendar = { group = "io.github.epicarchitect", name = "calendar-compose-dat
 essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
 essenty-statekeeper = { module = "com.arkivanov.essenty:state-keeper", version.ref = "essenty" }
 essenty-statekeeper-android = { module = "com.arkivanov.essenty:state-keeper-android", version.ref = "essenty" }
+essenty-instanceKeeper = { group = "com.arkivanov.essenty", name = "instance-keeper", version.ref = "essenty" }
+essenty-backHandler = { group = "com.arkivanov.essenty", name = "back-handler", version.ref = "essenty" }
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 glance-preview = { group = "androidx.glance", name = "glance-preview", version.ref = "glancePreview" }
@@ -69,6 +72,7 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
+stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
