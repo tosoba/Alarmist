@@ -4,6 +4,8 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.add
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.pages.Pages
 import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
@@ -69,7 +72,15 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
       }
     },
   ) {
-    Row(modifier = Modifier.fillMaxSize().padding(it)) {
+    Row(
+      modifier =
+        Modifier.fillMaxSize()
+          .padding(
+            start = it.calculateStartPadding(LocalLayoutDirection.current),
+            bottom = it.calculateBottomPadding(),
+            end = it.calculateEndPadding(LocalLayoutDirection.current),
+          )
+    ) {
       if (
         windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
           windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
