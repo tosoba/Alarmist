@@ -69,21 +69,19 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
       }
     },
   ) {
-    if (
-      windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
-        windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
-    ) {
-      Row(modifier = Modifier.fillMaxSize().padding(it)) {
+    Row(modifier = Modifier.fillMaxSize().padding(it)) {
+      if (
+        windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
+          windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+      ) {
         AlarmsNavigationRail(
           selectedIndex = pagesState.value.selectedIndex,
           onPageSelected = component::onPageSelected,
           modifier = Modifier.fillMaxHeight(),
         )
-
-        AlarmsMainContent(component = component, modifier = Modifier.fillMaxHeight().weight(1f))
       }
-    } else {
-      AlarmsMainContent(component = component, modifier = Modifier.fillMaxSize().padding(it))
+
+      AlarmsMainContent(component = component, modifier = Modifier.fillMaxHeight().weight(1f))
     }
   }
 }
