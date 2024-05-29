@@ -140,7 +140,7 @@ WHERE isOn = 1
 AND (
     scheduledOnDaysOfWeek IS NOT NULL
     OR
-    scheduledOnDates REGEXP :dates
+    INSTR(scheduledOnDates, :dates) > 0
 );
 
 selectOneTimeAlarmsBeforeTime:
