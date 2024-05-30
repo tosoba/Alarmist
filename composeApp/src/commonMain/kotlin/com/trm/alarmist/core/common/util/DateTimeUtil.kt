@@ -19,22 +19,27 @@ import kotlinx.datetime.toLocalDateTime
 
 fun now(): Instant = Clock.System.now()
 
-fun Instant.nextFullHour(): Int =
-  plus(1, DateTimeUnit.HOUR).toLocalDateTime(TimeZone.currentSystemDefault()).hour
+fun Instant.nextFullHour(timeZone: TimeZone = TimeZone.currentSystemDefault()): Int =
+  plus(1, DateTimeUnit.HOUR).toLocalDateTime(timeZone).hour
 
-fun LocalDateTime.Companion.now(): LocalDateTime =
-  Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+fun LocalDateTime.Companion.now(
+  timeZone: TimeZone = TimeZone.currentSystemDefault()
+): LocalDateTime = Clock.System.now().toLocalDateTime(timeZone)
 
-fun LocalDate.Companion.now(): LocalDate = LocalDateTime.now().date
+fun LocalDate.Companion.now(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
+  LocalDateTime.now(timeZone).date
 
-fun LocalTime.Companion.now(): LocalTime = LocalDateTime.now().time
+fun LocalTime.Companion.now(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalTime =
+  LocalDateTime.now(timeZone).time
 
-fun Instant.toLocalDateTimeDefault(): LocalDateTime =
-  toLocalDateTime(TimeZone.currentSystemDefault())
+fun Instant.toLocalDateTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDateTime =
+  this@toLocalDateTime.toLocalDateTime(timeZone)
 
-fun Instant.toLocalTimeDefault(): LocalTime = toLocalDateTimeDefault().time
+fun Instant.toLocalTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalTime =
+  toLocalDateTime(timeZone).time
 
-fun Instant.toLocalDateDefault(): LocalDate = toLocalDateTimeDefault().date
+fun Instant.toLocalDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
+  toLocalDateTime(timeZone).date
 
 fun Duration.formatCountdown(): String {
   fun Int.withZeroPrefix() = if (this < 10) "0$this" else this.toString()

@@ -25,7 +25,7 @@ import androidx.glance.text.TextDefaults
 import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toFormattedString
-import com.trm.alarmist.core.common.util.toLocalTimeDefault
+import com.trm.alarmist.core.common.util.toLocalTime
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.widget.common.util.mediumFontSize
 import java.time.format.TextStyle
@@ -102,7 +102,7 @@ private fun WidgetAlarmListItemPreview() {
           fireOnDateTime =
             LocalDateTime(
               date = LocalDate.now(),
-              time = Clock.System.now().plus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
+              time = Clock.System.now().plus(1, DateTimeUnit.HOUR).toLocalTime(),
             ),
           scheduledOnDaysOfWeek = emptyList(),
           scheduledOnClosestDate = null,

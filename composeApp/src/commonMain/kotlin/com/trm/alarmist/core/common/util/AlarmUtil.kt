@@ -108,7 +108,7 @@ fun snoozedFireAtTime(lastSnoozedAt: LocalDateTime?, snoozeDurationMinutes: Long
     lastSnoozedAt
       .toInstant(TimeZone.currentSystemDefault())
       .plus(snoozeDurationMinutes, DateTimeUnit.MINUTE)
-      .toLocalTimeDefault()
+      .toLocalTime()
   } else {
     null
   }

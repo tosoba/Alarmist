@@ -30,15 +30,10 @@ fun calculateAlarmNextFireOnDateTime(
   if (!isOn) return null
 
   if (scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()) {
-    return when {
-      fireAtTime <=
-        LocalTime(hour = afterDateTime.time.hour, minute = afterDateTime.time.minute) -> {
-        afterDateTime.date.plus(1, DateTimeUnit.DAY)
-      }
-      else -> {
-        afterDateTime.date
-      }
-    }.atTime(fireAtTime)
+    return calculateOneTimeAlarmNextFireOnDateTime(
+      fireAtTime = fireAtTime,
+      afterDateTime = afterDateTime,
+    )
   }
 
   fun DayOfWeek.nextScheduledOnDate(): LocalDate {
@@ -60,4 +55,18 @@ fun calculateAlarmNextFireOnDateTime(
     )
     .minOrNull()
     ?.atTime(fireAtTime)
+}
+
+private fun calculateOneTimeAlarmNextFireOnDateTime(
+  fireAtTime: LocalTime,
+  afterDateTime: LocalDateTime,
+): LocalDateTime {
+  return when {
+    fireAtTime <= LocalTime(hour = afterDateTime.time.hour, minute = afterDateTime.time.minute) -> {
+      afterDateTime.date.plus(1, DateTimeUnit.DAY)
+    }
+    else -> {
+      afterDateTime.date
+    }
+  }.atTime(fireAtTime)
 }

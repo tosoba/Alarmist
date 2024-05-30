@@ -20,7 +20,13 @@ fun alarmModel(
   lastNotificationDate: LocalDate? = null,
   snoozeDurationMinutes: Long = 0L,
   snoozeCount: Long = 0L,
+  snoozeLimit: Long = 0L,
   lastSnoozedAt: LocalDateTime? = null,
+  alarmDurationMinutes: Long = 0L,
+  soundEnabled: Boolean = false,
+  vibrationEnabled: Boolean = false,
+  reminderOffsetHours: Long = 0L,
+  soundId: String? = null,
 ): AlarmModel =
   AlarmModel(
     id = id,
@@ -35,5 +41,11 @@ fun alarmModel(
     lastNotificationDate = lastNotificationDate,
     snoozeDurationMinutes = snoozeDurationMinutes,
     snoozeCount = snoozeCount,
+    snoozeLimit = snoozeLimit,
     lastSnoozedAt = lastSnoozedAt,
+    alarmDurationMinutes = alarmDurationMinutes,
+    soundEnabled = soundEnabled,
+    vibrationEnabled = vibrationEnabled,
+    reminderOffsetHours = reminderOffsetHours,
+    soundId = soundId,
   )

@@ -1,8 +1,8 @@
 package com.trm.alarmist.core.domain
 
-import com.trm.alarmist.core.common.util.toLocalDateDefault
-import com.trm.alarmist.core.common.util.toLocalDateTimeDefault
-import com.trm.alarmist.core.common.util.toLocalTimeDefault
+import com.trm.alarmist.core.common.util.toLocalDate
+import com.trm.alarmist.core.common.util.toLocalDateTime
+import com.trm.alarmist.core.common.util.toLocalTime
 import com.trm.alarmist.core.domain.usecase.calculateAlarmMissedDateTimes
 import com.trm.alarmist.core.util.alarmModel
 import kotlin.test.Test
@@ -25,8 +25,8 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
         actual =
           calculateAlarmMissedDateTimes(
             alarmModel(
-              fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
-              lastModificationDateTime = now.minus(1, DateTimeUnit.HOUR).toLocalDateTimeDefault(),
+              fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTime(),
+              lastModificationDateTime = now.minus(1, DateTimeUnit.HOUR).toLocalDateTime(),
             )
           ),
       )
@@ -35,8 +35,8 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
         actual =
           calculateAlarmMissedDateTimes(
             alarmModel(
-              fireAtTime = now.minus(2, DateTimeUnit.HOUR).toLocalTimeDefault(),
-              lastModificationDateTime = now.minus(1, DateTimeUnit.HOUR).toLocalDateTimeDefault(),
+              fireAtTime = now.minus(2, DateTimeUnit.HOUR).toLocalTime(),
+              lastModificationDateTime = now.minus(1, DateTimeUnit.HOUR).toLocalDateTime(),
             )
           ),
       )
@@ -51,9 +51,9 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
         actual =
           calculateAlarmMissedDateTimes(
             alarmModel(
-              fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
-              lastModificationDateTime = now.minus(2, DateTimeUnit.HOUR).toLocalDateTimeDefault(),
-              lastNotificationDate = now.minus(1, DateTimeUnit.HOUR).toLocalDateDefault(),
+              fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTime(),
+              lastModificationDateTime = now.minus(2, DateTimeUnit.HOUR).toLocalDateTime(),
+              lastNotificationDate = now.minus(1, DateTimeUnit.HOUR).toLocalDate(),
             )
           ),
       )
@@ -62,14 +62,14 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
         actual =
           calculateAlarmMissedDateTimes(
             alarmModel(
-              fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
+              fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTime(),
               lastModificationDateTime =
                 LocalDateTime(
-                  date = now.toLocalDateDefault().minus(1, DateTimeUnit.DAY),
-                  time = now.minus(2, DateTimeUnit.HOUR).toLocalTimeDefault(),
+                  date = now.toLocalDate().minus(1, DateTimeUnit.DAY),
+                  time = now.minus(2, DateTimeUnit.HOUR).toLocalTime(),
                 ),
               lastNotificationDate =
-                now.plus(1, DateTimeUnit.HOUR).toLocalDateDefault().minus(1, DateTimeUnit.DAY),
+                now.plus(1, DateTimeUnit.HOUR).toLocalDate().minus(1, DateTimeUnit.DAY),
             )
           ),
       )
@@ -83,23 +83,23 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
         listOf(
           alarmModel(
             id = 1L,
-            fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
+            fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTime(),
             lastModificationDateTime =
               LocalDateTime(
-                date = now.toLocalDateDefault().minus(2, DateTimeUnit.DAY),
-                time = now.minus(2, DateTimeUnit.HOUR).toLocalTimeDefault(),
+                date = now.toLocalDate().minus(2, DateTimeUnit.DAY),
+                time = now.minus(2, DateTimeUnit.HOUR).toLocalTime(),
               ),
             lastNotificationDate = null,
           ),
           alarmModel(
             id = 2L,
-            fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTimeDefault(),
+            fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTime(),
             lastModificationDateTime =
               LocalDateTime(
-                date = now.toLocalDateDefault().minus(2, DateTimeUnit.DAY),
-                time = now.minus(2, DateTimeUnit.HOUR).toLocalTimeDefault(),
+                date = now.toLocalDate().minus(2, DateTimeUnit.DAY),
+                time = now.minus(2, DateTimeUnit.HOUR).toLocalTime(),
               ),
-            lastNotificationDate = now.toLocalDateDefault().minus(2, DateTimeUnit.DAY),
+            lastNotificationDate = now.toLocalDate().minus(2, DateTimeUnit.DAY),
           ),
         )
 
