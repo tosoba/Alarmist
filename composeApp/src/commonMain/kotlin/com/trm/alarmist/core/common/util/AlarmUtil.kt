@@ -147,12 +147,14 @@ fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =
 
 fun AlarmModel.isScheduledToFireOn(date: LocalDate): Boolean {
   require(scheduledOnDaysOfWeek.isNotEmpty() || scheduledOnDates.isNotEmpty())
+
   return (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) &&
     date !in offOnDates
 }
 
 fun AlarmModel.expectedOneTimeNotificationDateTime(): LocalDateTime {
   require(scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty())
+
   return LocalDateTime(
     date =
       if (lastModificationDateTime.time > fireAtTime) {
