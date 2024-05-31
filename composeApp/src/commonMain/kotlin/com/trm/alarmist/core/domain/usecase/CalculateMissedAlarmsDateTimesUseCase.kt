@@ -13,7 +13,7 @@ fun calculateAlarmMissedDateTimes(
   alarm: AlarmModel,
   now: LocalDateTime = LocalDateTime.now(),
 ): List<LocalDateTime> {
-  if (alarm.scheduledOnDaysOfWeek.isEmpty() && alarm.scheduledOnDates.isEmpty()) {
+  if (alarm.isOneTime) {
     val expectedNotificationDateTime = alarm.expectedOneTimeNotificationDateTime()
     return if (
       now > expectedNotificationDateTime &&

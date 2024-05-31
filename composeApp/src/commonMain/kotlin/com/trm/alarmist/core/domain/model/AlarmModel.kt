@@ -27,4 +27,7 @@ data class AlarmModel(
   val vibrationEnabled: Boolean,
   val reminderOffsetHours: Long,
   val soundId: String?,
-)
+) {
+  val isOneTime: Boolean
+    get() = scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()
+}

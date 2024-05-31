@@ -13,7 +13,7 @@ class IsAlarmScheduledToFireAtDateTime(private val repository: AlarmRepository) 
       !alarm.isOn -> {
         false
       }
-      alarm.scheduledOnDaysOfWeek.isEmpty() && alarm.scheduledOnDates.isEmpty() -> {
+      alarm.isOneTime -> {
         fireAtDateTime == alarm.expectedOneTimeNotificationDateTime()
       }
       else -> {

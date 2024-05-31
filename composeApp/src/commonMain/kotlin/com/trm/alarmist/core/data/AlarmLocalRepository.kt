@@ -155,7 +155,7 @@ class AlarmLocalRepository(
 
         // Reset missed one time alarms
         onAlarms
-          .filter { it.scheduledOnDaysOfWeek.isEmpty() && it.scheduledOnDates.isEmpty() }
+          .filter(AlarmModel::isOneTime)
           .map { it to it.expectedOneTimeNotificationDateTime() }
           .filter { (alarm, expectedNotificationDateTime) ->
             now > expectedNotificationDateTime &&
