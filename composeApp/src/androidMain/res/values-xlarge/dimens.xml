@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="today_alarms_target_cell_width">2</integer>
+    <integer name="today_alarms_target_cell_height">2</integer>
+    <dimen name="today_alarms_widget_min_width">180dp</dimen>
+    <dimen name="today_alarms_widget_min_height">184dp</dimen>
+    <dimen name="today_alarms_widget_min_resize_width">180dp</dimen>
+    <dimen name="today_alarms_widget_min_resize_height">184dp</dimen>
+    <dimen name="today_alarms_widget_max_resize_width">488dp</dimen>
+    <dimen name="today_alarms_widget_max_resize_height">488dp</dimen>
+</resources>
