@@ -26,24 +26,59 @@ fun calculateAlarmNextFireOnDateTime(
   offOnDates: Collection<LocalDate>,
   isOn: Boolean = true,
   afterDateTime: LocalDateTime = LocalDateTime.now(),
-): LocalDateTime? {
-  if (!isOn) return null
-
-  if (scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()) {
-    return calculateOneTimeAlarmNextFireOnDateTime(
-      fireAtTime = fireAtTime,
-      afterDateTime = afterDateTime,
-    )
+): LocalDateTime? =
+  when {
+    !isOn -> {
+      null
+    }
+    scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty() -> {
+      calculateOneTimeAlarmNextFireOnDateTime(
+        fireAtTime = fireAtTime,
+        afterDateTime = afterDateTime,
+      )
+    }
+    else -> {
+      calculateScheduledAlarmNextFireOnDateTime(
+        fireAtTime = fireAtTime,
+        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+        scheduledOnDates = scheduledOnDates,
+        offOnDates = offOnDates,
+        afterDateTime = afterDateTime,
+      )
+    }
   }
 
+internal fun calculateOneTimeAlarmNextFireOnDateTime(
+  fireAtTime: LocalTime,
+  afterDateTime: LocalDateTime,
+): LocalDateTime =
+  when {
+    fireAtTime <= LocalTime(hour = afterDateTime.time.hour, minute = afterDateTime.time.minute) -> {
+      afterDateTime.date.plus(1, DateTimeUnit.DAY)
+    }
+    else -> {
+      afterDateTime.date
+    }
+  }.atTime(fireAtTime)
+
+internal fun calculateScheduledAlarmNextFireOnDateTime(
+  fireAtTime: LocalTime,
+  scheduledOnDaysOfWeek: Collection<DayOfWeek>,
+  scheduledOnDates: Collection<LocalDate>,
+  offOnDates: Collection<LocalDate>,
+  afterDateTime: LocalDateTime,
+): LocalDateTime? {
   fun DayOfWeek.nextScheduledOnDate(): LocalDate {
     var currentDate = afterDateTime.date
+
     while (currentDate.dayOfWeek != this) {
       currentDate = currentDate.plus(1, DateTimeUnit.DAY)
     }
+
     while (currentDate.atTime(fireAtTime) <= afterDateTime || currentDate in offOnDates) {
       currentDate = currentDate.plus(1, DateTimeUnit.WEEK)
     }
+
     return currentDate
   }
 
@@ -55,18 +90,4 @@ fun calculateAlarmNextFireOnDateTime(
     )
     .minOrNull()
     ?.atTime(fireAtTime)
-}
-
-private fun calculateOneTimeAlarmNextFireOnDateTime(
-  fireAtTime: LocalTime,
-  afterDateTime: LocalDateTime,
-): LocalDateTime {
-  return when {
-    fireAtTime <= LocalTime(hour = afterDateTime.time.hour, minute = afterDateTime.time.minute) -> {
-      afterDateTime.date.plus(1, DateTimeUnit.DAY)
-    }
-    else -> {
-      afterDateTime.date
-    }
-  }.atTime(fireAtTime)
 }
