@@ -51,7 +51,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import org.koin.android.ext.android.inject
 
@@ -100,7 +99,7 @@ class AlarmFiredActivity : ComponentActivity() {
   }
 }
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 private fun AlarmFiredView(
   settings: AlarmFireSettings,

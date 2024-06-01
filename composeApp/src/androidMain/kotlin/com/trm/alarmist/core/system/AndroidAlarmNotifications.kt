@@ -17,9 +17,7 @@ import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.formattedTime
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.system.receiver.AlarmDismissedBroadcastReceiver
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-@OptIn(ExperimentalResourceApi::class)
 fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
   if (
     ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
@@ -50,7 +48,6 @@ fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
     )
 }
 
-@OptIn(ExperimentalResourceApi::class)
 fun Context.notifyAlarmMissed(settings: AlarmFireSettings) {
   if (
     ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=

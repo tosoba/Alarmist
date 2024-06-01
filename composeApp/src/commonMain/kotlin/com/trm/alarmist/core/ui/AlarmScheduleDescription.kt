@@ -19,10 +19,8 @@ import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
 import epicarchitect.calendar.compose.basis.firstDayOfWeek
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AlarmScheduleDescription(
   isOn: Boolean,

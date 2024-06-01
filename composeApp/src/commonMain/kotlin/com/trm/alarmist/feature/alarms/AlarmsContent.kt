@@ -36,14 +36,9 @@ import com.trm.alarmist.feature.alarms.list.AlarmListContent
 import com.trm.alarmist.feature.alarms.ui.AlarmsNavigationBar
 import com.trm.alarmist.feature.alarms.ui.AlarmsNavigationRail
 import com.trm.alarmist.feature.alarms.upcoming.UpcomingAlarmsContent
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(
-  ExperimentalDecomposeApi::class,
-  ExperimentalMaterial3WindowSizeClassApi::class,
-  ExperimentalResourceApi::class,
-)
+@OptIn(ExperimentalDecomposeApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
   val windowSizeClass = calculateWindowSizeClass()

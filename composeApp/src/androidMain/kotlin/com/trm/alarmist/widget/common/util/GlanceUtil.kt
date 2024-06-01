@@ -10,6 +10,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
@@ -85,3 +87,6 @@ internal val largeFontSize: Float
     }
 
 internal val LocalIsPreviewProvider = staticCompositionLocalOf { false }
+
+internal fun GlanceModifier.clickableIfNotNull(action: Action?): GlanceModifier =
+  if (action != null) this.clickable(action) else this

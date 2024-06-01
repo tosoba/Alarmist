@@ -32,7 +32,6 @@ import io.github.aakira.napier.Napier
 import java.util.Timer
 import java.util.TimerTask
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -119,8 +118,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     missedAlarms.add(settings)
   }
 
-  @OptIn(ExperimentalResourceApi::class)
-  private fun buildNotification(settings: AlarmFireSettings): Notification =
+    private fun buildNotification(settings: AlarmFireSettings): Notification =
     NotificationCompat.Builder(this, ALARM_FIRED_NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setContentTitle("Alarm was fired") // TODO: better message

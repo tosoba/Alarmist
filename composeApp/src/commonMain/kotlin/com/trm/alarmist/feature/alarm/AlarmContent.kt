@@ -141,10 +141,9 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
@@ -682,7 +681,7 @@ private fun AlarmSliderThumb(text: String, modifier: Modifier = Modifier) {
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ColumnScope.ExpandableCalendar(
   calendarModifier: Modifier = Modifier,
@@ -839,7 +838,6 @@ private fun ColumnScope.ExpandableCalendar(
   }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun CalendarDateAlarmOnOffSwitch(
   modifier: Modifier = Modifier,

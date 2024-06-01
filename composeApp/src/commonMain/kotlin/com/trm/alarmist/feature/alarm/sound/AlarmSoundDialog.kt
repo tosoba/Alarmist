@@ -25,10 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AlarmSoundDialog(component: AlarmSoundDialogComponent, modifier: Modifier = Modifier) {
   AlertDialog(
@@ -55,7 +53,6 @@ expect fun AlarmSoundLazyColumn(
   modifier: Modifier = Modifier,
 )
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AlarmSoundItem(
   title: String,

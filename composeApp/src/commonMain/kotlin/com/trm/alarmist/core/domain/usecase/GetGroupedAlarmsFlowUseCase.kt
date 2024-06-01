@@ -7,12 +7,10 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.GroupedAlarmsModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
 
 class GetGroupedAlarmsFlowUseCase(private val repository: AlarmRepository) {
-  @OptIn(ExperimentalResourceApi::class)
-  operator fun invoke(): Flow<GroupedAlarmsModel> =
+    operator fun invoke(): Flow<GroupedAlarmsModel> =
     repository.getAllAlarmGroupsFlow().combine(repository.getAllAlarmsListFlow()) { groups, alarms
       ->
       GroupedAlarmsModel(

@@ -22,10 +22,8 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import epicarchitect.calendar.compose.pager.state.EpicCalendarPagerState
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DatePickerYearMonthControls(pagerState: EpicCalendarPagerState, modifier: Modifier = Modifier) {
   val scope = rememberCoroutineScope()

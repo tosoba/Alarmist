@@ -50,10 +50,9 @@ import com.trm.alarmist.feature.root.ui.RootDialog
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   val childStack by component.childStack.subscribeAsState()

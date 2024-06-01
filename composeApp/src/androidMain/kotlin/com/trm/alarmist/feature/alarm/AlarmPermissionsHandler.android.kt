@@ -31,10 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.trm.alarmist.core.common.util.getActivity
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 actual fun alarmPermissionsHandler(onGranted: () -> Unit): () -> Unit {
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -104,7 +102,6 @@ actual fun alarmPermissionsHandler(onGranted: () -> Unit): () -> Unit {
   }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun PostNotificationPermissionInfoDialog(
   modifier: Modifier = Modifier,

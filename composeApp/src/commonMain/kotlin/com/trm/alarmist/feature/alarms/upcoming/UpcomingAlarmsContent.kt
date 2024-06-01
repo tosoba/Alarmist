@@ -87,10 +87,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UpcomingAlarmsContent(
   initialState: UpcomingAlarmsCalendarState,
@@ -192,7 +191,7 @@ private fun rememberMonthlyCalendarState(
     selectedDates = listOfNotNull(initialState.selectedDate),
   )
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun WeeklyMonthlyCalendar(
   initialState: UpcomingAlarmsCalendarState,
