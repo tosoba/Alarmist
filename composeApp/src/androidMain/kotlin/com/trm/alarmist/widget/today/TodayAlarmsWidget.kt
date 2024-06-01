@@ -50,7 +50,6 @@ import com.trm.alarmist.widget.today.Dimensions.fillItemItemPadding
 import com.trm.alarmist.widget.today.Dimensions.filledItemCornerRadius
 import com.trm.alarmist.widget.today.Dimensions.verticalSpacing
 import com.trm.alarmist.widget.today.Dimensions.widgetPadding
-import com.trm.alarmist.widget.today.ImageTextListLayoutSize.Companion.shouldDisplayTrailing
 import com.trm.alarmist.widget.today.ImageTextListLayoutSize.Companion.showTitleBar
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -134,24 +133,15 @@ private fun Content(alarms: Initializable<List<AlarmListModel>>) {
       // TODO: EmptyContent()
     }
     else -> {
-      val displayTrailing = shouldDisplayTrailing()
       when (ImageTextListLayoutSize.fromLocalSize()) {
         ImageTextListLayoutSize.Small -> {
-          ListView(
-            items = alarms.data,
-            displayHeaderSupporting = false,
-            displayTrailing = displayTrailing,
-          )
+          ListView(items = alarms.data, displayHeaderSupporting = false)
         }
         ImageTextListLayoutSize.Medium -> {
-          ListView(
-            items = alarms.data,
-            displayHeaderSupporting = true,
-            displayTrailing = displayTrailing,
-          )
+          ListView(items = alarms.data, displayHeaderSupporting = true)
         }
         ImageTextListLayoutSize.Large -> {
-          GridView(items = alarms.data, displayTrailing = displayTrailing)
+          GridView(items = alarms.data)
         }
       }
     }
@@ -159,11 +149,7 @@ private fun Content(alarms: Initializable<List<AlarmListModel>>) {
 }
 
 @Composable
-private fun ListView(
-  items: List<AlarmListModel>,
-  displayHeaderSupporting: Boolean,
-  displayTrailing: Boolean,
-) {
+private fun ListView(items: List<AlarmListModel>, displayHeaderSupporting: Boolean) {
   RoundedScrollingLazyColumn(
     modifier = GlanceModifier.fillMaxSize(),
     items = items,
@@ -173,7 +159,7 @@ private fun ListView(
         item = item,
         displayLeading = true,
         displayHeaderSupporting = displayHeaderSupporting,
-        displayTrailing = displayTrailing,
+        displayTrailing = true,
         onClick = null, // TODO: navigate to app
         modifier = GlanceModifier.fillMaxSize(),
       )
@@ -187,7 +173,7 @@ private fun ListView(
  * Supporting the grid display allows large screen users view more information at once.
  */
 @Composable
-private fun GridView(items: List<AlarmListModel>, displayTrailing: Boolean) {
+private fun GridView(items: List<AlarmListModel>) {
   RoundedScrollingLazyVerticalGrid(
     gridCells = NUM_GRID_CELLS,
     items = items,
@@ -197,7 +183,7 @@ private fun GridView(items: List<AlarmListModel>, displayTrailing: Boolean) {
         item = item,
         displayLeading = true,
         displayHeaderSupporting = true,
-        displayTrailing = displayTrailing,
+        displayTrailing = true,
         onClick = null, // TODO: navigate to app
         modifier = GlanceModifier.fillMaxSize(),
       )
@@ -244,10 +230,13 @@ private fun FilledHorizontalListItem(
 
   @Composable
   fun Trailing() {
-    Switch(checked = item.isOn, onCheckedChange = null) // TODO: action
+    Switch(
+      checked = item.isOn,
+      onCheckedChange = null, // TODO: find -> revert commit with switch action
+    )
   }
 
-  ListItem(
+  ListItem( // TODO: different background color when switching alarm on/off
     modifier =
       modifier
         .padding(fillItemItemPadding)
@@ -303,16 +292,6 @@ private enum class ImageTextListLayoutSize(val maxWidth: Dp) {
     }
 
     @Composable fun showTitleBar(): Boolean = LocalSize.current.height >= 180.dp
-
-    /**
-     * Returns if icon button should be displayed across medium and large sizes based on predefined
-     * breakpoints.
-     */
-    @Composable
-    fun shouldDisplayTrailing(): Boolean {
-      val widgetWidth = LocalSize.current.width
-      return (widgetWidth in 340.dp..479.dp || widgetWidth > 620.dp)
-    }
   }
 }
 
