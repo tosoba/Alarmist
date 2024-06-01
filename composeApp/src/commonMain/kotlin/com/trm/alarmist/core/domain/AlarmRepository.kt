@@ -66,7 +66,7 @@ interface AlarmRepository {
     time: LocalTime,
   ): Flow<List<UpcomingAlarmListModel>>
 
-  suspend fun getOnAlarmsScheduledToFireOnDateAfterTime(
+  suspend fun getAlarmsScheduledToFireOnDateAfterTime(
     date: LocalDate,
     time: LocalTime,
   ): List<AlarmListModel>
@@ -77,7 +77,7 @@ interface AlarmRepository {
 
   fun getOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<List<UpcomingAlarmListModel>>
 
-  suspend fun getOnOneTimeAlarmsAfterTime(time: LocalTime): List<AlarmListModel>
+  suspend fun getOneTimeAlarmsAfterTime(time: LocalTime): List<AlarmListModel>
 
   fun countOnOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<Int>
 

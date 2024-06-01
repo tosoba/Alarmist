@@ -29,7 +29,7 @@ import androidx.glance.text.TextDefaults
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledTodayUseCase
+import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
 import com.trm.alarmist.widget.common.ui.WidgetActionButtonContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListItem
 import com.trm.alarmist.widget.common.ui.WidgetHeader
@@ -44,7 +44,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
-  private val getAlarmsScheduledTodayUseCase: GetAlarmsScheduledTodayUseCase by inject()
+  private val getTodayAlarmsUseCase: GetTodayAlarmsUseCase by inject()
 
   override val sizeMode: SizeMode = SizeMode.Exact
 
@@ -53,7 +53,7 @@ class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
       val state = currentState<Preferences>()
       val alarms by
         produceState(Initializable(emptyList()), state) {
-          value = Initializable(getAlarmsScheduledTodayUseCase(), true)
+          value = Initializable(getTodayAlarmsUseCase(), true)
         }
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
         TodayAlarmsWidgetContent(id = id, alarms = alarms)

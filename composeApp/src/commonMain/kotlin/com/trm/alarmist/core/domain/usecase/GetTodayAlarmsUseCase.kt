@@ -5,11 +5,12 @@ import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import kotlinx.datetime.LocalDateTime
 
-class GetAlarmsScheduledTodayUseCase(private val repository: AlarmRepository) {
+class GetTodayAlarmsUseCase(private val repository: AlarmRepository) {
   suspend operator fun invoke(): List<AlarmListModel> {
     val now = LocalDateTime.now()
-    return (repository.getOnOneTimeAlarmsAfterTime(now.time) +
-        repository.getOnAlarmsScheduledToFireOnDateAfterTime(now.date, now.time))
-      .sortedBy(AlarmListModel::nextFireAtTime)
+    return repository
+      .getOneTimeAlarmsAfterTime(now.time)
+      .plus(repository.getAlarmsScheduledToFireOnDateAfterTime(now.date, now.time))
+      .sortedWith(compareBy(AlarmListModel::isOn, AlarmListModel::nextFireAtTime))
   }
 }
