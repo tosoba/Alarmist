@@ -18,7 +18,6 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
-import androidx.glance.preview.Surfaces
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextDefaults
@@ -88,7 +87,7 @@ internal fun WidgetAlarmListItem(
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Composable
-@Preview(Surfaces.APP_WIDGET)
+@Preview
 private fun WidgetAlarmListItemPreview() {
   GlanceTheme {
     WidgetAlarmListItem(
