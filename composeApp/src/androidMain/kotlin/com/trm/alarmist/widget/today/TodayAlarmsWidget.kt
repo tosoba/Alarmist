@@ -35,7 +35,7 @@ import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.example.platform.ui.appwidgets.glance.layout.collections.layout.ListItem
+import com.trm.alarmist.widget.common.ui.ListItem
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.domain.model.AlarmListModel

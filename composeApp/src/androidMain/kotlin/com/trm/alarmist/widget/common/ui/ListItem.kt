@@ -1,4 +1,4 @@
-package com.example.platform.ui.appwidgets.glance.layout.collections.layout
+package com.trm.alarmist.widget.common.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp

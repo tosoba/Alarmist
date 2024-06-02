@@ -60,13 +60,11 @@ fun <T> RoundedScrollingLazyColumn(
   horizontalAlignment: Alignment.Horizontal = Alignment.Start,
   verticalItemsSpacing: Dp = 4.dp,
 ) {
-  val lastIndex = items.size - 1
-
   RoundedScrollingLazyColumn(modifier, horizontalAlignment) {
     itemsIndexed(items) { index, item ->
       Column(modifier = GlanceModifier.fillMaxWidth()) {
         itemContentProvider(item)
-        if (index != lastIndex) {
+        if (index != items.lastIndex) {
           Spacer(modifier = GlanceModifier.height(verticalItemsSpacing))
         }
       }

@@ -19,18 +19,15 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextDefaults
 import com.trm.alarmist.R
-import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.largeFontSize
-import com.trm.alarmist.widget.common.util.smallFontSize
-import kotlinx.datetime.LocalDate
 
 @Composable
 internal fun WidgetHeader(
   text: String,
   onRefreshClick: Action,
   modifier: GlanceModifier = GlanceModifier,
-  subHeader: @Composable () -> Unit = {}
+  subHeader: @Composable () -> Unit = {},
 ) {
   Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
     Image(
