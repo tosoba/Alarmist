@@ -87,7 +87,9 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
     fun titleBar(): @Composable () -> Unit = {
       WidgetTitleBar(
         // TODO: either app icon or icon representing today
-        startIcon = ImageProvider(R.mipmap.ic_launcher_round),
+        startIcon =
+          if (widgetLayoutSize != WidgetLayoutSize.Small) ImageProvider(R.mipmap.ic_launcher_round)
+          else null,
         iconColor = GlanceTheme.colors.primary,
         actions = {
           CircleIconButton(
@@ -104,7 +106,13 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
           )
         },
       ) {
-        Box(contentAlignment = Alignment.CenterStart, modifier = GlanceModifier.defaultWeight()) {
+        Box(
+          contentAlignment = Alignment.CenterStart,
+          modifier =
+            GlanceModifier.defaultWeight().run {
+              if (widgetLayoutSize == WidgetLayoutSize.Small) padding(start = 16.dp) else this
+            },
+        ) {
           WidgetTextClock(useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small)
         }
       }

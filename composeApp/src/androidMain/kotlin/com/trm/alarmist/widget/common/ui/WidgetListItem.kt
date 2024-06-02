@@ -16,15 +16,17 @@ import com.trm.alarmist.widget.common.util.clickableIfNotNull
 
 @Composable
 fun WidgetListItem(
-  headlineContent: @Composable () -> Unit,
   modifier: GlanceModifier = GlanceModifier,
-  contentSpacing: Dp = 16.dp,
+  contentSpacing: Dp = 8.dp,
+  headlineContent: @Composable (() -> Unit)? = null,
   supportingContent: @Composable (() -> Unit)? = null,
   leadingContent: @Composable (() -> Unit)? = null,
   trailingContent: @Composable (() -> Unit)? = null,
   onClick: Action? = null,
   itemContentDescription: String? = null,
 ) {
+  require(leadingContent != null || headlineContent != null)
+
   val listItemModifier =
     if (itemContentDescription != null) {
       modifier.semantics { contentDescription = itemContentDescription }
@@ -38,19 +40,27 @@ fun WidgetListItem(
   ) {
     leadingContent?.let {
       it()
-      Spacer(modifier = GlanceModifier.width(contentSpacing))
+      if (headlineContent != null) {
+        Spacer(modifier = GlanceModifier.width(contentSpacing))
+      }
     }
 
-    Column(
-      modifier = GlanceModifier.defaultWeight(),
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      headlineContent()
-      supportingContent?.let { it() }
+    if (headlineContent != null) {
+      Column(
+        modifier = GlanceModifier.defaultWeight(),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        headlineContent()
+        supportingContent?.invoke()
+      }
+    } else {
+      Spacer(modifier = GlanceModifier.defaultWeight())
     }
 
     trailingContent?.let {
-      Spacer(modifier = GlanceModifier.width(contentSpacing))
+      if (headlineContent != null) {
+        Spacer(modifier = GlanceModifier.width(contentSpacing))
+      }
       it()
     }
   }

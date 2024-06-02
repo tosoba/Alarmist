@@ -18,30 +18,29 @@ import androidx.glance.unit.ColorProvider
 
 @Composable
 fun WidgetTitleBar(
-  startIcon: ImageProvider,
+  startIcon: ImageProvider?,
   iconColor: ColorProvider? = GlanceTheme.colors.onSurface,
   modifier: GlanceModifier = GlanceModifier,
   actions: @Composable RowScope.() -> Unit = {},
   content: @Composable RowScope.() -> Unit,
 ) {
-  @Composable
-  fun StartIcon() {
-    Box(GlanceModifier.size(48.dp).padding(start = 2.dp), contentAlignment = Alignment.Center) {
-      Image(
-        modifier = GlanceModifier.size(24.dp),
-        provider = startIcon,
-        contentDescription = "",
-        colorFilter = iconColor?.let { ColorFilter.tint(iconColor) },
-      )
-    }
-  }
-
   Row(
     modifier = modifier.fillMaxWidth().padding(vertical = 4.dp),
     verticalAlignment = Alignment.Vertical.CenterVertically,
   ) {
-    StartIcon()
+    if (startIcon != null) {
+      Box(GlanceModifier.size(48.dp).padding(start = 2.dp), contentAlignment = Alignment.Center) {
+        Image(
+          modifier = GlanceModifier.size(24.dp),
+          provider = startIcon,
+          contentDescription = "",
+          colorFilter = iconColor?.let { ColorFilter.tint(iconColor) },
+        )
+      }
+    }
+
     content()
+
     actions()
   }
 }
