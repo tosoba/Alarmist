@@ -17,7 +17,7 @@ import androidx.glance.layout.size
 import androidx.glance.unit.ColorProvider
 
 @Composable
-fun ContentTitleBar(
+fun WidgetTitleBar(
   startIcon: ImageProvider,
   iconColor: ColorProvider? = GlanceTheme.colors.onSurface,
   modifier: GlanceModifier = GlanceModifier,

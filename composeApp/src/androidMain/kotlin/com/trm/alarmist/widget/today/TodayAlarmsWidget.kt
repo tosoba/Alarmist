@@ -35,15 +35,15 @@ import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
-import com.trm.alarmist.widget.common.ui.ContentTitleBar
-import com.trm.alarmist.widget.common.ui.ListItem
-import com.trm.alarmist.widget.common.ui.RoundedScrollingLazyColumn
-import com.trm.alarmist.widget.common.ui.RoundedScrollingLazyVerticalGrid
-import com.trm.alarmist.widget.common.ui.TextClockRemoteViews
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
+import com.trm.alarmist.widget.common.ui.WidgetLazyColumn
+import com.trm.alarmist.widget.common.ui.WidgetLazyVerticalGrid
+import com.trm.alarmist.widget.common.ui.WidgetListItem
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
+import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
+import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.today.Dimensions.NUM_GRID_CELLS
@@ -83,7 +83,7 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
     val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
 
     fun titleBar(): @Composable () -> Unit = {
-      ContentTitleBar(
+      WidgetTitleBar(
         // TODO: either app icon or icon representing today
         startIcon = ImageProvider(R.mipmap.ic_launcher_round),
         iconColor = GlanceTheme.colors.primary,
@@ -103,7 +103,7 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
         },
       ) {
         Box(contentAlignment = Alignment.CenterStart, modifier = GlanceModifier.defaultWeight()) {
-          TextClockRemoteViews(useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small)
+          WidgetTextClock(useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small)
         }
       }
     }
@@ -150,52 +150,41 @@ private fun Content(alarms: Initializable<List<AlarmListModel>>) {
 
 @Composable
 private fun ListView(items: List<AlarmListModel>, displayHeaderSupporting: Boolean) {
-  RoundedScrollingLazyColumn(
-    modifier = GlanceModifier.fillMaxSize(),
+  WidgetLazyColumn(
     items = items,
+    modifier = GlanceModifier.fillMaxSize(),
     verticalItemsSpacing = verticalSpacing,
-    itemContentProvider = { item ->
-      FilledHorizontalListItem(
-        item = item,
-        displayLeading = true,
-        displayHeaderSupporting = displayHeaderSupporting,
-        displayTrailing = true,
-        onClick = null, // TODO: navigate to app
-        modifier = GlanceModifier.fillMaxSize(),
-      )
-    },
-  )
+  ) { item ->
+    FilledHorizontalListItem(
+      item = item,
+      displayLeading = true,
+      displayHeaderSupporting = displayHeaderSupporting,
+      displayTrailing = true,
+      onClick = null, // TODO: navigate to app
+      modifier = GlanceModifier.fillMaxSize(),
+    )
+  }
 }
 
-/**
- * A grid of [FilledHorizontalListItem]s suitable for [WidgetLayoutSize.Large] sizes.
- *
- * Supporting the grid display allows large screen users view more information at once.
- */
 @Composable
 private fun GridView(items: List<AlarmListModel>) {
-  RoundedScrollingLazyVerticalGrid(
+  WidgetLazyVerticalGrid(
     gridCells = NUM_GRID_CELLS,
     items = items,
-    cellSpacing = verticalSpacing,
-    itemContentProvider = { item ->
-      FilledHorizontalListItem(
-        item = item,
-        displayLeading = true,
-        displayHeaderSupporting = true,
-        displayTrailing = true,
-        onClick = null, // TODO: navigate to app
-        modifier = GlanceModifier.fillMaxSize(),
-      )
-    },
     modifier = GlanceModifier.fillMaxSize(),
-  )
+    cellSpacing = verticalSpacing,
+  ) { item ->
+    FilledHorizontalListItem(
+      item = item,
+      displayLeading = true,
+      displayHeaderSupporting = true,
+      displayTrailing = true,
+      onClick = null, // TODO: navigate to app
+      modifier = GlanceModifier.fillMaxSize(),
+    )
+  }
 }
 
-/**
- * Arranges the texts, the image and the icon button in a horizontal arrangement with a filled
- * container.
- */
 @Composable
 private fun FilledHorizontalListItem(
   item: AlarmListModel,
@@ -236,7 +225,7 @@ private fun FilledHorizontalListItem(
     )
   }
 
-  ListItem( // TODO: different background color when switching alarm on/off
+  WidgetListItem( // TODO: different background color when switching alarm on/off
     modifier =
       modifier
         .padding(fillItemItemPadding)

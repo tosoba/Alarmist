@@ -27,7 +27,7 @@ import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextAlarmUseCase
-import com.trm.alarmist.widget.common.ui.TextClockRemoteViews
+import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import org.koin.core.component.KoinComponent
@@ -53,12 +53,12 @@ class NextAlarmWidget : GlanceAppWidget(), KoinComponent {
 @Composable
 private fun NextAlarmWidgetContent(alarm: AlarmListModel?) {
   GlanceTheme {
-    Column(modifier = GlanceModifier.padding(8.dp)) {
+    Column(modifier = GlanceModifier.padding(8.dp)) { // TODO: on click go to app
       val context = LocalContext.current
       val textColor = GlanceTheme.colors.widgetBackground
 
       Box(contentAlignment = Alignment.CenterStart, modifier = GlanceModifier.defaultWeight()) {
-        TextClockRemoteViews(useFullTimeFormat = true) {
+        WidgetTextClock(useFullTimeFormat = true) {
           setInt(R.id.widget_text_clock, "setTextColor", textColor.getColor(context).toArgb())
         }
       }

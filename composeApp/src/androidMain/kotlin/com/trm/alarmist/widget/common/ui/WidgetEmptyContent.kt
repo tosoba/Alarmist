@@ -21,7 +21,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 
 @Composable
-fun EmptyContent(
+fun WidgetEmptyContent(
   noDataIconRes: Int,
   noDataText: String,
   actionButtonText: String,
