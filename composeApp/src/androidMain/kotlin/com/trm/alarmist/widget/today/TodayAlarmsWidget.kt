@@ -6,16 +6,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.LocalSize
 import androidx.glance.action.Action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -33,9 +30,7 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
-import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -45,7 +40,10 @@ import com.trm.alarmist.widget.common.ui.ListItem
 import com.trm.alarmist.widget.common.ui.RoundedScrollingLazyColumn
 import com.trm.alarmist.widget.common.ui.RoundedScrollingLazyVerticalGrid
 import com.trm.alarmist.widget.common.ui.TextClockRemoteViews
+import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
+import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
+import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.today.Dimensions.NUM_GRID_CELLS
@@ -53,7 +51,6 @@ import com.trm.alarmist.widget.today.Dimensions.fillItemItemPadding
 import com.trm.alarmist.widget.today.Dimensions.filledItemCornerRadius
 import com.trm.alarmist.widget.today.Dimensions.verticalSpacing
 import com.trm.alarmist.widget.today.Dimensions.widgetPadding
-import com.trm.alarmist.widget.today.ImageTextListLayoutSize.Companion.showTitleBar
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -69,6 +66,7 @@ class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
         produceState(Initializable(emptyList()), state) {
           value = Initializable(getTodayAlarmsUseCase(), true)
         }
+
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
         TodayAlarmsWidgetContent(id = id, alarms = alarms)
       }
@@ -82,7 +80,7 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
     val context = LocalContext.current
     val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
 
-    val imageTextListLayoutSize = ImageTextListLayoutSize.fromLocalSize()
+    val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
 
     fun titleBar(): @Composable () -> Unit = {
       ContentTitleBar(
@@ -105,9 +103,7 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
         },
       ) {
         Box(contentAlignment = Alignment.CenterStart, modifier = GlanceModifier.defaultWeight()) {
-          TextClockRemoteViews(
-            useFullTimeFormat = imageTextListLayoutSize != ImageTextListLayoutSize.Small
-          )
+          TextClockRemoteViews(useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small)
         }
       }
     }
@@ -137,14 +133,14 @@ private fun Content(alarms: Initializable<List<AlarmListModel>>) {
       // TODO: EmptyContent()
     }
     else -> {
-      when (ImageTextListLayoutSize.fromLocalSize()) {
-        ImageTextListLayoutSize.Small -> {
+      when (WidgetLayoutSize.fromLocalSize()) {
+        WidgetLayoutSize.Small -> {
           ListView(items = alarms.data, displayHeaderSupporting = false)
         }
-        ImageTextListLayoutSize.Medium -> {
+        WidgetLayoutSize.Medium -> {
           ListView(items = alarms.data, displayHeaderSupporting = true)
         }
-        ImageTextListLayoutSize.Large -> {
+        WidgetLayoutSize.Large -> {
           GridView(items = alarms.data)
         }
       }
@@ -172,7 +168,7 @@ private fun ListView(items: List<AlarmListModel>, displayHeaderSupporting: Boole
 }
 
 /**
- * A grid of [FilledHorizontalListItem]s suitable for [ImageTextListLayoutSize.Large] sizes.
+ * A grid of [FilledHorizontalListItem]s suitable for [WidgetLayoutSize.Large] sizes.
  *
  * Supporting the grid display allows large screen users view more information at once.
  */
@@ -214,7 +210,7 @@ private fun FilledHorizontalListItem(
     Text(
       text = item.fireAtTime.toString(),
       maxLines = 1,
-      style = TextStyles.titleText,
+      style = WidgetTextStyles.titleText,
     ) // TODO: group/name label (with icon)
   }
 
@@ -223,13 +219,13 @@ private fun FilledHorizontalListItem(
     Text(
       text = item.fireAtTime.toString(),
       maxLines = 2,
-      style = TextStyles.supportingText,
+      style = WidgetTextStyles.supportingText,
     ) // TODO: schedule desc
   }
 
   @Composable
   fun Leading() {
-    Text(text = item.fireAtTime.toString(), maxLines = 1, style = TextStyles.leadingText)
+    Text(text = item.fireAtTime.toString(), maxLines = 1, style = WidgetTextStyles.leadingText)
   }
 
   @Composable
@@ -262,80 +258,6 @@ private fun FilledHorizontalListItem(
         null
       },
   )
-}
-
-/**
- * Reference breakpoints for deciding on widget style to display e.g. list / grid etc.
- *
- * In this layout, only width breakpoints are used to scale the layout.
- */
-private enum class ImageTextListLayoutSize(val maxWidth: Dp) {
-  // Single column vertical list without images or trailing button in this size.
-  Small(maxWidth = 260.dp),
-
-  // Single column horizontal list with images and optional trailing button if exists.
-  Medium(maxWidth = 479.dp),
-
-  // 2 Column Grid of horizontal list items. Images are always shown; trailing button is shown if
-  // it fits.
-  Large(maxWidth = 644.dp);
-
-  companion object {
-    /**
-     * Returns the corresponding [ImageTextListLayoutSize] to be considered for the current widget
-     * size.
-     */
-    @Composable
-    fun fromLocalSize(): ImageTextListLayoutSize {
-      val width = LocalSize.current.width
-      return when {
-        width >= Medium.maxWidth -> Large
-        width >= Small.maxWidth -> Medium
-        else -> Small
-      }
-    }
-
-    @Composable fun showTitleBar(): Boolean = LocalSize.current.height >= 180.dp
-  }
-}
-
-private object TextStyles {
-  val leadingText: TextStyle
-    @Composable
-    get() =
-      TextStyle(
-        fontWeight = FontWeight.Bold,
-        fontSize =
-          if (ImageTextListLayoutSize.fromLocalSize() == ImageTextListLayoutSize.Small) {
-            18.sp
-          } else {
-            22.sp // M3 Title Large
-          },
-        color = GlanceTheme.colors.onSurface,
-      )
-
-  val titleText: TextStyle
-    @Composable
-    get() =
-      TextStyle(
-        fontWeight = FontWeight.Medium,
-        fontSize =
-          if (ImageTextListLayoutSize.fromLocalSize() == ImageTextListLayoutSize.Small) {
-            14.sp // M3 Title Small
-          } else {
-            16.sp // M3 Title Medium
-          },
-        color = GlanceTheme.colors.onSurface,
-      )
-
-  val supportingText: TextStyle
-    @Composable
-    get() =
-      TextStyle(
-        fontWeight = FontWeight.Normal,
-        fontSize = 12.sp, // M3 Label Medium
-        color = GlanceTheme.colors.secondary,
-      )
 }
 
 private object Dimensions {

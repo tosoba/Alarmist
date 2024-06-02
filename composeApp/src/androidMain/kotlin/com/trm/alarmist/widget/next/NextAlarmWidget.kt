@@ -6,44 +6,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
-import androidx.glance.layout.Row
-import androidx.glance.layout.Spacer
-import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.fillMaxWidth
-import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
-import androidx.glance.text.TextDefaults
-import com.trm.alarmist.core.common.model.Initializable
+import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextAlarmUseCase
-import com.trm.alarmist.widget.common.ui.WidgetActionButtonContent
-import com.trm.alarmist.widget.common.ui.WidgetHeader
-import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
-import com.trm.alarmist.widget.common.ui.WidgetOuterColumn
+import com.trm.alarmist.widget.common.ui.TextClockRemoteViews
+import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
-import com.trm.alarmist.widget.common.util.mediumFontSize
-import com.trm.alarmist.widget.common.util.updateWidgetIntent
-import com.trm.alarmist.widget.common.util.widgetBackgroundCornerRadius
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -55,89 +41,41 @@ class NextAlarmWidget : GlanceAppWidget(), KoinComponent {
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       val state = currentState<Preferences>()
-      val nextAlarm by
-        produceState<Initializable<AlarmListModel?>>(Initializable(null), state) {
-          value = Initializable(getNextAlarmUseCase(), true)
-        }
+      val alarm by produceState<AlarmListModel?>(null, state) { value = getNextAlarmUseCase() }
+
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
-        NextAlarmWidgetContent(id = id, alarm = nextAlarm)
+        NextAlarmWidgetContent(alarm = alarm)
       }
     }
   }
 }
 
 @Composable
-private fun NextAlarmWidgetContent(id: GlanceId, alarm: Initializable<AlarmListModel?>) {
+private fun NextAlarmWidgetContent(alarm: AlarmListModel?) {
   GlanceTheme {
-    WidgetOuterColumn(modifier = GlanceModifier.fillMaxSize().widgetBackgroundCornerRadius()) {
+    Column(modifier = GlanceModifier.padding(8.dp)) {
       val context = LocalContext.current
-      val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
+      val textColor = GlanceTheme.colors.widgetBackground
 
-      WidgetHeader(
-        text = "Next",
-        onRefreshClick =
-          actionSendBroadcast(
-            context.updateWidgetIntent<NextAlarmWidgetReceiver>(widgetManager.getAppWidgetId(id))
-          ),
-        modifier = GlanceModifier.fillMaxWidth(),
-      )
-
-      Spacer(GlanceModifier.height(4.dp))
-
-      when {
-        !alarm.initialized -> {
-          WidgetLoadingIndicator(
-            modifier = GlanceModifier.fillMaxWidth().defaultWeight().padding(vertical = 20.dp)
-          )
-        }
-        alarm.data == null -> {
-          WidgetActionButtonContent(
-            infoText = "No scheduled alarms",
-            buttonText = "Schedule an alarm",
-            modifier = GlanceModifier.fillMaxWidth().defaultWeight().padding(vertical = 20.dp),
-          )
-        }
-        else -> {
-          NextAlarm(alarm = alarm.data, modifier = GlanceModifier.fillMaxWidth())
+      Box(contentAlignment = Alignment.CenterStart, modifier = GlanceModifier.defaultWeight()) {
+        TextClockRemoteViews(useFullTimeFormat = true) {
+          setInt(R.id.widget_text_clock, "setTextColor", textColor.getColor(context).toArgb())
         }
       }
-    }
-  }
-}
 
-@Composable
-private fun NextAlarm(
-  alarm: AlarmListModel,
-  modifier: GlanceModifier = GlanceModifier,
-  is24HourFormat: @Composable () -> Boolean = { DateFormat.is24HourFormat(LocalContext.current) },
-) {
-  Column(modifier) {
-    alarm.name?.let { Text(text = it, maxLines = 1) }
-
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = GlanceModifier.fillMaxWidth()) {
-      Text(
-        text =
-          """${alarm.nextFireAtTime.toFormattedString(is24HourFormat)} ${alarm.nextFireAtTime.amPmString(is24HourFormat)}"""
-            .trim(),
-        maxLines = 1,
-        style =
-          TextDefaults.defaultTextStyle.copy(
-            fontSize = mediumFontSize.sp,
-            fontWeight = FontWeight.Medium,
-          ),
-      )
-    }
-
-    alarm.fireOnDateTime?.let {
-      Text(
-        text =
-          if (alarm.scheduledOnClosestDate != null || alarm.scheduledOnDaysOfWeek.isNotEmpty()) {
-            "Custom scheduled"
-          } else {
-            "One time"
-          },
-        modifier = GlanceModifier.fillMaxWidth(),
-      )
+      if (alarm != null) {
+        // TODO: current date (maybe do it via TextClock that just displays a date to avoid needing
+        // to update it)
+        // TODO: alarm icon next to alarm fireAtTime
+        val is24HourFormat = DateFormat.is24HourFormat(context)
+        Text(
+          text =
+            """${alarm.nextFireAtTime.toFormattedString { is24HourFormat }} ${alarm.nextFireAtTime.amPmString { is24HourFormat }}"""
+              .trim(),
+          maxLines = 1,
+          style = WidgetTextStyles.titleText.copy(color = textColor),
+        )
+      }
     }
   }
 }

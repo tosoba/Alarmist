@@ -13,7 +13,7 @@ fun TextClockRemoteViews(useFullTimeFormat: Boolean, configure: RemoteViews.() -
     remoteViews =
       RemoteViews(context.packageName, R.layout.widget_text_clock_remote_view).apply {
         setCharSequence(
-          R.id.location_clock,
+          R.id.widget_text_clock,
           "setFormat12Hour",
           context.getString(
             if (useFullTimeFormat) R.string.time_format_12_h_full
@@ -21,7 +21,7 @@ fun TextClockRemoteViews(useFullTimeFormat: Boolean, configure: RemoteViews.() -
           ),
         )
         setCharSequence(
-          R.id.location_clock,
+          R.id.widget_text_clock,
           "setFormat24Hour",
           context.getString(
             if (useFullTimeFormat) R.string.time_format_24_h_full
