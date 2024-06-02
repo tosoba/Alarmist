@@ -21,12 +21,10 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.padding
-import androidx.glance.text.Text
 import com.trm.alarmist.R
-import com.trm.alarmist.core.common.util.amPmString
-import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextAlarmUseCase
+import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
@@ -68,11 +66,10 @@ private fun NextAlarmWidgetContent(alarm: AlarmListModel?) {
         // to update it)
         // TODO: alarm icon next to alarm fireAtTime
         val is24HourFormat = DateFormat.is24HourFormat(context)
-        Text(
-          text =
-            """${alarm.nextFireAtTime.toFormattedString { is24HourFormat }} ${alarm.nextFireAtTime.amPmString { is24HourFormat }}"""
-              .trim(),
-          maxLines = 1,
+        WidgetAlarmFireAtTimeText(
+          fireAtTime = alarm.nextFireAtTime,
+          is24HourFormat = is24HourFormat,
+          useFullFormat = true,
           style = WidgetTextStyles.titleText.copy(color = textColor),
         )
       }

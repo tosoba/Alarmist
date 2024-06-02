@@ -1,6 +1,7 @@
 package com.trm.alarmist.widget.today
 
 import android.content.Context
+import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -35,6 +36,7 @@ import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
+import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
 import com.trm.alarmist.widget.common.ui.WidgetLazyColumn
@@ -214,7 +216,12 @@ private fun FilledHorizontalListItem(
 
   @Composable
   fun Leading() {
-    Text(text = item.fireAtTime.toString(), maxLines = 1, style = WidgetTextStyles.leadingText)
+    WidgetAlarmFireAtTimeText(
+      fireAtTime = item.nextFireAtTime,
+      is24HourFormat = DateFormat.is24HourFormat(LocalContext.current),
+      useFullFormat = displayHeaderSupporting,
+      style = WidgetTextStyles.leadingText,
+    )
   }
 
   @Composable
