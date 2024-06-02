@@ -24,24 +24,27 @@ import androidx.glance.appwidget.Switch
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
-import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.trm.alarmist.widget.common.ui.ListItem
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
+import com.trm.alarmist.widget.common.ui.ContentTitleBar
+import com.trm.alarmist.widget.common.ui.ListItem
 import com.trm.alarmist.widget.common.ui.RoundedScrollingLazyColumn
 import com.trm.alarmist.widget.common.ui.RoundedScrollingLazyVerticalGrid
+import com.trm.alarmist.widget.common.ui.TextClockRemoteViews
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
@@ -81,16 +84,11 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
 
     val imageTextListLayoutSize = ImageTextListLayoutSize.fromLocalSize()
 
-    fun titleBar(): @Composable (() -> Unit) = {
-      // TODO: consider using TitleBar impl to create a TitleBar with a RemoteViews TextClock
-      // instead of string title
-      TitleBar(
+    fun titleBar(): @Composable () -> Unit = {
+      ContentTitleBar(
         // TODO: either app icon or icon representing today
         startIcon = ImageProvider(R.mipmap.ic_launcher_round),
-        title =
-          "Today".takeIf { imageTextListLayoutSize != ImageTextListLayoutSize.Small }.orEmpty(),
         iconColor = GlanceTheme.colors.primary,
-        textColor = GlanceTheme.colors.onSurface,
         actions = {
           CircleIconButton(
             imageProvider = ImageProvider(R.drawable.refresh),
@@ -105,7 +103,13 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
               ),
           )
         },
-      )
+      ) {
+        Box(contentAlignment = Alignment.CenterStart, modifier = GlanceModifier.defaultWeight()) {
+          TextClockRemoteViews(
+            useFullTimeFormat = imageTextListLayoutSize != ImageTextListLayoutSize.Small
+          )
+        }
+      }
     }
 
     Scaffold(
