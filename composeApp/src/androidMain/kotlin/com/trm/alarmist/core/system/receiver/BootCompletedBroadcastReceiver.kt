@@ -11,9 +11,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class BootCompletedBroadcastReceiver : BroadcastReceiver(), KoinComponent {
-  private val getAndResetMissedAlarmsOnBootUseCase:
-    GetAndResetMissedAlarmsOnBootUseCase by
-    inject()
+  private val getAndResetMissedAlarmsOnBootUseCase: GetAndResetMissedAlarmsOnBootUseCase by inject()
 
   override fun onReceive(context: Context?, intent: Intent?) {
     if (intent?.action != Intent.ACTION_BOOT_COMPLETED && intent?.action != Intent.ACTION_REBOOT) {
@@ -21,9 +19,11 @@ class BootCompletedBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     }
 
     launch {
-      val missedAlarms =
-        getAndResetMissedAlarmsOnBootUseCase()
-      if (missedAlarms.isEmpty()) return@launch
+      val missedAlarms = getAndResetMissedAlarmsOnBootUseCase()
+      if (missedAlarms.isEmpty()) {
+        Napier.e("No missed alarms.")
+        return@launch
+      }
 
       missedAlarms.forEach {
         Napier.e("${it.key.id} - ${it.value.joinToString(transform = LocalDateTime::toString)}")

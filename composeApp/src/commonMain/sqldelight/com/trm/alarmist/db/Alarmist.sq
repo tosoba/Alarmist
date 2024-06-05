@@ -192,6 +192,10 @@ UPDATE alarm SET isOn = ?, lastModificationDateTime = ? WHERE groupId = ?;
 updateUngroupedAlarmsOnOff:
 UPDATE alarm SET isOn = ?, lastModificationDateTime = ? WHERE groupId IS NULL;
 
+selectScheduledOnDatesOnly:
+SELECT id, fireAtTime, scheduledOnDates FROM alarm
+WHERE scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NOT NULL;
+
 updateResetAlarmById:
 UPDATE alarm
 SET
