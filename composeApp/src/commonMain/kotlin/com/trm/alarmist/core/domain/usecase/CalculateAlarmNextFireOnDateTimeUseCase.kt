@@ -59,12 +59,8 @@ internal fun calculateOneTimeAlarmNextFireOnDateTime(
   afterDateTime: LocalDateTime,
 ): LocalDateTime =
   when {
-    fireAtTime <= LocalTime(hour = afterDateTime.time.hour, minute = afterDateTime.time.minute) -> {
-      afterDateTime.date.plus(1, DateTimeUnit.DAY)
-    }
-    else -> {
-      afterDateTime.date
-    }
+    fireAtTime <= afterDateTime.time -> afterDateTime.date.plus(1, DateTimeUnit.DAY)
+    else -> afterDateTime.date
   }.atTime(fireAtTime)
 
 private typealias CalculateScheduledAlarmNextFireOnDateTime =
