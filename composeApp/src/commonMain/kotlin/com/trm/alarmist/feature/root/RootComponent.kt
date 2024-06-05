@@ -13,6 +13,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
+import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.EditAlarmInputModel
@@ -138,6 +139,10 @@ class DefaultRootComponent(componentContext: ComponentContext) :
         }
       }
     }
+
+  init {
+    instanceKeeper.getOrCreate(::RootFeature)
+  }
 
   private fun createChild(
     config: ChildConfig,

@@ -165,13 +165,13 @@ class AlarmLocalRepository(
           .takeIf(List<Long>::isNotEmpty)
           ?.let { queries.updateResetAlarmByIds(now, it) }
 
-        // Reset alarms passed alarms that are scheduled on dates only (both on and off ones)
-        queries
-          .selectScheduledOnDatesOnly()
-          .executeAsList()
+        // Reset on alarms that are scheduled on past dates only
+        onAlarms
           .filter {
-            it.scheduledOnDates.last() < now.date ||
-              (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time)
+            it.scheduledOnDaysOfWeek.isEmpty() &&
+              it.scheduledOnDates.isNotEmpty() &&
+              (it.scheduledOnDates.last() < now.date ||
+                (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time))
           }
           .map { (id) -> id }
           .takeIf(List<Long>::isNotEmpty)
@@ -181,6 +181,22 @@ class AlarmLocalRepository(
 
         onAlarms
       }
+    }
+  }
+
+  override suspend fun resetPastOffAlarmsScheduledOnDatesOnly() {
+    val now = LocalDateTime.now()
+    withContext(dispatcher) {
+      queries
+        .selectOffAlarmsScheduledOnDatesOnly()
+        .executeAsList()
+        .filter {
+          it.scheduledOnDates.last() < now.date ||
+            (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time)
+        }
+        .map { (id) -> id }
+        .takeIf(List<Long>::isNotEmpty)
+        ?.let { queries.updateResetAlarmByIds(now, it) }
     }
   }
 
