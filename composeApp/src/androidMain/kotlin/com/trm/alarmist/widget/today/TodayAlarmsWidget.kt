@@ -35,7 +35,8 @@ import androidx.glance.text.Text
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.util.now
-import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
+import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
@@ -80,7 +81,10 @@ class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
 }
 
 @Composable
-private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<AlarmListModel>>) {
+private fun TodayAlarmsWidgetContent(
+  id: GlanceId,
+  alarms: Initializable<List<UpcomingAlarmListModel>>,
+) {
   GlanceTheme {
     val context = LocalContext.current
     val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
@@ -136,7 +140,7 @@ private fun TodayAlarmsWidgetContent(id: GlanceId, alarms: Initializable<List<Al
 }
 
 @Composable
-private fun Content(alarms: Initializable<List<AlarmListModel>>) {
+private fun Content(alarms: Initializable<List<UpcomingAlarmListModel>>) {
   when {
     !alarms.initialized -> {
       // TODO: better loading indicator?
@@ -162,7 +166,7 @@ private fun Content(alarms: Initializable<List<AlarmListModel>>) {
 }
 
 @Composable
-private fun ListView(items: List<AlarmListModel>, displayHeaderSupporting: Boolean) {
+private fun ListView(items: List<UpcomingAlarmListModel>, displayHeaderSupporting: Boolean) {
   WidgetLazyColumn(
     items = items,
     modifier = GlanceModifier.fillMaxSize(),
@@ -180,7 +184,7 @@ private fun ListView(items: List<AlarmListModel>, displayHeaderSupporting: Boole
 }
 
 @Composable
-private fun GridView(items: List<AlarmListModel>) {
+private fun GridView(items: List<UpcomingAlarmListModel>) {
   WidgetLazyVerticalGrid(
     gridCells = NUM_GRID_CELLS,
     items = items,
@@ -200,7 +204,7 @@ private fun GridView(items: List<AlarmListModel>) {
 
 @Composable
 private fun FilledHorizontalListItem(
-  item: AlarmListModel,
+  item: UpcomingAlarmListModel,
   displayLeading: Boolean,
   displayHeaderSupporting: Boolean,
   displayTrailing: Boolean,
@@ -228,7 +232,7 @@ private fun FilledHorizontalListItem(
   @Composable
   fun Leading() {
     WidgetAlarmFireAtTimeText(
-      fireAtTime = item.nextFireAtTime,
+      fireAtTime = item.fireAtTime,
       is24HourFormat = DateFormat.is24HourFormat(LocalContext.current),
       useFullFormat = displayHeaderSupporting,
       style = WidgetTextStyles.leadingText,
@@ -238,7 +242,7 @@ private fun FilledHorizontalListItem(
   @Composable
   fun Trailing() {
     Switch(
-      checked = item.isOn,
+      checked = item.status == UpcomingAlarmListStatus.ON,
       onCheckedChange =
         actionSendBroadcast(LocalContext.current.turnAlarmOffIntent(item.id, LocalDate.now())),
     )
