@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -113,49 +114,85 @@ private fun AlarmFiredView(
     windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
   ) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-      Column(modifier = Modifier.weight(.5f), horizontalAlignment = Alignment.CenterHorizontally) {
-        AlarmFireAtTimeText(settings)
+    AlarmFiredRowView(
+      settings = settings,
+      modifier = modifier,
+      stringResource = stringResource,
+      onSnoozeClick = onSnoozeClick,
+      onDismissClick = onDismissClick,
+    )
+  } else {
+    AlarmFiredColumnView(
+      settings = settings,
+      modifier = modifier,
+      stringResource = stringResource,
+      onSnoozeClick = onSnoozeClick,
+      onDismissClick = onDismissClick,
+    )
+  }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
+@Composable
+private fun AlarmFiredColumnView(
+  settings: AlarmFireSettings,
+  modifier: Modifier = Modifier,
+  stringResource: @Composable (StringResource) -> String = { stringResource(resource = it) },
+  onSnoozeClick: () -> Unit = {},
+  onDismissClick: () -> Unit = {},
+) {
+  Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Spacer(modifier = Modifier.weight(1f))
 
-        Text(
-          text = settings.name ?: stringResource(Res.string.alarm),
-          style = MaterialTheme.typography.headlineMedium,
+    AlarmFireAtTimeText(settings = settings, modifier = Modifier.fillMaxWidth())
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Text(
+      text = settings.name ?: stringResource(Res.string.alarm),
+      style = MaterialTheme.typography.headlineMedium,
+    )
+
+    Spacer(modifier = Modifier.weight(.5f))
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+      OutlinedButton(onClick = onSnoozeClick, modifier = Modifier.weight(1f)) {
+        AutoSizeText(
+          text = stringResource(Res.string.snooze),
+          style = MaterialTheme.typography.headlineLarge,
+          maxLines = 1,
+          maxTextSize = MaterialTheme.typography.headlineLarge.fontSize,
+          modifier = Modifier.padding(vertical = 8.dp),
         )
       }
 
-      Spacer(modifier = Modifier.width(32.dp))
+      Spacer(modifier = Modifier.width(16.dp))
 
-      Column(modifier = Modifier.weight(.5f), horizontalAlignment = Alignment.CenterHorizontally) {
-        OutlinedButton(onClick = onSnoozeClick, modifier = Modifier.fillMaxWidth()) {
-          AutoSizeText(
-            text = stringResource(Res.string.snooze),
-            style = MaterialTheme.typography.headlineLarge,
-            maxLines = 1,
-            maxTextSize = MaterialTheme.typography.headlineLarge.fontSize,
-            modifier = Modifier.padding(vertical = 8.dp),
-          )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = onDismissClick, modifier = Modifier.fillMaxWidth()) {
-          AutoSizeText(
-            text = stringResource(Res.string.dismiss),
-            style = MaterialTheme.typography.headlineLarge,
-            maxLines = 1,
-            maxTextSize = MaterialTheme.typography.headlineLarge.fontSize,
-            modifier = Modifier.padding(vertical = 8.dp),
-          )
-        }
+      Button(onClick = onDismissClick, modifier = Modifier.weight(1f)) {
+        AutoSizeText(
+          text = stringResource(Res.string.dismiss),
+          style = MaterialTheme.typography.headlineLarge,
+          maxLines = 1,
+          maxTextSize = MaterialTheme.typography.headlineLarge.fontSize,
+          modifier = Modifier.padding(vertical = 8.dp),
+        )
       }
     }
-  } else {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-      Spacer(modifier = Modifier.weight(1f))
 
-      AlarmFireAtTimeText(settings)
+    Spacer(modifier = Modifier.weight(.5f))
+  }
+}
+
+@Composable
+private fun AlarmFiredRowView(
+  settings: AlarmFireSettings,
+  modifier: Modifier,
+  stringResource: @Composable (StringResource) -> String = { stringResource(resource = it) },
+  onSnoozeClick: () -> Unit = {},
+  onDismissClick: () -> Unit = {},
+) {
+  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    Column(modifier = Modifier.weight(.5f), horizontalAlignment = Alignment.CenterHorizontally) {
+      AlarmFireAtTimeText(settings = settings, modifier = Modifier.fillMaxWidth())
 
       Spacer(modifier = Modifier.height(16.dp))
 
@@ -163,67 +200,89 @@ private fun AlarmFiredView(
         text = settings.name ?: stringResource(Res.string.alarm),
         style = MaterialTheme.typography.headlineMedium,
       )
+    }
 
-      Spacer(modifier = Modifier.weight(.5f))
+    Spacer(modifier = Modifier.width(32.dp))
 
-      Row(modifier = Modifier.fillMaxWidth()) {
-        OutlinedButton(onClick = onSnoozeClick, modifier = Modifier.weight(1f)) {
-          AutoSizeText(
-            text = stringResource(Res.string.snooze),
-            style = MaterialTheme.typography.headlineLarge,
-            maxLines = 1,
-            maxTextSize = MaterialTheme.typography.headlineLarge.fontSize,
-            modifier = Modifier.padding(vertical = 8.dp),
-          )
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Button(onClick = onDismissClick, modifier = Modifier.weight(1f)) {
-          AutoSizeText(
-            text = stringResource(Res.string.dismiss),
-            style = MaterialTheme.typography.headlineLarge,
-            maxLines = 1,
-            maxTextSize = MaterialTheme.typography.headlineLarge.fontSize,
-            modifier = Modifier.padding(vertical = 8.dp),
-          )
-        }
+    Column(modifier = Modifier.weight(.5f), horizontalAlignment = Alignment.CenterHorizontally) {
+      OutlinedButton(onClick = onSnoozeClick, modifier = Modifier.fillMaxWidth()) {
+        AutoSizeText(
+          text = stringResource(Res.string.snooze),
+          style = MaterialTheme.typography.headlineLarge,
+          maxLines = 1,
+          maxTextSize = MaterialTheme.typography.headlineLarge.fontSize,
+          modifier = Modifier.padding(vertical = 8.dp),
+        )
       }
 
-      Spacer(modifier = Modifier.weight(.5f))
+      Spacer(modifier = Modifier.height(16.dp))
+
+      Button(onClick = onDismissClick, modifier = Modifier.fillMaxWidth()) {
+        AutoSizeText(
+          text = stringResource(Res.string.dismiss),
+          style = MaterialTheme.typography.headlineLarge,
+          maxLines = 1,
+          maxTextSize = MaterialTheme.typography.headlineLarge.fontSize,
+          modifier = Modifier.padding(vertical = 8.dp),
+        )
+      }
     }
   }
 }
 
 @Composable
 private fun AlarmFireAtTimeText(settings: AlarmFireSettings, modifier: Modifier = Modifier) {
-  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+  Row(
+    modifier = modifier,
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.Center,
+  ) {
     AutoSizeText(
       text = settings.fireOnDateTime.time.toFormattedString(),
       style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
       maxLines = 1,
-      maxTextSize = 96.sp,
-      modifier = Modifier.alignByBaseline().weight(1f),
+      maxTextSize = 80.sp,
+      modifier = Modifier.alignByBaseline(),
     )
 
     settings.fireOnDateTime.time.amPmString().takeIf(String::isNotEmpty)?.let {
-      Spacer(modifier = Modifier.width(2.dp))
+      Spacer(modifier = Modifier.width(8.dp))
 
-      Text(
+      AutoSizeText(
         text = it,
-        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
         maxLines = 1,
         modifier = Modifier.alignByBaseline(),
+        maxTextSize = MaterialTheme.typography.displaySmall.fontSize,
       )
     }
   }
 }
 
-// TODO: previews for both horizontal and vertical layouts
 @Composable
 @Preview(showBackground = true)
-private fun AlarmFiredPreview() {
-  AlarmFiredView(
+private fun AlarmFiredColumnPreview() {
+  AlarmFiredColumnView(
+    settings =
+      AlarmFireSettings(
+        id = 1L,
+        name = "Get up",
+        fireOnDateTime = LocalDateTime.now(),
+        snoozeAvailable = true,
+        alarmDurationMinutes = 3L,
+        soundEnabled = true,
+        soundId = null,
+        vibrationEnabled = true,
+      ),
+    modifier = Modifier.fillMaxSize().padding(16.dp),
+    stringResource = { it.key.capitalize(Locale.current) },
+  )
+}
+
+@Composable
+@Preview(showBackground = true, widthDp = 640, heightDp = 360)
+private fun AlarmFiredRowPreview() {
+  AlarmFiredRowView(
     settings =
       AlarmFireSettings(
         id = 1L,
