@@ -28,6 +28,7 @@ fun AlarmFireAtTime(fireAtTime: LocalTime, isOn: Boolean, modifier: Modifier = M
       color = MaterialTheme.colorScheme.onOffContainer(isOn),
       maxLines = 1,
       maxTextSize = MaterialTheme.typography.displayMedium.fontSize,
+      modifier = Modifier.alignByBaseline()
     )
 
     fireAtTime.amPmString().takeIf(String::isNotEmpty)?.let {
@@ -42,6 +43,7 @@ fun AlarmFireAtTime(fireAtTime: LocalTime, isOn: Boolean, modifier: Modifier = M
           ),
         color = MaterialTheme.colorScheme.onOffContainer(isOn),
         maxLines = 1,
+        modifier = Modifier.alignByBaseline()
       )
     }
   }

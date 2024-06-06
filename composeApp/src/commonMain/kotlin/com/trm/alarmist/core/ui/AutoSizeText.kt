@@ -3,20 +3,15 @@ package com.trm.alarmist.core.ui
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.InternalFoundationTextApi
-import androidx.compose.foundation.text.TextDelegate
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.platform.LocalDensity
@@ -29,75 +24,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
+import com.trm.alarmist.core.common.util.roundToPx
+import com.trm.alarmist.core.common.util.toIntSize
+import com.trm.alarmist.core.common.util.toSp
 import com.trm.alarmist.core.ui.SuggestedFontSizesStatus.Companion.rememberSuggestedFontSizesStatus
 import io.github.aakira.napier.Napier
 import kotlin.math.min
-
-// DP
-fun Density.toSp(dp: Dp): TextUnit = dp.toSp()
-
-fun Density.toPx(dp: Dp): Float = dp.toPx()
-
-fun Density.roundToPx(dp: Dp): Int = dp.roundToPx()
-
-// TEXT UNIT
-fun Density.toDp(sp: TextUnit): Dp = sp.toDp()
-
-fun Density.toPx(sp: TextUnit): Float = sp.toPx()
-
-fun Density.roundToPx(sp: TextUnit): Int = sp.roundToPx()
-
-// FLOAT
-fun Density.toDp(px: Float): Dp = px.toDp()
-
-fun Density.toSp(px: Float): TextUnit = px.toSp()
-
-// INT
-fun Density.toDp(px: Int): Dp = px.toDp()
-
-fun Density.toSp(px: Int): TextUnit = px.toSp()
-
-// SIZE
-fun Density.toIntSize(dpSize: DpSize): IntSize =
-  IntSize(dpSize.width.roundToPx(), dpSize.height.roundToPx())
-
-fun Density.toSize(dpSize: DpSize): Size =
-  if (dpSize.isSpecified) Size(dpSize.width.toPx(), dpSize.height.toPx()) else Size.Unspecified
-
-fun Density.toDpSize(size: Size): DpSize =
-  if (size.isSpecified) DpSize(size.width.toDp(), size.height.toDp()) else DpSize.Unspecified
-
-fun Density.toDpSize(intSize: IntSize): DpSize = DpSize(intSize.width.toDp(), intSize.height.toDp())
-
-// OFFSET
-fun Density.toIntOffset(dpOffset: DpOffset): IntOffset =
-  IntOffset(dpOffset.x.roundToPx(), dpOffset.y.roundToPx())
-
-fun Density.toOffset(dpOffset: DpOffset): Offset =
-  if (dpOffset.isSpecified) Offset(dpOffset.x.toPx(), dpOffset.y.toPx()) else Offset.Unspecified
-
-fun Density.toDpOffset(offset: Offset): DpOffset =
-  if (offset.isSpecified) DpOffset(offset.x.toDp(), offset.y.toDp()) else DpOffset.Unspecified
-
-fun Density.toDpOffset(intOffset: IntOffset): DpOffset =
-  DpOffset(intOffset.x.toDp(), intOffset.y.toDp())
-
-@Immutable data class ImmutableWrapper<T>(val value: T)
-
-fun <T> T.toImmutableWrapper(): ImmutableWrapper<T> = ImmutableWrapper(this)
 
 /**
  * Composable function that automatically adjusts the text size to fit within given constraints,
@@ -159,7 +101,7 @@ fun AutoSizeText(
   text: String,
   modifier: Modifier = Modifier,
   color: Color = Color.Unspecified,
-  suggestedFontSizes: ImmutableWrapper<List<TextUnit>> = emptyList<TextUnit>().toImmutableWrapper(),
+  suggestedFontSizes: List<TextUnit> = emptyList(),
   suggestedFontSizesStatus: SuggestedFontSizesStatus =
     suggestedFontSizes.rememberSuggestedFontSizesStatus,
   stepGranularityTextSize: TextUnit = TextUnit.Unspecified,
@@ -219,7 +161,7 @@ fun AutoSizeText(
   text: AnnotatedString,
   modifier: Modifier = Modifier,
   color: Color = Color.Unspecified,
-  suggestedFontSizes: ImmutableWrapper<List<TextUnit>> = emptyList<TextUnit>().toImmutableWrapper(),
+  suggestedFontSizes: List<TextUnit> = emptyList(),
   suggestedFontSizesStatus: SuggestedFontSizesStatus =
     suggestedFontSizes.rememberSuggestedFontSizesStatus,
   stepGranularityTextSize: TextUnit = TextUnit.Unspecified,
@@ -235,8 +177,7 @@ fun AutoSizeText(
   softWrap: Boolean = true,
   maxLines: Int = Int.MAX_VALUE,
   minLines: Int = 1,
-  inlineContent: ImmutableWrapper<Map<String, InlineTextContent>> =
-    mapOf<String, InlineTextContent>().toImmutableWrapper(),
+  inlineContent: Map<String, InlineTextContent> = mapOf(),
   onTextLayout: (TextLayoutResult) -> Unit = {},
   style: TextStyle = LocalTextStyle.current,
   lineSpacingRatio: Float = style.lineHeight.value / style.fontSize.value,
@@ -273,27 +214,29 @@ fun AutoSizeText(
       val layoutDirection = LocalLayoutDirection.current
       val density = LocalDensity.current
       val fontFamilyResolver = LocalFontFamilyResolver.current
+      val textMeasurer = rememberTextMeasurer()
       val coercedLineSpacingRatio = lineSpacingRatio.takeIf { it.isFinite() && it >= 1 } ?: 1F
       val shouldMoveBackward: (TextUnit) -> Boolean = {
         shouldShrink(
           text = text,
           textStyle =
             combinedTextStyle.copy(fontSize = it, lineHeight = it * coercedLineSpacingRatio),
-          minLines = minLines,
           maxLines = maxLines,
-          softWrap = softWrap,
           layoutDirection = layoutDirection,
+          softWrap = softWrap,
           density = density,
           fontFamilyResolver = fontFamilyResolver,
+          textMeasurer = textMeasurer,
         )
       }
 
       val electedFontSize =
-        run {
-            if (suggestedFontSizesStatus == SuggestedFontSizesStatus.VALID) suggestedFontSizes.value
+        kotlin
+          .run {
+            if (suggestedFontSizesStatus == SuggestedFontSizesStatus.VALID) suggestedFontSizes
             else
               remember(key1 = suggestedFontSizes) {
-                suggestedFontSizes.value
+                suggestedFontSizes
                   .filter { it.isSp }
                   .takeIf { it.isNotEmpty() }
                   ?.sortedBy { it.value }
@@ -314,12 +257,14 @@ fun AutoSizeText(
 
       if (electedFontSize == 0.sp)
         Napier.w(
-          """The text cannot be displayed. Please consider the following options:
+          tag = "AutoSizeText",
+          message =
+            """The text cannot be displayed. Please consider the following options:
                       |  1. Providing 'suggestedFontSizes' with smaller values that can be utilized.
                       |  2. Decreasing the 'stepGranularityTextSize' value.
                       |  3. Adjusting the 'minTextSize' parameter to a suitable value and ensuring the overflow parameter is set to "TextOverflow.Ellipsis".
                     """
-            .trimMargin()
+              .trimMargin(),
         )
 
       Text(
@@ -328,7 +273,7 @@ fun AutoSizeText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        inlineContent = inlineContent.value,
+        inlineContent = inlineContent,
         onTextLayout = onTextLayout,
         style =
           combinedTextStyle.copy(
@@ -340,31 +285,7 @@ fun AutoSizeText(
   }
 }
 
-@OptIn(InternalFoundationTextApi::class)
 private fun BoxWithConstraintsScope.shouldShrink(
-  text: AnnotatedString,
-  textStyle: TextStyle,
-  minLines: Int,
-  maxLines: Int,
-  softWrap: Boolean,
-  layoutDirection: LayoutDirection,
-  density: Density,
-  fontFamilyResolver: FontFamily.Resolver,
-) =
-  TextDelegate(
-      text = text,
-      style = textStyle,
-      maxLines = maxLines,
-      minLines = minLines,
-      softWrap = softWrap,
-      overflow = TextOverflow.Clip,
-      density = density,
-      fontFamilyResolver = fontFamilyResolver,
-    )
-    .layout(constraints = constraints, layoutDirection = layoutDirection)
-    .hasVisualOverflow
-
-private fun BoxWithConstraintsScope.shouldShrink2(
   text: AnnotatedString,
   textStyle: TextStyle,
   maxLines: Int,
@@ -388,6 +309,7 @@ private fun BoxWithConstraintsScope.shouldShrink2(
     )
     .hasVisualOverflow
 
+@Stable
 @Composable
 private fun rememberCandidateFontSizesIntProgress(
   density: Density,
@@ -422,14 +344,14 @@ private fun rememberCandidateFontSizesIntProgress(
 }
 
 // This function works by using a binary search algorithm
-fun <E> List<E>.findElectedValue(shouldMoveBackward: (E) -> Boolean) = run {
+fun <T> List<T>.findElectedValue(shouldMoveBackward: (T) -> Boolean) = run {
   indices.findElectedValue(transform = { this[it] }, shouldMoveBackward = shouldMoveBackward)
 }
 
 // This function works by using a binary search algorithm
-private fun <E> IntProgression.findElectedValue(
-  transform: (Int) -> E,
-  shouldMoveBackward: (E) -> Boolean,
+private fun <T> IntProgression.findElectedValue(
+  transform: (Int) -> T,
+  shouldMoveBackward: (T) -> Boolean,
 ) = run {
   var low = first / step
   var high = last / step
@@ -450,7 +372,7 @@ enum class SuggestedFontSizesStatus {
       get() =
         if (isNotEmpty() && all { it.isSp } && sortedBy { it.value } == this) VALID else INVALID
 
-    val ImmutableWrapper<List<TextUnit>>.rememberSuggestedFontSizesStatus
-      @Composable get() = remember(key1 = this) { value.suggestedFontSizesStatus }
+    val List<TextUnit>.rememberSuggestedFontSizesStatus
+      @Composable get() = remember(key1 = this) { suggestedFontSizesStatus }
   }
 }
