@@ -34,6 +34,7 @@ import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
@@ -47,12 +48,14 @@ import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.today.Dimensions.NUM_GRID_CELLS
 import com.trm.alarmist.widget.today.Dimensions.fillItemItemPadding
 import com.trm.alarmist.widget.today.Dimensions.filledItemCornerRadius
 import com.trm.alarmist.widget.today.Dimensions.verticalSpacing
 import com.trm.alarmist.widget.today.Dimensions.widgetPadding
+import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -236,7 +239,8 @@ private fun FilledHorizontalListItem(
   fun Trailing() {
     Switch(
       checked = item.isOn,
-      onCheckedChange = null, // TODO: find -> revert commit with switch action
+      onCheckedChange =
+        actionSendBroadcast(LocalContext.current.turnAlarmOffIntent(item.id, LocalDate.now())),
     )
   }
 

@@ -16,22 +16,6 @@ import androidx.glance.layout.padding
 import kotlin.math.ceil
 
 @Composable
-fun WidgetLazyVerticalGrid(
-  gridCells: GridCells,
-  modifier: GlanceModifier = GlanceModifier,
-  horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-  content: LazyVerticalGridScope.() -> Unit,
-) {
-  Box(modifier = GlanceModifier.cornerRadius(16.dp).then(modifier)) {
-    LazyVerticalGrid(
-      gridCells = gridCells,
-      horizontalAlignment = horizontalAlignment,
-      content = content,
-    )
-  }
-}
-
-@Composable
 fun <T> WidgetLazyVerticalGrid(
   gridCells: Int,
   items: List<T>,
@@ -96,5 +80,21 @@ fun <T> WidgetLazyVerticalGrid(
         itemContent(item)
       }
     }
+  }
+}
+
+@Composable
+private fun WidgetLazyVerticalGrid(
+  gridCells: GridCells,
+  modifier: GlanceModifier = GlanceModifier,
+  horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+  content: LazyVerticalGridScope.() -> Unit,
+) {
+  Box(modifier = GlanceModifier.cornerRadius(16.dp).then(modifier)) {
+    LazyVerticalGrid(
+      gridCells = gridCells,
+      horizontalAlignment = horizontalAlignment,
+      content = content,
+    )
   }
 }

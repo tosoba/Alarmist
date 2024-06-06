@@ -17,26 +17,16 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 
 @Composable
-fun WidgetLazyColumn(
-  modifier: GlanceModifier = GlanceModifier,
-  horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-  content: LazyListScope.() -> Unit,
-) {
-  Box(modifier = modifier.fillMaxSize().cornerRadius(16.dp)) {
-    LazyColumn(horizontalAlignment = horizontalAlignment, content = content)
-  }
-}
-
-@Composable
 fun <T> WidgetLazyColumn(
   items: List<T>,
   modifier: GlanceModifier = GlanceModifier,
   horizontalAlignment: Alignment.Horizontal = Alignment.Start,
   verticalItemsSpacing: Dp = 4.dp,
+  itemId: (item: T) -> Long = { LazyListScope.UnspecifiedItemId },
   itemContent: @Composable (item: T) -> Unit,
 ) {
   WidgetLazyColumn(modifier, horizontalAlignment) {
-    itemsIndexed(items) { index, item ->
+    itemsIndexed(items = items, itemId = { _, item -> itemId(item) }) { index, item ->
       Column(modifier = GlanceModifier.fillMaxWidth()) {
         itemContent(item)
         if (index != items.lastIndex) {
@@ -44,5 +34,16 @@ fun <T> WidgetLazyColumn(
         }
       }
     }
+  }
+}
+
+@Composable
+private fun WidgetLazyColumn(
+  modifier: GlanceModifier = GlanceModifier,
+  horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+  content: LazyListScope.() -> Unit,
+) {
+  Box(modifier = modifier.fillMaxSize().cornerRadius(16.dp)) {
+    LazyColumn(horizontalAlignment = horizontalAlignment, content = content)
   }
 }

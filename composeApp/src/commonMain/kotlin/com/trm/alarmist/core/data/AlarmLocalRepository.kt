@@ -292,6 +292,33 @@ class AlarmLocalRepository(
       }
     }
 
+  override suspend fun toggleAlarmOnOffOnDate(id: Long, date: LocalDate): AlarmModel =
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        val alarm = queries.selectAlarmById(id).executeAsOne()
+        when {
+          alarm.scheduledOnDaysOfWeek.isNullOrEmpty() && alarm.scheduledOnDates.isNullOrEmpty() -> {
+            queries.updateToggleAlarmOnOffById(LocalDateTime.now(), id)
+          }
+          alarm.offOnDates?.contains(date) == true -> {
+            queries.updateOffOnDatesAndToggleOnById(
+              offOnDates = (alarm.offOnDates - date).takeIf(Collection<LocalDate>::isNotEmpty),
+              lastModificationDateTime = LocalDateTime.now(),
+              id = id,
+            )
+          }
+          else -> {
+            queries.updateOffOnDatesAndToggleOnById(
+              offOnDates = alarm.offOnDates?.let { it + date } ?: listOf(date),
+              lastModificationDateTime = LocalDateTime.now(),
+              id = id,
+            )
+          }
+        }
+        queries.selectAlarmById(id).executeAsOne().toModel()
+      }
+    }
+
   override suspend fun turnAlarmOnOnDate(id: Long, date: LocalDate): AlarmModel =
     withContext(dispatcher) {
       val alarm = queries.selectAlarmById(id).executeAsOne()

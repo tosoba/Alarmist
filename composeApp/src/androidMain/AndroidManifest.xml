@@ -91,6 +91,8 @@
                 android:resource="@xml/next_alarm_widget" />
         </receiver>
 
+        <receiver android:name=".widget.common.TurnOffAlarmActionReceiver" />
+
     </application>
 
 </manifest>

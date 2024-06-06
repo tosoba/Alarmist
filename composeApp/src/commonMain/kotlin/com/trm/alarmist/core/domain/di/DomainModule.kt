@@ -12,6 +12,7 @@ import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeU
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
 import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTime
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
+import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffOnDateUseCase
 import com.trm.alarmist.core.domain.usecase.TurnAlarmOffOnDateUseCase
 import com.trm.alarmist.core.domain.usecase.TurnAlarmOnOnDateUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
@@ -40,4 +41,5 @@ val domainModule = module {
   factoryOf(::IsAlarmScheduledToFireAtDateTime)
   factoryOf(::TurnAlarmOffOnDateUseCase)
   factoryOf(::TurnAlarmOnOnDateUseCase)
+  factoryOf(::ToggleAlarmOnOffOnDateUseCase)
 }
