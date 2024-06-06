@@ -10,6 +10,6 @@ class TodayAlarmsWidgetReceiver : GlanceAppWidgetReceiver() {
 
   override fun onReceive(context: Context, intent: Intent) {
     super.onReceive(context, intent)
-    handleAction(context, intent)
+    glanceAppWidget.handleAction(context, intent)
   }
 }

@@ -18,7 +18,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
-internal fun GlanceAppWidget.updateWidget(
+internal fun GlanceAppWidget.updateById(
   widgetId: Int,
   context: Context,
   updateState: suspend (MutablePreferences) -> Unit,
@@ -30,7 +30,7 @@ internal fun GlanceAppWidget.updateWidget(
   }
 }
 
-internal inline fun <reified T : GlanceAppWidget> T.updateAllWidgets(
+internal inline fun <reified T : GlanceAppWidget> T.updateAll(
   context: Context,
   noinline updateState: suspend (MutablePreferences) -> Unit,
 ) {
