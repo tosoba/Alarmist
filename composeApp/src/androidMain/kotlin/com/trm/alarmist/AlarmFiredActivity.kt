@@ -6,7 +6,6 @@ import alarmist.composeapp.generated.resources.dismiss
 import alarmist.composeapp.generated.resources.snooze
 import android.content.Intent
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,14 +29,16 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
-import com.trm.alarmist.core.common.util.formattedTime
+import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.common.util.turnScreenOffAndKeyguardOn
 import com.trm.alarmist.core.common.util.turnScreenOnAndKeyguardOff
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
@@ -49,8 +50,7 @@ import com.trm.alarmist.core.ui.AutoSizeText
 import com.trm.alarmist.core.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.format
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.android.ext.android.inject
 
@@ -106,6 +106,7 @@ private fun AlarmFiredView(
   modifier: Modifier = Modifier,
   onSnoozeClick: () -> Unit = {},
   onDismissClick: () -> Unit = {},
+  stringResource: @Composable (StringResource) -> String = { stringResource(resource = it) },
 ) {
   val windowSizeClass = calculateWindowSizeClass()
   if (
@@ -196,30 +197,31 @@ private fun AlarmFiredView(
 
 @Composable
 private fun AlarmFireAtTimeText(settings: AlarmFireSettings, modifier: Modifier = Modifier) {
-  AutoSizeText(
-    text =
-      buildString {
-        append(
-          settings.fireOnDateTime.formattedTime(
-            context = LocalContext.current,
-            showDayOfWeek = false,
-            showAmPmIf12HourFormat = false,
-          )
-        )
-        if (!DateFormat.is24HourFormat(LocalContext.current)) {
-          append(' ')
-          append(settings.fireOnDateTime.time.format(LocalTime.Format { amPmMarker("AM", "PM") }))
-        }
-      },
-    style =
-      MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold, fontSize = 96.sp),
-    maxLines = 1,
-    modifier = modifier,
-  )
+  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    AutoSizeText(
+      text = settings.fireOnDateTime.time.toFormattedString(),
+      style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
+      maxLines = 1,
+      maxTextSize = 96.sp,
+      modifier = Modifier.alignByBaseline().weight(1f),
+    )
+
+    settings.fireOnDateTime.time.amPmString().takeIf(String::isNotEmpty)?.let {
+      Spacer(modifier = Modifier.width(2.dp))
+
+      Text(
+        text = it,
+        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+        maxLines = 1,
+        modifier = Modifier.alignByBaseline(),
+      )
+    }
+  }
 }
 
+// TODO: previews for both horizontal and vertical layouts
 @Composable
-@Preview
+@Preview(showBackground = true)
 private fun AlarmFiredPreview() {
   AlarmFiredView(
     settings =
@@ -234,5 +236,6 @@ private fun AlarmFiredPreview() {
         vibrationEnabled = true,
       ),
     modifier = Modifier.fillMaxSize().padding(16.dp),
+    stringResource = { it.key.capitalize(Locale.current) },
   )
 }
