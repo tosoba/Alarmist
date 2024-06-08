@@ -294,6 +294,14 @@ class AlarmLocalRepository(
       }
     }
 
+  override suspend fun turnAlarmOff(id: Long): AlarmModel =
+    withContext(dispatcher) {
+      queries.transactionWithResult {
+        queries.updateTurnAlarmOffById(LocalDateTime.now(), id)
+        queries.selectAlarmById(id).executeAsOne().toModel()
+      }
+    }
+
   override suspend fun toggleAlarmOnOffOnDate(id: Long, date: LocalDate): AlarmModel =
     withContext(dispatcher) {
       queries.transactionWithResult {

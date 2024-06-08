@@ -74,9 +74,19 @@ SET
         ELSE snoozeCount
     END,
     isOn = CASE
+        WHEN scheduledOnDaysOfWeek IS NULL AND scheduledOnDates = offOnDates AND isOn = 1 THEN isOn
         WHEN isOn = 1 THEN 0
         ELSE 1
+    END,
+    offOnDates = CASE
+        WHEN scheduledOnDaysOfWeek IS NULL AND scheduledOnDates = offOnDates THEN NULL
+        ELSE offOnDates
     END
+WHERE id = ?;
+
+updateTurnAlarmOffById:
+UPDATE alarm
+SET isOn = 0, lastModificationDateTime = ?
 WHERE id = ?;
 
 updateOffOnDatesAndToggleOnById:
@@ -92,7 +102,7 @@ WHERE id = ?;
 updateAlarmsGroups:
 UPDATE alarm
 SET groupId = CASE
-    WHEN groupId = :groupId THEN NULL
+        WHEN groupId = :groupId THEN NULL
     ELSE :groupId
 END
 WHERE id IN :alarmIds;

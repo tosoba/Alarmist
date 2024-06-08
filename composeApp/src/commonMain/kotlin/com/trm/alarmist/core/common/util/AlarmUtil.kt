@@ -28,7 +28,12 @@ fun Alarm.toListModel(now: LocalDateTime): AlarmListModel {
     groupId = groupId,
     fireAtTime = fireAtTime,
     name = name,
-    isOn = isOn == DB_ON,
+    isOn =
+      isOn == DB_ON &&
+        (!scheduledOnDaysOfWeek.isNullOrEmpty() ||
+          scheduledOnDates.isNullOrEmpty() ||
+          offOnDates.isNullOrEmpty() ||
+          !offOnDates.containsAll(scheduledOnDates)),
     fireOnDateTime =
       if (snoozedFireAtTime != null) {
         calculateAlarmNextFireOnDateTime(

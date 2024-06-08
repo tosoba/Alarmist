@@ -8,8 +8,8 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
-import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import com.trm.alarmist.core.domain.usecase.TurnAlarmOffOnDateUseCase
+import com.trm.alarmist.core.domain.usecase.TurnAlarmOffUseCase
 import com.trm.alarmist.core.domain.usecase.TurnAlarmOnOnDateUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,7 +37,7 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
     GetScheduledAlarmCountsForDateRangeUseCase by
     inject()
 
-  private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
+  private val turnAlarmOffUseCase: TurnAlarmOffUseCase by inject()
   private val turnAlarmOnOnDateUseCase: TurnAlarmOnOnDateUseCase by inject()
   private val turnAlarmOffOnDateUseCase: TurnAlarmOffOnDateUseCase by inject()
 
@@ -101,7 +101,7 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
   }
 
   fun onTurnAlarmOff(alarm: UpcomingAlarmListModel) {
-    coroutineScope.launch { toggleAlarmOnOffUseCase(alarm.id) }
+    coroutineScope.launch { turnAlarmOffUseCase(alarm.id) }
   }
 
   fun onTurnAlarmOffOnSelectedDate(alarm: UpcomingAlarmListModel) {
