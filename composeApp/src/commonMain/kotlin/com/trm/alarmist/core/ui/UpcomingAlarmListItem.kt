@@ -1,5 +1,9 @@
 package com.trm.alarmist.core.ui
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.pause_alarm_on_selected_date
+import alarmist.composeapp.generated.resources.turn_alarm_off
+import alarmist.composeapp.generated.resources.turn_alarm_on
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +33,7 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import com.trm.alarmist.core.ui.theme.onOffCardColors
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +95,12 @@ fun UpcomingAlarmListItem(
               }
             },
             shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp),
-            label = { Icon(Icons.Default.Stop, "Off") },
+            label = {
+              Icon(
+                imageVector = Icons.Default.Stop,
+                contentDescription = stringResource(Res.string.turn_alarm_off),
+              )
+            },
           )
 
           SegmentedButton(
@@ -101,7 +111,12 @@ fun UpcomingAlarmListItem(
               }
             },
             shape = RectangleShape,
-            label = { Icon(Icons.Default.Pause, "Pause") },
+            label = {
+              Icon(
+                imageVector = Icons.Default.Pause,
+                contentDescription = stringResource(Res.string.pause_alarm_on_selected_date),
+              )
+            },
           )
 
           SegmentedButton(
@@ -112,7 +127,12 @@ fun UpcomingAlarmListItem(
               }
             },
             shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
-            label = { Icon(Icons.Default.PlayArrow, "On") },
+            label = {
+              Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = stringResource(Res.string.turn_alarm_on),
+              )
+            },
           )
         }
       }
