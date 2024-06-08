@@ -288,9 +288,7 @@ private fun GroupedAlarmCard(
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
       AlarmFireAtTime(fireAtTime = alarm.nextFireAtTime, isOn = alarm.isOn)
-
       Spacer(modifier = Modifier.width(8.dp))
-
       Checkbox(checked = isSelected, onCheckedChange = { onToggleAlarmSelection() })
     }
 
@@ -303,11 +301,13 @@ private fun GroupedAlarmCard(
       AlarmScheduleDescription(
         isOn = alarm.isOn,
         scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek,
-        scheduledOnDate = alarm.scheduledOnClosestDate,
-        offOnScheduledDate = false,
+        scheduledOnDate = alarm.closestScheduledOnDate,
+        offOnScheduledDate = alarm.offOnAllScheduledDates,
         scheduledOnMultipleDates = alarm.scheduledOnMultipleDates,
       )
+
       Spacer(modifier = Modifier.weight(1f))
+
       AlarmFireOnDateTimeCountdown(fireOnDateTime = alarm.fireOnDateTime, isOn = alarm.isOn)
     }
 

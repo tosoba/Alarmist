@@ -51,9 +51,7 @@ fun AlarmListItem(
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
       AlarmFireAtTime(fireAtTime = item.nextFireAtTime, isOn = item.isOn)
-
       Spacer(modifier = Modifier.width(8.dp))
-
       Switch(checked = item.isOn, onCheckedChange = { _ -> onToggleOnOff(item) })
     }
 
@@ -66,8 +64,8 @@ fun AlarmListItem(
       AlarmScheduleDescription(
         isOn = item.isOn,
         scheduledOnDaysOfWeek = item.scheduledOnDaysOfWeek,
-        scheduledOnDate = item.scheduledOnClosestDate,
-        offOnScheduledDate = false,
+        scheduledOnDate = item.closestScheduledOnDate,
+        offOnScheduledDate = item.offOnAllScheduledDates,
         scheduledOnMultipleDates = item.scheduledOnMultipleDates,
       )
 
