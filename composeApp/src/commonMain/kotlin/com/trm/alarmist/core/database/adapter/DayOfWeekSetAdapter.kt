@@ -4,15 +4,16 @@ import app.cash.sqldelight.ColumnAdapter
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.isoDayNumber
 
-object DayOfWeekListAdapter : ColumnAdapter<List<DayOfWeek>, String> {
-  override fun decode(databaseValue: String): List<DayOfWeek> =
+object DayOfWeekSetAdapter : ColumnAdapter<Set<DayOfWeek>, String> {
+  override fun decode(databaseValue: String): Set<DayOfWeek> =
     databaseValue
       .takeIf(String::isNotEmpty)
       ?.split(",")
       ?.map { DayOfWeek(isoDayNumber = it.toInt()) }
       .orEmpty()
+      .toSet()
 
-  override fun encode(value: List<DayOfWeek>): String =
+  override fun encode(value: Set<DayOfWeek>): String =
     value
       .takeIf(Collection<DayOfWeek>::isNotEmpty)
       ?.sorted()

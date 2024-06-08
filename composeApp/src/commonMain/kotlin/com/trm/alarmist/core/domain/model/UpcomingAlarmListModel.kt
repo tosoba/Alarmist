@@ -15,6 +15,6 @@ data class UpcomingAlarmListModel(
   val name: String?,
   val status: UpcomingAlarmListStatus,
   val fireOnDateTime: LocalDateTime?,
-  val scheduledOnDaysOfWeek: List<DayOfWeek>,
+  val scheduledOnDaysOfWeek: Set<DayOfWeek>,
   val scheduledOnMultipleDates: Boolean,
 )

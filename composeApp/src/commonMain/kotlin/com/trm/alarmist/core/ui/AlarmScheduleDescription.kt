@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AlarmScheduleDescription(
   isOn: Boolean,
-  scheduledOnDaysOfWeek: List<DayOfWeek>,
+  scheduledOnDaysOfWeek: Collection<DayOfWeek>,
   scheduledOnDate: LocalDate?,
   offOnScheduledDate: Boolean,
   scheduledOnMultipleDates: Boolean,

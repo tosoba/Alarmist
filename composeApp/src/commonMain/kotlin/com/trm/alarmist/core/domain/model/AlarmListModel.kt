@@ -14,7 +14,7 @@ data class AlarmListModel(
   val name: String?,
   val isOn: Boolean,
   val fireOnDateTime: LocalDateTime?,
-  val scheduledOnDaysOfWeek: List<DayOfWeek>,
+  val scheduledOnDaysOfWeek: Set<DayOfWeek>,
   val closestScheduledOnDate: LocalDate?,
   val offOnAllScheduledDates: Boolean,
   val scheduledOnMultipleDates: Boolean,

@@ -63,9 +63,9 @@ class AlarmLocalRepository(
           name = name,
           isOn = if (isOn) DB_ON else DB_OFF,
           scheduledOnDaysOfWeek =
-            scheduledOnDaysOfWeek.takeIf(Collection<DayOfWeek>::isNotEmpty)?.toList(),
-          scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
-          offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
+            scheduledOnDaysOfWeek.takeIf(Collection<DayOfWeek>::isNotEmpty)?.toSet(),
+          scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toSet(),
+          offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toSet(),
           lastModificationDateTime = LocalDateTime.now(),
           lastNotificationDate = null,
           snoozeDurationMinutes = snoozeDurationMinutes,
@@ -107,9 +107,9 @@ class AlarmLocalRepository(
         name = name,
         isOn = if (isOn) DB_ON else DB_OFF,
         scheduledOnDaysOfWeek =
-          scheduledOnDaysOfWeek.takeIf(Collection<DayOfWeek>::isNotEmpty)?.toList(),
-        scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
-        offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toList(),
+          scheduledOnDaysOfWeek.takeIf(Collection<DayOfWeek>::isNotEmpty)?.toSet(),
+        scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toSet(),
+        offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toSet(),
         lastModificationDateTime = LocalDateTime.now(),
         snoozeDurationMinutes = snoozeDurationMinutes,
         snoozeLimit = snoozeLimit,
@@ -311,7 +311,7 @@ class AlarmLocalRepository(
           }
           else -> {
             queries.updateOffOnDatesAndToggleOnById(
-              offOnDates = alarm.offOnDates?.let { it + date } ?: listOf(date),
+              offOnDates = alarm.offOnDates?.let { it + date } ?: setOf(date),
               lastModificationDateTime = LocalDateTime.now(),
               id = id,
             )
@@ -337,7 +337,7 @@ class AlarmLocalRepository(
     withContext(dispatcher) {
       val alarm = queries.selectAlarmById(id).executeAsOne()
       queries.updateOffOnDatesAndToggleOnById(
-        offOnDates = alarm.offOnDates?.let { it + date } ?: listOf(date),
+        offOnDates = alarm.offOnDates?.let { it + date } ?: setOf(date),
         lastModificationDateTime = LocalDateTime.now(),
         id = id,
       )
@@ -392,9 +392,9 @@ class AlarmLocalRepository(
         } else if (notificationDateTime.date in alarm.scheduledOnDates) {
           queries.updateScheduledOnDatesById(
             scheduledOnDates =
-              (alarm.scheduledOnDates - notificationDateTime.date).takeIf(
-                Collection<LocalDate>::isNotEmpty
-              ),
+              (alarm.scheduledOnDates - notificationDateTime.date)
+                .takeIf(Collection<LocalDate>::isNotEmpty)
+                ?.toSet(),
             lastModificationDateTime = notificationDateTime,
             id = id,
           )
