@@ -89,13 +89,7 @@ fun UpcomingAlarmListItem(
                 onOffButtonClick(item)
               }
             },
-            shape =
-              RoundedCornerShape(
-                topStart = 20.dp,
-                topEnd = 0.dp,
-                bottomEnd = 0.dp,
-                bottomStart = 20.dp,
-              ),
+            shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp),
             label = { Icon(Icons.Default.Stop, "Off") },
           )
 
@@ -117,13 +111,7 @@ fun UpcomingAlarmListItem(
                 onOnButtonClick(item)
               }
             },
-            shape =
-              RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 20.dp,
-                bottomEnd = 20.dp,
-                bottomStart = 0.dp,
-              ),
+            shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp),
             label = { Icon(Icons.Default.PlayArrow, "On") },
           )
         }
