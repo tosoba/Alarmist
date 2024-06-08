@@ -373,7 +373,7 @@ class AlarmLocalRepository(
         lastModificationDateTime = LocalDateTime.now(),
         id = id,
       )
-      alarm.toModel() // return pre-modification alarm so it can be cancelled properly in UseCase
+      queries.selectAlarmById(id).executeAsOne().toModel()
     }
 
   override suspend fun updateGroupAlarmsOnOff(groupId: Long, isOn: Boolean): List<AlarmModel> =

@@ -9,11 +9,34 @@ class TurnAlarmOffOnDateUseCase(
   private val scheduler: AlarmScheduler,
 ) {
   suspend operator fun invoke(id: Long, date: LocalDate) {
-    val preModificationAlarm = repository.turnAlarmOffOnDate(id, date)
-    calculateAlarmNextFireOnDateTime(preModificationAlarm)
-      ?.takeIf { it.date == date }
-      ?.let { scheduler.cancelAlarm(id) }
-    // scheduler.cancelAlarm(id) is only called for a scheduled alarm if date matches
-    // since a scheduled alarm might already be scheduled on an earlier date.
+    val modifiedAlarm = repository.turnAlarmOffOnDate(id, date)
+    calculateAlarmNextFireOnDateTime(modifiedAlarm)
+      ?.takeIf { it.date > date }
+      ?.let {
+        // If modified alarm should be scheduled for a date later than date argument
+        // then alarm is rescheduled.
+        scheduler.scheduleAlarm(
+          id = id,
+          name = modifiedAlarm.name,
+          fireOnDateTime = it,
+          snoozeAvailable = modifiedAlarm.snoozeDurationMinutes > 0L,
+          alarmDurationMinutes = modifiedAlarm.alarmDurationMinutes,
+          soundEnabled = modifiedAlarm.soundEnabled,
+          soundId = modifiedAlarm.soundId,
+          vibrationEnabled = modifiedAlarm.vibrationEnabled,
+          reminderOffsetHours = modifiedAlarm.reminderOffsetHours,
+        )
+      }
+      ?: run {
+        // calculate nextFireOnDateTime for pre-modified alarm
+        calculateAlarmNextFireOnDateTime(
+            modifiedAlarm.copy(offOnDates = modifiedAlarm.offOnDates - date)
+          )
+          ?.takeIf { it.date == date }
+          ?.let { scheduler.cancelAlarm(id) }
+        // scheduler.cancelAlarm(id) is only called for a scheduled alarm
+        // if nextFireOnDateTime calculated for pre-modified alarm matches date argument
+        // since a scheduled alarm might already be scheduled on an earlier date.
+      }
   }
 }
