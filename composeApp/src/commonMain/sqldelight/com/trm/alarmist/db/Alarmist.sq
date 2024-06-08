@@ -206,6 +206,10 @@ selectOffAlarmsScheduledOnDatesOnly:
 SELECT id, fireAtTime, scheduledOnDates FROM alarm
 WHERE isOn = 0 AND scheduledOnDaysOfWeek IS NULL AND scheduledOnDates IS NOT NULL;
 
+selectOffScheduledAlarms:
+SELECT id, fireAtTime, scheduledOnDates FROM alarm
+WHERE isOn = 0 AND scheduledOnDaysOfWeek IS NOT NULL AND scheduledOnDates IS NOT NULL;
+
 updateResetAlarmById:
 UPDATE alarm
 SET
@@ -230,6 +234,11 @@ SET
     lastNotificationDate = NULL,
     snoozeCount = 0,
     lastSnoozedAt = NULL
+WHERE id IN :ids;
+
+updateResetScheduledOnDatesByIds:
+UPDATE alarm
+SET scheduledOnDates = NULL, lastModificationDateTime = ?
 WHERE id IN :ids;
 
 updateAlarmSnoozeById:

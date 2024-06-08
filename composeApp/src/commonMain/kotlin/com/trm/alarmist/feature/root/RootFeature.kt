@@ -28,7 +28,7 @@ class RootFeature : CoroutineFeature(), KoinComponent {
           }
         }
       }
-      .onEach { repository.resetPastOffAlarmsScheduledOnDatesOnly() }
+      .onEach { repository.resetPastOffAlarmsScheduledOnDates() }
       .launchIn(coroutineScope)
   }
 }

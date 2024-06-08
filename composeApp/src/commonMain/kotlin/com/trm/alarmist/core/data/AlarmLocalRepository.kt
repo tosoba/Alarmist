@@ -177,6 +177,17 @@ class AlarmLocalRepository(
           .takeIf(List<Long>::isNotEmpty)
           ?.let { queries.updateResetAlarmByIds(now, it) }
 
+        // Reset scheduled dates of on alarms that are scheduled on past dates and days of week
+        onAlarms
+          .filter {
+            it.scheduledOnDates.isNotEmpty() &&
+              (it.scheduledOnDates.last() < now.date ||
+                (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time))
+          }
+          .map { (id) -> id }
+          .takeIf(List<Long>::isNotEmpty)
+          ?.let { queries.updateResetScheduledOnDatesByIds(now, it) }
+
         queries.updateOnAlarmsLastModificationDateTime(now)
 
         onAlarms
@@ -184,19 +195,32 @@ class AlarmLocalRepository(
     }
   }
 
-  override suspend fun resetPastOffAlarmsScheduledOnDatesOnly() {
+  override suspend fun resetPastOffAlarmsScheduledOnDates() {
     val now = LocalDateTime.now()
     withContext(dispatcher) {
-      queries
-        .selectOffAlarmsScheduledOnDatesOnly()
-        .executeAsList()
-        .filter {
-          it.scheduledOnDates.last() < now.date ||
-            (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time)
-        }
-        .map { (id) -> id }
-        .takeIf(List<Long>::isNotEmpty)
-        ?.let { queries.updateResetAlarmByIds(now, it) }
+      queries.transaction {
+        queries
+          .selectOffAlarmsScheduledOnDatesOnly()
+          .executeAsList()
+          .filter {
+            it.scheduledOnDates.last() < now.date ||
+              (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time)
+          }
+          .map { (id) -> id }
+          .takeIf(List<Long>::isNotEmpty)
+          ?.let { queries.updateResetAlarmByIds(now, it) }
+
+        queries
+          .selectOffScheduledAlarms()
+          .executeAsList()
+          .filter {
+            it.scheduledOnDates.last() < now.date ||
+              (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time)
+          }
+          .map { (id) -> id }
+          .takeIf(List<Long>::isNotEmpty)
+          ?.let { ids -> queries.updateResetScheduledOnDatesByIds(now, ids) }
+      }
     }
   }
 

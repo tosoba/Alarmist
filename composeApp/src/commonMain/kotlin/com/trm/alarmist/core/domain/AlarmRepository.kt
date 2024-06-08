@@ -85,7 +85,7 @@ interface AlarmRepository {
 
   suspend fun getOnAlarmsAndResetMissedAlarms(): List<AlarmModel>
 
-  suspend fun resetPastOffAlarmsScheduledOnDatesOnly()
+  suspend fun resetPastOffAlarmsScheduledOnDates()
 
   suspend fun toggleAlarmOnOff(id: Long): AlarmModel
 
