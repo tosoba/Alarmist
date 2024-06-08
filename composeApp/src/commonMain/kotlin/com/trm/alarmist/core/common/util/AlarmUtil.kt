@@ -57,8 +57,14 @@ fun Alarm.toListModel(now: LocalDateTime): AlarmListModel {
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
     closestScheduledOnDate =
       scheduledOnDates
-        ?.run { if (offOnDates.isNullOrEmpty()) this else filter { it !in offOnDates } }
-        ?.minOrNull() ?: scheduledOnDates?.minOrNull(),
+        ?.filter {
+          (it > now.date || (it == now.date && fireAtTime > now.time)) &&
+            (offOnDates.isNullOrEmpty() || it !in offOnDates)
+        }
+        ?.minOrNull()
+        ?: scheduledOnDates
+          ?.filter { it > now.date || (it == now.date && fireAtTime > now.time) }
+          ?.minOrNull(),
     offOnAllScheduledDates =
       !scheduledOnDates.isNullOrEmpty() && offOnDates?.containsAll(scheduledOnDates) == true,
     scheduledOnMultipleDates = isScheduledOnMultipleDates(),
