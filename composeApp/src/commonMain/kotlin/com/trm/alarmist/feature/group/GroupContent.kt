@@ -60,6 +60,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.AlarmFireAtTime
@@ -267,8 +268,7 @@ private fun GroupedAlarmCard(
     modifier = modifier,
     colors = CardDefaults.onOffCardColors(alarm.isOn),
     shape = shape,
-    elevation =
-      if (alarm.isOn) CardDefaults.elevatedCardElevation() else CardDefaults.cardElevation(),
+    elevation = CardDefaults.elevatedIf(alarm.isOn),
     onClick = onToggleAlarmSelection,
   ) {
     Spacer(modifier = Modifier.height(16.dp))

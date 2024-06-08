@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
@@ -164,9 +165,7 @@ fun AlarmGroupsContent(
                   },
                 shape =
                   ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp)),
-                elevation =
-                  if (group.isOn) CardDefaults.elevatedCardElevation()
-                  else CardDefaults.cardElevation(),
+                elevation = CardDefaults.elevatedIf(group.isOn),
               ) {
                 Box(Modifier.fillMaxWidth()) {
                   TextButton(

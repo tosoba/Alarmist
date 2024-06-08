@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
@@ -51,9 +52,7 @@ fun UpcomingAlarmListItem(
     modifier = modifier,
     colors = CardDefaults.onOffCardColors(item.status == UpcomingAlarmListStatus.ON),
     shape = shape,
-    elevation =
-      if (item.status == UpcomingAlarmListStatus.ON) CardDefaults.elevatedCardElevation()
-      else CardDefaults.cardElevation(),
+    elevation = CardDefaults.elevatedIf(item.status == UpcomingAlarmListStatus.ON),
     onClick = { onItemClick(item) },
   ) {
     Spacer(modifier = Modifier.height(16.dp))

@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.theme.onOffCardColors
@@ -31,8 +32,7 @@ fun AlarmListItem(
   Card(
     modifier = modifier,
     colors = CardDefaults.onOffCardColors(item.isOn),
-    elevation =
-      if (item.isOn) CardDefaults.elevatedCardElevation() else CardDefaults.cardElevation(),
+    elevation = CardDefaults.elevatedIf(item.isOn),
     shape = shape,
     onClick = { onItemClick(item) },
   ) {

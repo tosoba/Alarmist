@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
@@ -32,8 +33,7 @@ fun AlarmGroupHeaderCard(
   Card(
     modifier = modifier,
     shape = shape,
-    elevation =
-      if (group.isOn) CardDefaults.elevatedCardElevation() else CardDefaults.cardElevation(),
+    elevation = CardDefaults.elevatedIf(group.isOn),
     colors = CardDefaults.onOffCardColors(group.isOn),
   ) {
     Row(
