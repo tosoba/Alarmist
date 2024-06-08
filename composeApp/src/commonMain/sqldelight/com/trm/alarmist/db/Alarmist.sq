@@ -140,7 +140,7 @@ WHERE isOn = 1
 AND (
     scheduledOnDaysOfWeek IS NOT NULL
     OR
-    INSTR(scheduledOnDates, :dates) > 0
+    :dates LIKE '%' || scheduledOnDates || '%'
 );
 
 selectOneTimeAlarmsBeforeTime:

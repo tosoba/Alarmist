@@ -248,7 +248,7 @@ class AlarmLocalRepository(
 
   private fun ClosedRange<LocalDate>.toQueryString(): String =
     List(endInclusive.toEpochDays() - start.toEpochDays() + 1) { start.plus(it, DateTimeUnit.DAY) }
-      .joinToString { it.toString().replace(".", "\\.") }
+      .joinToString(separator = ",") { it.toString().replace(".", "\\.") }
 
   override fun getOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<UpcomingAlarmListModel>> =
     queries.selectOneTimeAlarmsBeforeTime(time).asAlarmsListFlow { alarm, now ->
