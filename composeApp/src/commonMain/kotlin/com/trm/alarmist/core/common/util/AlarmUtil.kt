@@ -57,17 +57,12 @@ fun Alarm.toListModel(now: LocalDateTime): AlarmListModel {
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
     closestScheduledOnDate =
       scheduledOnDates
-        ?.filter {
-          (it > now.date || (it == now.date && fireAtTime > now.time)) &&
-            (offOnDates.isNullOrEmpty() || it !in offOnDates)
-        }
+        ?.filter { LocalDateTime(it, fireAtTime) > now && offOnDates?.contains(it) != true }
         ?.minOrNull()
-        ?: scheduledOnDates
-          ?.filter { it > now.date || (it == now.date && fireAtTime > now.time) }
-          ?.minOrNull(),
+        ?: scheduledOnDates?.filter { LocalDateTime(it, fireAtTime) > now }?.minOrNull(),
     offOnAllScheduledDates =
       !scheduledOnDates.isNullOrEmpty() && offOnDates?.containsAll(scheduledOnDates) == true,
-    scheduledOnMultipleDates = isScheduledOnMultipleDates(),
+    scheduledOnMultipleDates = isScheduledOnMultipleDates(now),
     snoozedFireAtTime = snoozedFireAtTime,
   )
 }
@@ -84,15 +79,9 @@ fun Alarm.toUpcomingListModelScheduledAtDate(
     name = name,
     status =
       when {
-        isOn != DB_ON -> {
-          UpcomingAlarmListStatus.OFF
-        }
-        !offOnDates.isNullOrEmpty() && offOnDates.contains(date) -> {
-          UpcomingAlarmListStatus.OFF_ON_DATE
-        }
-        else -> {
-          UpcomingAlarmListStatus.ON
-        }
+        isOn != DB_ON -> UpcomingAlarmListStatus.OFF
+        offOnDates?.contains(date) == true -> UpcomingAlarmListStatus.OFF_ON_DATE
+        else -> UpcomingAlarmListStatus.ON
       },
     fireOnDateTime =
       if (date != null) {
@@ -108,12 +97,18 @@ fun Alarm.toUpcomingListModelScheduledAtDate(
         )
       },
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
-    scheduledOnMultipleDates = isScheduledOnMultipleDates(),
+    scheduledOnMultipleDates = isScheduledOnMultipleDates(now),
   )
 
-private fun Alarm.isScheduledOnMultipleDates(): Boolean =
+private fun Alarm.isScheduledOnMultipleDates(now: LocalDateTime): Boolean =
   (scheduledOnDates?.count(
-    if (offOnDates == null) { _ -> true } else { scheduledOnDate -> scheduledOnDate !in offOnDates }
+    if (offOnDates == null) {
+      { scheduledOnDate -> LocalDateTime(scheduledOnDate, fireAtTime) > now }
+    } else {
+      { scheduledOnDate ->
+        LocalDateTime(scheduledOnDate, fireAtTime) > now && scheduledOnDate !in offOnDates
+      }
+    }
   ) ?: 0) > 1
 
 fun snoozedFireAtTime(lastSnoozedAt: LocalDateTime?, snoozeDurationMinutes: Long): LocalTime? =
