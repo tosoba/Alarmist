@@ -27,6 +27,7 @@ mokkery = "1.9.23-1.6.1"
 napier = "2.6.1"
 permissionFlowCompose = "2.0.0"
 sqlDelight = "2.0.2"
+sqlliteDriver = "2.0.0"
 stately = "2.0.7"
 windowSizeClass = "0.5.0"
 
@@ -68,9 +69,10 @@ material = { group = "com.google.android.material", name = "material", version.r
 material3-windowSizeClass = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "windowSizeClass" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 permission-flow-compose = { module = "dev.shreyaspatil.permission-flow:permission-flow-compose", version.ref = "permissionFlowCompose" }
-sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
-sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
+sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
+sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlliteDriver" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
 

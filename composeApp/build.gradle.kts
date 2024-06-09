@@ -50,6 +50,12 @@ kotlin {
       implementation(libs.sqldelight.android.driver)
     }
 
+    getByName("androidUnitTest").dependencies {
+      implementation(libs.kotlin.test)
+      implementation(libs.kotlinx.coroutines.test)
+      implementation(libs.sqldelight.sqlite.driver)
+    }
+
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.foundation)
