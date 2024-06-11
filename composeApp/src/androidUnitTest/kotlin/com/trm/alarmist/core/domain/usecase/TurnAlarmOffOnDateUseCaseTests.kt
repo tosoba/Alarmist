@@ -10,6 +10,7 @@ import com.trm.alarmist.core.system.AlarmScheduler
 import com.trm.alarmist.db.AlarmistDb
 import dev.mokkery.MockMode
 import dev.mokkery.matcher.any
+import dev.mokkery.matcher.eq
 import dev.mokkery.mock
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
@@ -51,9 +52,7 @@ class TurnAlarmOffOnDateUseCaseTests {
           addAlarm(
             fireAtTime = nextScheduledAt.toLocalTime(),
             isOn = true,
-            scheduledOnDaysOfWeek = emptyList(),
             scheduledOnDates = listOf(nextScheduledAtDate, turnOffAtDate),
-            offOnDates = emptyList(),
           ),
         date = turnOffAtDate,
       )
@@ -62,6 +61,48 @@ class TurnAlarmOffOnDateUseCaseTests {
         scheduler.scheduleAlarm(any(), any(), any(), any(), any(), any(), any(), any(), any())
       }
       verify(VerifyMode.not) { scheduler.cancelAlarm(any()) }
+    }
+
+  @Test
+  fun `given on alarm scheduled for 2 future dates - when turn off on earlier date is called - then scheduleAlarm is called`() =
+    runTest(dispatcher) {
+      val nextScheduledAt = now().plus(1L, DateTimeUnit.HOUR)
+      val turnOffAtDate = nextScheduledAt.toLocalDate()
+      val scheduler = mock<AlarmScheduler>(MockMode.autoUnit)
+      val id =
+        addAlarm(
+          fireAtTime = nextScheduledAt.toLocalTime(),
+          isOn = true,
+          scheduledOnDates = listOf(turnOffAtDate, turnOffAtDate.plus(1L, DateTimeUnit.DAY)),
+        )
+
+      TurnAlarmOffOnDateUseCase(repo, scheduler)(id = id, date = turnOffAtDate)
+
+      verify(VerifyMode.exactly(1)) {
+        scheduler.scheduleAlarm(eq(id), any(), any(), any(), any(), any(), any(), any(), any())
+      }
+      verify(VerifyMode.not) { scheduler.cancelAlarm(any()) }
+    }
+
+  @Test
+  fun `given on alarm scheduled for 1 future date - when turn off on that date is called - then cancelAlarm is called`() =
+    runTest(dispatcher) {
+      val nextScheduledAt = now().plus(1L, DateTimeUnit.HOUR)
+      val turnOffAtDate = nextScheduledAt.toLocalDate()
+      val scheduler = mock<AlarmScheduler>(MockMode.autoUnit)
+      val id =
+        addAlarm(
+          fireAtTime = nextScheduledAt.toLocalTime(),
+          isOn = true,
+          scheduledOnDates = listOf(turnOffAtDate),
+        )
+
+      TurnAlarmOffOnDateUseCase(repo, scheduler)(id = id, date = turnOffAtDate)
+
+      verify(VerifyMode.not) {
+        scheduler.scheduleAlarm(any(), any(), any(), any(), any(), any(), any(), any(), any())
+      }
+      verify(VerifyMode.exactly(1)) { scheduler.cancelAlarm(eq(id)) }
     }
 
   private suspend fun addAlarm(
