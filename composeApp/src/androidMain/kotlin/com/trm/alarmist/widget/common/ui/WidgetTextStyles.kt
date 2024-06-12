@@ -7,25 +7,24 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.TextStyle
 
 object WidgetTextStyles {
-  val leadingText: TextStyle
-    @Composable
-    get() =
-      TextStyle(
-        fontWeight = FontWeight.Bold,
-        fontSize =
-          if (WidgetLayoutSize.fromLocalSize() == WidgetLayoutSize.Small) {
-            18.sp
-          } else {
-            22.sp // M3 Title Large
-          },
-        color = GlanceTheme.colors.onSurface,
-      )
+  @Composable
+  fun leadingText(fontWeight: FontWeight = FontWeight.Medium): TextStyle =
+    TextStyle(
+      fontWeight = fontWeight,
+      fontSize =
+        if (WidgetLayoutSize.fromLocalSize() == WidgetLayoutSize.Small) {
+          18.sp
+        } else {
+          22.sp // M3 Title Large
+        },
+      color = GlanceTheme.colors.onSurface,
+    )
 
   val titleText: TextStyle
     @Composable
     get() =
       TextStyle(
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Normal,
         fontSize =
           if (WidgetLayoutSize.fromLocalSize() == WidgetLayoutSize.Small) {
             14.sp // M3 Title Small

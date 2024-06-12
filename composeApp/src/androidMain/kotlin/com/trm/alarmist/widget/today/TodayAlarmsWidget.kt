@@ -31,6 +31,7 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
@@ -235,7 +236,11 @@ private fun FilledHorizontalListItem(
       fireAtTime = item.fireAtTime,
       is24HourFormat = DateFormat.is24HourFormat(LocalContext.current),
       useFullFormat = displayHeaderSupporting,
-      style = WidgetTextStyles.leadingText,
+      style =
+        WidgetTextStyles.leadingText(
+          fontWeight =
+            if (item.status == UpcomingAlarmListStatus.ON) FontWeight.Medium else FontWeight.Normal
+        ),
     )
   }
 
@@ -253,7 +258,10 @@ private fun FilledHorizontalListItem(
       modifier
         .padding(fillItemItemPadding)
         .cornerRadius(filledItemCornerRadius)
-        .background(GlanceTheme.colors.secondaryContainer),
+        .background(
+          if (item.status == UpcomingAlarmListStatus.ON) GlanceTheme.colors.primaryContainer
+          else GlanceTheme.colors.secondaryContainer
+        ),
     headlineContent = { if (displayHeaderSupporting) TitleText() },
     supportingContent = { if (displayHeaderSupporting) SupportingText() },
     onClick = onClick,
