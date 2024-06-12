@@ -7,8 +7,8 @@ import androidx.glance.LocalSize
 
 enum class WidgetLayoutSize(val maxWidth: Dp) {
   Small(maxWidth = 260.dp),
-  Medium(maxWidth = 479.dp),
-  Large(maxWidth = 644.dp);
+  Medium(maxWidth = 480.dp),
+  Large(maxWidth = 600.dp);
 
   companion object {
     @Composable

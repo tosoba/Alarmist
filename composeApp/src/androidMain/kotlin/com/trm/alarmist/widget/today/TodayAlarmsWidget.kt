@@ -96,7 +96,7 @@ private fun TodayAlarmsWidgetContent(
       WidgetTitleBar(
         // TODO: either app icon or icon representing today
         startIcon =
-          if (widgetLayoutSize != WidgetLayoutSize.Small) ImageProvider(R.mipmap.ic_launcher_round)
+          if (widgetLayoutSize == WidgetLayoutSize.Large) ImageProvider(R.mipmap.ic_launcher_round)
           else null,
         iconColor = GlanceTheme.colors.primary,
         actions = {
@@ -118,10 +118,13 @@ private fun TodayAlarmsWidgetContent(
           contentAlignment = Alignment.CenterStart,
           modifier =
             GlanceModifier.defaultWeight().run {
-              if (widgetLayoutSize == WidgetLayoutSize.Small) padding(start = 16.dp) else this
+              if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
             },
         ) {
-          WidgetTextClock(useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small)
+          WidgetTextClock(
+            useLargeFont = true,
+            useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small,
+          )
         }
       }
     }
