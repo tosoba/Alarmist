@@ -7,27 +7,16 @@ import androidx.glance.appwidget.AndroidRemoteViews
 import com.trm.alarmist.R
 
 @Composable
-fun WidgetTextClock(useFullTimeFormat: Boolean, configure: RemoteViews.() -> Unit = {}) {
-  val context = LocalContext.current
+fun WidgetTextClock(
+  format12Hour: CharSequence,
+  format24Hour: CharSequence,
+  configure: RemoteViews.() -> Unit = {},
+) {
   AndroidRemoteViews(
     remoteViews =
-      RemoteViews(context.packageName, R.layout.widget_text_clock).apply {
-        setCharSequence(
-          R.id.widget_text_clock,
-          "setFormat12Hour",
-          context.getString(
-            if (useFullTimeFormat) R.string.time_format_12_h_full
-            else R.string.time_format_12_h_short
-          ),
-        )
-        setCharSequence(
-          R.id.widget_text_clock,
-          "setFormat24Hour",
-          context.getString(
-            if (useFullTimeFormat) R.string.time_format_24_h_full
-            else R.string.time_format_24_h_short
-          ),
-        )
+      RemoteViews(LocalContext.current.packageName, R.layout.widget_text_clock).apply {
+        setCharSequence(R.id.widget_text_clock, "setFormat12Hour", format12Hour)
+        setCharSequence(R.id.widget_text_clock, "setFormat24Hour", format24Hour)
         configure()
       }
   )

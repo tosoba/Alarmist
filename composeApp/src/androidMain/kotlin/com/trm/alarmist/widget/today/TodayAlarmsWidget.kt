@@ -26,8 +26,8 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
-import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
+import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
@@ -114,19 +114,46 @@ private fun TodayAlarmsWidgetContent(
           )
         },
       ) {
-        Box(
-          contentAlignment = Alignment.CenterStart,
+        Column(
           modifier =
             GlanceModifier.defaultWeight().run {
               if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
-            },
+            }
         ) {
-          WidgetTextClock(useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small) {
-            setFloat(
-              R.id.widget_text_clock,
-              "setTextSize",
-              context.resources.getInteger(R.integer.widget_text_clock_large_font_size).toFloat(),
-            )
+          Box {
+            WidgetTextClock(
+              format12Hour =
+                context.getString(
+                  if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_12_h_full
+                  else R.string.time_format_12_h_short
+                ),
+              format24Hour =
+                context.getString(
+                  if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_24_h_full
+                  else R.string.time_format_24_h_short
+                ),
+            ) {
+              setFloat(
+                R.id.widget_text_clock,
+                "setTextSize",
+                context.resources.getInteger(R.integer.widget_text_clock_large_font_size).toFloat(),
+              )
+            }
+          }
+
+          Box {
+            val amPmFormat =
+              context.getString(
+                if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_am_pm_full
+                else R.string.time_format_am_pm_short
+              )
+            WidgetTextClock(format12Hour = amPmFormat, format24Hour = amPmFormat) {
+              setFloat(
+                R.id.widget_text_clock,
+                "setTextSize",
+                context.resources.getInteger(R.integer.widget_text_clock_am_pm_font_size).toFloat(),
+              )
+            }
           }
         }
       }

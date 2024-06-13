@@ -17,7 +17,6 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
-import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.padding
@@ -55,9 +54,28 @@ private fun NextAlarmWidgetContent(alarm: AlarmListModel?) {
       val context = LocalContext.current
       val textColor = GlanceTheme.colors.widgetBackground
 
-      Box(contentAlignment = Alignment.CenterStart, modifier = GlanceModifier.defaultWeight()) {
-        WidgetTextClock(useFullTimeFormat = true) {
+      // TODO: add shadow to widget texts
+
+      Box {
+        WidgetTextClock(
+          format12Hour = context.getString(R.string.time_format_12_h_full),
+          format24Hour = context.getString(R.string.time_format_24_h_full),
+        ) {
           setInt(R.id.widget_text_clock, "setTextColor", textColor.getColor(context).toArgb())
+        }
+      }
+
+      Box {
+        WidgetTextClock(
+          format12Hour = context.getString(R.string.time_format_am_pm_short),
+          format24Hour = context.getString(R.string.time_format_am_pm_short),
+        ) {
+          setInt(R.id.widget_text_clock, "setTextColor", textColor.getColor(context).toArgb())
+          setFloat(
+            R.id.widget_text_clock,
+            "setTextSize",
+            context.resources.getInteger(R.integer.widget_text_clock_am_pm_font_size).toFloat(),
+          )
         }
       }
 
@@ -65,10 +83,9 @@ private fun NextAlarmWidgetContent(alarm: AlarmListModel?) {
         // TODO: current date (maybe do it via TextClock that just displays a date to avoid needing
         // to update it)
         // TODO: alarm icon next to alarm fireAtTime
-        val is24HourFormat = DateFormat.is24HourFormat(context)
         WidgetAlarmFireAtTimeText(
           fireAtTime = alarm.nextFireAtTime,
-          is24HourFormat = is24HourFormat,
+          is24HourFormat = DateFormat.is24HourFormat(context),
           useFullFormat = true,
           style = WidgetTextStyles.titleText.copy(color = textColor),
         )
