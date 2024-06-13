@@ -56,7 +56,7 @@ private fun NextAlarmWidgetContent(alarm: AlarmListModel?) {
       val textColor = GlanceTheme.colors.widgetBackground
 
       Box(contentAlignment = Alignment.CenterStart, modifier = GlanceModifier.defaultWeight()) {
-        WidgetTextClock(useLargeFont = false, useFullTimeFormat = true) {
+        WidgetTextClock(useFullTimeFormat = true) {
           setInt(R.id.widget_text_clock, "setTextColor", textColor.getColor(context).toArgb())
         }
       }

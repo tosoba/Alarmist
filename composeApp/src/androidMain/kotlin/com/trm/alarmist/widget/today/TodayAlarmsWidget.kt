@@ -121,10 +121,13 @@ private fun TodayAlarmsWidgetContent(
               if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
             },
         ) {
-          WidgetTextClock(
-            useLargeFont = true,
-            useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small,
-          )
+          WidgetTextClock(useFullTimeFormat = widgetLayoutSize != WidgetLayoutSize.Small) {
+            setFloat(
+              R.id.widget_text_clock,
+              "setTextSize",
+              context.resources.getInteger(R.integer.widget_text_clock_large_font_size).toFloat(),
+            )
+          }
         }
       }
     }
