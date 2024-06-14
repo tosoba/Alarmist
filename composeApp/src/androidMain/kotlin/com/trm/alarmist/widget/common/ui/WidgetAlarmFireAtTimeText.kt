@@ -12,6 +12,8 @@ import androidx.glance.layout.Box
 import androidx.glance.text.TextDefaults
 import androidx.glance.text.TextStyle
 import com.trm.alarmist.R
+import com.trm.alarmist.core.common.util.amPmString
+import com.trm.alarmist.core.common.util.toFormattedString
 import kotlinx.datetime.LocalTime
 
 @Composable
@@ -26,12 +28,32 @@ fun WidgetAlarmFireAtTimeText(
     AndroidRemoteViews(
       remoteViews =
         RemoteViews(LocalContext.current.packageName, R.layout.widget_text_view).apply {
-          val s = "BIG SMALL"
+          val fireAtTimeText =
+            if (useFullFormat) {
+                """${fireAtTime.toFormattedString { is24HourFormat }} ${fireAtTime.amPmString { is24HourFormat }}"""
+                  .trim()
+              } else {
+                fireAtTime.toFormattedString { is24HourFormat }
+              }
+              .replace(" ", "\u200A")
           setTextViewText(
             R.id.widget_text_view,
-            SpannableString(s).apply {
-              setSpan(RelativeSizeSpan(1f), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-              setSpan(RelativeSizeSpan(0.75f), 6, s.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            SpannableString(fireAtTimeText).apply {
+              val amPmIndex = fireAtTimeText.indexOfAny(listOf("am", "pm"), ignoreCase = true)
+              setSpan(
+                RelativeSizeSpan(1f),
+                0,
+                if (amPmIndex != -1) amPmIndex else fireAtTimeText.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+              )
+              if (amPmIndex != -1) {
+                setSpan(
+                  RelativeSizeSpan(.5f),
+                  amPmIndex,
+                  fireAtTimeText.length,
+                  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+                )
+              }
             },
           )
         }
