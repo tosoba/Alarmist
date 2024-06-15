@@ -267,7 +267,7 @@ private fun TodayAlarmsWidgetListItem(
         stringResource(
           id =
             if (item.scheduledOnDaysOfWeek.isNotEmpty() || item.date != null) {
-              R.string.scheduled_for_today
+              R.string.custom_scheduled
             } else {
               R.string.one_time
             }
