@@ -41,8 +41,5 @@ class GetAlarmsScheduledOnDateFlowUseCase(private val repository: AlarmRepositor
   private fun concatSortedByFireAtTime(
     alarms1: List<UpcomingAlarmListModel>,
     alarms2: List<UpcomingAlarmListModel>,
-  ): List<UpcomingAlarmListModel> =
-    (alarms1 + alarms2).sortedWith(
-      compareBy(UpcomingAlarmListModel::status, UpcomingAlarmListModel::fireAtTime)
-    )
+  ): List<UpcomingAlarmListModel> = (alarms1 + alarms2).sortedBy(UpcomingAlarmListModel::fireAtTime)
 }
