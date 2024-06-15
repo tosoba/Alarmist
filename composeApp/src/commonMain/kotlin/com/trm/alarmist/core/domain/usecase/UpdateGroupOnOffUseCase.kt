@@ -3,10 +3,12 @@ package com.trm.alarmist.core.domain.usecase
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.system.AlarmScheduler
+import com.trm.alarmist.core.system.WidgetManager
 
 class UpdateGroupOnOffUseCase(
   private val repository: AlarmRepository,
   private val scheduler: AlarmScheduler,
+  private val widgetManager: WidgetManager,
 ) {
   suspend operator fun invoke(id: Long, isOn: Boolean) {
     if (id == AlarmGroupModel.UNGROUPED_ID) {
@@ -29,5 +31,7 @@ class UpdateGroupOnOffUseCase(
           )
         } ?: run { scheduler.cancelAlarm(alarm.id) }
       }
+
+    widgetManager.updateAllWidgets()
   }
 }

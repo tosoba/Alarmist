@@ -3,10 +3,12 @@ package com.trm.alarmist.core.domain.usecase
 import com.trm.alarmist.core.common.util.snoozedFireAtTime
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.system.AlarmScheduler
+import com.trm.alarmist.core.system.WidgetManager
 
 class UpdateAlarmOnSnoozeUseCase(
   private val repository: AlarmRepository,
   private val scheduler: AlarmScheduler,
+  private val widgetManager: WidgetManager,
 ) {
   suspend operator fun invoke(id: Long) {
     val alarm = repository.updateAlarmOnSnooze(id)
@@ -32,8 +34,10 @@ class UpdateAlarmOnSnoozeUseCase(
           soundEnabled = alarm.soundEnabled,
           soundId = alarm.soundId,
           vibrationEnabled = alarm.vibrationEnabled,
-          reminderOffsetHours = alarm.reminderOffsetHours
+          reminderOffsetHours = alarm.reminderOffsetHours,
         )
       }
+
+    widgetManager.updateAllWidgets()
   }
 }

@@ -2,11 +2,13 @@ package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.system.AlarmScheduler
+import com.trm.alarmist.core.system.WidgetManager
 import kotlinx.datetime.LocalDate
 
 class TurnAlarmOffOnDateUseCase(
   private val repository: AlarmRepository,
   private val scheduler: AlarmScheduler,
+  private val widgetManager: WidgetManager,
 ) {
   suspend operator fun invoke(id: Long, date: LocalDate) {
     val modifiedAlarm = repository.turnAlarmOffOnDate(id, date)
@@ -33,10 +35,14 @@ class TurnAlarmOffOnDateUseCase(
             modifiedAlarm.copy(offOnDates = modifiedAlarm.offOnDates - date)
           )
           ?.takeIf { it.date == date }
-          ?.let { scheduler.cancelAlarm(id) }
-        // scheduler.cancelAlarm(id) is only called for a scheduled alarm
-        // if nextFireOnDateTime calculated for pre-modified alarm matches date argument
-        // since a scheduled alarm might already be scheduled on an earlier date.
+          ?.let {
+            // scheduler.cancelAlarm(id) is only called for a scheduled alarm
+            // if nextFireOnDateTime calculated for pre-modified alarm matches date argument
+            // since a scheduled alarm might already be scheduled on an earlier date.
+            scheduler.cancelAlarm(id)
+          }
       }
+
+    widgetManager.updateAllWidgets()
   }
 }

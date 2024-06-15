@@ -2,12 +2,14 @@ package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.system.AlarmScheduler
+import com.trm.alarmist.core.system.WidgetManager
 import kotlinx.datetime.LocalDate
 
 class ToggleAlarmOnOffOnDateUseCase(
   private val updateAlarmScheduleUseCase: UpdateAlarmScheduleUseCase,
   private val repository: AlarmRepository,
   private val scheduler: AlarmScheduler,
+  private val widgetManager: WidgetManager,
 ) {
   suspend operator fun invoke(id: Long, date: LocalDate) {
     val toggledAlarm = repository.toggleAlarmOnOffOnDate(id, date)
@@ -30,11 +32,13 @@ class ToggleAlarmOnOffOnDateUseCase(
               reminderOffsetHours = toggledAlarm.reminderOffsetHours,
             )
           } else {
+            // scheduler.cancelAlarm(id) is only called for a scheduled alarm if date matches
+            // since a scheduled alarm might already be scheduled on an earlier date
             scheduler.cancelAlarm(id)
           }
         }
-      // scheduler.cancelAlarm(id) is only called for a scheduled alarm if date matches
-      // since a scheduled alarm might already be scheduled on an earlier date
     }
+
+    widgetManager.updateAllWidgets()
   }
 }

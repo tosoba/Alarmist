@@ -2,6 +2,7 @@ package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
+import com.trm.alarmist.core.system.WidgetManager
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -9,6 +10,7 @@ import kotlinx.datetime.LocalTime
 class EditAlarmUseCase(
   private val updateAlarmScheduleUseCase: UpdateAlarmScheduleUseCase,
   private val repository: AlarmRepository,
+  private val widgetManager: WidgetManager,
 ) {
   suspend operator fun invoke(
     id: Long,
@@ -44,6 +46,7 @@ class EditAlarmUseCase(
       reminderOffsetHours = reminderOffsetHours,
       soundId = soundId,
     )
+
     updateAlarmScheduleUseCase(
       isOn = isOn,
       id = id,
@@ -59,5 +62,7 @@ class EditAlarmUseCase(
       vibrationEnabled = vibrationEnabled,
       reminderOffsetHours = reminderOffsetHours,
     )
+
+    widgetManager.updateAllWidgets()
   }
 }
