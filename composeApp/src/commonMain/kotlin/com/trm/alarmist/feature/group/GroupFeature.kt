@@ -4,8 +4,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
-import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.domain.usecase.AddGroupUseCase
+import com.trm.alarmist.core.domain.usecase.DeleteGroupUseCase
+import com.trm.alarmist.core.domain.usecase.EditGroupUseCase
 import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsFlowUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,9 @@ class GroupFeature(
   private val mode: GroupComponent.Mode,
 ) : CoroutineFeature(), KoinComponent {
   private val getGroupedAlarmsFlowUseCase: GetGroupedAlarmsFlowUseCase by inject()
-  private val repository: AlarmRepository by inject()
+  private val addGroupUseCase: AddGroupUseCase by inject()
+  private val editGroupUseCase: EditGroupUseCase by inject()
+  private val deleteGroupUseCase: DeleteGroupUseCase by inject()
 
   private val _state: MutableStateFlow<GroupState> =
     MutableStateFlow(
@@ -44,7 +48,7 @@ class GroupFeature(
   fun onDeleteClick(): Job =
     coroutineScope.launch {
       check(mode is GroupComponent.Mode.Edit)
-      repository.deleteGroup(mode.group.id)
+      deleteGroupUseCase(mode.group.id)
     }
 
   fun onConfirmClick(): Job? =
@@ -57,10 +61,10 @@ class GroupFeature(
       coroutineScope.launch {
         when (mode) {
           GroupComponent.Mode.Add -> {
-            repository.addGroup(name = name, color = color, alarmIds = selectedAlarmIds)
+            addGroupUseCase(name = name, color = color, alarmIds = selectedAlarmIds)
           }
           is GroupComponent.Mode.Edit -> {
-            repository.editGroup(
+            editGroupUseCase(
               id = mode.group.id,
               name = name,
               color = color,

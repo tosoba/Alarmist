@@ -1,8 +1,11 @@
 package com.trm.alarmist.core.domain.di
 
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
+import com.trm.alarmist.core.domain.usecase.AddGroupUseCase
 import com.trm.alarmist.core.domain.usecase.DeleteAlarmUseCase
+import com.trm.alarmist.core.domain.usecase.DeleteGroupUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
+import com.trm.alarmist.core.domain.usecase.EditGroupUseCase
 import com.trm.alarmist.core.domain.usecase.GetAlarmsInGroupFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetAndResetMissedAlarmsOnBootUseCase
@@ -10,7 +13,7 @@ import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetNextAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.GetScheduledAlarmCountsForDateRangeUseCase
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
-import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTime
+import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTimeUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffOnDateUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import com.trm.alarmist.core.domain.usecase.TurnAlarmOffOnDateUseCase
@@ -39,9 +42,12 @@ val domainModule = module {
   factoryOf(::GetTodayAlarmsUseCase)
   factoryOf(::GetNextAlarmUseCase)
   factoryOf(::GetScheduledAlarmCountsForDateRangeUseCase)
-  factoryOf(::IsAlarmScheduledToFireAtDateTime)
+  factoryOf(::IsAlarmScheduledToFireAtDateTimeUseCase)
   factoryOf(::TurnAlarmOffOnDateUseCase)
   factoryOf(::TurnAlarmOnOnDateUseCase)
   factoryOf(::ToggleAlarmOnOffOnDateUseCase)
   factoryOf(::TurnAlarmOffUseCase)
+  factoryOf(::AddGroupUseCase)
+  factoryOf(::EditGroupUseCase)
+  factoryOf(::DeleteGroupUseCase)
 }

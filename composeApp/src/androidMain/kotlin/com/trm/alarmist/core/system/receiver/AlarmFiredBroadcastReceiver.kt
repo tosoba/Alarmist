@@ -11,7 +11,7 @@ import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.common.util.requireAlarmFireSettings
-import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTime
+import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTimeUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.system.AndroidAlarmService
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
-  private val isAlarmScheduledToFireAtDateTime: IsAlarmScheduledToFireAtDateTime by inject()
+  private val isAlarmScheduledToFireAtDateTimeUseCase: IsAlarmScheduledToFireAtDateTimeUseCase by inject()
   private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
 
   override fun onReceive(context: Context, intent: Intent?) {
@@ -28,7 +28,7 @@ class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
     val settings = intent.requireAlarmFireSettings()
     launch {
-      if (!isAlarmScheduledToFireAtDateTime(settings.id, settings.fireOnDateTime)) return@launch
+      if (!isAlarmScheduledToFireAtDateTimeUseCase(settings.id, settings.fireOnDateTime)) return@launch
 
       if (
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
