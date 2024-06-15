@@ -1,4 +1,4 @@
-package com.trm.alarmist.widget.next
+package com.trm.alarmist.widget.clock
 
 import android.content.Context
 import android.text.format.DateFormat
@@ -30,7 +30,7 @@ import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class NextAlarmWidget : GlanceAppWidget(), KoinComponent {
+class ClockWidget : GlanceAppWidget(), KoinComponent {
   private val getNextAlarmUseCase: GetNextAlarmUseCase by inject()
 
   override val sizeMode: SizeMode = SizeMode.Exact
@@ -41,14 +41,14 @@ class NextAlarmWidget : GlanceAppWidget(), KoinComponent {
       val alarm by produceState<AlarmListModel?>(null, state) { value = getNextAlarmUseCase() }
 
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
-        NextAlarmWidgetContent(alarm = alarm)
+        ClockWidgetContent(alarm = alarm)
       }
     }
   }
 }
 
 @Composable
-private fun NextAlarmWidgetContent(alarm: AlarmListModel?) {
+private fun ClockWidgetContent(alarm: AlarmListModel?) {
   GlanceTheme {
     Column(modifier = GlanceModifier.padding(8.dp)) { // TODO: on click go to app
       val context = LocalContext.current

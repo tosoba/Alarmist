@@ -9,7 +9,7 @@ import com.trm.alarmist.widget.common.util.WidgetAction
 import com.trm.alarmist.widget.common.util.WidgetExtra
 import com.trm.alarmist.widget.common.util.updateAllWidgetsIntent
 import com.trm.alarmist.widget.group.AlarmGroupWidgetReceiver
-import com.trm.alarmist.widget.next.NextAlarmWidgetReceiver
+import com.trm.alarmist.widget.clock.ClockWidgetReceiver
 import com.trm.alarmist.widget.today.TodayAlarmsWidgetReceiver
 import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
@@ -30,7 +30,7 @@ class TurnOffAlarmActionReceiver : BroadcastReceiver(), KoinComponent {
       )
 
       context.sendBroadcast(context.updateAllWidgetsIntent<AlarmGroupWidgetReceiver>())
-      context.sendBroadcast(context.updateAllWidgetsIntent<NextAlarmWidgetReceiver>())
+      context.sendBroadcast(context.updateAllWidgetsIntent<ClockWidgetReceiver>())
       context.sendBroadcast(context.updateAllWidgetsIntent<TodayAlarmsWidgetReceiver>())
     }
   }

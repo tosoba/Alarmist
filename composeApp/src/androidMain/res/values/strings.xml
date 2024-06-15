@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">alarmist</string>
     <string name="today_alarms">Today alarms</string>
-    <string name="next_alarm">Next alarm</string>
+    <string name="clock">Clock</string>
 
     <string name="time_format_am_pm_full">aa / EEEE</string>
     <string name="time_format_am_pm_short">aa / EEE</string>

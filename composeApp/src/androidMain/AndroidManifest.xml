@@ -78,9 +78,9 @@
         </receiver>
 
         <receiver
-            android:name=".widget.next.NextAlarmWidgetReceiver"
+            android:name=".widget.clock.ClockWidgetReceiver"
             android:exported="false"
-            android:label="@string/next_alarm">
+            android:label="@string/clock">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -88,7 +88,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/next_alarm_widget" />
+                android:resource="@xml/clock_widget" />
         </receiver>
 
         <receiver android:name=".widget.common.TurnOffAlarmActionReceiver" />
