@@ -24,8 +24,11 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.trm.alarmist.AlarmFiredActivity
 import com.trm.alarmist.R
+import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
+import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.common.util.getSerializable
 import com.trm.alarmist.core.common.util.getStringBlocking
+import com.trm.alarmist.core.common.util.requireAlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import io.github.aakira.napier.Napier
@@ -54,7 +57,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
               requireNotNull(intent.getSerializable<AlarmActionType>(EXTRA_ALARM_ACTION_TYPE)) {
                 "Missing AlarmActionType."
               },
-            settings = getAlarmFireSettings(intent),
+            settings = intent.requireAlarmFireSettings(),
           )
         }
       }
@@ -87,7 +90,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     super.onStartCommand(intent, flags, startId)
     if (intent == null) return START_NOT_STICKY
 
-    val settings = getAlarmFireSettings(intent)
+    val settings = intent.requireAlarmFireSettings()
     cancelNotification(settings.id.toInt())
 
     if (isPlaying) {
@@ -118,7 +121,7 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     missedAlarms.add(settings)
   }
 
-    private fun buildNotification(settings: AlarmFireSettings): Notification =
+  private fun buildNotification(settings: AlarmFireSettings): Notification =
     NotificationCompat.Builder(this, ALARM_FIRED_NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setContentTitle("Alarm was fired") // TODO: better message

@@ -1,4 +1,4 @@
-package com.trm.alarmist.core.system
+package com.trm.alarmist.core.common.domain.model
 
 import android.os.Parcelable
 import com.trm.alarmist.core.common.util.LocalDateTimeParceler

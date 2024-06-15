@@ -37,16 +37,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
+import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.common.util.requireAlarmFireSettings
 import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.common.util.turnScreenOffAndKeyguardOn
 import com.trm.alarmist.core.common.util.turnScreenOnAndKeyguardOff
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
-import com.trm.alarmist.core.system.AlarmFireSettings
 import com.trm.alarmist.core.system.AndroidAlarmService
-import com.trm.alarmist.core.system.getAlarmFireSettings
 import com.trm.alarmist.core.ui.AutoSizeText
 import com.trm.alarmist.core.ui.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -68,7 +68,7 @@ class AlarmFiredActivity : ComponentActivity() {
     setContent {
       AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-          val settings = getAlarmFireSettings(intent)
+          val settings = intent.requireAlarmFireSettings()
           AlarmFiredView(
             settings = settings,
             modifier = Modifier.fillMaxSize().padding(16.dp),

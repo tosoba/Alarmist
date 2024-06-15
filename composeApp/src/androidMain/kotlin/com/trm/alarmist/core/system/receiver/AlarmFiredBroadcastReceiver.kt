@@ -7,13 +7,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
+import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.common.util.launch
+import com.trm.alarmist.core.common.util.requireAlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTime
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
-import com.trm.alarmist.core.system.AlarmFireSettings
 import com.trm.alarmist.core.system.AndroidAlarmService
-import com.trm.alarmist.core.system.EXTRA_ALARM_FIRE_SETTINGS
-import com.trm.alarmist.core.system.getAlarmFireSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -26,7 +26,7 @@ class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   override fun onReceive(context: Context, intent: Intent?) {
     if (intent?.action != ACTION_ALARM_FIRED) return
 
-    val settings = getAlarmFireSettings(intent)
+    val settings = intent.requireAlarmFireSettings()
     launch {
       if (!isAlarmScheduledToFireAtDateTime(settings.id, settings.fireOnDateTime)) return@launch
 

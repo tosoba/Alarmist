@@ -3,6 +3,7 @@ package com.trm.alarmist.core.system
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.system.receiver.AlarmFiredBroadcastReceiver
 import com.trm.alarmist.core.system.receiver.AlarmUpcomingBroadcastReceiver
 import kotlinx.datetime.DateTimeUnit
