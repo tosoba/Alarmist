@@ -209,7 +209,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
     alarmParameter: (AlarmComponent) -> T,
     groupParameter: (GroupComponent) -> T,
     fallback: () -> T = { throw IllegalStateException() },
-  ) =
+  ): T =
     when (val active = bottomSheet.value.child?.instance) {
       is RootComponent.BottomSheetChild.Alarm -> {
         if (active.component.mode is AlarmComponent.Mode.Edit) {
