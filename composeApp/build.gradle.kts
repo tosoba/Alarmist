@@ -2,6 +2,7 @@ plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
+  alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlinx.serialization)
   alias(libs.plugins.kotlinx.parcelize)
   alias(libs.plugins.sqlDelight)
