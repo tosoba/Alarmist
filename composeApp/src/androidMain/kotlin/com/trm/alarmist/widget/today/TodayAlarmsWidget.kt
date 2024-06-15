@@ -50,12 +50,13 @@ import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import com.trm.alarmist.widget.today.Dimensions.NUM_GRID_CELLS
 import com.trm.alarmist.widget.today.Dimensions.fillItemItemPadding
 import com.trm.alarmist.widget.today.Dimensions.filledItemCornerRadius
-import com.trm.alarmist.widget.today.Dimensions.verticalSpacing
+import com.trm.alarmist.widget.today.Dimensions.verticalItemSpacing
 import com.trm.alarmist.widget.today.Dimensions.widgetPadding
 import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
@@ -102,7 +103,7 @@ private fun TodayAlarmsWidgetContent(
         actions = {
           CircleIconButton(
             imageProvider = ImageProvider(R.drawable.refresh),
-            contentDescription = "Refresh",
+            contentDescription = stringResource(R.string.refresh),
             contentColor = GlanceTheme.colors.secondary,
             backgroundColor = null, // transparent
             onClick =
@@ -204,7 +205,7 @@ private fun ListView(items: List<UpcomingAlarmListModel>, displayHeaderSupportin
   WidgetLazyColumn(
     items = items,
     modifier = GlanceModifier.fillMaxSize(),
-    verticalItemsSpacing = verticalSpacing,
+    verticalItemsSpacing = verticalItemSpacing,
   ) { item ->
     FilledHorizontalListItem(
       item = item,
@@ -223,7 +224,7 @@ private fun GridView(items: List<UpcomingAlarmListModel>) {
     gridCells = NUM_GRID_CELLS,
     items = items,
     modifier = GlanceModifier.fillMaxSize(),
-    cellSpacing = verticalSpacing,
+    cellSpacing = verticalItemSpacing,
   ) { item ->
     FilledHorizontalListItem(
       item = item,
@@ -257,10 +258,18 @@ private fun FilledHorizontalListItem(
   @Composable
   fun SupportingText() {
     Text(
-      text = item.fireAtTime.toString(),
+      text =
+        stringResource(
+          id =
+            if (item.scheduledOnDaysOfWeek.isNotEmpty() || item.date != null) {
+              R.string.scheduled_for_today
+            } else {
+              R.string.one_time
+            }
+        ),
       maxLines = 2,
       style = WidgetTextStyles.supportingText,
-    ) // TODO: schedule desc
+    )
   }
 
   @Composable
@@ -286,7 +295,7 @@ private fun FilledHorizontalListItem(
     )
   }
 
-  WidgetListItem( // TODO: different background color when switching alarm on/off
+  WidgetListItem(
     modifier =
       modifier
         .padding(fillItemItemPadding)
@@ -314,18 +323,10 @@ private fun FilledHorizontalListItem(
 }
 
 private object Dimensions {
-  /** Number of cells in the grid, when items are displayed as a grid. */
   const val NUM_GRID_CELLS = 2
 
-  /** Padding around the the widget content */
   val widgetPadding = 12.dp
-
-  /** Corner radius for each filled list item. */
   val filledItemCornerRadius = 16.dp
-
-  /** Padding applied to each item in the list. */
   val fillItemItemPadding = 12.dp
-
-  /** Vertical Space between each item in the list. */
-  val verticalSpacing = 4.dp
+  val verticalItemSpacing = 4.dp
 }

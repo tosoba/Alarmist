@@ -9,4 +9,8 @@
     <string name="time_format_12_h_short">hh:mm</string>
     <string name="time_format_24_h_full">HH:mm:ss</string>
     <string name="time_format_24_h_short">HH:mm</string>
+
+    <string name="one_time">One time</string>
+    <string name="scheduled_for_today">Scheduled for today</string>
+    <string name="refresh">Refresh</string>
 </resources>
