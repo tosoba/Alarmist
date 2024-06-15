@@ -36,10 +36,18 @@ import androidx.glance.text.Text
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.domain.AlarmRepository
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
+import com.trm.alarmist.core.ui.buildAlarmLabelText
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
+import com.trm.alarmist.widget.common.ui.WidgetDimensions.NUM_GRID_CELLS
+import com.trm.alarmist.widget.common.ui.WidgetDimensions.fillItemItemPadding
+import com.trm.alarmist.widget.common.ui.WidgetDimensions.filledItemCornerRadius
+import com.trm.alarmist.widget.common.ui.WidgetDimensions.verticalItemSpacing
+import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
 import com.trm.alarmist.widget.common.ui.WidgetLazyColumn
@@ -53,44 +61,47 @@ import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
-import com.trm.alarmist.widget.today.Dimensions.NUM_GRID_CELLS
-import com.trm.alarmist.widget.today.Dimensions.fillItemItemPadding
-import com.trm.alarmist.widget.today.Dimensions.filledItemCornerRadius
-import com.trm.alarmist.widget.today.Dimensions.verticalItemSpacing
-import com.trm.alarmist.widget.today.Dimensions.widgetPadding
 import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
   private val getTodayAlarmsUseCase: GetTodayAlarmsUseCase by inject()
+  private val repository: AlarmRepository by inject()
 
   override val sizeMode: SizeMode = SizeMode.Exact
 
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       val state = currentState<Preferences>()
-      val alarms by
-        produceState(Initializable(emptyList()), state) {
-          value = Initializable(getTodayAlarmsUseCase(), true)
+      val widgetState by
+        produceState(Initializable(TodayAlarmsWidgetState(emptyList(), emptyMap())), state) {
+          value =
+            Initializable(
+              TodayAlarmsWidgetState(
+                alarms = getTodayAlarmsUseCase(),
+                groups = repository.getAllAlarmGroups().associateBy(AlarmGroupModel::id),
+              ),
+              true,
+            )
         }
-
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
-        TodayAlarmsWidgetContent(id = id, alarms = alarms)
+        TodayAlarmsWidgetScaffold(id = id, state = widgetState)
       }
     }
   }
 }
 
+private data class TodayAlarmsWidgetState(
+  val alarms: List<UpcomingAlarmListModel>,
+  val groups: Map<Long, AlarmGroupModel>,
+)
+
 @Composable
-private fun TodayAlarmsWidgetContent(
-  id: GlanceId,
-  alarms: Initializable<List<UpcomingAlarmListModel>>,
-) {
+private fun TodayAlarmsWidgetScaffold(id: GlanceId, state: Initializable<TodayAlarmsWidgetState>) {
   GlanceTheme {
     val context = LocalContext.current
     val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
-
     val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
 
     fun titleBar(): @Composable () -> Unit = {
@@ -105,7 +116,7 @@ private fun TodayAlarmsWidgetContent(
             imageProvider = ImageProvider(R.drawable.refresh),
             contentDescription = stringResource(R.string.refresh),
             contentColor = GlanceTheme.colors.secondary,
-            backgroundColor = null, // transparent
+            backgroundColor = null,
             onClick =
               actionSendBroadcast(
                 context.updateWidgetIntent<TodayAlarmsWidgetReceiver>(
@@ -169,31 +180,30 @@ private fun TodayAlarmsWidgetContent(
         ),
       titleBar = if (showTitleBar()) titleBar() else null,
     ) {
-      Content(alarms = alarms)
+      TodayAlarmsWidgetScaffoldContent(state = state)
     }
   }
 }
 
 @Composable
-private fun Content(alarms: Initializable<List<UpcomingAlarmListModel>>) {
+private fun TodayAlarmsWidgetScaffoldContent(state: Initializable<TodayAlarmsWidgetState>) {
   when {
-    !alarms.initialized -> {
-      // TODO: better loading indicator?
+    !state.initialized -> {
       WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))
     }
-    alarms.data.isEmpty() -> {
-      // TODO: EmptyContent()
+    state.data.alarms.isEmpty() -> {
+      // TODO: EmptyContent() with button action deeplink to create alarm
     }
     else -> {
       when (WidgetLayoutSize.fromLocalSize()) {
         WidgetLayoutSize.Small -> {
-          ListView(items = alarms.data, displayHeaderSupporting = false)
+          TodayAlarmsWidgetList(state = state.data, displayHeaderSupporting = false)
         }
         WidgetLayoutSize.Medium -> {
-          ListView(items = alarms.data, displayHeaderSupporting = true)
+          TodayAlarmsWidgetList(state = state.data, displayHeaderSupporting = true)
         }
         WidgetLayoutSize.Large -> {
-          GridView(items = alarms.data)
+          TodayAlarmsWidgetGrid(state = state.data)
         }
       }
     }
@@ -201,58 +211,53 @@ private fun Content(alarms: Initializable<List<UpcomingAlarmListModel>>) {
 }
 
 @Composable
-private fun ListView(items: List<UpcomingAlarmListModel>, displayHeaderSupporting: Boolean) {
+private fun TodayAlarmsWidgetList(state: TodayAlarmsWidgetState, displayHeaderSupporting: Boolean) {
   WidgetLazyColumn(
-    items = items,
+    items = state.alarms,
     modifier = GlanceModifier.fillMaxSize(),
     verticalItemsSpacing = verticalItemSpacing,
   ) { item ->
-    FilledHorizontalListItem(
+    TodayAlarmsWidgetListItem(
       item = item,
-      displayLeading = true,
+      group = item.groupId?.let(state.groups::get),
       displayHeaderSupporting = displayHeaderSupporting,
-      displayTrailing = true,
-      onClick = null, // TODO: navigate to app
+      onClick = null, // TODO: navigate to app - edit alarm
       modifier = GlanceModifier.fillMaxSize(),
     )
   }
 }
 
 @Composable
-private fun GridView(items: List<UpcomingAlarmListModel>) {
+private fun TodayAlarmsWidgetGrid(state: TodayAlarmsWidgetState) {
   WidgetLazyVerticalGrid(
     gridCells = NUM_GRID_CELLS,
-    items = items,
+    items = state.alarms,
     modifier = GlanceModifier.fillMaxSize(),
     cellSpacing = verticalItemSpacing,
   ) { item ->
-    FilledHorizontalListItem(
+    TodayAlarmsWidgetListItem(
       item = item,
-      displayLeading = true,
+      group = item.groupId?.let(state.groups::get),
       displayHeaderSupporting = true,
-      displayTrailing = true,
-      onClick = null, // TODO: navigate to app
+      onClick = null, // TODO: navigate to app - edit alarm
       modifier = GlanceModifier.fillMaxSize(),
     )
   }
 }
 
 @Composable
-private fun FilledHorizontalListItem(
+private fun TodayAlarmsWidgetListItem(
   item: UpcomingAlarmListModel,
-  displayLeading: Boolean,
+  group: AlarmGroupModel?,
   displayHeaderSupporting: Boolean,
-  displayTrailing: Boolean,
   onClick: Action?,
   modifier: GlanceModifier = GlanceModifier,
 ) {
   @Composable
   fun TitleText() {
-    Text(
-      text = item.fireAtTime.toString(),
-      maxLines = 1,
-      style = WidgetTextStyles.titleText,
-    ) // TODO: group/name label (with icon)
+    buildAlarmLabelText(item.name, group).takeIf(String::isNotEmpty)?.let {
+      Text(text = it, maxLines = 1, style = WidgetTextStyles.titleText)
+    }
   }
 
   @Composable
@@ -307,26 +312,7 @@ private fun FilledHorizontalListItem(
     headlineContent = { if (displayHeaderSupporting) TitleText() },
     supportingContent = { if (displayHeaderSupporting) SupportingText() },
     onClick = onClick,
-    leadingContent =
-      if (displayLeading) {
-        { Leading() }
-      } else {
-        null
-      },
-    trailingContent =
-      if (displayTrailing) {
-        { Trailing() }
-      } else {
-        null
-      },
+    leadingContent = { Leading() },
+    trailingContent = { Trailing() },
   )
-}
-
-private object Dimensions {
-  const val NUM_GRID_CELLS = 2
-
-  val widgetPadding = 12.dp
-  val filledItemCornerRadius = 16.dp
-  val fillItemItemPadding = 12.dp
-  val verticalItemSpacing = 4.dp
 }

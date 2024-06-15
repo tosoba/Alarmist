@@ -27,19 +27,21 @@ fun AlarmLabel(
       }
 
       Text(
-        text =
-          if (alarmName != null && group != null) {
-            buildString {
-              append(group.name)
-              append(" · ")
-              append(alarmName)
-            }
-          } else {
-            group?.name ?: alarmName.orEmpty()
-          },
+        text = buildAlarmLabelText(alarmName, group),
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onOffContainer(isOn),
       )
     }
   }
 }
+
+fun buildAlarmLabelText(alarmName: String?, group: AlarmGroupModel?): String =
+  if (alarmName != null && group != null) {
+    buildString {
+      append(group.name)
+      append(" · ")
+      append(alarmName)
+    }
+  } else {
+    group?.name ?: alarmName.orEmpty()
+  }

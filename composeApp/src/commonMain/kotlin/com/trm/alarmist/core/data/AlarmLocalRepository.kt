@@ -141,6 +141,11 @@ class AlarmLocalRepository(
       it.map(SelectAllGroups::toModel)
     }
 
+  override suspend fun getAllAlarmGroups(): List<AlarmGroupModel> =
+    withContext(dispatcher) {
+      queries.selectAllGroups().executeAsList().map(SelectAllGroups::toModel)
+    }
+
   override fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmListModel>> =
     queries.selectAlarmsByGroupId(groupId).asAlarmsListFlow()
 
