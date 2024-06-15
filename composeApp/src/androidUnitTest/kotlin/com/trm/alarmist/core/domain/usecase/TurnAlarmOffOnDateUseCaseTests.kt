@@ -39,7 +39,7 @@ class TurnAlarmOffOnDateUseCaseTests {
       val turnOffAtDate = nextScheduledAtDate.plus(1L, DateTimeUnit.DAY)
       val scheduler = mock<AlarmScheduler>(MockMode.autoUnit)
 
-      TurnAlarmOffOnDateUseCase(repo, scheduler)(
+      TurnAlarmOffOnDateUseCase(repo, scheduler, mock(MockMode.autoUnit))(
         id =
           repo.addTestAlarm(
             fireAtTime = nextScheduledAt.toLocalTime(),
@@ -65,7 +65,10 @@ class TurnAlarmOffOnDateUseCaseTests {
           scheduledOnDates = listOf(turnOffAtDate, turnOffAtDate.plus(1L, DateTimeUnit.DAY)),
         )
 
-      TurnAlarmOffOnDateUseCase(repo, scheduler)(id = id, date = turnOffAtDate)
+      TurnAlarmOffOnDateUseCase(repo, scheduler, mock(MockMode.autoUnit))(
+        id = id,
+        date = turnOffAtDate,
+      )
 
       verify(VerifyMode.exactly(1)) {
         scheduler.scheduleAlarm(eq(id), any(), any(), any(), any(), any(), any(), any(), any())
@@ -86,7 +89,10 @@ class TurnAlarmOffOnDateUseCaseTests {
           scheduledOnDates = listOf(turnOffAtDate),
         )
 
-      TurnAlarmOffOnDateUseCase(repo, scheduler)(id = id, date = turnOffAtDate)
+      TurnAlarmOffOnDateUseCase(repo, scheduler, mock(MockMode.autoUnit))(
+        id = id,
+        date = turnOffAtDate,
+      )
 
       verify(VerifyMode.exactly(1)) { scheduler.cancelAlarm(eq(id)) }
       verifyNoMoreCalls(scheduler)

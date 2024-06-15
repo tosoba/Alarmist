@@ -39,7 +39,7 @@ class TurnAlarmOnOnDateUseCaseTests {
       val turnOnAtDate = nextScheduledAtDate.plus(1L, DateTimeUnit.DAY)
       val scheduler = mock<AlarmScheduler>(MockMode.autoUnit)
 
-      TurnAlarmOnOnDateUseCase(repo, scheduler)(
+      TurnAlarmOnOnDateUseCase(repo, scheduler, mock(MockMode.autoUnit))(
         id =
           repo.addTestAlarm(
             fireAtTime = nextScheduledAt.toLocalTime(),
@@ -65,7 +65,10 @@ class TurnAlarmOnOnDateUseCaseTests {
           scheduledOnDates = listOf(turnOnAtDate, turnOnAtDate.plus(1L, DateTimeUnit.DAY)),
         )
 
-      TurnAlarmOnOnDateUseCase(repo, scheduler)(id = id, date = turnOnAtDate)
+      TurnAlarmOnOnDateUseCase(repo, scheduler, mock(MockMode.autoUnit))(
+        id = id,
+        date = turnOnAtDate,
+      )
 
       verify(VerifyMode.exactly(1)) {
         scheduler.scheduleAlarm(eq(id), any(), any(), any(), any(), any(), any(), any(), any())
@@ -85,7 +88,10 @@ class TurnAlarmOnOnDateUseCaseTests {
           scheduledOnDates = listOf(turnOnAtDate),
         )
 
-      TurnAlarmOnOnDateUseCase(repo, scheduler)(id = id, date = turnOnAtDate)
+      TurnAlarmOnOnDateUseCase(repo, scheduler, mock(MockMode.autoUnit))(
+        id = id,
+        date = turnOnAtDate,
+      )
 
       verify(VerifyMode.exactly(1)) {
         scheduler.scheduleAlarm(any(), any(), any(), any(), any(), any(), any(), any(), any())
