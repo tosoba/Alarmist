@@ -1,5 +1,8 @@
 package com.trm.alarmist.core.ui
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.alarms_count
+import alarmist.composeapp.generated.resources.empty
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +25,7 @@ import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AlarmGroupHeaderCard(
@@ -57,7 +61,9 @@ fun AlarmGroupHeaderCard(
         Spacer(modifier = Modifier.height(2.dp))
 
         Text(
-          text = if (group.alarmsCount > 0L) "${group.alarmsCount} alarm(s)" else "Empty",
+          text =
+            if (group.alarmsCount > 0L) stringResource(Res.string.alarms_count, group.alarmsCount)
+            else stringResource(Res.string.empty),
           style = MaterialTheme.typography.bodyLarge,
           color = MaterialTheme.colorScheme.onOffContainer(group.isOn),
         )

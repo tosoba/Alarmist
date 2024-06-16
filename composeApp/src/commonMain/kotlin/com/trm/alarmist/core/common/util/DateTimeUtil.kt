@@ -1,5 +1,8 @@
 package com.trm.alarmist.core.common.util
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.days_count
+import alarmist.composeapp.generated.resources.one_day
 import androidx.compose.runtime.Composable
 import kotlin.time.Duration
 import kotlinx.datetime.Clock
@@ -16,6 +19,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 
 fun now(): Instant = Clock.System.now()
 
@@ -41,15 +45,16 @@ fun Instant.toLocalTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): L
 fun Instant.toLocalDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
   toLocalDateTime(timeZone).date
 
+@Composable
 fun Duration.formatCountdown(): String {
   fun Int.withZeroPrefix() = if (this < 10) "0$this" else this.toString()
 
   return when {
     inWholeDays > 1L -> {
-      "$inWholeDays days"
+      stringResource(Res.string.days_count, inWholeDays)
     }
     inWholeDays == 1L -> {
-      "1 day"
+      stringResource(Res.string.one_day)
     }
     inWholeHours >= 1L -> {
       toComponents { hours, minutes, _, _ -> "${hours}h ${minutes.withZeroPrefix()}m" }

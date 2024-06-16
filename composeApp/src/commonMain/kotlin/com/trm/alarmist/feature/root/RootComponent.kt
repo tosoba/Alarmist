@@ -1,5 +1,10 @@
 package com.trm.alarmist.feature.root
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.delete_alarm
+import alarmist.composeapp.generated.resources.delete_alarm_confirmation_message
+import alarmist.composeapp.generated.resources.delete_group
+import alarmist.composeapp.generated.resources.delete_group_confirmation_message
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
@@ -14,6 +19,7 @@ import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.essenty.instancekeeper.getOrCreate
+import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.EditAlarmInputModel
@@ -193,13 +199,13 @@ class DefaultRootComponent(componentContext: ComponentContext) :
       RootDialogComponent.Config(
         title =
           deleteActionParameter(
-            alarmParameter = { "Delete alarm" },
-            groupParameter = { "Delete group" },
+            alarmParameter = { getStringBlocking(Res.string.delete_alarm) },
+            groupParameter = { getStringBlocking(Res.string.delete_group) },
           ),
         message =
           deleteActionParameter(
-            alarmParameter = { "Are you sure you want to delete this alarm?" },
-            groupParameter = { "Are you sure you want to delete this group?" },
+            alarmParameter = { getStringBlocking(Res.string.delete_alarm_confirmation_message) },
+            groupParameter = { getStringBlocking(Res.string.delete_group_confirmation_message) },
           ),
       )
     )
