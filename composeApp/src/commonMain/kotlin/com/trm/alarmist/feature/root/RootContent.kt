@@ -3,18 +3,18 @@ package com.trm.alarmist.feature.root
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.alarms
 import alarmist.composeapp.generated.resources.app_name
-import alarmist.composeapp.generated.resources.clock
 import alarmist.composeapp.generated.resources.stopwatch
 import alarmist.composeapp.generated.resources.timer
+import alarmist.composeapp.generated.resources.widgets
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.MoreTime
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,13 +42,13 @@ import com.trm.alarmist.core.common.util.BackHandler
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
-import com.trm.alarmist.feature.clock.ClockContent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.root.ui.RootAppBar
 import com.trm.alarmist.feature.root.ui.RootDialog
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
+import com.trm.alarmist.feature.widgets.WidgetsContent
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -111,29 +111,6 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           modifier = Modifier.padding(horizontal = 12.dp),
           icon = {
             Icon(
-              imageVector = Icons.Default.MoreTime,
-              contentDescription = stringResource(Res.string.clock),
-            )
-          },
-          label = {
-            Text(
-              text = stringResource(Res.string.clock),
-              style = MaterialTheme.typography.bodyLarge,
-              fontWeight =
-                if (childStack.isItemSelected<RootComponent.Child.Clock>()) FontWeight.Medium
-                else FontWeight.Normal,
-            )
-          },
-          selected = childStack.isItemSelected<RootComponent.Child.Clock>(),
-          onClick = {
-            closeDrawer()
-            component.onClockDrawerItemClick()
-          },
-        )
-        NavigationDrawerItem(
-          modifier = Modifier.padding(horizontal = 12.dp),
-          icon = {
-            Icon(
               imageVector = Icons.Default.Timer,
               contentDescription = stringResource(Res.string.timer),
             )
@@ -174,6 +151,29 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           onClick = {
             closeDrawer()
             component.onStopwatchDrawerItemClick()
+          },
+        )
+        NavigationDrawerItem(
+          modifier = Modifier.padding(horizontal = 12.dp),
+          icon = {
+            Icon(
+              imageVector = Icons.Default.Widgets,
+              contentDescription = stringResource(Res.string.widgets),
+            )
+          },
+          label = {
+            Text(
+              text = stringResource(Res.string.widgets),
+              style = MaterialTheme.typography.bodyLarge,
+              fontWeight =
+              if (childStack.isItemSelected<RootComponent.Child.Widgets>()) FontWeight.Medium
+              else FontWeight.Normal,
+            )
+          },
+          selected = childStack.isItemSelected<RootComponent.Child.Widgets>(),
+          onClick = {
+            closeDrawer()
+            component.onWidgetsDrawerItemClick()
           },
         )
       }
@@ -268,8 +268,8 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           is RootComponent.Child.Alarms -> {
             AlarmsContent(modifier = Modifier.fillMaxSize(), component = child.component)
           }
-          is RootComponent.Child.Clock -> {
-            ClockContent(modifier = Modifier.fillMaxSize(), component = child.component)
+          is RootComponent.Child.Widgets -> {
+            WidgetsContent(modifier = Modifier.fillMaxSize(), component = child.component)
           }
           is RootComponent.Child.Stopwatch -> {
             StopwatchContent(modifier = Modifier.fillMaxSize(), component = child.component)

@@ -1,7 +1,7 @@
-package com.trm.alarmist.feature.clock
+package com.trm.alarmist.feature.widgets
 
 import alarmist.composeapp.generated.resources.Res
-import alarmist.composeapp.generated.resources.clock
+import alarmist.composeapp.generated.resources.widgets
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ClockContent(modifier: Modifier = Modifier, component: ClockComponent) {
+fun WidgetsContent(modifier: Modifier = Modifier, component: WidgetsComponent) {
   Box(modifier = modifier) {
-    Text(stringResource(Res.string.clock), modifier = Modifier.align(Alignment.Center))
+    Text(stringResource(Res.string.widgets), modifier = Modifier.align(Alignment.Center))
   }
 }

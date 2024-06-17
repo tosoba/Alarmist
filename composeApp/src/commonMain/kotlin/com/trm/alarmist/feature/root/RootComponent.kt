@@ -28,14 +28,14 @@ import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
 import com.trm.alarmist.feature.alarms.AlarmsComponent
 import com.trm.alarmist.feature.alarms.DefaultAlarmsComponent
-import com.trm.alarmist.feature.clock.ClockComponent
-import com.trm.alarmist.feature.clock.DefaultClockComponent
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.stopwatch.DefaultStopwatchComponent
 import com.trm.alarmist.feature.stopwatch.StopwatchComponent
 import com.trm.alarmist.feature.timer.DefaultTimerComponent
 import com.trm.alarmist.feature.timer.TimerComponent
+import com.trm.alarmist.feature.widgets.DefaultWidgetsComponent
+import com.trm.alarmist.feature.widgets.WidgetsComponent
 import kotlinx.serialization.Serializable
 
 interface RootComponent : BackHandlerOwner {
@@ -47,7 +47,7 @@ interface RootComponent : BackHandlerOwner {
 
   fun onAlarmsDrawerItemClick()
 
-  fun onClockDrawerItemClick()
+  fun onWidgetsDrawerItemClick()
 
   fun onTimerDrawerItemClick()
 
@@ -78,7 +78,7 @@ interface RootComponent : BackHandlerOwner {
   sealed interface Child {
     class Alarms(val component: AlarmsComponent) : Child
 
-    class Clock(val component: ClockComponent) : Child
+    class Widgets(val component: WidgetsComponent) : Child
 
     class Timer(val component: TimerComponent) : Child
 
@@ -167,8 +167,8 @@ class DefaultRootComponent(componentContext: ComponentContext) :
           )
         )
       }
-      ChildConfig.Clock -> {
-        RootComponent.Child.Clock(DefaultClockComponent(componentContext))
+      ChildConfig.Widgets -> {
+        RootComponent.Child.Widgets(DefaultWidgetsComponent(componentContext))
       }
       ChildConfig.Timer -> {
         RootComponent.Child.Timer(DefaultTimerComponent(componentContext))
@@ -182,8 +182,8 @@ class DefaultRootComponent(componentContext: ComponentContext) :
     navigation.replaceAll(ChildConfig.Alarms)
   }
 
-  override fun onClockDrawerItemClick() {
-    navigation.replaceAll(ChildConfig.Clock)
+  override fun onWidgetsDrawerItemClick() {
+    navigation.replaceAll(ChildConfig.Widgets)
   }
 
   override fun onTimerDrawerItemClick() {
@@ -279,7 +279,7 @@ class DefaultRootComponent(componentContext: ComponentContext) :
   private sealed interface ChildConfig {
     @Serializable data object Alarms : ChildConfig
 
-    @Serializable data object Clock : ChildConfig
+    @Serializable data object Widgets : ChildConfig
 
     @Serializable data object Timer : ChildConfig
 
