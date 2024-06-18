@@ -166,8 +166,8 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               text = stringResource(Res.string.widgets),
               style = MaterialTheme.typography.bodyLarge,
               fontWeight =
-              if (childStack.isItemSelected<RootComponent.Child.Widgets>()) FontWeight.Medium
-              else FontWeight.Normal,
+                if (childStack.isItemSelected<RootComponent.Child.Widgets>()) FontWeight.Medium
+                else FontWeight.Normal,
             )
           },
           selected = childStack.isItemSelected<RootComponent.Child.Widgets>(),
