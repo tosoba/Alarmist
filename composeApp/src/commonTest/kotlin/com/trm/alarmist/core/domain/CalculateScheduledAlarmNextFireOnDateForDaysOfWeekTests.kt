@@ -104,7 +104,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
         LocalTime(hour = 11, minute = 24, second = 53),
       )
 
-    val days = List(DayOfWeek.entries.size - 1) { afterDateTime.date.plus(it, DateTimeUnit.DAY) }
+    val days = daysOfWeekOtherThanOf(afterDateTime)
     assertEquals(
       days.min(),
       calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
@@ -124,7 +124,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
         LocalTime(hour = 11, minute = 24, second = 53),
       )
 
-    val days = List(DayOfWeek.entries.size - 1) { afterDateTime.date.plus(it, DateTimeUnit.DAY) }
+    val days = daysOfWeekOtherThanOf(afterDateTime)
     val offOnDates = days.take(2)
     assertEquals(
       days.filter { it !in offOnDates }.min(),
@@ -136,4 +136,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
       ),
     )
   }
+
+  private fun daysOfWeekOtherThanOf(afterDateTime: LocalDateTime): List<LocalDate> =
+    List(DayOfWeek.entries.size - 1) { afterDateTime.date.plus(it, DateTimeUnit.DAY) }
 }
