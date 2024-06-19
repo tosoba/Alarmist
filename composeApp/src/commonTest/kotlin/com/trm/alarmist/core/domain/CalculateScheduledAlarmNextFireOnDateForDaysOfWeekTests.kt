@@ -76,4 +76,64 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
         assertTrue(result > afterDateTime.date)
       }
   }
+
+  @Test
+  fun `given day of week equal to afterDateTime day of week and fireAtTime after afterDateTime and offOnDates containing afterDateTime date - then return date 1 week after afterDateTime`() {
+    val afterDateTime =
+      LocalDateTime(
+        LocalDate(year = 2024, month = Month.JULY, dayOfMonth = 10),
+        LocalTime(hour = 9, minute = 45, second = 12),
+      )
+
+    assertEquals(
+      afterDateTime.date.plus(7L, DateTimeUnit.DAY),
+      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
+        scheduledOnDaysOfWeek = listOf(afterDateTime.dayOfWeek),
+        fireAtTime = LocalTime(hour = 20, minute = 20),
+        offOnDates = listOf(afterDateTime.date),
+        afterDateTime = afterDateTime,
+      ),
+    )
+  }
+
+  @Test
+  fun `given multiple days of week and empty offOnDates - then return the closest day after afterDateTime`() {
+    val afterDateTime =
+      LocalDateTime(
+        LocalDate(year = 2024, month = Month.SEPTEMBER, dayOfMonth = 21),
+        LocalTime(hour = 11, minute = 24, second = 53),
+      )
+
+    val days = List(DayOfWeek.entries.size - 1) { afterDateTime.date.plus(it, DateTimeUnit.DAY) }
+    assertEquals(
+      days.min(),
+      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
+        scheduledOnDaysOfWeek = days.map(LocalDate::dayOfWeek),
+        fireAtTime = LocalTime(hour = 11, minute = 25),
+        offOnDates = emptyList(),
+        afterDateTime = afterDateTime,
+      ),
+    )
+  }
+
+  @Test
+  fun `given multiple days of week and non empty offOnDates - then return the closest day after afterDateTime not contained in offOnDates`() {
+    val afterDateTime =
+      LocalDateTime(
+        LocalDate(year = 2024, month = Month.SEPTEMBER, dayOfMonth = 21),
+        LocalTime(hour = 11, minute = 24, second = 53),
+      )
+
+    val days = List(DayOfWeek.entries.size - 1) { afterDateTime.date.plus(it, DateTimeUnit.DAY) }
+    val offOnDates = days.take(2)
+    assertEquals(
+      days.filter { it !in offOnDates }.min(),
+      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
+        scheduledOnDaysOfWeek = days.map(LocalDate::dayOfWeek),
+        fireAtTime = LocalTime(hour = 11, minute = 25),
+        offOnDates = offOnDates,
+        afterDateTime = afterDateTime,
+      ),
+    )
+  }
 }
