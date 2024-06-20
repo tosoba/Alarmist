@@ -56,8 +56,8 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
         LocalDate(year = 2024, month = Month.MAY, dayOfMonth = 8),
         LocalTime(hour = 14, minute = 11, second = 8),
       )
-
     val scheduledOnDates = List(20) { afterDateTime.date.plus(it - 10, DateTimeUnit.DAY) }
+
     assertEquals(
       scheduledOnDates.filter { it > afterDateTime.date }.min(),
       calculateScheduledAlarmNextFireOnDateForDateList(
@@ -76,9 +76,9 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
         LocalDate(year = 2024, month = Month.MAY, dayOfMonth = 8),
         LocalTime(hour = 14, minute = 11, second = 8),
       )
-
     val scheduledOnDates = List(10) { afterDateTime.date.plus(it + 1, DateTimeUnit.DAY) }
     val offOnDates = scheduledOnDates.take(5)
+
     assertEquals(
       scheduledOnDates.filter { it !in offOnDates }.min(),
       calculateScheduledAlarmNextFireOnDateForDateList(

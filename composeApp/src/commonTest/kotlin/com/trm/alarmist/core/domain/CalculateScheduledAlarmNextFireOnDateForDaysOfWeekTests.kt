@@ -103,8 +103,8 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
         LocalDate(year = 2024, month = Month.SEPTEMBER, dayOfMonth = 21),
         LocalTime(hour = 11, minute = 24, second = 53),
       )
-
     val days = daysOfWeekOtherThanOf(afterDateTime)
+
     assertEquals(
       days.min(),
       calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
@@ -123,9 +123,9 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
         LocalDate(year = 2024, month = Month.SEPTEMBER, dayOfMonth = 21),
         LocalTime(hour = 11, minute = 24, second = 53),
       )
-
     val days = daysOfWeekOtherThanOf(afterDateTime)
     val offOnDates = days.take(2)
+
     assertEquals(
       days.filter { it !in offOnDates }.min(),
       calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
