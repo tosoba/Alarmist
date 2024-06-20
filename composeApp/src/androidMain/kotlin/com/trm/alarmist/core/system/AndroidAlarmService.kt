@@ -1,9 +1,7 @@
 package com.trm.alarmist.core.system
 
 import alarmist.composeapp.generated.resources.Res
-import alarmist.composeapp.generated.resources.alarm_fired
 import alarmist.composeapp.generated.resources.dismiss
-import alarmist.composeapp.generated.resources.named_alarm_fired
 import alarmist.composeapp.generated.resources.snooze
 import android.app.Notification
 import android.app.PendingIntent
@@ -34,11 +32,11 @@ import com.trm.alarmist.core.common.util.requireAlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import io.github.aakira.napier.Napier
-import java.util.Timer
-import java.util.TimerTask
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.util.Timer
+import java.util.TimerTask
 
 class AndroidAlarmService : LifecycleService(), KoinComponent {
   private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
@@ -127,8 +125,8 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
     NotificationCompat.Builder(this, ALARM_FIRED_NOTIFICATION_CHANNEL_ID)
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setContentTitle(
-        settings.name?.let { getStringBlocking(Res.string.named_alarm_fired, it) }
-          ?: getStringBlocking(Res.string.alarm_fired)
+        settings.name?.let { getString(R.string.named_alarm_fired, it) }
+          ?: getString(R.string.alarm_fired)
       )
       .setCategory(NotificationCompat.CATEGORY_ALARM)
       .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)

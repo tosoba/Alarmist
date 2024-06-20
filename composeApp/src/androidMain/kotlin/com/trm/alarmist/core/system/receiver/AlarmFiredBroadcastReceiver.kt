@@ -1,8 +1,5 @@
 package com.trm.alarmist.core.system.receiver
 
-import alarmist.composeapp.generated.resources.Res
-import alarmist.composeapp.generated.resources.alarm_not_fired_due_to_permission
-import alarmist.composeapp.generated.resources.named_alarm_not_fired_due_to_permission
 import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,9 +7,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.trm.alarmist.R
 import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
-import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.common.util.requireAlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTimeUseCase
@@ -46,8 +43,8 @@ class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
           Toast.makeText(
               context,
               settings.name?.let {
-                getStringBlocking(Res.string.named_alarm_not_fired_due_to_permission, it)
-              } ?: getStringBlocking(Res.string.alarm_not_fired_due_to_permission),
+                context.getString(R.string.named_alarm_not_fired_due_to_permission, it)
+              } ?: context.getString(R.string.alarm_not_fired_due_to_permission),
               Toast.LENGTH_LONG,
             )
             .show()

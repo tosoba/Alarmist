@@ -13,4 +13,9 @@
     <string name="one_time">One time</string>
     <string name="custom_scheduled">Custom scheduled</string>
     <string name="refresh">Refresh</string>
+
+    <string name="alarm_fired">Alarm fired</string>
+    <string name="named_alarm_fired">Alarm %1$s fired</string>
+    <string name="alarm_not_fired_due_to_permission">Alarm was not fired due to denied notification permission.</string>
+    <string name="named_alarm_not_fired_due_to_permission">Alarm %1$s was not fired due to denied notification permission.</string>
 </resources>
