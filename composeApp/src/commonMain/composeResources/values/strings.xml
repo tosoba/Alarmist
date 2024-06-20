@@ -80,4 +80,6 @@
     <string name="empty">Empty</string>
     <string name="days_count">%1$s days</string>
     <string name="one_day">1 day</string>
+    <string name="alarm_fired">Alarm fired.</string>
+    <string name="named_alarm_fired">Alarm %1$s fired.</string>
 </resources>
