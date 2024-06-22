@@ -91,7 +91,7 @@
                 android:resource="@xml/clock_widget" />
         </receiver>
 
-        <receiver android:name=".widget.common.TurnOffAlarmActionReceiver" />
+        <receiver android:name=".widget.common.ToggleAlarmOnOffActionReceiver" />
 
     </application>
 

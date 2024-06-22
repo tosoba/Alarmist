@@ -10,7 +10,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
-import com.trm.alarmist.widget.common.TurnOffAlarmActionReceiver
+import com.trm.alarmist.widget.common.ToggleAlarmOnOffActionReceiver
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +51,7 @@ private fun Context.getGlanceIdByWidgetId(widgetId: Int): GlanceId =
 internal object WidgetAction {
   const val UPDATE_ALL_WIDGETS = "ACTION_UPDATE_ALL_WIDGETS"
   const val UPDATE_WIDGET = "ACTION_UPDATE_WIDGET"
-  const val TURN_ALARM_OFF = "TURN_ALARM_OFF"
+  const val TOGGLE_ALARM_ON_OFF = "TOGGLE_ALARM_ON_OFF"
 }
 
 internal object WidgetExtra {
@@ -64,8 +64,8 @@ internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateWidgetIn
   widgetId: Int
 ): Intent = actionIntent<T>(WidgetAction.UPDATE_WIDGET).putExtra(WidgetExtra.WIDGET_ID, widgetId)
 
-internal fun Context.turnAlarmOffIntent(alarmId: Long, alarmFireDate: LocalDate): Intent =
-  actionIntent<TurnOffAlarmActionReceiver>(WidgetAction.TURN_ALARM_OFF)
+internal fun Context.toggleAlarmOnOffIntent(alarmId: Long, alarmFireDate: LocalDate): Intent =
+  actionIntent<ToggleAlarmOnOffActionReceiver>(WidgetAction.TOGGLE_ALARM_ON_OFF)
     .putExtra(WidgetExtra.ALARM_ID, alarmId)
     .putExtra(WidgetExtra.ALARM_FIRE_DATE, alarmFireDate.toEpochDays())
 

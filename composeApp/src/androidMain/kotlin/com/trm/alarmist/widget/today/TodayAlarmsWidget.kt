@@ -61,7 +61,7 @@ import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.deepLinkAction
 import com.trm.alarmist.widget.common.util.editAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.stringResource
-import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
+import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
@@ -298,7 +298,7 @@ private fun TodayAlarmsWidgetListItem(
     Switch(
       checked = item.status == UpcomingAlarmListStatus.ON,
       onCheckedChange =
-        actionSendBroadcast(LocalContext.current.turnAlarmOffIntent(item.id, LocalDate.now())),
+        actionSendBroadcast(LocalContext.current.toggleAlarmOnOffIntent(item.id, LocalDate.now())),
     )
   }
 
