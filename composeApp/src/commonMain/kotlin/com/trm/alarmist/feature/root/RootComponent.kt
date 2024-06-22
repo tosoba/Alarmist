@@ -86,7 +86,7 @@ interface RootComponent : BackHandlerOwner {
   }
 }
 
-class DefaultRootComponent(componentContext: ComponentContext) :
+class DefaultRootComponent(componentContext: ComponentContext, startMode: RootStartMode) :
   RootComponent, ComponentContext by componentContext {
   private val navigation = StackNavigation<ChildConfig>()
 
@@ -130,6 +130,14 @@ class DefaultRootComponent(componentContext: ComponentContext) :
       key = "BottomSheetSlot",
       source = bottomSheetNavigation,
       serializer = BottomSheetChildConfig.serializer(),
+      initialConfiguration = {
+        when (startMode) {
+          RootStartMode.AddAlarm -> BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Add)
+          is RootStartMode.EditAlarm ->
+            TODO() // BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(startMode.id))
+          RootStartMode.Normal -> null
+        }
+      },
       handleBackButton = true,
     ) { config, childComponentContext ->
       when (config) {

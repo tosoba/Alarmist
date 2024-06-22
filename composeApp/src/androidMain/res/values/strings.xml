@@ -18,4 +18,9 @@
     <string name="named_alarm_fired">Alarm %1$s fired</string>
     <string name="alarm_not_fired_due_to_permission">Alarm was not fired due to denied notification permission.</string>
     <string name="named_alarm_not_fired_due_to_permission">Alarm %1$s was not fired due to denied notification permission.</string>
+
+    <string name="deeplink_scheme" translatable="false">deeplink</string>
+    <string name="deeplink_host" translatable="false">alarmist</string>
+    <string name="deeplink_path_add_alarm" translatable="false">add_alarm</string>
+    <string name="deeplink_path_edit_alarm" translatable="false">edit_alarm</string>
 </resources>
