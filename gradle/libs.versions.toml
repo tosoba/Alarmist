@@ -7,6 +7,7 @@ androidx-activityCompose = "1.9.0"
 androidx-core-ktx = "1.13.1"
 androidx-espresso-core = "3.5.1"
 androidx-test-junit = "1.1.5"
+androidx-work = "2.9.0"
 androidxLifecycle = "2.8.2"
 androidxSavedstate = "1.2.1"
 compose = "1.6.8"
@@ -42,6 +43,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-lifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "androidxLifecycle" }
 androidx-lifecycle-lifecycleService = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "androidxLifecycle" }
 androidx-savedstate-savedstate = { group = "androidx.savedstate", name = "savedstate", version.ref = "androidxSavedstate" }
+androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidx-work" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }

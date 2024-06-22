@@ -31,6 +31,7 @@ kotlin {
       implementation(libs.androidx.savedstate.savedstate)
       implementation(libs.androidx.lifecycle.lifecycleRuntime)
       implementation(libs.androidx.lifecycle.lifecycleService)
+      implementation(libs.androidx.work.ktx)
 
       implementation(libs.compose.ui.tooling.preview)
       implementation(libs.compose.ui.tooling)
