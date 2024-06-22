@@ -2,6 +2,8 @@ package com.trm.alarmist.feature.alarm
 
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
+import com.trm.alarmist.core.common.util.nextFullHour
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
@@ -36,10 +38,13 @@ class AlarmFeature(
 
   private val _state: MutableStateFlow<AlarmState> =
     MutableStateFlow(
-      when (mode) {
-        AlarmComponent.Mode.Add -> AlarmState()
-        is AlarmComponent.Mode.Edit -> AlarmState(mode.alarm)
-      }
+      AlarmState(
+        fireAtTime =
+          when (mode) {
+            AlarmComponent.Mode.Add -> LocalTime(now().nextFullHour(), 0)
+            is AlarmComponent.Mode.Edit -> null
+          }
+      )
     )
   val state: StateFlow<AlarmState> = _state.asStateFlow()
 
@@ -57,14 +62,14 @@ class AlarmFeature(
     if (savedState != null) {
       _state.value = savedState
     } else if (mode is AlarmComponent.Mode.Edit) {
-      coroutineScope.launch { _state.value = AlarmState(repository.getAlarmById(mode.alarm.id)) }
+      coroutineScope.launch { _state.value = AlarmState(repository.getAlarmById(mode.alarmId)) }
     }
   }
 
   fun onDeleteClick(): Job =
     coroutineScope.launch {
       check(mode is AlarmComponent.Mode.Edit)
-      deleteAlarmUseCase(mode.alarm.id)
+      deleteAlarmUseCase(mode.alarmId)
     }
 
   fun onConfirmClick(): Job =
@@ -75,7 +80,7 @@ class AlarmFeature(
             addAlarmUseCase(
               groupId = groupId,
               name = name,
-              fireAtTime = fireAtTime,
+              fireAtTime = requireNotNull(fireAtTime),
               isOn = isOn,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
@@ -91,9 +96,9 @@ class AlarmFeature(
           }
           is AlarmComponent.Mode.Edit -> {
             editAlarmUseCase(
-              id = mode.alarm.id,
+              id = mode.alarmId,
               groupId = groupId,
-              fireAtTime = fireAtTime,
+              fireAtTime = requireNotNull(fireAtTime),
               name = name,
               isOn = isOn,
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,

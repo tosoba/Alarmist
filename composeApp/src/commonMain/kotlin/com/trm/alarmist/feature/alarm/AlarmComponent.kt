@@ -9,7 +9,6 @@ import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
-import com.trm.alarmist.core.domain.model.EditAlarmInputModel
 import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialogComponent
 import com.trm.alarmist.feature.alarm.sound.DefaultAlarmSoundDialogComponent
 import kotlinx.serialization.Serializable
@@ -27,7 +26,7 @@ interface AlarmComponent {
   sealed interface Mode {
     @Serializable data object Add : Mode
 
-    @Serializable data class Edit(val alarm: EditAlarmInputModel) : Mode
+    @Serializable data class Edit(val alarmId: Long) : Mode
   }
 }
 

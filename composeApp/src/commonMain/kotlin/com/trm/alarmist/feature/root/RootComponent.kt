@@ -22,7 +22,6 @@ import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.domain.model.EditAlarmInputModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
@@ -249,15 +248,11 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
   }
 
   override fun onEditAlarmClick(alarm: AlarmListModel) {
-    bottomSheetNavigation.activate(
-      BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(EditAlarmInputModel(alarm)))
-    )
+    bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(alarm.id)))
   }
 
   override fun onEditUpcomingAlarmClick(alarm: UpcomingAlarmListModel) {
-    bottomSheetNavigation.activate(
-      BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(EditAlarmInputModel(alarm)))
-    )
+    bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(alarm.id)))
   }
 
   override fun onAddGroupClick() {

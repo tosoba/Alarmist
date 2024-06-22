@@ -5,7 +5,6 @@ import com.trm.alarmist.core.common.util.nextFullHour
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmModel
-import com.trm.alarmist.core.domain.model.EditAlarmInputModel
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -14,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Immutable
 data class AlarmState(
-  val fireAtTime: LocalTime = LocalTime(now().nextFullHour(), 0),
+  val fireAtTime: LocalTime? = null,
   val groupId: Long = AlarmGroupModel.UNGROUPED_ID,
   val name: String? = null,
   val isOn: Boolean = true,
@@ -50,15 +49,6 @@ data class AlarmState(
     reminderEnabled = alarm.reminderOffsetHours > 0L,
     reminderOffset = AlarmReminderOffset.fromHours(alarm.reminderOffsetHours),
     soundId = alarm.soundId,
-  )
-
-  constructor(
-    alarm: EditAlarmInputModel
-  ) : this(
-    fireAtTime = alarm.fireAtTime,
-    groupId = alarm.groupId ?: AlarmGroupModel.UNGROUPED_ID,
-    name = alarm.name,
-    isOn = alarm.isOn,
   )
 
   val snoozeDurationOrZero: Long

@@ -114,6 +114,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.trm.alarmist.core.common.util.nextFullHour
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
@@ -256,19 +257,19 @@ fun AlarmContent(
         }
       }
 
-      Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-        val timePickerState =
-          rememberTimePickerState(
-            initialHour = state.fireAtTime.hour,
-            initialMinute = state.fireAtTime.minute,
-          )
-        LaunchedEffect(timePickerState.hour, timePickerState.minute) {
-          onFireAtChange(LocalTime(timePickerState.hour, timePickerState.minute))
-        }
-        Crossfade(timePickerMode, modifier = Modifier.align(Alignment.Center)) {
-          when (it) {
-            TimePickerMode.DIAL -> TimePicker(state = timePickerState)
-            TimePickerMode.INPUT -> TimeInput(state = timePickerState)
+      state.fireAtTime?.let {
+        Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+          val timePickerState = rememberTimePickerState(it.hour, it.minute)
+
+          LaunchedEffect(timePickerState.hour, timePickerState.minute) {
+            onFireAtChange(LocalTime(timePickerState.hour, timePickerState.minute))
+          }
+
+          Crossfade(timePickerMode, modifier = Modifier.align(Alignment.Center)) { mode ->
+            when (mode) {
+              TimePickerMode.DIAL -> TimePicker(state = timePickerState)
+              TimePickerMode.INPUT -> TimeInput(state = timePickerState)
+            }
           }
         }
       }
@@ -353,7 +354,7 @@ fun AlarmContent(
       ExpandableCalendar(
         calendarModifier =
           Modifier.fillMaxWidth().padding(start = 24.dp, end = 16.dp, bottom = 16.dp),
-        fireAtTime = state.fireAtTime,
+        fireAtTime = state.fireAtTime ?: remember { LocalTime(now().nextFullHour(), 0) },
         isExpanded = isCustomScheduleExpanded,
         scheduledOnDaysOfWeek = state.scheduledOnDaysOfWeek,
         scheduledOnDates = state.scheduledOnDates,
