@@ -58,6 +58,8 @@ import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.deepLinkAction
+import com.trm.alarmist.widget.common.util.editAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.turnAlarmOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
@@ -221,7 +223,7 @@ private fun TodayAlarmsWidgetList(state: TodayAlarmsWidgetState, displayHeaderSu
       item = item,
       group = item.groupId?.let(state.groups::get),
       displayHeaderSupporting = displayHeaderSupporting,
-      onClick = null, // TODO: navigate to app - edit alarm
+      onClick = deepLinkAction(LocalContext.current.editAlarmDeeplinkUri(item.id)),
       modifier = GlanceModifier.fillMaxSize(),
     )
   }
@@ -239,7 +241,7 @@ private fun TodayAlarmsWidgetGrid(state: TodayAlarmsWidgetState) {
       item = item,
       group = item.groupId?.let(state.groups::get),
       displayHeaderSupporting = true,
-      onClick = null, // TODO: navigate to app - edit alarm
+      onClick = deepLinkAction(LocalContext.current.editAlarmDeeplinkUri(item.id)),
       modifier = GlanceModifier.fillMaxSize(),
     )
   }

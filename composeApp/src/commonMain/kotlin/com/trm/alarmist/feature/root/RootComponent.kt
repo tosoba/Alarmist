@@ -131,10 +131,15 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
       serializer = BottomSheetChildConfig.serializer(),
       initialConfiguration = {
         when (startMode) {
-          RootStartMode.AddAlarm -> BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Add)
-          is RootStartMode.EditAlarm ->
-            TODO() // BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(startMode.id))
-          RootStartMode.Normal -> null
+          RootStartMode.AddAlarm -> {
+            BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Add)
+          }
+          is RootStartMode.EditAlarm -> {
+            BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(startMode.id))
+          }
+          RootStartMode.Normal -> {
+            null
+          }
         }
       },
       handleBackButton = true,
