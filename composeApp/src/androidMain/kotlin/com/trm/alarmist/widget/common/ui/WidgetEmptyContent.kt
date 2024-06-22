@@ -3,12 +3,9 @@ package com.trm.alarmist.widget.common.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
-import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.LocalSize
 import androidx.glance.action.Action
 import androidx.glance.appwidget.components.FilledButton
 import androidx.glance.layout.Alignment
@@ -22,31 +19,18 @@ import androidx.glance.text.TextStyle
 
 @Composable
 fun WidgetEmptyContent(
-  noDataIconRes: Int,
-  noDataText: String,
+  emptyText: String,
   actionButtonText: String,
-  actionButtonIcon: Int,
+  actionButtonIcon: Int?,
   actionButtonOnClick: Action,
 ) {
-  @Composable fun showIcon() = LocalSize.current.height >= 180.dp
-
   Column(
     verticalAlignment = Alignment.CenterVertically,
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = GlanceModifier.fillMaxSize(),
   ) {
-    if (showIcon()) {
-      Image(
-        provider = ImageProvider(noDataIconRes),
-        colorFilter = ColorFilter.tint(GlanceTheme.colors.secondary),
-        contentDescription = null,
-      )
-
-      Spacer(modifier = GlanceModifier.height(8.dp))
-    }
-
     Text(
-      text = noDataText,
+      text = emptyText,
       style =
         TextStyle(
           fontWeight = FontWeight.Medium,
@@ -59,7 +43,7 @@ fun WidgetEmptyContent(
 
     FilledButton(
       text = actionButtonText,
-      icon = ImageProvider(actionButtonIcon),
+      icon = actionButtonIcon?.let(::ImageProvider),
       onClick = actionButtonOnClick,
     )
   }

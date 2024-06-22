@@ -23,4 +23,7 @@
     <string name="deeplink_host" translatable="false">alarmist</string>
     <string name="deeplink_path_add_alarm" translatable="false">add_alarm</string>
     <string name="deeplink_path_edit_alarm" translatable="false">edit_alarm</string>
+
+    <string name="no_alarms_today">No alarms today.</string>
+    <string name="add_alarm">Add alarm</string>
 </resources>

@@ -11,6 +11,11 @@ import androidx.glance.appwidget.action.actionStartActivity
 import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
 
+internal fun Context.addAlarmDeeplinkPattern(): String =
+  "${getString(R.string.deeplink_scheme)}://${getString(R.string.deeplink_host)}/${getString(R.string.deeplink_path_add_alarm)}"
+
+internal fun Context.addAlarmDeeplinkUri(): Uri = addAlarmDeeplinkPattern().toUri()
+
 internal fun Context.editAlarmDeeplinkPattern(id: Long): String =
   "${getString(R.string.deeplink_scheme)}://${getString(R.string.deeplink_host)}/${getString(R.string.deeplink_path_edit_alarm)}/$id"
 

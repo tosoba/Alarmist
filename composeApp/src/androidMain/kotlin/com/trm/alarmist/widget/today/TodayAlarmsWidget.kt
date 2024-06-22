@@ -48,6 +48,7 @@ import com.trm.alarmist.widget.common.ui.WidgetDimensions.fillItemItemPadding
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.filledItemCornerRadius
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.verticalItemSpacing
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
+import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
 import com.trm.alarmist.widget.common.ui.WidgetLazyColumn
@@ -58,6 +59,7 @@ import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.addAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.deepLinkAction
 import com.trm.alarmist.widget.common.util.editAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.stringResource
@@ -194,7 +196,13 @@ private fun TodayAlarmsWidgetScaffoldContent(state: Initializable<TodayAlarmsWid
       WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))
     }
     state.data.alarms.isEmpty() -> {
-      // TODO: EmptyContent() with button action deeplink to create alarm
+      val context = LocalContext.current
+      WidgetEmptyContent(
+        emptyText = context.getString(R.string.no_alarms_today),
+        actionButtonText = context.getString(R.string.add_alarm),
+        actionButtonIcon = null,
+        actionButtonOnClick = deepLinkAction(context.addAlarmDeeplinkUri()),
+      )
     }
     else -> {
       when (WidgetLayoutSize.fromLocalSize()) {
