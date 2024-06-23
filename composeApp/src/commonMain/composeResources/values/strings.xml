@@ -80,4 +80,6 @@
     <string name="empty">Empty</string>
     <string name="days_count">%1$s days</string>
     <string name="one_day">1 day</string>
+    <string name="widget_pin_unavailable_title">Unsupported feature</string>
+    <string name="widget_pin_unavailable_description">Widget pinning is not supported in the default launcher</string>
 </resources>

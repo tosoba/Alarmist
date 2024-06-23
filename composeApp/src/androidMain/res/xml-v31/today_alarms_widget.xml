@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/today_widget_description"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:maxResizeWidth="@dimen/today_alarms_widget_max_resize_width"
     android:maxResizeHeight="@dimen/today_alarms_widget_max_resize_height"
@@ -7,6 +8,7 @@
     android:minHeight="@dimen/today_alarms_widget_min_height"
     android:minResizeWidth="@dimen/today_alarms_widget_min_resize_width"
     android:minResizeHeight="@dimen/today_alarms_widget_min_resize_height"
+    android:previewImage="@drawable/today_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="@integer/today_alarms_target_cell_width"
     android:targetCellHeight="@integer/today_alarms_target_cell_height"

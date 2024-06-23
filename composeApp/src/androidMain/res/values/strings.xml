@@ -26,4 +26,9 @@
 
     <string name="no_alarms_today">No alarms today.</string>
     <string name="add_alarm">Add alarm</string>
+
+    <string name="today_widget_description">Alarms scheduled for today</string>
+    <string name="clock_widget_description">A clock with next scheduled alarm</string>
+
+    <string name="widget_pinned_success_info">Widget pinned. Check it on your homescreen.</string>
 </resources>

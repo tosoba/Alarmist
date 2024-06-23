@@ -8,6 +8,7 @@ import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.toArgb
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.AndroidRemoteViews
@@ -71,6 +72,12 @@ fun WidgetAlarmFireAtTimeText(
                 )
               }
             },
+          )
+
+          setInt(
+            R.id.widget_text_view,
+            "setTextColor",
+            style.color.getColor(LocalContext.current).toArgb(),
           )
 
           style.fontSize?.value?.let { setFloat(R.id.widget_text_view, "setTextSize", it) }

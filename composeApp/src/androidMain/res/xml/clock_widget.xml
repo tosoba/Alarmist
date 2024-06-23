@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:description="@string/clock"
+    android:description="@string/clock_widget_description"
     android:initialLayout="@layout/widget_loading"
     android:minWidth="100dp"
     android:minHeight="50dp"
+    android:previewImage="@drawable/clock_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen" />

@@ -5,7 +5,6 @@ import alarmist.composeapp.generated.resources.alarms
 import alarmist.composeapp.generated.resources.app_name
 import alarmist.composeapp.generated.resources.stopwatch
 import alarmist.composeapp.generated.resources.timer
-import alarmist.composeapp.generated.resources.widgets
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -153,24 +151,9 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             component.onStopwatchDrawerItemClick()
           },
         )
-        NavigationDrawerItem(
-          modifier = Modifier.padding(horizontal = 12.dp),
-          icon = {
-            Icon(
-              imageVector = Icons.Default.Widgets,
-              contentDescription = stringResource(Res.string.widgets),
-            )
-          },
-          label = {
-            Text(
-              text = stringResource(Res.string.widgets),
-              style = MaterialTheme.typography.bodyLarge,
-              fontWeight =
-                if (childStack.isItemSelected<RootComponent.Child.Widgets>()) FontWeight.Medium
-                else FontWeight.Normal,
-            )
-          },
-          selected = childStack.isItemSelected<RootComponent.Child.Widgets>(),
+
+        RootDrawerWidgetsItem(
+          isSelected = childStack.isItemSelected<RootComponent.Child.Widgets>(),
           onClick = {
             closeDrawer()
             component.onWidgetsDrawerItemClick()
