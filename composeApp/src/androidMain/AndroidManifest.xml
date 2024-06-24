@@ -41,12 +41,12 @@
             android:exported="false"
             android:launchMode="singleInstance" />
 
-        <receiver android:name=".core.system.receiver.AlarmDismissedBroadcastReceiver" />
-        <receiver android:name=".core.system.receiver.AlarmFiredBroadcastReceiver" />
-        <receiver android:name=".core.system.receiver.AlarmUpcomingBroadcastReceiver" />
+        <receiver android:name=".core.system.alarm.receiver.AlarmDismissedBroadcastReceiver" />
+        <receiver android:name=".core.system.alarm.receiver.AlarmFiredBroadcastReceiver" />
+        <receiver android:name=".core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver" />
 
         <receiver
-            android:name=".core.system.receiver.BootCompletedBroadcastReceiver"
+            android:name=".core.system.boot.BootCompletedBroadcastReceiver"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="false"
@@ -59,7 +59,7 @@
         </receiver>
 
         <service
-            android:name=".core.system.AndroidAlarmService"
+            android:name=".core.system.alarm.AlarmService"
             android:exported="false"
             android:foregroundServiceType="systemExempted" />
 

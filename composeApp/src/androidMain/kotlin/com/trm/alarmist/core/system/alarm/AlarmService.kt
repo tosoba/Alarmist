@@ -1,4 +1,4 @@
-package com.trm.alarmist.core.system
+package com.trm.alarmist.core.system.alarm
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.dismiss
@@ -38,7 +38,7 @@ import org.koin.core.component.inject
 import java.util.Timer
 import java.util.TimerTask
 
-class AndroidAlarmService : LifecycleService(), KoinComponent {
+class AlarmService : LifecycleService(), KoinComponent {
   private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
   private val updateAlarmOnSnoozeUseCase: UpdateAlarmOnSnoozeUseCase by inject()
 
@@ -185,10 +185,10 @@ class AndroidAlarmService : LifecycleService(), KoinComponent {
           }
 
           setDataSource(
-            this@AndroidAlarmService,
+            this@AlarmService,
             settings.soundId?.let {
               val ringtoneManager =
-                RingtoneManager(this@AndroidAlarmService).apply {
+                RingtoneManager(this@AlarmService).apply {
                   setType(RingtoneManager.TYPE_ALARM)
                 }
               val cursor = ringtoneManager.cursor

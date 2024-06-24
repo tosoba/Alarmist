@@ -1,7 +1,7 @@
 package com.trm.alarmist.core.system.di
 
 import com.trm.alarmist.core.system.AlarmScheduler
-import com.trm.alarmist.core.system.AndroidAlarmScheduler
+import com.trm.alarmist.core.system.alarm.AndroidAlarmScheduler
 import com.trm.alarmist.core.system.AndroidWidgetManager
 import com.trm.alarmist.core.system.WidgetManager
 import org.koin.android.ext.koin.androidContext

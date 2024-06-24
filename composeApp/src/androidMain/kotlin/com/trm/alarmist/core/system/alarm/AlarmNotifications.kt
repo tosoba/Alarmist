@@ -1,4 +1,4 @@
-package com.trm.alarmist.core.system
+package com.trm.alarmist.core.system.alarm
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.dismiss
@@ -17,7 +17,7 @@ import com.trm.alarmist.R
 import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.formattedTime
 import com.trm.alarmist.core.common.util.getStringBlocking
-import com.trm.alarmist.core.system.receiver.AlarmDismissedBroadcastReceiver
+import com.trm.alarmist.core.system.alarm.receiver.AlarmDismissedBroadcastReceiver
 
 fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
   if (

@@ -1,4 +1,4 @@
-package com.trm.alarmist.core.system.receiver
+package com.trm.alarmist.core.system.alarm.receiver
 
 import android.Manifest
 import android.content.BroadcastReceiver
@@ -14,7 +14,7 @@ import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.common.util.requireAlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTimeUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
-import com.trm.alarmist.core.system.AndroidAlarmService
+import com.trm.alarmist.core.system.alarm.AlarmService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -52,7 +52,7 @@ class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
       } else {
         ContextCompat.startForegroundService(
           context,
-          Intent(context, AndroidAlarmService::class.java).putExtras(intent),
+          Intent(context, AlarmService::class.java).putExtras(intent),
         )
       }
     }

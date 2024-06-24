@@ -46,7 +46,7 @@ import com.trm.alarmist.core.common.util.turnScreenOffAndKeyguardOn
 import com.trm.alarmist.core.common.util.turnScreenOnAndKeyguardOff
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
-import com.trm.alarmist.core.system.AndroidAlarmService
+import com.trm.alarmist.core.system.alarm.AlarmService
 import com.trm.alarmist.core.ui.AutoSizeText
 import com.trm.alarmist.core.ui.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -76,7 +76,7 @@ class AlarmFiredActivity : ComponentActivity() {
               lifecycleScope
                 .launch { updateAlarmOnSnoozeUseCase(settings.id) }
                 .invokeOnCompletion {
-                  stopService(Intent(this@AlarmFiredActivity, AndroidAlarmService::class.java))
+                  stopService(Intent(this@AlarmFiredActivity, AlarmService::class.java))
                   finish()
                 }
             },
@@ -84,7 +84,7 @@ class AlarmFiredActivity : ComponentActivity() {
               lifecycleScope
                 .launch { updateAlarmOnDismissUseCase(settings.id, settings.fireOnDateTime) }
                 .invokeOnCompletion {
-                  stopService(Intent(this@AlarmFiredActivity, AndroidAlarmService::class.java))
+                  stopService(Intent(this@AlarmFiredActivity, AlarmService::class.java))
                   finish()
                 }
             },

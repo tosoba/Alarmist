@@ -1,11 +1,12 @@
-package com.trm.alarmist.core.system
+package com.trm.alarmist.core.system.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
-import com.trm.alarmist.core.system.receiver.AlarmFiredBroadcastReceiver
-import com.trm.alarmist.core.system.receiver.AlarmUpcomingBroadcastReceiver
+import com.trm.alarmist.core.system.AlarmScheduler
+import com.trm.alarmist.core.system.alarm.receiver.AlarmFiredBroadcastReceiver
+import com.trm.alarmist.core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
