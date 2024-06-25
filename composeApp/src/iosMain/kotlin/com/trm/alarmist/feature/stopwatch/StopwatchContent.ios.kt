@@ -4,4 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-expect fun StopwatchContent(modifier: Modifier = Modifier, component: StopwatchComponent)
+actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
+  // TODO:
+}

@@ -59,7 +59,7 @@ import com.trm.alarmist.core.ui.UpcomingAlarmListItem
 import com.trm.alarmist.core.ui.WeekArrowsRow
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
-import com.trm.alarmist.feature.alarm.isAlarmPermissionGranted
+import com.trm.alarmist.core.system.permission.isPostNotificationPermissionGranted
 import epicarchitect.calendar.compose.basis.EpicCalendarConstants
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.atDay
@@ -104,7 +104,7 @@ fun UpcomingAlarmsContent(
   onSelectedDateChange: (LocalDate?) -> Unit = {},
   onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit = {},
 ) {
-  val alarmPermissionGranted = isAlarmPermissionGranted()
+  val alarmPermissionGranted = isPostNotificationPermissionGranted()
 
   LazyColumn(
     modifier = modifier,

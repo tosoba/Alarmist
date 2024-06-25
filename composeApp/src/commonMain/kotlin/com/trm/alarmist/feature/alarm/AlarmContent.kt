@@ -117,6 +117,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.trm.alarmist.core.common.util.nextFullHour
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
+import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
@@ -650,7 +651,7 @@ fun AlarmContent(
       AlarmSoundDialog(component = it, modifier = Modifier.heightIn(max = 500.dp))
     }
 
-    val permissionsHandler = alarmPermissionsHandler(onGranted = onConfirmClick)
+    val permissionsHandler = postNotificationsPermissionHandler(onGranted = onConfirmClick)
 
     FloatingActionButton(
       modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),

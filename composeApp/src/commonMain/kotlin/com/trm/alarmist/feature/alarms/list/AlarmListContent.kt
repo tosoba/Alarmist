@@ -27,7 +27,7 @@ import com.trm.alarmist.core.ui.EmptyPlaceholder
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
-import com.trm.alarmist.feature.alarm.isAlarmPermissionGranted
+import com.trm.alarmist.core.system.permission.isPostNotificationPermissionGranted
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -57,7 +57,7 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
           FloatingActionButtonSpacer()
         }
       } else {
-        val alarmPermissionGranted = isAlarmPermissionGranted()
+        val alarmPermissionGranted = isPostNotificationPermissionGranted()
 
         LazyColumn(
           modifier = Modifier.fillMaxSize(),

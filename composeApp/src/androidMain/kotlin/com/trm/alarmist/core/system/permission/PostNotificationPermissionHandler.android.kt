@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.alarm
+package com.trm.alarmist.core.system.permission
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.cancel
@@ -34,7 +34,7 @@ import com.trm.alarmist.core.common.util.getActivity
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-actual fun alarmPermissionsHandler(onGranted: () -> Unit): () -> Unit {
+actual fun postNotificationsPermissionHandler(onGranted: () -> Unit): () -> Unit {
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     val context = LocalContext.current
 

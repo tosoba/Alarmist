@@ -43,7 +43,7 @@ import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
-import com.trm.alarmist.feature.alarm.isAlarmPermissionGranted
+import com.trm.alarmist.core.system.permission.isPostNotificationPermissionGranted
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -57,7 +57,7 @@ fun AlarmGroupsContent(
   onToggleAlarmOnOff: (AlarmListModel) -> Unit = {},
   onToggleGroupOnOff: (AlarmGroupModel) -> Unit = {},
 ) {
-  val alarmPermissionGranted = isAlarmPermissionGranted()
+  val alarmPermissionGranted = isPostNotificationPermissionGranted()
 
   Crossfade(state.groups.isEmpty(), modifier = modifier) { groupsEmpty ->
     if (groupsEmpty) {
