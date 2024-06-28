@@ -41,6 +41,7 @@ androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-lifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "androidxLifecycle" }
+androidx-lifecycle-lifecycleRuntimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-lifecycleService = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "androidxLifecycle" }
 androidx-savedstate-savedstate = { group = "androidx.savedstate", name = "savedstate", version.ref = "androidxSavedstate" }
 androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidx-work" }

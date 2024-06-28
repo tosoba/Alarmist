@@ -30,6 +30,7 @@ kotlin {
       implementation(libs.androidx.activity.compose)
       implementation(libs.androidx.savedstate.savedstate)
       implementation(libs.androidx.lifecycle.lifecycleRuntime)
+      implementation(libs.androidx.lifecycle.lifecycleRuntimeCompose)
       implementation(libs.androidx.lifecycle.lifecycleService)
       implementation(libs.androidx.work.ktx)
 

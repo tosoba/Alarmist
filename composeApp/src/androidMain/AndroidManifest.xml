@@ -63,6 +63,11 @@
             android:exported="false"
             android:foregroundServiceType="systemExempted" />
 
+        <service
+            android:name=".core.system.stopwatch.StopwatchService"
+            android:enabled="true"
+            android:exported="false" />
+
         <receiver
             android:name=".widget.today.TodayAlarmsWidgetReceiver"
             android:exported="false"
