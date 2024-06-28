@@ -8,6 +8,7 @@ import android.os.Binder
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.trm.alarmist.R
+import com.trm.alarmist.core.domain.model.StopwatchState
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
@@ -180,11 +181,4 @@ class StopwatchService : Service() {
   inner class StopwatchBinder : Binder() {
     fun getService(): StopwatchService = this@StopwatchService
   }
-}
-
-enum class StopwatchState {
-  Idle,
-  Started,
-  Stopped,
-  Canceled,
 }

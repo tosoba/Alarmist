@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.trm.alarmist.MainActivity
+import com.trm.alarmist.core.domain.model.StopwatchState
 
 object ServiceHelper {
 
