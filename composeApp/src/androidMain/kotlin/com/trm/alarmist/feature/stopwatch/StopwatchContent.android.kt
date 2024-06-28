@@ -170,7 +170,7 @@ fun StopwatchServiceContent(
           )
         },
         enabled = seconds != "00" && currentState != StopwatchState.Started,
-        colors = ButtonDefaults.buttonColors(),
+        colors = ButtonDefaults.buttonColors(disabledContainerColor = Color(0xFF17162B)),
       ) {
         Text(text = "Cancel")
       }

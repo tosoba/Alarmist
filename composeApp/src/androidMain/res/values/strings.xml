@@ -31,4 +31,6 @@
     <string name="clock_widget_description">A clock with next scheduled alarm</string>
 
     <string name="widget_pinned_success_info">Widget pinned. Check it on your homescreen.</string>
+
+    <string name="stopwatch_service_description">A foreground service used to display a notification for a currently running stopwatch.</string>
 </resources>

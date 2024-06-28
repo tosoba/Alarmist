@@ -5,9 +5,9 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
-import android.os.Build
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
+import com.trm.alarmist.R
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
@@ -19,7 +19,7 @@ class StopwatchService : Service() {
     NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
       .setContentTitle("Stopwatch")
       .setContentText("00:00:00")
-      //            .setSmallIcon(R.drawable.ic_baseline_timer_24)
+      .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setOngoing(true)
       .addAction(0, "Stop", ServiceHelper.stopPendingIntent(this))
       .addAction(0, "Cancel", ServiceHelper.cancelPendingIntent(this))
@@ -134,15 +134,13 @@ class StopwatchService : Service() {
   }
 
   private fun createNotificationChannel() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      val channel =
-        NotificationChannel(
-          Constants.NOTIFICATION_CHANNEL_ID,
-          Constants.NOTIFICATION_CHANNEL_NAME,
-          NotificationManager.IMPORTANCE_LOW,
-        )
-      getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
-    }
+    val channel =
+      NotificationChannel(
+        Constants.NOTIFICATION_CHANNEL_ID,
+        Constants.NOTIFICATION_CHANNEL_NAME,
+        NotificationManager.IMPORTANCE_LOW,
+      )
+    getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
   }
 
   private fun updateNotification(hours: String, minutes: String, seconds: String) {
