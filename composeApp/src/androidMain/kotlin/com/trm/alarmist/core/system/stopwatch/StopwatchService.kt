@@ -19,7 +19,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class StopwatchService : Service() {
   private val notificationBuilder: NotificationCompat.Builder by lazy {
-    NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
+    NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
       .setContentTitle("Stopwatch")
       .setContentText("00:00:00")
       .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -127,29 +127,30 @@ class StopwatchService : Service() {
 
   private fun startForegroundService() {
     createNotificationChannel()
-    startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build())
+    startForeground(NOTIFICATION_ID, notificationBuilder.build())
   }
 
   private fun stopForegroundService() {
-    getSystemService(NotificationManager::class.java).cancel(Constants.NOTIFICATION_ID)
+    getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
     stopForeground(STOP_FOREGROUND_REMOVE)
     stopSelf()
   }
 
   private fun createNotificationChannel() {
-    val channel =
-      NotificationChannel(
-        Constants.NOTIFICATION_CHANNEL_ID,
-        Constants.NOTIFICATION_CHANNEL_NAME,
-        NotificationManager.IMPORTANCE_LOW,
+    getSystemService(NotificationManager::class.java)
+      .createNotificationChannel(
+        NotificationChannel(
+          NOTIFICATION_CHANNEL_ID,
+          NOTIFICATION_CHANNEL_NAME,
+          NotificationManager.IMPORTANCE_LOW,
+        )
       )
-    getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
   }
 
   private fun updateNotification(hours: String, minutes: String, seconds: String) {
     getSystemService(NotificationManager::class.java)
       .notify(
-        Constants.NOTIFICATION_ID,
+        NOTIFICATION_ID,
         notificationBuilder
           .setContentText(formatTime(hours = hours, minutes = minutes, seconds = seconds))
           .build(),
@@ -167,7 +168,7 @@ class StopwatchService : Service() {
       NotificationCompat.Action(0, "Stop", stopPendingIntent(this)),
     )
     getSystemService(NotificationManager::class.java)
-      .notify(Constants.NOTIFICATION_ID, notificationBuilder.build())
+      .notify(NOTIFICATION_ID, notificationBuilder.build())
   }
 
   private fun setResumeButton() {
@@ -177,7 +178,7 @@ class StopwatchService : Service() {
       NotificationCompat.Action(0, "Resume", resumePendingIntent(this)),
     )
     getSystemService(NotificationManager::class.java)
-      .notify(Constants.NOTIFICATION_ID, notificationBuilder.build())
+      .notify(NOTIFICATION_ID, notificationBuilder.build())
   }
 
   private fun clickPendingIntent(context: Context): PendingIntent {
@@ -227,6 +228,10 @@ class StopwatchService : Service() {
     private const val CANCEL_REQUEST_CODE = 101
     private const val STOP_REQUEST_CODE = 102
     private const val RESUME_REQUEST_CODE = 103
+
+    private const val NOTIFICATION_CHANNEL_ID = "STOPWATCH_NOTIFICATION_ID"
+    private const val NOTIFICATION_CHANNEL_NAME = "STOPWATCH_NOTIFICATION"
+    private const val NOTIFICATION_ID = 10
 
     fun start(context: Context, action: String) {
       context.startService(Intent(context, StopwatchService::class.java).setAction(action))
