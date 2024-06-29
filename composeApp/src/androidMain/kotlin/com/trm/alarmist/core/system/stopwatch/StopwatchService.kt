@@ -51,7 +51,6 @@ class StopwatchService : Service() {
           updateNotificationWhenStopped()
         }
         Action.CANCEL -> {
-          stopStopwatch()
           cancelStopwatch()
           stopForegroundService()
         }
@@ -76,6 +75,7 @@ class StopwatchService : Service() {
   }
 
   private fun cancelStopwatch() {
+    timer?.cancel()
     duration = Duration.ZERO
     state = StopwatchState.Idle
   }
