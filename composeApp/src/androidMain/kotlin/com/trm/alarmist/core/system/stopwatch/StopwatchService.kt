@@ -64,7 +64,7 @@ class StopwatchService : Service() {
   private fun startStopwatch() {
     state = StopwatchState.Started
     timer =
-      fixedRateTimer(initialDelay = 1000L, period = 1000L) {
+      fixedRateTimer(initialDelay = TIMER_TICK_MILLIS, period = TIMER_TICK_MILLIS) {
         duration += 1.seconds
         updateNotificationWhenStarted()
       }
@@ -83,15 +83,7 @@ class StopwatchService : Service() {
   private fun buildNotification(vararg actions: NotificationCompat.Action): Notification =
     NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
       .setContentTitle("Stopwatch")
-      .setContentText(
-        duration.toComponents { hours, minutes, seconds, _ ->
-          formatTime(
-            hours = hours.toInt().zeroPadded(),
-            minutes = minutes.zeroPadded(),
-            seconds = seconds.zeroPadded(),
-          )
-        }
-      )
+      .setContentText(duration.formatted())
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setOngoing(true)
       .apply { actions.forEach(::addAction) }
@@ -144,10 +136,6 @@ class StopwatchService : Service() {
   private fun cancelNotificationAction(): NotificationCompat.Action =
     NotificationCompat.Action(null, "Cancel", cancelPendingIntent(this))
 
-  private fun formatTime(seconds: String, minutes: String, hours: String): String {
-    return "$hours:$minutes:$seconds"
-  }
-
   private fun clickPendingIntent(context: Context): PendingIntent {
     // TODO: deeplink to stopwatch?
     return PendingIntent.getActivity(
@@ -182,6 +170,10 @@ class StopwatchService : Service() {
       PendingIntent.FLAG_IMMUTABLE,
     )
 
+  private fun Duration.formatted(): String = toComponents { hours, minutes, seconds, _ ->
+    "${hours.toInt().zeroPadded()}:${minutes.zeroPadded()}:${seconds.zeroPadded()}"
+  }
+
   inner class StopwatchBinder : Binder() {
     fun getService(): StopwatchService = this@StopwatchService
   }
@@ -202,6 +194,8 @@ class StopwatchService : Service() {
     private const val NOTIFICATION_CHANNEL_NAME = "STOPWATCH_NOTIFICATION"
     // TODO: change it to prevent collisions with alarm notifications
     private const val NOTIFICATION_ID = 10
+
+    private const val TIMER_TICK_MILLIS = 1000L
 
     fun start(context: Context, action: Action) {
       context.startService(Intent(context, StopwatchService::class.java).setAction(action.name))
