@@ -2,11 +2,14 @@ package com.trm.alarmist.core.system.stopwatch
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
+import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
 import com.trm.alarmist.core.domain.model.StopwatchState
 import java.util.Timer
@@ -15,16 +18,15 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class StopwatchService : Service() {
-
   private val notificationBuilder: NotificationCompat.Builder by lazy {
     NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
       .setContentTitle("Stopwatch")
       .setContentText("00:00:00")
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setOngoing(true)
-      .addAction(0, "Stop", ServiceHelper.stopPendingIntent(this))
-      .addAction(0, "Cancel", ServiceHelper.cancelPendingIntent(this))
-      .setContentIntent(ServiceHelper.clickPendingIntent(this))
+      .addAction(0, "Stop", stopPendingIntent(this))
+      .addAction(0, "Cancel", cancelPendingIntent(this))
+      .setContentIntent(clickPendingIntent(this))
   }
 
   private val binder = StopwatchBinder()
@@ -44,7 +46,7 @@ class StopwatchService : Service() {
   var currentState = mutableStateOf(StopwatchState.Idle)
     private set
 
-  override fun onBind(intent: Intent?) = binder
+  override fun onBind(intent: Intent?): StopwatchBinder = binder
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.getStringExtra(Constants.STOPWATCH_STATE)) {
@@ -162,7 +164,7 @@ class StopwatchService : Service() {
     notificationBuilder.mActions.removeAt(0)
     notificationBuilder.mActions.add(
       0,
-      NotificationCompat.Action(0, "Stop", ServiceHelper.stopPendingIntent(this)),
+      NotificationCompat.Action(0, "Stop", stopPendingIntent(this)),
     )
     getSystemService(NotificationManager::class.java)
       .notify(Constants.NOTIFICATION_ID, notificationBuilder.build())
@@ -172,13 +174,62 @@ class StopwatchService : Service() {
     notificationBuilder.mActions.removeAt(0)
     notificationBuilder.mActions.add(
       0,
-      NotificationCompat.Action(0, "Resume", ServiceHelper.resumePendingIntent(this)),
+      NotificationCompat.Action(0, "Resume", resumePendingIntent(this)),
     )
     getSystemService(NotificationManager::class.java)
       .notify(Constants.NOTIFICATION_ID, notificationBuilder.build())
   }
 
+  private fun clickPendingIntent(context: Context): PendingIntent {
+    // TODO: likely should work with a deeplink
+    return PendingIntent.getActivity(
+      context,
+      CLICK_REQUEST_CODE,
+      Intent(context, MainActivity::class.java)
+        .putExtra(Constants.STOPWATCH_STATE, StopwatchState.Started.name),
+      PendingIntent.FLAG_IMMUTABLE,
+    )
+  }
+
+  private fun stopPendingIntent(context: Context): PendingIntent =
+    PendingIntent.getService(
+      context,
+      STOP_REQUEST_CODE,
+      Intent(context, StopwatchService::class.java)
+        .putExtra(Constants.STOPWATCH_STATE, StopwatchState.Stopped.name),
+      PendingIntent.FLAG_IMMUTABLE,
+    )
+
+  private fun resumePendingIntent(context: Context): PendingIntent =
+    PendingIntent.getService(
+      context,
+      RESUME_REQUEST_CODE,
+      Intent(context, StopwatchService::class.java)
+        .putExtra(Constants.STOPWATCH_STATE, StopwatchState.Started.name),
+      PendingIntent.FLAG_IMMUTABLE,
+    )
+
+  private fun cancelPendingIntent(context: Context): PendingIntent =
+    PendingIntent.getService(
+      context,
+      CANCEL_REQUEST_CODE,
+      Intent(context, StopwatchService::class.java)
+        .putExtra(Constants.STOPWATCH_STATE, StopwatchState.Canceled.name),
+      PendingIntent.FLAG_IMMUTABLE,
+    )
+
   inner class StopwatchBinder : Binder() {
     fun getService(): StopwatchService = this@StopwatchService
+  }
+
+  companion object {
+    private const val CLICK_REQUEST_CODE = 100
+    private const val CANCEL_REQUEST_CODE = 101
+    private const val STOP_REQUEST_CODE = 102
+    private const val RESUME_REQUEST_CODE = 103
+
+    fun start(context: Context, action: String) {
+      context.startService(Intent(context, StopwatchService::class.java).setAction(action))
+    }
   }
 }

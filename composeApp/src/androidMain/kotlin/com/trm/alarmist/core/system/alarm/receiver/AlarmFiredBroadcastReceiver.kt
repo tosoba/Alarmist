@@ -30,8 +30,9 @@ class AlarmFiredBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
     val settings = intent.requireAlarmFireSettings()
     launch {
-      if (!isAlarmScheduledToFireAtDateTimeUseCase(settings.id, settings.fireOnDateTime))
+      if (!isAlarmScheduledToFireAtDateTimeUseCase(settings.id, settings.fireOnDateTime)) {
         return@launch
+      }
 
       if (
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
