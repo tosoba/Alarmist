@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleStartEffect
+import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.stopwatch.StopwatchService
@@ -49,16 +50,20 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
   }
 
   AnimatedNullableVisibility(service) {
+    val (hours, minutes, seconds) =
+      it.duration.toComponents { hours, minutes, seconds, _ ->
+        Triple(hours.toInt().zeroPadded(), minutes.zeroPadded(), seconds.zeroPadded())
+      }
     StopwatchTime(
-      hours = it.hours.value,
-      minutes = it.minutes.value,
-      seconds = it.seconds.value,
-      state = it.currentState.value,
+      hours = hours,
+      minutes = minutes,
+      seconds = seconds,
+      state = it.state,
       onStartStopClick = {
         StopwatchService.start(
           context = context,
           action =
-            if (it.currentState.value == StopwatchState.Started) StopwatchService.Action.STOP
+            if (it.state == StopwatchState.Started) StopwatchService.Action.STOP
             else StopwatchService.Action.START,
         )
       },

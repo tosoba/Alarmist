@@ -45,11 +45,11 @@ fun Instant.toLocalTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): L
 fun Instant.toLocalDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
   toLocalDateTime(timeZone).date
 
-@Composable
-fun Duration.formatCountdown(): String {
-  fun Int.withZeroPrefix() = if (this < 10) "0$this" else this.toString()
+fun Int.zeroPadded() = toString().padStart(2, '0')
 
-  return when {
+@Composable
+fun Duration.formatCountdown(): String =
+  when {
     inWholeDays > 1L -> {
       stringResource(Res.string.days_count, inWholeDays)
     }
@@ -57,18 +57,15 @@ fun Duration.formatCountdown(): String {
       stringResource(Res.string.one_day)
     }
     inWholeHours >= 1L -> {
-      toComponents { hours, minutes, _, _ -> "${hours}h ${minutes.withZeroPrefix()}m" }
+      toComponents { hours, minutes, _, _ -> "${hours}h ${minutes.zeroPadded()}m" }
     }
     inWholeMinutes >= 10L -> {
       toComponents { _, minutes, _, _ -> "${minutes}m" }
     }
     else -> {
-      toComponents { _, minutes, seconds, _ ->
-        "${minutes.withZeroPrefix()}:${seconds.withZeroPrefix()}"
-      }
+      toComponents { _, minutes, seconds, _ -> "${minutes.zeroPadded()}:${seconds.zeroPadded()}" }
     }
   }
-}
 
 fun LocalDate.previousDayOfWeek(dayOfWeek: DayOfWeek): LocalDate {
   var current = this

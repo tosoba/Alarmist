@@ -8,10 +8,13 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
 import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
+import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
@@ -19,20 +22,13 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class StopwatchService : Service() {
-  private var duration: Duration = Duration.ZERO
+  var state by mutableStateOf(StopwatchState.Idle)
+    private set
+
+  var duration by mutableStateOf(Duration.ZERO)
+    private set
+
   private var timer: Timer? = null
-
-  var seconds = mutableStateOf("00")
-    private set
-
-  var minutes = mutableStateOf("00")
-    private set
-
-  var hours = mutableStateOf("00")
-    private set
-
-  var currentState = mutableStateOf(StopwatchState.Idle)
-    private set
 
   private val binder = StopwatchBinder()
 
@@ -66,47 +62,41 @@ class StopwatchService : Service() {
   }
 
   private fun startStopwatch() {
-    currentState.value = StopwatchState.Started
+    state = StopwatchState.Started
     timer =
       fixedRateTimer(initialDelay = 1000L, period = 1000L) {
-        duration = duration.plus(1.seconds)
-        updateTime()
+        duration += 1.seconds
         updateNotificationWhenStarted()
       }
   }
 
   private fun stopStopwatch() {
     timer?.cancel()
-    currentState.value = StopwatchState.Stopped
+    state = StopwatchState.Stopped
   }
 
   private fun cancelStopwatch() {
     duration = Duration.ZERO
-    currentState.value = StopwatchState.Idle
-    updateTime()
+    state = StopwatchState.Idle
   }
 
   private fun buildNotification(vararg actions: NotificationCompat.Action): Notification =
     NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
       .setContentTitle("Stopwatch")
       .setContentText(
-        formatTime(hours = hours.value, minutes = minutes.value, seconds = seconds.value)
+        duration.toComponents { hours, minutes, seconds, _ ->
+          formatTime(
+            hours = hours.toInt().zeroPadded(),
+            minutes = minutes.zeroPadded(),
+            seconds = seconds.zeroPadded(),
+          )
+        }
       )
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setOngoing(true)
       .apply { actions.forEach(::addAction) }
       .setContentIntent(clickPendingIntent(this))
       .build()
-
-  private fun updateTime() {
-    duration.toComponents { hours, minutes, seconds, _ ->
-      this@StopwatchService.hours.value = hours.toInt().pad()
-      this@StopwatchService.minutes.value = minutes.pad()
-      this@StopwatchService.seconds.value = seconds.pad()
-    }
-  }
-
-  private fun Int.pad(): String = this.toString().padStart(2, '0')
 
   private fun startForegroundService() {
     startForeground(NOTIFICATION_ID, buildStartedNotification())
