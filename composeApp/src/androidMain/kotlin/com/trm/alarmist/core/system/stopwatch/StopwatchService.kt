@@ -19,10 +19,10 @@ import com.trm.alarmist.core.domain.model.StopwatchState
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.milliseconds
 
 class StopwatchService : Service() {
-  var state by mutableStateOf(StopwatchState.Idle)
+  var state by mutableStateOf(StopwatchState.IDLE)
     private set
 
   var duration by mutableStateOf(Duration.ZERO)
@@ -61,23 +61,23 @@ class StopwatchService : Service() {
   }
 
   private fun startStopwatch() {
-    state = StopwatchState.Started
+    state = StopwatchState.STARTED
     timer =
-      fixedRateTimer(initialDelay = TIMER_TICK_MILLIS, period = TIMER_TICK_MILLIS) {
-        duration += 1.seconds
-        updateNotificationWhenStarted()
+      fixedRateTimer(period = TIMER_PERIOD_MILLIS) {
+        duration += TIMER_PERIOD_MILLIS.milliseconds
+        if (duration.inWholeMilliseconds % 1_000L == 0L) updateNotificationWhenStarted()
       }
   }
 
   private fun stopStopwatch() {
     timer?.cancel()
-    state = StopwatchState.Stopped
+    state = StopwatchState.STOPPED
   }
 
   private fun cancelStopwatch() {
     timer?.cancel()
     duration = Duration.ZERO
-    state = StopwatchState.Idle
+    state = StopwatchState.IDLE
   }
 
   private fun buildNotification(vararg actions: NotificationCompat.Action): Notification =
@@ -195,7 +195,8 @@ class StopwatchService : Service() {
     // TODO: change it to prevent collisions with alarm notifications
     private const val NOTIFICATION_ID = 10
 
-    private const val TIMER_TICK_MILLIS = 1000L
+    private const val TIMER_INITIAL_DELAY_MILLIS = 1000L
+    private const val TIMER_PERIOD_MILLIS = 10L
 
     fun start(context: Context, action: Action) {
       context.startService(Intent(context, StopwatchService::class.java).setAction(action.name))
