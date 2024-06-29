@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +17,7 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import com.trm.alarmist.core.domain.model.StopwatchState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.stopwatch.StopwatchService
+import com.trm.alarmist.core.ui.AnimatedNullableVisibility
 
 @Composable
 actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
@@ -48,25 +48,23 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
     onStopOrDispose { context.unbindService(connection) }
   }
 
-  AnimatedVisibility(visible = service != null) {
-    service?.let {
-      StopwatchTime(
-        hours = it.hours.value,
-        minutes = it.minutes.value,
-        seconds = it.seconds.value,
-        state = it.currentState.value,
-        onStartStopClick = {
-          StopwatchService.start(
-            context = context,
-            action =
-              if (it.currentState.value == StopwatchState.Started) StopwatchService.Action.STOP
-              else StopwatchService.Action.START,
-          )
-        },
-        onCancelClick = {
-          StopwatchService.start(context = context, action = StopwatchService.Action.CANCEL)
-        },
-      )
-    }
+  AnimatedNullableVisibility(service) {
+    StopwatchTime(
+      hours = it.hours.value,
+      minutes = it.minutes.value,
+      seconds = it.seconds.value,
+      state = it.currentState.value,
+      onStartStopClick = {
+        StopwatchService.start(
+          context = context,
+          action =
+            if (it.currentState.value == StopwatchState.Started) StopwatchService.Action.STOP
+            else StopwatchService.Action.START,
+        )
+      },
+      onCancelClick = {
+        StopwatchService.start(context = context, action = StopwatchService.Action.CANCEL)
+      },
+    )
   }
 }
