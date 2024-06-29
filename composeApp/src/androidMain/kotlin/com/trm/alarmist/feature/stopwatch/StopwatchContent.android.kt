@@ -15,7 +15,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleStartEffect
-import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.stopwatch.StopwatchService
@@ -23,20 +22,11 @@ import kotlin.time.Duration
 
 @Composable
 actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
-  val handler = postNotificationsPermissionHandler {}
-  LaunchedEffect(Unit) { handler() }
+  val permissionHandler = postNotificationsPermissionHandler {}
+  LaunchedEffect(Unit) { permissionHandler() }
 
   val context = LocalContext.current
-
   var service: StopwatchService? by remember { mutableStateOf(null) }
-  val stopwatchState by remember { derivedStateOf { service?.state ?: StopwatchState.IDLE } }
-  val stopwatchDuration by remember {
-    derivedStateOf {
-      (service?.duration ?: Duration.ZERO).toComponents { hours, minutes, seconds, _ ->
-        Triple(hours.toInt().zeroPadded(), minutes.zeroPadded(), seconds.zeroPadded())
-      }
-    }
-  }
 
   LifecycleStartEffect(Unit) {
     val connection =
@@ -59,17 +49,17 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
     onStopOrDispose { context.unbindService(connection) }
   }
 
-  val (hours, minutes, seconds) = stopwatchDuration
-  StopwatchTime(
-    hours = hours,
-    minutes = minutes,
-    seconds = seconds,
-    state = stopwatchState,
+  val state by remember { derivedStateOf { service?.state ?: StopwatchState.IDLE } }
+  val duration by remember { derivedStateOf { service?.duration ?: Duration.ZERO } }
+
+  StopwatchDuration(
+    duration = duration,
+    state = state,
     onStartStopClick = {
       StopwatchService.start(
         context = context,
         action =
-          if (stopwatchState == StopwatchState.STARTED) StopwatchService.Action.STOP
+          if (state == StopwatchState.STARTED) StopwatchService.Action.STOP
           else StopwatchService.Action.START,
       )
     },

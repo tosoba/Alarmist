@@ -45,7 +45,7 @@ fun Instant.toLocalTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): L
 fun Instant.toLocalDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
   toLocalDateTime(timeZone).date
 
-fun Int.zeroPadded() = toString().padStart(2, '0')
+fun Int.zeroPadded(): String = toString().padStart(2, '0')
 
 @Composable
 fun Duration.formatCountdown(): String =
