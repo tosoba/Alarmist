@@ -49,24 +49,6 @@ class StopwatchService : Service() {
   override fun onBind(intent: Intent?): StopwatchBinder = binder
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    when (intent?.getStringExtra(Constants.STOPWATCH_STATE)) {
-      StopwatchState.Started.name -> {
-        setStopButton()
-        startForegroundService()
-        startStopwatch { hours, minutes, seconds ->
-          updateNotification(hours = hours, minutes = minutes, seconds = seconds)
-        }
-      }
-      StopwatchState.Stopped.name -> {
-        stopStopwatch()
-        setResumeButton()
-      }
-      StopwatchState.Canceled.name -> {
-        stopStopwatch()
-        cancelStopwatch()
-        stopForegroundService()
-      }
-    }
     intent?.action.let {
       when (it) {
         Constants.ACTION_SERVICE_START -> {
@@ -87,6 +69,7 @@ class StopwatchService : Service() {
         }
       }
     }
+
     return super.onStartCommand(intent, flags, startId)
   }
 
@@ -182,12 +165,11 @@ class StopwatchService : Service() {
   }
 
   private fun clickPendingIntent(context: Context): PendingIntent {
-    // TODO: likely should work with a deeplink
+    // TODO: deeplink to stopwatch?
     return PendingIntent.getActivity(
       context,
       CLICK_REQUEST_CODE,
-      Intent(context, MainActivity::class.java)
-        .putExtra(Constants.STOPWATCH_STATE, StopwatchState.Started.name),
+      Intent(context, MainActivity::class.java),
       PendingIntent.FLAG_IMMUTABLE,
     )
   }
@@ -196,8 +178,7 @@ class StopwatchService : Service() {
     PendingIntent.getService(
       context,
       STOP_REQUEST_CODE,
-      Intent(context, StopwatchService::class.java)
-        .putExtra(Constants.STOPWATCH_STATE, StopwatchState.Stopped.name),
+      Intent(context, StopwatchService::class.java).setAction(Constants.ACTION_SERVICE_STOP),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -205,8 +186,7 @@ class StopwatchService : Service() {
     PendingIntent.getService(
       context,
       RESUME_REQUEST_CODE,
-      Intent(context, StopwatchService::class.java)
-        .putExtra(Constants.STOPWATCH_STATE, StopwatchState.Started.name),
+      Intent(context, StopwatchService::class.java).setAction(Constants.ACTION_SERVICE_START),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -214,8 +194,7 @@ class StopwatchService : Service() {
     PendingIntent.getService(
       context,
       CANCEL_REQUEST_CODE,
-      Intent(context, StopwatchService::class.java)
-        .putExtra(Constants.STOPWATCH_STATE, StopwatchState.Canceled.name),
+      Intent(context, StopwatchService::class.java).setAction(Constants.ACTION_SERVICE_CANCEL),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
