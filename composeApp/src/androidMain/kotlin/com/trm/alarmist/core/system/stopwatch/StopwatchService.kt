@@ -1,5 +1,6 @@
 package com.trm.alarmist.core.system.stopwatch
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -18,19 +19,6 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class StopwatchService : Service() {
-  private val notificationBuilder: NotificationCompat.Builder by lazy {
-    NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-      .setContentTitle("Stopwatch")
-      .setContentText("00:00:00")
-      .setSmallIcon(R.drawable.ic_launcher_foreground)
-      .setOngoing(true)
-      .addAction(0, "Stop", stopPendingIntent(this))
-      .addAction(0, "Cancel", cancelPendingIntent(this))
-      .setContentIntent(clickPendingIntent(this))
-  }
-
-  private val binder = StopwatchBinder()
-
   private var duration: Duration = Duration.ZERO
   private var timer: Timer? = null
 
@@ -46,21 +34,25 @@ class StopwatchService : Service() {
   var currentState = mutableStateOf(StopwatchState.Idle)
     private set
 
+  private val binder = StopwatchBinder()
+
+  override fun onCreate() {
+    super.onCreate()
+    createNotificationChannel()
+  }
+
   override fun onBind(intent: Intent?): StopwatchBinder = binder
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     intent?.action?.let {
       when (Action.valueOf(it)) {
         Action.START -> {
-          setStopButton()
           startForegroundService()
-          startStopwatch { hours, minutes, seconds ->
-            updateNotification(hours = hours, minutes = minutes, seconds = seconds)
-          }
+          startStopwatch()
         }
         Action.STOP -> {
           stopStopwatch()
-          setResumeButton()
+          updateNotificationWhenStopped()
         }
         Action.CANCEL -> {
           stopStopwatch()
@@ -73,13 +65,13 @@ class StopwatchService : Service() {
     return super.onStartCommand(intent, flags, startId)
   }
 
-  private fun startStopwatch(onTick: (h: String, m: String, s: String) -> Unit) {
+  private fun startStopwatch() {
     currentState.value = StopwatchState.Started
     timer =
       fixedRateTimer(initialDelay = 1000L, period = 1000L) {
         duration = duration.plus(1.seconds)
-        updateTimeUnits()
-        onTick(hours.value, minutes.value, seconds.value)
+        updateTime()
+        updateNotificationWhenStarted()
       }
   }
 
@@ -91,10 +83,22 @@ class StopwatchService : Service() {
   private fun cancelStopwatch() {
     duration = Duration.ZERO
     currentState.value = StopwatchState.Idle
-    updateTimeUnits()
+    updateTime()
   }
 
-  private fun updateTimeUnits() {
+  private fun buildNotification(vararg actions: NotificationCompat.Action): Notification =
+    NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+      .setContentTitle("Stopwatch")
+      .setContentText(
+        formatTime(hours = hours.value, minutes = minutes.value, seconds = seconds.value)
+      )
+      .setSmallIcon(R.drawable.ic_launcher_foreground)
+      .setOngoing(true)
+      .apply { actions.forEach(::addAction) }
+      .setContentIntent(clickPendingIntent(this))
+      .build()
+
+  private fun updateTime() {
     duration.toComponents { hours, minutes, seconds, _ ->
       this@StopwatchService.hours.value = hours.toInt().pad()
       this@StopwatchService.minutes.value = minutes.pad()
@@ -102,13 +106,10 @@ class StopwatchService : Service() {
     }
   }
 
-  private fun Int.pad(): String {
-    return this.toString().padStart(2, '0')
-  }
+  private fun Int.pad(): String = this.toString().padStart(2, '0')
 
   private fun startForegroundService() {
-    createNotificationChannel()
-    startForeground(NOTIFICATION_ID, notificationBuilder.build())
+    startForeground(NOTIFICATION_ID, buildStartedNotification())
   }
 
   private fun stopForegroundService() {
@@ -128,38 +129,33 @@ class StopwatchService : Service() {
       )
   }
 
-  private fun updateNotification(hours: String, minutes: String, seconds: String) {
+  private fun updateNotificationWhenStarted() {
     getSystemService(NotificationManager::class.java)
-      .notify(
-        NOTIFICATION_ID,
-        notificationBuilder
-          .setContentText(formatTime(hours = hours, minutes = minutes, seconds = seconds))
-          .build(),
-      )
+      .notify(NOTIFICATION_ID, buildStartedNotification())
   }
+
+  private fun updateNotificationWhenStopped() {
+    getSystemService(NotificationManager::class.java)
+      .notify(NOTIFICATION_ID, buildStoppedNotification())
+  }
+
+  private fun buildStartedNotification(): Notification =
+    buildNotification(pauseNotificationAction(), cancelNotificationAction())
+
+  private fun buildStoppedNotification(): Notification =
+    buildNotification(resumeNotificationAction(), cancelNotificationAction())
+
+  private fun pauseNotificationAction(): NotificationCompat.Action =
+    NotificationCompat.Action(null, "Pause", stopPendingIntent(this))
+
+  private fun resumeNotificationAction(): NotificationCompat.Action =
+    NotificationCompat.Action(null, "Resume", resumePendingIntent(this))
+
+  private fun cancelNotificationAction(): NotificationCompat.Action =
+    NotificationCompat.Action(null, "Cancel", cancelPendingIntent(this))
 
   private fun formatTime(seconds: String, minutes: String, hours: String): String {
     return "$hours:$minutes:$seconds"
-  }
-
-  private fun setStopButton() {
-    notificationBuilder.mActions.removeAt(0)
-    notificationBuilder.mActions.add(
-      0,
-      NotificationCompat.Action(0, "Stop", stopPendingIntent(this)),
-    )
-    getSystemService(NotificationManager::class.java)
-      .notify(NOTIFICATION_ID, notificationBuilder.build())
-  }
-
-  private fun setResumeButton() {
-    notificationBuilder.mActions.removeAt(0)
-    notificationBuilder.mActions.add(
-      0,
-      NotificationCompat.Action(0, "Resume", resumePendingIntent(this)),
-    )
-    getSystemService(NotificationManager::class.java)
-      .notify(NOTIFICATION_ID, notificationBuilder.build())
   }
 
   private fun clickPendingIntent(context: Context): PendingIntent {
