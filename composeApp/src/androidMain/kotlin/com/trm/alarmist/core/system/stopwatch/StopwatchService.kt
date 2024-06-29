@@ -32,7 +32,7 @@ class StopwatchService : Service() {
   private val binder = StopwatchBinder()
 
   private var duration: Duration = Duration.ZERO
-  private lateinit var timer: Timer
+  private var timer: Timer? = null
 
   var seconds = mutableStateOf("00")
     private set
@@ -49,26 +49,26 @@ class StopwatchService : Service() {
   override fun onBind(intent: Intent?): StopwatchBinder = binder
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    intent?.action.let {
-      when (it) {
-        Constants.ACTION_SERVICE_START -> {
+    intent?.action?.let {
+      when (Action.valueOf(it)) {
+        Action.START -> {
           setStopButton()
           startForegroundService()
           startStopwatch { hours, minutes, seconds ->
             updateNotification(hours = hours, minutes = minutes, seconds = seconds)
           }
         }
-        Constants.ACTION_SERVICE_STOP -> {
+        Action.STOP -> {
           stopStopwatch()
           setResumeButton()
         }
-        Constants.ACTION_SERVICE_CANCEL -> {
+        Action.CANCEL -> {
           stopStopwatch()
           cancelStopwatch()
           stopForegroundService()
         }
       }
-    }
+    } ?: throw IllegalArgumentException("Missing StopwatchServiceAction.")
 
     return super.onStartCommand(intent, flags, startId)
   }
@@ -84,9 +84,7 @@ class StopwatchService : Service() {
   }
 
   private fun stopStopwatch() {
-    if (this::timer.isInitialized) {
-      timer.cancel()
-    }
+    timer?.cancel()
     currentState.value = StopwatchState.Stopped
   }
 
@@ -178,7 +176,7 @@ class StopwatchService : Service() {
     PendingIntent.getService(
       context,
       STOP_REQUEST_CODE,
-      Intent(context, StopwatchService::class.java).setAction(Constants.ACTION_SERVICE_STOP),
+      Intent(context, StopwatchService::class.java).setAction(Action.STOP.name),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -186,7 +184,7 @@ class StopwatchService : Service() {
     PendingIntent.getService(
       context,
       RESUME_REQUEST_CODE,
-      Intent(context, StopwatchService::class.java).setAction(Constants.ACTION_SERVICE_START),
+      Intent(context, StopwatchService::class.java).setAction(Action.START.name),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -194,12 +192,18 @@ class StopwatchService : Service() {
     PendingIntent.getService(
       context,
       CANCEL_REQUEST_CODE,
-      Intent(context, StopwatchService::class.java).setAction(Constants.ACTION_SERVICE_CANCEL),
+      Intent(context, StopwatchService::class.java).setAction(Action.CANCEL.name),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
   inner class StopwatchBinder : Binder() {
     fun getService(): StopwatchService = this@StopwatchService
+  }
+
+  enum class Action {
+    START,
+    STOP,
+    CANCEL,
   }
 
   companion object {
@@ -210,10 +214,11 @@ class StopwatchService : Service() {
 
     private const val NOTIFICATION_CHANNEL_ID = "STOPWATCH_NOTIFICATION_ID"
     private const val NOTIFICATION_CHANNEL_NAME = "STOPWATCH_NOTIFICATION"
+    // TODO: change it to prevent collisions with alarm notifications
     private const val NOTIFICATION_ID = 10
 
-    fun start(context: Context, action: String) {
-      context.startService(Intent(context, StopwatchService::class.java).setAction(action))
+    fun start(context: Context, action: Action) {
+      context.startService(Intent(context, StopwatchService::class.java).setAction(action.name))
     }
   }
 }

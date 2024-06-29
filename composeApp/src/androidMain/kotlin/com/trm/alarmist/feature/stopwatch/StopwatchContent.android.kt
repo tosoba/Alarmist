@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.trm.alarmist.core.domain.model.StopwatchState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
-import com.trm.alarmist.core.system.stopwatch.Constants
 import com.trm.alarmist.core.system.stopwatch.StopwatchService
 
 @Composable
@@ -60,12 +59,12 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
           StopwatchService.start(
             context = context,
             action =
-              if (it.currentState.value == StopwatchState.Started) Constants.ACTION_SERVICE_STOP
-              else Constants.ACTION_SERVICE_START,
+              if (it.currentState.value == StopwatchState.Started) StopwatchService.Action.STOP
+              else StopwatchService.Action.START,
           )
         },
         onCancelClick = {
-          StopwatchService.start(context = context, action = Constants.ACTION_SERVICE_CANCEL)
+          StopwatchService.start(context = context, action = StopwatchService.Action.CANCEL)
         },
       )
     }
