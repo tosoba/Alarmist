@@ -45,8 +45,15 @@
         <activity
             android:name=".widget.group.AlarmGroupWidgetConfigActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
+            android:excludeFromRecents="true"
             android:exported="false"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+
+        </activity>
 
         <receiver android:name=".core.system.alarm.receiver.AlarmDismissedBroadcastReceiver" />
         <receiver android:name=".core.system.alarm.receiver.AlarmFiredBroadcastReceiver" />

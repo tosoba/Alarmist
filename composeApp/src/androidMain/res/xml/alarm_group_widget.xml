@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="com.trm.alarmist.widget.group.AlarmGroupWidgetConfigActivity"
     android:description="@string/alarm_group_widget_description"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:minWidth="@dimen/alarm_list_widget_min_width"
