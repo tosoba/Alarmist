@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.pinWidget
+import com.trm.alarmist.core.common.util.widgetReceiverComponentName
 import com.trm.alarmist.widget.common.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.AlarmGroupWidgetConfigActivity
 import com.trm.alarmist.widget.group.AlarmGroupWidgetReceiver
@@ -127,8 +128,8 @@ private fun WidgetInfoCard(providerInfo: AppWidgetProviderInfo, modifier: Modifi
 }
 
 private fun AppWidgetProviderInfo.pinCallback(context: Context): PendingIntent =
-  when (provider.className) {
-    AlarmGroupWidgetReceiver::class.java.name -> {
+  when (provider) {
+    context.widgetReceiverComponentName<AlarmGroupWidgetReceiver>() -> {
       AlarmGroupWidgetConfigActivity.pendingIntent(context)
     }
     else -> {
