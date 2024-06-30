@@ -47,6 +47,7 @@ import com.trm.alarmist.feature.root.ui.RootDialog
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
 import com.trm.alarmist.feature.widgets.WidgetsContent
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -61,9 +62,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
     scope.launch { drawerState.open() }
   }
 
-  fun closeDrawer() {
-    scope.launch { drawerState.close() }
-  }
+  fun closeDrawer(): Job = scope.launch { drawerState.close() }
 
   BackHandler(
     backHandler = component.backHandler,
@@ -100,10 +99,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             )
           },
           selected = childStack.isItemSelected<RootComponent.Child.Alarms>(),
-          onClick = {
-            closeDrawer()
-            component.onAlarmsDrawerItemClick()
-          },
+          onClick = { closeDrawer().invokeOnCompletion { component.onAlarmsDrawerItemClick() } },
         )
         NavigationDrawerItem(
           modifier = Modifier.padding(horizontal = 12.dp),
@@ -123,10 +119,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             )
           },
           selected = childStack.isItemSelected<RootComponent.Child.Timer>(),
-          onClick = {
-            closeDrawer()
-            component.onTimerDrawerItemClick()
-          },
+          onClick = { closeDrawer().invokeOnCompletion { component.onTimerDrawerItemClick() } },
         )
         NavigationDrawerItem(
           modifier = Modifier.padding(horizontal = 12.dp),
@@ -146,18 +139,12 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
             )
           },
           selected = childStack.isItemSelected<RootComponent.Child.Stopwatch>(),
-          onClick = {
-            closeDrawer()
-            component.onStopwatchDrawerItemClick()
-          },
+          onClick = { closeDrawer().invokeOnCompletion { component.onStopwatchDrawerItemClick() } },
         )
 
         RootDrawerWidgetsItem(
           isSelected = childStack.isItemSelected<RootComponent.Child.Widgets>(),
-          onClick = {
-            closeDrawer()
-            component.onWidgetsDrawerItemClick()
-          },
+          onClick = { closeDrawer().invokeOnCompletion { component.onWidgetsDrawerItemClick() } },
         )
       }
     },
