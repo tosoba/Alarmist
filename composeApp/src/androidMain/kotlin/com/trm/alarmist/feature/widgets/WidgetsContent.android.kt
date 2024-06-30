@@ -7,10 +7,8 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -32,7 +31,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.common.util.pinWidget
 import com.trm.alarmist.widget.common.WidgetPinnedReceiver
+import com.trm.alarmist.widget.group.AlarmGroupWidgetConfigActivity
+import com.trm.alarmist.widget.group.AlarmGroupWidgetReceiver
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -95,31 +97,41 @@ private fun WidgetInfoCard(providerInfo: AppWidgetProviderInfo, modifier: Modifi
       null
     }
 
-  Card(modifier = modifier, onClick = { providerInfo.pin(context) }) {
-    Row(
-      modifier = Modifier.fillMaxWidth().padding(16.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-      Column(modifier = Modifier.padding(end = 8.dp)) {
-        Text(text = label, style = MaterialTheme.typography.titleLarge)
-        description?.let { Text(text = it, style = MaterialTheme.typography.bodyMedium) }
+  Card(
+    modifier = modifier,
+    onClick = {
+      context.pinWidget(providerInfo = providerInfo, callback = providerInfo.pinCallback(context))
+    },
+  ) {
+    Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+      Column(modifier = Modifier.padding(end = 8.dp).weight(.5f)) {
+        Text(
+          text = label,
+          style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
+        )
+        description?.let {
+          Spacer(modifier = Modifier.height(4.dp))
+          Text(text = it, style = MaterialTheme.typography.bodyMedium)
+        }
       }
 
-      Image(painter = painterResource(providerInfo.previewImage), contentDescription = description)
+      Spacer(modifier = Modifier.width(8.dp))
+
+      Image(
+        painter = painterResource(providerInfo.previewImage),
+        contentDescription = description,
+        modifier = Modifier.weight(.5f),
+      )
     }
   }
 }
 
-private fun AppWidgetProviderInfo.pin(context: Context) {
-  AppWidgetManager.getInstance(context)
-    .requestPinAppWidget(
-      provider,
-      null,
-      PendingIntent.getBroadcast(
-        context,
-        0,
-        Intent(context, WidgetPinnedReceiver::class.java),
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-      ),
-    )
-}
+private fun AppWidgetProviderInfo.pinCallback(context: Context): PendingIntent =
+  when (provider.className) {
+    AlarmGroupWidgetReceiver::class.java.name -> {
+      AlarmGroupWidgetConfigActivity.pendingIntent(context)
+    }
+    else -> {
+      WidgetPinnedReceiver.pendingIntent(context)
+    }
+  }

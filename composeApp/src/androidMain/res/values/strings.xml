@@ -2,6 +2,7 @@
     <string name="app_name">alarmist</string>
     <string name="today_alarms">Today alarms</string>
     <string name="clock">Clock</string>
+    <string name="alarm_group">Alarm group</string>
 
     <string name="time_format_am_pm_full">aa / EEEE</string>
     <string name="time_format_am_pm_short">aa / EEE</string>
@@ -29,6 +30,7 @@
 
     <string name="today_widget_description">Alarms scheduled for today</string>
     <string name="clock_widget_description">A clock with next scheduled alarm</string>
+    <string name="alarm_group_widget_description">Alarm group</string>
 
     <string name="widget_pinned_success_info">Widget pinned. Check it on your homescreen.</string>
 

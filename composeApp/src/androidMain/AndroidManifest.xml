@@ -42,6 +42,12 @@
             android:exported="false"
             android:launchMode="singleInstance" />
 
+        <activity
+            android:name=".widget.group.AlarmGroupWidgetConfigActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
+            android:exported="false"
+            android:launchMode="singleInstance" />
+
         <receiver android:name=".core.system.alarm.receiver.AlarmDismissedBroadcastReceiver" />
         <receiver android:name=".core.system.alarm.receiver.AlarmFiredBroadcastReceiver" />
         <receiver android:name=".core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver" />
@@ -102,6 +108,21 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/clock_widget" />
         </receiver>
+
+        <receiver
+            android:name=".widget.group.AlarmGroupWidgetReceiver"
+            android:exported="false"
+            android:label="@string/alarm_group">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/alarm_group_widget" />
+        </receiver>
+
 
         <receiver android:name=".widget.common.ToggleAlarmOnOffActionReceiver" />
 
