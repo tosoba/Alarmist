@@ -195,7 +195,6 @@ class StopwatchService : Service() {
     // TODO: change it to prevent collisions with alarm notifications
     private const val NOTIFICATION_ID = 10
 
-    private const val TIMER_INITIAL_DELAY_MILLIS = 1000L
     private const val TIMER_PERIOD_MILLIS = 10L
 
     fun start(context: Context, action: Action) {
