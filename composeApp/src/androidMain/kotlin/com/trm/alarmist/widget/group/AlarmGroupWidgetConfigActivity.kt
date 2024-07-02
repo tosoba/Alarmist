@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 
 class AlarmGroupWidgetConfigActivity : ComponentActivity() {
@@ -25,6 +26,21 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity() {
     if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) finish()
 
     setContent {
+      //      AppTheme {
+      //        Surface(color = MaterialTheme.colorScheme.background) {
+      //          val component =
+      //            DefaultGroupWidgetConfigComponent(componentContext = defaultComponentContext())
+      //          val state by component.feature.state.collectAsState()
+      //          GroupWidgetConfigContent(
+      //            state = state,
+      //            modifier = Modifier.fillMaxSize(),
+      //            onExpandGroup = component.feature::onExpandGroup,
+      //            onCollapseGroup = component.feature::onCollapseGroup,
+      //            onChooseGroup = component.feature::onChooseGroup,
+      //          )
+      //        }
+      //      }
+
       Column(modifier = Modifier.fillMaxSize()) {
         Text(text = "Alarm group config activity")
 
