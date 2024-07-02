@@ -8,8 +8,6 @@ import com.trm.alarmist.core.domain.model.AlarmListModel
 import kotlinx.coroutines.flow.StateFlow
 
 interface AlarmGroupsComponent {
-  val state: StateFlow<AlarmGroupsState>
-
   val feature: AlarmGroupsFeature
 
   val onEditAlarmClick: (AlarmListModel) -> Unit
@@ -28,8 +26,6 @@ class DefaultAlarmGroupsComponent(
         stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
       )
     }
-
-  override val state: StateFlow<AlarmGroupsState> = feature.state
 
   init {
     stateKeeper.register(

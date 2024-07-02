@@ -133,7 +133,7 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
           )
         }
         is AlarmsComponent.Page.AlarmGroups -> {
-          val state by page.component.state.collectAsState()
+          val state by page.component.feature.state.collectAsState()
 
           AlarmGroupsContent(
             modifier = Modifier.fillMaxSize(),
