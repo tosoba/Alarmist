@@ -43,38 +43,27 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity() {
       intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
     if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) finish()
 
+    val stateKeeper = stateKeeper(discardSavedState = false, isSavingAllowed = { true })
+    val marker =
+      stateKeeper.consume(key = "GroupWidgetConfig_state_marker", strategy = String.serializer())
+    stateKeeper.register(key = "GroupWidgetConfig_state_marker", strategy = String.serializer()) {
+      "marker"
+    }
+    val component =
+      DefaultGroupWidgetConfigComponent(
+        componentContext =
+          DefaultComponentContext(
+            lifecycle = lifecycle.asEssentyLifecycle(),
+            stateKeeper = stateKeeper,
+            instanceKeeper = instanceKeeper(discardRetainedInstances = marker == null),
+            backHandler =
+              BackHandler(onBackPressedDispatcher = onBackPressedDispatcher, lifecycleOwner = this),
+          )
+      )
+
     setContent {
       AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-          // TODO: this line crashes due to state keeper key collision - there can be only 1 default
-          // component context in decompose.
-          // Consider switching to viewModel - this would break navigation
-          val stateKeeper = stateKeeper(discardSavedState = false, isSavingAllowed = { true })
-          val marker =
-            stateKeeper.consume(
-              key = "GroupWidgetConfig_state_marker",
-              strategy = String.serializer(),
-            )
-          stateKeeper.register(
-            key = "GroupWidgetConfig_state_marker",
-            strategy = String.serializer(),
-          ) {
-            "marker"
-          }
-          val component =
-            DefaultGroupWidgetConfigComponent(
-              componentContext =
-                DefaultComponentContext(
-                  lifecycle = lifecycle.asEssentyLifecycle(),
-                  stateKeeper = stateKeeper,
-                  instanceKeeper = instanceKeeper(discardRetainedInstances = marker == null),
-                  backHandler =
-                    BackHandler(
-                      onBackPressedDispatcher = onBackPressedDispatcher,
-                      lifecycleOwner = this,
-                    ),
-                )
-            )
           val state by component.feature.state.collectAsState()
 
           Column(modifier = Modifier.fillMaxSize()) {
