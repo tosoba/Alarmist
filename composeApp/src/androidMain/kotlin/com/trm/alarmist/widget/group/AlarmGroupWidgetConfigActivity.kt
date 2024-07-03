@@ -7,13 +7,31 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.essenty.backhandler.BackHandler
+import com.arkivanov.essenty.instancekeeper.instanceKeeper
+import com.arkivanov.essenty.lifecycle.asEssentyLifecycle
+import com.arkivanov.essenty.statekeeper.stateKeeper
+import com.trm.alarmist.core.ui.theme.AppTheme
+import com.trm.alarmist.feature.widget.config.group.DefaultGroupWidgetConfigComponent
+import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigContent
+import kotlinx.serialization.builtins.serializer
 
 class AlarmGroupWidgetConfigActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,38 +44,76 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity() {
     if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) finish()
 
     setContent {
-      //      AppTheme {
-      //        Surface(color = MaterialTheme.colorScheme.background) {
-      //          val component =
-      //            DefaultGroupWidgetConfigComponent(componentContext = defaultComponentContext())
-      //          val state by component.feature.state.collectAsState()
-      //          GroupWidgetConfigContent(
-      //            state = state,
-      //            modifier = Modifier.fillMaxSize(),
-      //            onExpandGroup = component.feature::onExpandGroup,
-      //            onCollapseGroup = component.feature::onCollapseGroup,
-      //            onChooseGroup = component.feature::onChooseGroup,
-      //          )
-      //        }
-      //      }
-
-      Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "Alarm group config activity")
-
-        Row {
-          Button(onClick = { finish() }) { Text(text = "Cancel") }
-          Button(
-            onClick = {
-              // TODO: update widget like in daylighter
-
-              setResult(
-                RESULT_OK,
-                Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
-              )
-              finish()
-            }
+      AppTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+          // TODO: this line crashes due to state keeper key collision - there can be only 1 default
+          // component context in decompose.
+          // Consider switching to viewModel - this would break navigation
+          val stateKeeper = stateKeeper(discardSavedState = false, isSavingAllowed = { true })
+          val marker =
+            stateKeeper.consume(
+              key = "GroupWidgetConfig_state_marker",
+              strategy = String.serializer(),
+            )
+          stateKeeper.register(
+            key = "GroupWidgetConfig_state_marker",
+            strategy = String.serializer(),
           ) {
-            Text(text = "Ok")
+            "marker"
+          }
+          val component =
+            DefaultGroupWidgetConfigComponent(
+              componentContext =
+                DefaultComponentContext(
+                  lifecycle = lifecycle.asEssentyLifecycle(),
+                  stateKeeper = stateKeeper,
+                  instanceKeeper = instanceKeeper(discardRetainedInstances = marker == null),
+                  backHandler =
+                    BackHandler(
+                      onBackPressedDispatcher = onBackPressedDispatcher,
+                      lifecycleOwner = this,
+                    ),
+                )
+            )
+          val state by component.feature.state.collectAsState()
+
+          Column(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+              GroupWidgetConfigContent(
+                state = state,
+                modifier = Modifier.fillMaxSize(),
+                onExpandGroup = component.feature::onExpandGroup,
+                onCollapseGroup = component.feature::onCollapseGroup,
+                onChooseGroup = component.feature::onChooseGroup,
+              )
+
+              // TODO: new group fab
+            }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+              // TODO: different button weights for different screen sizes
+
+              OutlinedButton(onClick = { finish() }, modifier = Modifier.weight(1f)) {
+                Text(text = "Cancel")
+              }
+
+              Spacer(modifier = Modifier.width(16.dp))
+
+              Button(
+                onClick = {
+                  // TODO: update widget like in daylighter
+
+                  setResult(
+                    RESULT_OK,
+                    Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
+                  )
+                  finish()
+                },
+                modifier = Modifier.weight(1f),
+              ) {
+                Text(text = "Ok")
+              }
+            }
           }
         }
       }
