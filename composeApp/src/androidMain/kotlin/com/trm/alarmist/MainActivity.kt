@@ -22,19 +22,16 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    val startMode = handleDeepLink(::rootStartModeFrom) ?: RootStartMode.Normal
+    val component =
+      DefaultRootComponent(
+        componentContext = defaultComponentContext(),
+        startMode = handleDeepLink(::rootStartModeFrom) ?: RootStartMode.Normal,
+      )
 
     setContent {
       AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-          RootContent(
-            component =
-              DefaultRootComponent(
-                componentContext = defaultComponentContext(),
-                startMode = startMode,
-              ),
-            modifier = Modifier.fillMaxSize(),
-          )
+          RootContent(component = component, modifier = Modifier.fillMaxSize())
         }
       }
     }
