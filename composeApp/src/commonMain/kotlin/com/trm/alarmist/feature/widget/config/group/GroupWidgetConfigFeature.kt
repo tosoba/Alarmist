@@ -43,7 +43,7 @@ class GroupWidgetConfigFeature(savedStateContainer: SerializableContainer?) :
   }
 
   fun onChooseGroup(group: AlarmGroupModel) {
-    _state.update { it.copy(chosenGroupId = group.id) }
+    _state.update { it.copy(chosenGroupId = if (group.id == it.chosenGroupId) null else group.id) }
   }
 
   fun onExpandGroup(group: AlarmGroupModel) {
