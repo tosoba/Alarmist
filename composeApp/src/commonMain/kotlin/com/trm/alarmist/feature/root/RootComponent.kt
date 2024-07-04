@@ -102,7 +102,7 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
 
   override val dialog: Value<ChildSlot<*, RootDialogComponent>> =
     childSlot(
-      key = "DialogSlot",
+      key = "RootDialogSlot",
       source = dialogNavigation,
       serializer = RootDialogComponent.Config.serializer(),
       handleBackButton = true,
@@ -126,7 +126,7 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
 
   override val bottomSheet: Value<ChildSlot<*, RootComponent.BottomSheetChild>> =
     childSlot(
-      key = "BottomSheetSlot",
+      key = "RootBottomSheetSlot",
       source = bottomSheetNavigation,
       serializer = BottomSheetChildConfig.serializer(),
       initialConfiguration = {
