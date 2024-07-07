@@ -1,5 +1,6 @@
 package com.trm.alarmist.widget.common.util
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.datastore.preferences.core.MutablePreferences
@@ -55,14 +56,15 @@ internal object WidgetAction {
 }
 
 internal object WidgetExtra {
-  const val WIDGET_ID = "WIDGET_ID"
   const val ALARM_ID = "ALARM_ID"
   const val ALARM_FIRE_DATE = "ALARM_FIRE_DATE"
 }
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateWidgetIntent(
   widgetId: Int
-): Intent = actionIntent<T>(WidgetAction.UPDATE_WIDGET).putExtra(WidgetExtra.WIDGET_ID, widgetId)
+): Intent =
+  actionIntent<T>(WidgetAction.UPDATE_WIDGET)
+    .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
 
 internal fun Context.toggleAlarmOnOffIntent(alarmId: Long, alarmFireDate: LocalDate): Intent =
   actionIntent<ToggleAlarmOnOffActionReceiver>(WidgetAction.TOGGLE_ALARM_ON_OFF)
@@ -72,7 +74,7 @@ internal fun Context.toggleAlarmOnOffIntent(alarmId: Long, alarmFireDate: LocalD
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateAllWidgetsIntent(): Intent =
   actionIntent<T>(WidgetAction.UPDATE_ALL_WIDGETS)
 
-private inline fun <reified T> Context.actionIntent(action: String): Intent =
+internal inline fun <reified T> Context.actionIntent(action: String): Intent =
   Intent(this, T::class.java).also { it.action = action }
 
 internal val uuidKey: Preferences.Key<String>

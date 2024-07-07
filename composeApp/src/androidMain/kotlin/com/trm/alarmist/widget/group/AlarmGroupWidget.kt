@@ -12,6 +12,7 @@ import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 
 class AlarmGroupWidget : GlanceAppWidget() {
@@ -20,8 +21,16 @@ class AlarmGroupWidget : GlanceAppWidget() {
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       val state = currentState<Preferences>()
+
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
-        GlanceTheme { Box(contentAlignment = Alignment.Center) { Text(text = "Group widget") } }
+        GlanceTheme {
+          Box(contentAlignment = Alignment.Center) {
+            Text(
+              text = state[AlarmGroupWidgetReceiver.groupIdKey]?.toString() ?: "No group set",
+              style = TextStyle(color = GlanceTheme.colors.widgetBackground),
+            )
+          }
+        }
       }
     }
   }

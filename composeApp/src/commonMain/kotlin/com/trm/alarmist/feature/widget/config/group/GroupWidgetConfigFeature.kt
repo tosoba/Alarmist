@@ -5,6 +5,7 @@ import com.trm.alarmist.core.common.CoroutineFeature
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.usecase.GetAlarmsInGroupFlowUseCase
+import com.trm.alarmist.core.system.WidgetManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +23,8 @@ class GroupWidgetConfigFeature(savedStateContainer: SerializableContainer?) :
   CoroutineFeature(), KoinComponent {
   private val repository: AlarmRepository by inject()
   private val getAlarmsInGroupFlowUseCase: GetAlarmsInGroupFlowUseCase by inject()
+
+  private val widgetManager: WidgetManager by inject()
 
   private val _state: MutableStateFlow<GroupWidgetConfigState> =
     MutableStateFlow(
@@ -52,6 +55,12 @@ class GroupWidgetConfigFeature(savedStateContainer: SerializableContainer?) :
 
   fun onCollapseGroup() {
     _state.update { it.copy(expandedGroupId = null, expandedGroupAlarms = emptyList()) }
+  }
+
+  fun onConfirmClick(widgetId: Int) {
+    state.value.chosenGroupId?.let { groupId ->
+      widgetManager.updateWidgetGroup(widgetId = widgetId, groupId = groupId)
+    }
   }
 
   fun saveState(): SerializableContainer =

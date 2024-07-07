@@ -12,4 +12,14 @@ class AndroidWidgetManager(private val context: Context) : WidgetManager {
     context.sendBroadcast(context.updateAllWidgetsIntent<ClockWidgetReceiver>())
     context.sendBroadcast(context.updateAllWidgetsIntent<TodayAlarmsWidgetReceiver>())
   }
+
+  override fun updateWidgetGroup(widgetId: Int, groupId: Long) {
+    context.sendBroadcast(
+      AlarmGroupWidgetReceiver.updateGroupIntent(
+        context = context,
+        widgetId = widgetId,
+        groupId = groupId,
+      )
+    )
+  }
 }

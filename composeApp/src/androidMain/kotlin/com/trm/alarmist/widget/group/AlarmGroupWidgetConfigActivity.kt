@@ -54,17 +54,18 @@ import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigComponent
 import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigContent
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.koin.core.component.KoinComponent
 
-class AlarmGroupWidgetConfigActivity : ComponentActivity() {
+class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     setResult(RESULT_CANCELED)
 
-    val appWidgetId =
+    val widgetId =
       intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-    if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) finish()
+    if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) finish()
 
     val component =
       DefaultGroupWidgetConfigComponent(
@@ -109,11 +110,10 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity() {
 
                 Button(
                   onClick = {
-                    // TODO: update widget like in daylighter
-
+                    component.feature.onConfirmClick(widgetId)
                     setResult(
                       RESULT_OK,
-                      Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
+                      Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId),
                     )
                     finish()
                   },

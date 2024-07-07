@@ -1,10 +1,10 @@
 package com.trm.alarmist.widget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.glance.appwidget.GlanceAppWidget
 import com.trm.alarmist.widget.common.util.WidgetAction
-import com.trm.alarmist.widget.common.util.WidgetExtra
 import com.trm.alarmist.widget.common.util.updateAll
 import com.trm.alarmist.widget.common.util.updateById
 import com.trm.alarmist.widget.common.util.updateUuid
@@ -22,7 +22,7 @@ internal inline fun <reified T : GlanceAppWidget> T.handleAction(
       updateById(
         widgetId =
           requireNotNull(intent.extras) { "Extras were not provided to UPDATE_WIDGET action." }
-            .getInt(WidgetExtra.WIDGET_ID),
+            .getInt(AppWidgetManager.EXTRA_APPWIDGET_ID),
         context = context,
         updateState = ::updateUuid,
       )
