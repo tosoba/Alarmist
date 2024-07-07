@@ -42,8 +42,7 @@ import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.group.GroupContent
-import com.trm.alarmist.feature.root.ui.RootAppBar
-import com.trm.alarmist.feature.root.ui.RootDialog
+import com.trm.alarmist.feature.dialog.DialogContent
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
 import com.trm.alarmist.feature.widgets.WidgetsContent
@@ -252,7 +251,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
     }
 
     val dialog by component.dialog.subscribeAsState()
-    dialog.child?.instance?.let { RootDialog(component = it, onConfirmClick = ::hideBottomSheet) }
+    dialog.child?.instance?.let { DialogContent(component = it, onConfirmClick = ::hideBottomSheet) }
   }
 }
 

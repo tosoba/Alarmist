@@ -29,20 +29,30 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.arkivanov.essenty.lifecycle.asEssentyLifecycle
 import com.trm.alarmist.core.ui.theme.AppTheme
+import com.trm.alarmist.feature.alarm.AlarmComponent
+import com.trm.alarmist.feature.alarm.AlarmContent
+import com.trm.alarmist.feature.group.GroupComponent
+import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.widget.config.group.DefaultGroupWidgetConfigComponent
+import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigComponent
 import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigContent
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 class AlarmGroupWidgetConfigActivity : ComponentActivity() {
@@ -69,8 +79,6 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity() {
     setContent {
       AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-          val state by component.feature.state.collectAsState()
-
           Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -89,10 +97,9 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity() {
             bottomBar = {
               Row(
                 modifier =
-                Modifier
-                  .fillMaxWidth()
-                  .background(MaterialTheme.colorScheme.surfaceContainer)
-                  .padding(16.dp)
+                  Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .padding(16.dp)
               ) {
                 OutlinedButton(onClick = { finish() }, modifier = Modifier.weight(1f)) {
                   Text(text = stringResource(Res.string.cancel))
@@ -117,11 +124,7 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity() {
               }
             },
             floatingActionButton = {
-              FloatingActionButton(
-                onClick = {
-                  // TODO: go to add group
-                }
-              ) {
+              FloatingActionButton(onClick = component::onAddGroupClick) {
                 Icon(
                   imageVector = Icons.Default.Add,
                   contentDescription = stringResource(Res.string.add),
@@ -129,15 +132,105 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity() {
               }
             },
           ) {
+            val state by component.feature.state.collectAsState()
+
             GroupWidgetConfigContent(
               state = state,
-              modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
+              modifier = Modifier.fillMaxSize().padding(it),
               onExpandGroup = component.feature::onExpandGroup,
               onCollapseGroup = component.feature::onCollapseGroup,
               onChooseGroup = component.feature::onChooseGroup,
+              onEditGroupClick = component::onEditGroupClick,
             )
+
+            val bottomSheet by component.bottomSheet.subscribeAsState()
+            val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            val scope = rememberCoroutineScope()
+
+            fun hideBottomSheet() {
+              scope
+                .launch { bottomSheetState.hide() }
+                .invokeOnCompletion { component.onBottomSheetDismissRequest() }
+            }
+
+            bottomSheet.child?.instance?.let { child ->
+              ModalBottomSheet(
+                onDismissRequest = component::onBottomSheetDismissRequest,
+                sheetState = bottomSheetState,
+              ) {
+                when (child) {
+                  is GroupWidgetConfigComponent.BottomSheetChild.Alarm -> {
+                    val alarmState by child.component.feature.state.collectAsState()
+                    val groups by child.component.feature.groups.collectAsState()
+
+                    AlarmContent(
+                      component = child.component,
+                      state = alarmState,
+                      groups = groups,
+                      onBackClick = ::hideBottomSheet,
+                      onDeleteClick =
+                        if (child.component.mode is AlarmComponent.Mode.Edit) {
+                          {
+                            // TODO:
+                          }
+                        } else {
+                          null
+                        },
+                      onNameChange = child.component.feature::onNameChange,
+                      onFireAtChange = child.component.feature::onFireAtChange,
+                      onToggleIsOnChange = child.component.feature::onToggleIsOnChange,
+                      onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
+                      onDateOnOffSwitchCheckedChange =
+                        child.component.feature::onDateOnOffSwitchCheckedChange,
+                      onDeleteOnAllDaysWeekClick =
+                        child.component.feature::onDeleteOnAllDaysWeekClick,
+                      onDeleteOnDateClick = child.component.feature::onDeleteOnDateClick,
+                      onScheduleOnDateClick = child.component.feature::onScheduleOnDateClick,
+                      onToggleSnoozeEnabled = child.component.feature::onToggleSnoozeEnabled,
+                      onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
+                      onSnoozeLimitChange = child.component.feature::onSnoozeLimitChange,
+                      onAlarmDurationChange = child.component.feature::onAlarmDurationChange,
+                      onSoundClick = child.component::onSoundClick,
+                      onToggleSoundEnabled = child.component.feature::onToggleSoundEnabled,
+                      onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
+                      onToggleReminderEnabled = child.component.feature::onToggleReminderEnabled,
+                      onReminderOffsetChange = child.component.feature::onReminderOffsetChange,
+                      onGroupClick = child.component.feature::onGroupClick,
+                      onConfirmClick = {
+                        child.component.feature.onConfirmClick().invokeOnCompletion {
+                          hideBottomSheet()
+                        }
+                      },
+                    )
+                  }
+                  is GroupWidgetConfigComponent.BottomSheetChild.Group -> {
+                    val groupState by child.component.feature.state.collectAsState()
+
+                    GroupContent(
+                      mode = child.component.mode,
+                      state = groupState,
+                      onBackClick = ::hideBottomSheet,
+                      onNameChange = child.component.feature::onNameChange,
+                      onDeleteClick =
+                        if (child.component.mode is GroupComponent.Mode.Edit) {
+                          {
+                            // TODO:
+                          }
+                        } else {
+                          null
+                        },
+                      onColorChange = child.component.feature::onColorChange,
+                      onToggleAlarmSelection = child.component.feature::onToggleAlarmSelection,
+                      onConfirmClick = {
+                        child.component.feature.onConfirmClick()?.invokeOnCompletion {
+                          hideBottomSheet()
+                        }
+                      },
+                    )
+                  }
+                }
+              }
+            }
           }
         }
       }

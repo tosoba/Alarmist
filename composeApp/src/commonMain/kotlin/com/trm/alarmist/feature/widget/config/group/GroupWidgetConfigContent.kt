@@ -18,6 +18,7 @@ fun GroupWidgetConfigContent(
   state: GroupWidgetConfigState = GroupWidgetConfigState(),
   onExpandGroup: (AlarmGroupModel) -> Unit = {},
   onCollapseGroup: () -> Unit = {},
+  onEditGroupClick: (AlarmGroupModel) -> Unit = {},
   onChooseGroup: (AlarmGroupModel) -> Unit = {},
 ) {
   AlarmGroupsList(
@@ -27,6 +28,7 @@ fun GroupWidgetConfigContent(
     expandedGroupAlarms = state.expandedGroupAlarms,
     onExpandGroup = onExpandGroup,
     onCollapseGroup = onCollapseGroup,
+    onEditGroupClick = onEditGroupClick,
   ) { group ->
     Column(
       modifier = Modifier.padding(end = 16.dp),

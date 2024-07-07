@@ -1,9 +1,9 @@
-package com.trm.alarmist.feature.root
+package com.trm.alarmist.feature.dialog
 
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.serialization.Serializable
 
-interface RootDialogComponent {
+interface DialogComponent {
   val title: String
   val message: String
   val onConfirm: () -> Unit
@@ -12,10 +12,10 @@ interface RootDialogComponent {
   @Serializable data class Config(val title: String, val message: String)
 }
 
-class DefaultRootDialogComponent(
+class DefaultDialogComponent(
   private val componentContext: ComponentContext,
   override val title: String,
   override val message: String,
   override val onConfirm: () -> Unit,
   override val onDismiss: () -> Unit,
-) : RootDialogComponent, ComponentContext by componentContext
+) : DialogComponent, ComponentContext by componentContext

@@ -27,6 +27,8 @@ import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
 import com.trm.alarmist.feature.alarms.AlarmsComponent
 import com.trm.alarmist.feature.alarms.DefaultAlarmsComponent
+import com.trm.alarmist.feature.dialog.DefaultDialogComponent
+import com.trm.alarmist.feature.dialog.DialogComponent
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.stopwatch.DefaultStopwatchComponent
@@ -40,7 +42,7 @@ import kotlinx.serialization.Serializable
 interface RootComponent : BackHandlerOwner {
   val childStack: Value<ChildStack<*, Child>>
 
-  val dialog: Value<ChildSlot<*, RootDialogComponent>>
+  val dialog: Value<ChildSlot<*, DialogComponent>>
 
   val bottomSheet: Value<ChildSlot<*, BottomSheetChild>>
 
@@ -98,16 +100,16 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
       childFactory = ::createChild,
     )
 
-  private val dialogNavigation = SlotNavigation<RootDialogComponent.Config>()
+  private val dialogNavigation = SlotNavigation<DialogComponent.Config>()
 
-  override val dialog: Value<ChildSlot<*, RootDialogComponent>> =
+  override val dialog: Value<ChildSlot<*, DialogComponent>> =
     childSlot(
       key = "RootDialogSlot",
       source = dialogNavigation,
-      serializer = RootDialogComponent.Config.serializer(),
+      serializer = DialogComponent.Config.serializer(),
       handleBackButton = true,
     ) { config, childComponentContext ->
-      DefaultRootDialogComponent(
+      DefaultDialogComponent(
         componentContext = childComponentContext,
         title = config.title,
         message = config.message,
@@ -208,7 +210,7 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
 
   override fun onDeleteActionClick() {
     dialogNavigation.activate(
-      RootDialogComponent.Config(
+      DialogComponent.Config(
         title =
           deleteActionParameter(
             alarmParameter = { getStringBlocking(Res.string.delete_alarm) },

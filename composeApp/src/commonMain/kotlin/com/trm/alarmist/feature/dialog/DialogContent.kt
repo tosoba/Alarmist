@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.root.ui
+package com.trm.alarmist.feature.dialog
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.confirm
@@ -8,12 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.trm.alarmist.feature.root.RootDialogComponent
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun RootDialog(
-  component: RootDialogComponent,
+fun DialogContent(
+  component: DialogComponent,
   onConfirmClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {

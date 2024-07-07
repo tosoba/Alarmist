@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.root.ui
+package com.trm.alarmist.feature.root
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.alarms
@@ -14,7 +14,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.trm.alarmist.feature.root.RootComponent
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
