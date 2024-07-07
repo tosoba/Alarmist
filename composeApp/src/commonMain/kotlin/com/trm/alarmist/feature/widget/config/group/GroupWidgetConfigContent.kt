@@ -28,7 +28,10 @@ fun GroupWidgetConfigContent(
     onExpandGroup = onExpandGroup,
     onCollapseGroup = onCollapseGroup,
   ) { group ->
-    Column(modifier = Modifier.padding(end = 16.dp), horizontalAlignment = Alignment.End) {
+    Column(
+      modifier = Modifier.padding(end = 16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
       Checkbox(
         checked = state.chosenGroupId == group.id,
         onCheckedChange = { _ -> onChooseGroup(group) },

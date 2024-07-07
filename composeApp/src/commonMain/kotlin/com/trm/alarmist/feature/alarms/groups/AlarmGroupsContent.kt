@@ -48,7 +48,10 @@ fun AlarmGroupsContent(
     },
   ) { group ->
     if (group.alarmsCount > 0L) {
-      Column(modifier = Modifier.padding(end = 16.dp), horizontalAlignment = Alignment.End) {
+      Column(
+        modifier = Modifier.padding(end = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+      ) {
         Switch(checked = group.isOn, onCheckedChange = { _ -> onToggleGroupOnOff(group) })
         Spacer(Modifier.weight(1f))
         ExpandableIcon(
