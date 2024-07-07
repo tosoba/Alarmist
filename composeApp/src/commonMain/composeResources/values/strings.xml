@@ -82,4 +82,5 @@
     <string name="one_day">1 day</string>
     <string name="widget_pin_unavailable_title">Unsupported feature</string>
     <string name="widget_pin_unavailable_description">Widget pinning is not supported in the default launcher</string>
+    <string name="new_group_widget">New group widget</string>
 </resources>

@@ -70,7 +70,7 @@ fun AlarmGroupsList(
       }
     } else {
       LazyColumn(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
       ) {
         headerItems()
