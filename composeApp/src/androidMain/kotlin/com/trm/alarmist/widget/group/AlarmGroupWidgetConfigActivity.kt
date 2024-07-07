@@ -52,6 +52,7 @@ import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.widget.config.group.DefaultGroupWidgetConfigComponent
 import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigComponent
 import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigContent
+import com.trm.alarmist.widget.common.util.showWidgetPinnedToast
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
@@ -66,6 +67,8 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
     val widgetId =
       intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
     if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) finish()
+
+    val isPinned = intent.getBooleanExtra(EXTRA_IS_PINNED, false)
 
     val component =
       DefaultGroupWidgetConfigComponent(
@@ -102,8 +105,10 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                     .background(MaterialTheme.colorScheme.surfaceContainer)
                     .padding(16.dp)
               ) {
-                OutlinedButton(onClick = { finish() }, modifier = Modifier.weight(1f)) {
-                  Text(text = stringResource(Res.string.cancel))
+                if (!isPinned) {
+                  OutlinedButton(onClick = { finish() }, modifier = Modifier.weight(1f)) {
+                    Text(text = stringResource(Res.string.cancel))
+                  }
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -111,6 +116,9 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                 Button(
                   onClick = {
                     component.feature.onConfirmClick(widgetId)
+
+                    showWidgetPinnedToast()
+
                     setResult(
                       RESULT_OK,
                       Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId),
@@ -238,11 +246,13 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
   }
 
   companion object {
+    private const val EXTRA_IS_PINNED = "IS_PINNED"
+
     fun pendingIntent(context: Context): PendingIntent =
       PendingIntent.getActivity(
         context,
         0,
-        Intent(context, AlarmGroupWidgetConfigActivity::class.java),
+        Intent(context, AlarmGroupWidgetConfigActivity::class.java).putExtra(EXTRA_IS_PINNED, true),
         // must have FLAG_MUTABLE - otherwise EXTRA_APPWIDGET_ID will not be set
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
       )

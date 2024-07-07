@@ -3,6 +3,7 @@ package com.trm.alarmist.widget.common.util
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -11,6 +12,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
+import com.trm.alarmist.R
 import com.trm.alarmist.widget.common.ToggleAlarmOnOffActionReceiver
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
@@ -82,4 +84,8 @@ internal val uuidKey: Preferences.Key<String>
 
 internal fun updateUuid(prefs: MutablePreferences) {
   prefs[uuidKey] = UUID.randomUUID().toString()
+}
+
+internal fun Context.showWidgetPinnedToast() {
+  Toast.makeText(this, getString(R.string.widget_pinned_success_info), Toast.LENGTH_SHORT).show()
 }
