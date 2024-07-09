@@ -93,6 +93,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -114,6 +115,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.decompose.router.slot.ChildSlot
 import com.trm.alarmist.core.common.util.nextFullHour
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
@@ -129,6 +131,7 @@ import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
 import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
 import com.trm.alarmist.feature.alarm.model.AlarmState
 import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialog
+import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialogComponent
 import com.trm.alarmist.feature.alarm.sound.alarmSoundTitle
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.config.rememberMutableBasisEpicCalendarConfig
@@ -145,11 +148,52 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmContent(
   modifier: Modifier = Modifier,
   component: AlarmComponent,
+  onDeleteActionClick: () -> Unit,
+  onBackClick: () -> Unit,
+  onConfirmClick: () -> Unit,
+) {
+  val alarmState by component.feature.state.collectAsState()
+  val groups by component.feature.groups.collectAsState()
+  val soundDialog by component.soundDialog.subscribeAsState()
+
+  AlarmContent(
+    modifier = modifier,
+    soundDialog = soundDialog,
+    state = alarmState,
+    groups = groups,
+    onBackClick = onBackClick,
+    onDeleteClick = if (component.mode is AlarmComponent.Mode.Edit) onDeleteActionClick else null,
+    onNameChange = component.feature::onNameChange,
+    onFireAtChange = component.feature::onFireAtChange,
+    onToggleIsOnChange = component.feature::onToggleIsOnChange,
+    onDayOfWeekClick = component.feature::onDayOfWeekClick,
+    onDateOnOffSwitchCheckedChange = component.feature::onDateOnOffSwitchCheckedChange,
+    onDeleteOnAllDaysWeekClick = component.feature::onDeleteOnAllDaysWeekClick,
+    onDeleteOnDateClick = component.feature::onDeleteOnDateClick,
+    onScheduleOnDateClick = component.feature::onScheduleOnDateClick,
+    onToggleSnoozeEnabled = component.feature::onToggleSnoozeEnabled,
+    onSnoozeDurationChange = component.feature::onSnoozeDurationChange,
+    onSnoozeLimitChange = component.feature::onSnoozeLimitChange,
+    onAlarmDurationChange = component.feature::onAlarmDurationChange,
+    onSoundClick = component::onSoundClick,
+    onToggleSoundEnabled = component.feature::onToggleSoundEnabled,
+    onToggleVibrationEnabled = component.feature::onToggleVibrationEnabled,
+    onToggleReminderEnabled = component.feature::onToggleReminderEnabled,
+    onReminderOffsetChange = component.feature::onReminderOffsetChange,
+    onGroupClick = component.feature::onGroupClick,
+    onConfirmClick = onConfirmClick,
+  )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AlarmContent(
+  modifier: Modifier = Modifier,
+  soundDialog: ChildSlot<*, AlarmSoundDialogComponent>,
   state: AlarmState = AlarmState(),
   groups: List<AlarmGroupModel> = emptyList(),
   onBackClick: () -> Unit = {},
@@ -646,8 +690,7 @@ fun AlarmContent(
       FloatingActionButtonSpacer()
     }
 
-    val dialog by component.dialog.subscribeAsState()
-    dialog.child?.instance?.let {
+    soundDialog.child?.instance?.let {
       AlarmSoundDialog(component = it, modifier = Modifier.heightIn(max = 500.dp))
     }
 

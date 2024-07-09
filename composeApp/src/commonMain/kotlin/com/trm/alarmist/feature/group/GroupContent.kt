@@ -49,6 +49,7 @@ import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
@@ -74,6 +75,29 @@ import com.trm.alarmist.core.ui.keyboardAsState
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
 import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun GroupContent(
+  modifier: Modifier = Modifier,
+  component: GroupComponent,
+  onDeleteActionClick: () -> Unit,
+  onBackClick: () -> Unit,
+  onConfirmClick: () -> Unit,
+) {
+  val groupState by component.feature.state.collectAsState()
+
+  GroupContent(
+    modifier = modifier,
+    mode = component.mode,
+    state = groupState,
+    onBackClick = onBackClick,
+    onNameChange = component.feature::onNameChange,
+    onDeleteClick = if (component.mode is GroupComponent.Mode.Edit) onDeleteActionClick else null,
+    onColorChange = component.feature::onColorChange,
+    onToggleAlarmSelection = component.feature::onToggleAlarmSelection,
+    onConfirmClick = onConfirmClick,
+  )
+}
 
 @Composable
 fun GroupContent(

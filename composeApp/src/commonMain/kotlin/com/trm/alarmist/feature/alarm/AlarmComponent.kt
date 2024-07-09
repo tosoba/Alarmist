@@ -18,7 +18,7 @@ interface AlarmComponent {
 
   val feature: AlarmFeature
 
-  val dialog: Value<ChildSlot<*, AlarmSoundDialogComponent>>
+  val soundDialog: Value<ChildSlot<*, AlarmSoundDialogComponent>>
 
   fun onSoundClick()
 
@@ -45,7 +45,7 @@ class DefaultAlarmComponent(
 
   private val dialogNavigation = SlotNavigation<AlarmSoundDialogComponent.Config>()
 
-  override val dialog: Value<ChildSlot<*, AlarmSoundDialogComponent>> =
+  override val soundDialog: Value<ChildSlot<*, AlarmSoundDialogComponent>> =
     childSlot(
       key = "AlarmDialogSlot",
       source = dialogNavigation,

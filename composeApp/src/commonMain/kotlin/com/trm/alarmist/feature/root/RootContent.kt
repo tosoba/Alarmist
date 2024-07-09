@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -37,12 +36,10 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.trm.alarmist.core.common.util.BackHandler
-import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
-import com.trm.alarmist.feature.group.GroupComponent
-import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.dialog.DialogContent
+import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
 import com.trm.alarmist.feature.widgets.WidgetsContent
@@ -164,58 +161,20 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       ) {
         when (child) {
           is RootComponent.BottomSheetChild.Alarm -> {
-            val state by child.component.feature.state.collectAsState()
-            val groups by child.component.feature.groups.collectAsState()
             AlarmContent(
               component = child.component,
-              state = state,
-              groups = groups,
+              onDeleteActionClick = component::onDeleteActionClick,
               onBackClick = ::hideBottomSheet,
-              onDeleteClick =
-                if (child.component.mode is AlarmComponent.Mode.Edit) {
-                  { component.onDeleteActionClick() }
-                } else {
-                  null
-                },
-              onNameChange = child.component.feature::onNameChange,
-              onFireAtChange = child.component.feature::onFireAtChange,
-              onToggleIsOnChange = child.component.feature::onToggleIsOnChange,
-              onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
-              onDateOnOffSwitchCheckedChange =
-                child.component.feature::onDateOnOffSwitchCheckedChange,
-              onDeleteOnAllDaysWeekClick = child.component.feature::onDeleteOnAllDaysWeekClick,
-              onDeleteOnDateClick = child.component.feature::onDeleteOnDateClick,
-              onScheduleOnDateClick = child.component.feature::onScheduleOnDateClick,
-              onToggleSnoozeEnabled = child.component.feature::onToggleSnoozeEnabled,
-              onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
-              onSnoozeLimitChange = child.component.feature::onSnoozeLimitChange,
-              onAlarmDurationChange = child.component.feature::onAlarmDurationChange,
-              onSoundClick = child.component::onSoundClick,
-              onToggleSoundEnabled = child.component.feature::onToggleSoundEnabled,
-              onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
-              onToggleReminderEnabled = child.component.feature::onToggleReminderEnabled,
-              onReminderOffsetChange = child.component.feature::onReminderOffsetChange,
-              onGroupClick = child.component.feature::onGroupClick,
               onConfirmClick = {
                 child.component.feature.onConfirmClick().invokeOnCompletion { hideBottomSheet() }
               },
             )
           }
           is RootComponent.BottomSheetChild.Group -> {
-            val state by child.component.feature.state.collectAsState()
             GroupContent(
-              mode = child.component.mode,
-              state = state,
+              component = child.component,
+              onDeleteActionClick = component::onDeleteActionClick,
               onBackClick = ::hideBottomSheet,
-              onNameChange = child.component.feature::onNameChange,
-              onDeleteClick =
-                if (child.component.mode is GroupComponent.Mode.Edit) {
-                  { component.onDeleteActionClick() }
-                } else {
-                  null
-                },
-              onColorChange = child.component.feature::onColorChange,
-              onToggleAlarmSelection = child.component.feature::onToggleAlarmSelection,
               onConfirmClick = {
                 child.component.feature.onConfirmClick()?.invokeOnCompletion { hideBottomSheet() }
               },
@@ -251,7 +210,9 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
     }
 
     val dialog by component.dialog.subscribeAsState()
-    dialog.child?.instance?.let { DialogContent(component = it, onConfirmClick = ::hideBottomSheet) }
+    dialog.child?.instance?.let {
+      DialogContent(component = it, onConfirmClick = ::hideBottomSheet)
+    }
   }
 }
 

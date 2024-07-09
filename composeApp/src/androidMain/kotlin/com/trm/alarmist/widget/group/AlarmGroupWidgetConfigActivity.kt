@@ -45,9 +45,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.arkivanov.essenty.lifecycle.asEssentyLifecycle
 import com.trm.alarmist.core.ui.theme.AppTheme
-import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.AlarmContent
-import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.widget.config.group.DefaultGroupWidgetConfigComponent
 import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigComponent
@@ -168,42 +166,10 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
               ) {
                 when (child) {
                   is GroupWidgetConfigComponent.BottomSheetChild.Alarm -> {
-                    val alarmState by child.component.feature.state.collectAsState()
-                    val groups by child.component.feature.groups.collectAsState()
-
                     AlarmContent(
                       component = child.component,
-                      state = alarmState,
-                      groups = groups,
+                      onDeleteActionClick = { /*TODO*/ },
                       onBackClick = ::hideBottomSheet,
-                      onDeleteClick =
-                        if (child.component.mode is AlarmComponent.Mode.Edit) {
-                          {
-                            // TODO:
-                          }
-                        } else {
-                          null
-                        },
-                      onNameChange = child.component.feature::onNameChange,
-                      onFireAtChange = child.component.feature::onFireAtChange,
-                      onToggleIsOnChange = child.component.feature::onToggleIsOnChange,
-                      onDayOfWeekClick = child.component.feature::onDayOfWeekClick,
-                      onDateOnOffSwitchCheckedChange =
-                        child.component.feature::onDateOnOffSwitchCheckedChange,
-                      onDeleteOnAllDaysWeekClick =
-                        child.component.feature::onDeleteOnAllDaysWeekClick,
-                      onDeleteOnDateClick = child.component.feature::onDeleteOnDateClick,
-                      onScheduleOnDateClick = child.component.feature::onScheduleOnDateClick,
-                      onToggleSnoozeEnabled = child.component.feature::onToggleSnoozeEnabled,
-                      onSnoozeDurationChange = child.component.feature::onSnoozeDurationChange,
-                      onSnoozeLimitChange = child.component.feature::onSnoozeLimitChange,
-                      onAlarmDurationChange = child.component.feature::onAlarmDurationChange,
-                      onSoundClick = child.component::onSoundClick,
-                      onToggleSoundEnabled = child.component.feature::onToggleSoundEnabled,
-                      onToggleVibrationEnabled = child.component.feature::onToggleVibrationEnabled,
-                      onToggleReminderEnabled = child.component.feature::onToggleReminderEnabled,
-                      onReminderOffsetChange = child.component.feature::onReminderOffsetChange,
-                      onGroupClick = child.component.feature::onGroupClick,
                       onConfirmClick = {
                         child.component.feature.onConfirmClick().invokeOnCompletion {
                           hideBottomSheet()
@@ -212,23 +178,10 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                     )
                   }
                   is GroupWidgetConfigComponent.BottomSheetChild.Group -> {
-                    val groupState by child.component.feature.state.collectAsState()
-
                     GroupContent(
-                      mode = child.component.mode,
-                      state = groupState,
+                      component = child.component,
+                      onDeleteActionClick = { /*TODO*/ },
                       onBackClick = ::hideBottomSheet,
-                      onNameChange = child.component.feature::onNameChange,
-                      onDeleteClick =
-                        if (child.component.mode is GroupComponent.Mode.Edit) {
-                          {
-                            // TODO:
-                          }
-                        } else {
-                          null
-                        },
-                      onColorChange = child.component.feature::onColorChange,
-                      onToggleAlarmSelection = child.component.feature::onToggleAlarmSelection,
                       onConfirmClick = {
                         child.component.feature.onConfirmClick()?.invokeOnCompletion {
                           hideBottomSheet()
