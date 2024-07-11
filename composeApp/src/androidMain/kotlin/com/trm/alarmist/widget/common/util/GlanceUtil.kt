@@ -16,3 +16,9 @@ internal val LocalIsPreviewProvider = staticCompositionLocalOf { false }
 
 internal fun GlanceModifier.clickableIfNotNull(action: Action?): GlanceModifier =
   if (action != null) this.clickable(action) else this
+
+@Composable
+internal fun composableIfOrNull(
+  condition: Boolean,
+  content: @Composable () -> Unit,
+): (@Composable () -> Unit)? = if (condition) content else null

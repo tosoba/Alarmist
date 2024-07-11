@@ -26,8 +26,6 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
-import androidx.glance.layout.Box
-import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
@@ -43,6 +41,7 @@ import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
 import com.trm.alarmist.core.ui.buildAlarmLabelText
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
+import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.NUM_GRID_CELLS
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.fillItemItemPadding
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.filledItemCornerRadius
@@ -55,11 +54,11 @@ import com.trm.alarmist.widget.common.ui.WidgetLazyColumn
 import com.trm.alarmist.widget.common.ui.WidgetLazyVerticalGrid
 import com.trm.alarmist.widget.common.ui.WidgetListItem
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
-import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.addAlarmDeeplinkUri
+import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.deepLinkAction
 import com.trm.alarmist.widget.common.util.editAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.stringResource
@@ -106,74 +105,6 @@ private fun TodayAlarmsWidgetScaffold(id: GlanceId, state: Initializable<TodayAl
   GlanceTheme {
     val context = LocalContext.current
     val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
-    val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
-
-    fun titleBar(): @Composable () -> Unit = {
-      WidgetTitleBar(
-        // TODO: either app icon or icon representing today
-        startIcon =
-          if (widgetLayoutSize == WidgetLayoutSize.Large) ImageProvider(R.mipmap.ic_launcher_round)
-          else null,
-        iconColor = GlanceTheme.colors.primary,
-        actions = {
-          CircleIconButton(
-            imageProvider = ImageProvider(R.drawable.refresh),
-            contentDescription = stringResource(R.string.refresh),
-            contentColor = GlanceTheme.colors.secondary,
-            backgroundColor = null,
-            onClick =
-              actionSendBroadcast(
-                context.updateWidgetIntent<TodayAlarmsWidgetReceiver>(
-                  widgetManager.getAppWidgetId(id)
-                )
-              ),
-          )
-        },
-      ) {
-        Column(
-          modifier =
-            GlanceModifier.defaultWeight().run {
-              if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
-            }
-        ) {
-          Box {
-            WidgetTextClock(
-              format12Hour =
-                context.getString(
-                  if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_12_h_full
-                  else R.string.time_format_12_h_short
-                ),
-              format24Hour =
-                context.getString(
-                  if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_24_h_full
-                  else R.string.time_format_24_h_short
-                ),
-            ) {
-              setFloat(
-                R.id.widget_text_clock,
-                "setTextSize",
-                context.resources.getInteger(R.integer.widget_text_clock_large_font_size).toFloat(),
-              )
-            }
-          }
-
-          Box {
-            val amPmFormat =
-              context.getString(
-                if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_am_pm_full
-                else R.string.time_format_am_pm_short
-              )
-            WidgetTextClock(format12Hour = amPmFormat, format24Hour = amPmFormat) {
-              setFloat(
-                R.id.widget_text_clock,
-                "setTextSize",
-                context.resources.getInteger(R.integer.widget_text_clock_am_pm_font_size).toFloat(),
-              )
-            }
-          }
-        }
-      }
-    }
 
     Scaffold(
       backgroundColor = GlanceTheme.colors.widgetBackground,
@@ -182,7 +113,37 @@ private fun TodayAlarmsWidgetScaffold(id: GlanceId, state: Initializable<TodayAl
           top = if (showTitleBar()) 0.dp else widgetPadding,
           bottom = widgetPadding,
         ),
-      titleBar = if (showTitleBar()) titleBar() else null,
+      titleBar =
+        composableIfOrNull(condition = showTitleBar()) {
+          val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
+
+          WidgetTitleBar(
+            // TODO: either app icon or icon representing today
+            startIcon =
+              if (widgetLayoutSize == WidgetLayoutSize.Large) {
+                ImageProvider(R.mipmap.ic_launcher_round)
+              } else {
+                null
+              },
+            iconColor = GlanceTheme.colors.primary,
+            actions = {
+              CircleIconButton(
+                imageProvider = ImageProvider(R.drawable.refresh),
+                contentDescription = stringResource(R.string.refresh),
+                contentColor = GlanceTheme.colors.secondary,
+                backgroundColor = null,
+                onClick =
+                  actionSendBroadcast(
+                    context.updateWidgetIntent<TodayAlarmsWidgetReceiver>(
+                      widgetManager.getAppWidgetId(id)
+                    )
+                  ),
+              )
+            },
+          ) {
+            WidgetAlarmListTextClock(widgetLayoutSize)
+          }
+        },
     ) {
       TodayAlarmsWidgetScaffoldContent(state = state)
     }
