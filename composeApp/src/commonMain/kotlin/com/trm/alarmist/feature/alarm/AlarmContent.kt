@@ -52,6 +52,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -109,6 +110,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -319,28 +323,34 @@ private fun AlarmContent(
         }
       }
 
+      val autoScheduleLabel = stringResource(Res.string.auto_schedule_label)
       Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier =
           Modifier.clip(RoundedCornerShape(24.dp))
-            .clickable(onClick = onToggleIsOnChange)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .toggleable(
+              value = state.isOn,
+              role = Role.Switch,
+              onValueChange = remember { { onToggleIsOnChange() } },
+            )
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .semantics { contentDescription = autoScheduleLabel },
       ) {
         Icon(
           imageVector = Icons.Default.AlarmOn,
-          contentDescription = stringResource(Res.string.auto_schedule_label),
+          contentDescription = null,
           modifier = Modifier.padding(end = 12.dp),
         )
 
         Text(
-          text = stringResource(Res.string.auto_schedule_label),
+          text = autoScheduleLabel,
           style = MaterialTheme.typography.titleLarge,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
 
         Spacer(Modifier.weight(1f))
 
-        Switch(checked = state.isOn, onCheckedChange = remember { { onToggleIsOnChange() } })
+        Switch(checked = state.isOn, onCheckedChange = null)
       }
 
       Row(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
