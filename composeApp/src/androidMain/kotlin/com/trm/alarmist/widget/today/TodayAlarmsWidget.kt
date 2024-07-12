@@ -1,7 +1,6 @@
 package com.trm.alarmist.widget.today
 
 import android.content.Context
-import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -14,57 +13,36 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.action.Action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.Switch
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
-import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
-import androidx.glance.background
 import androidx.glance.currentState
-import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
-import androidx.glance.text.FontWeight
-import androidx.glance.text.Text
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
-import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
-import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
-import com.trm.alarmist.core.ui.buildAlarmLabelText
-import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
+import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
-import com.trm.alarmist.widget.common.ui.WidgetDimensions.NUM_GRID_CELLS
-import com.trm.alarmist.widget.common.ui.WidgetDimensions.fillItemItemPadding
-import com.trm.alarmist.widget.common.ui.WidgetDimensions.filledItemCornerRadius
-import com.trm.alarmist.widget.common.ui.WidgetDimensions.verticalItemSpacing
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
-import com.trm.alarmist.widget.common.ui.WidgetLazyColumn
-import com.trm.alarmist.widget.common.ui.WidgetLazyVerticalGrid
-import com.trm.alarmist.widget.common.ui.WidgetListItem
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
-import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.addAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.deepLinkAction
-import com.trm.alarmist.widget.common.util.editAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.stringResource
-import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
-import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -166,124 +144,7 @@ private fun TodayAlarmsWidgetScaffoldContent(state: Initializable<TodayAlarmsWid
       )
     }
     else -> {
-      when (WidgetLayoutSize.fromLocalSize()) {
-        WidgetLayoutSize.Small -> {
-          TodayAlarmsWidgetList(state = state.data, displayHeaderSupporting = false)
-        }
-        WidgetLayoutSize.Medium -> {
-          TodayAlarmsWidgetList(state = state.data, displayHeaderSupporting = true)
-        }
-        WidgetLayoutSize.Large -> {
-          TodayAlarmsWidgetGrid(state = state.data)
-        }
-      }
+      WidgetAlarmListContent(alarms = state.data.alarms, getGroup = state.data.groups::get)
     }
   }
-}
-
-@Composable
-private fun TodayAlarmsWidgetList(state: TodayAlarmsWidgetState, displayHeaderSupporting: Boolean) {
-  WidgetLazyColumn(
-    items = state.alarms,
-    modifier = GlanceModifier.fillMaxSize(),
-    verticalItemsSpacing = verticalItemSpacing,
-  ) { item ->
-    TodayAlarmsWidgetListItem(
-      item = item,
-      group = item.groupId?.let(state.groups::get),
-      displayHeaderSupporting = displayHeaderSupporting,
-      onClick = deepLinkAction(LocalContext.current.editAlarmDeeplinkUri(item.id)),
-      modifier = GlanceModifier.fillMaxSize(),
-    )
-  }
-}
-
-@Composable
-private fun TodayAlarmsWidgetGrid(state: TodayAlarmsWidgetState) {
-  WidgetLazyVerticalGrid(
-    gridCells = NUM_GRID_CELLS,
-    items = state.alarms,
-    modifier = GlanceModifier.fillMaxSize(),
-    cellSpacing = verticalItemSpacing,
-  ) { item ->
-    TodayAlarmsWidgetListItem(
-      item = item,
-      group = item.groupId?.let(state.groups::get),
-      displayHeaderSupporting = true,
-      onClick = deepLinkAction(LocalContext.current.editAlarmDeeplinkUri(item.id)),
-      modifier = GlanceModifier.fillMaxSize(),
-    )
-  }
-}
-
-@Composable
-private fun TodayAlarmsWidgetListItem(
-  item: UpcomingAlarmListModel,
-  group: AlarmGroupModel?,
-  displayHeaderSupporting: Boolean,
-  onClick: Action?,
-  modifier: GlanceModifier = GlanceModifier,
-) {
-  @Composable
-  fun TitleText() {
-    buildAlarmLabelText(item.name, group).takeIf(String::isNotEmpty)?.let {
-      Text(text = it, maxLines = 1, style = WidgetTextStyles.titleText)
-    }
-  }
-
-  @Composable
-  fun SupportingText() {
-    Text(
-      text =
-        stringResource(
-          id =
-            if (item.scheduledOnDaysOfWeek.isNotEmpty() || item.date != null) {
-              R.string.custom_scheduled
-            } else {
-              R.string.one_time
-            }
-        ),
-      maxLines = 2,
-      style = WidgetTextStyles.supportingText,
-    )
-  }
-
-  @Composable
-  fun Leading() {
-    WidgetAlarmFireAtTimeText(
-      fireAtTime = item.fireAtTime,
-      is24HourFormat = DateFormat.is24HourFormat(LocalContext.current),
-      useFullFormat = displayHeaderSupporting,
-      style =
-        WidgetTextStyles.leadingText(
-          fontWeight =
-            if (item.status == UpcomingAlarmListStatus.ON) FontWeight.Medium else FontWeight.Normal
-        ),
-    )
-  }
-
-  @Composable
-  fun Trailing() {
-    Switch(
-      checked = item.status == UpcomingAlarmListStatus.ON,
-      onCheckedChange =
-        actionSendBroadcast(LocalContext.current.toggleAlarmOnOffIntent(item.id, LocalDate.now())),
-    )
-  }
-
-  WidgetListItem(
-    modifier =
-      modifier
-        .padding(fillItemItemPadding)
-        .cornerRadius(filledItemCornerRadius)
-        .background(
-          if (item.status == UpcomingAlarmListStatus.ON) GlanceTheme.colors.primaryContainer
-          else GlanceTheme.colors.secondaryContainer
-        ),
-    headlineContent = { if (displayHeaderSupporting) TitleText() },
-    supportingContent = { if (displayHeaderSupporting) SupportingText() },
-    onClick = onClick,
-    leadingContent = { Leading() },
-    trailingContent = { Trailing() },
-  )
 }
