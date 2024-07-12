@@ -44,8 +44,8 @@ fun RowScope.WidgetAlarmListTextClock(widgetLayoutSize: WidgetLayoutSize) {
     Box {
       val amPmFormat =
         context.getString(
-          if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_am_pm_full
-          else R.string.time_format_am_pm_short
+          if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_am_pm_date_full
+          else R.string.time_format_am_pm_date_short
         )
       WidgetTextClock(format12Hour = amPmFormat, format24Hour = amPmFormat) {
         setFloat(

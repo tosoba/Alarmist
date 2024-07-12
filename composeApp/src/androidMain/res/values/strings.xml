@@ -4,8 +4,8 @@
     <string name="clock">Clock</string>
     <string name="alarm_group">Alarm group</string>
 
-    <string name="time_format_am_pm_full">aa / EEEE</string>
-    <string name="time_format_am_pm_short">aa / EEE</string>
+    <string name="time_format_am_pm_date_full">aa / EEEE, MMM dd</string>
+    <string name="time_format_am_pm_date_short">aa / EEE, MMM dd</string>
     <string name="time_format_12_h_full">hh:mm:ss</string>
     <string name="time_format_12_h_short">hh:mm</string>
     <string name="time_format_24_h_full">HH:mm:ss</string>

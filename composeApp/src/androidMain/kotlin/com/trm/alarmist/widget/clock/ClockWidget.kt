@@ -67,8 +67,8 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
 
       Box {
         WidgetTextClock(
-          format12Hour = context.getString(R.string.time_format_am_pm_short),
-          format24Hour = context.getString(R.string.time_format_am_pm_short),
+          format12Hour = context.getString(R.string.time_format_am_pm_date_short),
+          format24Hour = context.getString(R.string.time_format_am_pm_date_short),
         ) {
           setInt(R.id.widget_text_clock, "setTextColor", textColor.getColor(context).toArgb())
           setFloat(
