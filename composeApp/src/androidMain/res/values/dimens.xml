@@ -6,6 +6,7 @@
     <integer name="widget_text_clock_large_font_size">28</integer>
     <integer name="widget_text_clock_normal_font_size">22</integer>
     <integer name="widget_text_clock_am_pm_font_size">12</integer>
+    <integer name="widget_chronometer_font_size">12</integer>
 
     <integer name="alarm_list_widget_target_cell_width">3</integer>
     <integer name="alarm_list_widget_target_cell_height">2</integer>

@@ -10,6 +10,7 @@ import androidx.glance.appwidget.Switch
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
+import androidx.glance.layout.Column
 import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -71,11 +72,15 @@ fun WidgetAlarmListItem(
 
   @Composable
   fun Trailing() {
-    Switch(
-      checked = item.status == UpcomingAlarmListStatus.ON,
-      onCheckedChange =
-        actionSendBroadcast(LocalContext.current.toggleAlarmOnOffIntent(item.id, LocalDate.now())),
-    )
+    Column {
+      Switch(
+        checked = item.status == UpcomingAlarmListStatus.ON,
+        onCheckedChange =
+          actionSendBroadcast(LocalContext.current.toggleAlarmOnOffIntent(item.id, LocalDate.now())),
+      )
+
+      item.fireOnDateTime?.let { WidgetChronometer(timeTo = it) }
+    }
   }
 
   WidgetListItem(
