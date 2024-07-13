@@ -1,10 +1,5 @@
 package com.trm.alarmist.feature.root
 
-import alarmist.composeapp.generated.resources.Res
-import alarmist.composeapp.generated.resources.delete_alarm
-import alarmist.composeapp.generated.resources.delete_alarm_confirmation_message
-import alarmist.composeapp.generated.resources.delete_group
-import alarmist.composeapp.generated.resources.delete_group_confirmation_message
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
@@ -19,7 +14,6 @@ import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.essenty.instancekeeper.getOrCreate
-import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
@@ -27,8 +21,8 @@ import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
 import com.trm.alarmist.feature.alarms.AlarmsComponent
 import com.trm.alarmist.feature.alarms.DefaultAlarmsComponent
-import com.trm.alarmist.feature.dialog.DefaultDialogComponent
-import com.trm.alarmist.feature.dialog.DialogComponent
+import com.trm.alarmist.feature.dialog.delete.DefaultDeleteDialog
+import com.trm.alarmist.feature.dialog.delete.DeleteDialog
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.sheet.BottomSheetChild
@@ -44,7 +38,7 @@ import kotlinx.serialization.Serializable
 interface RootComponent : BackHandlerOwner {
   val childStack: Value<ChildStack<*, Child>>
 
-  val dialog: Value<ChildSlot<*, DialogComponent>>
+  val dialog: DeleteDialog
 
   val bottomSheet: Value<ChildSlot<*, BottomSheetChild>>
 
@@ -55,8 +49,6 @@ interface RootComponent : BackHandlerOwner {
   fun onTimerDrawerItemClick()
 
   fun onStopwatchDrawerItemClick()
-
-  fun onDeleteActionClick()
 
   fun onAddAlarmClick()
 
@@ -96,30 +88,6 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
       childFactory = ::createChild,
     )
 
-  private val dialogNavigation = SlotNavigation<DialogComponent.Config>()
-
-  override val dialog: Value<ChildSlot<*, DialogComponent>> =
-    childSlot(
-      key = "RootDialogSlot",
-      source = dialogNavigation,
-      serializer = DialogComponent.Config.serializer(),
-      handleBackButton = true,
-    ) { config, childComponentContext ->
-      DefaultDialogComponent(
-        componentContext = childComponentContext,
-        title = config.title,
-        message = config.message,
-        onConfirm = {
-          dialogNavigation.dismiss()
-          deleteActionParameter(
-            alarmParameter = { it.feature::onDeleteClick },
-            groupParameter = { it.feature::onDeleteClick },
-          )()
-        },
-        onDismiss = dialogNavigation::dismiss,
-      )
-    }
-
   private val bottomSheetNavigation = SlotNavigation<BottomSheetChildConfig>()
 
   override val bottomSheet: Value<ChildSlot<*, BottomSheetChild>> =
@@ -154,6 +122,11 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
           )
         }
       }
+    }
+
+  override val dialog: DeleteDialog =
+    DefaultDeleteDialog(componentContext = componentContext, childSlotKey = "RootDialogSlot") {
+      bottomSheet.value.child?.instance
     }
 
   init {
@@ -203,48 +176,6 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
   override fun onStopwatchDrawerItemClick() {
     navigation.replaceAll(ChildConfig.Stopwatch)
   }
-
-  override fun onDeleteActionClick() {
-    dialogNavigation.activate(
-      DialogComponent.Config(
-        title =
-          deleteActionParameter(
-            alarmParameter = { getStringBlocking(Res.string.delete_alarm) },
-            groupParameter = { getStringBlocking(Res.string.delete_group) },
-          ),
-        message =
-          deleteActionParameter(
-            alarmParameter = { getStringBlocking(Res.string.delete_alarm_confirmation_message) },
-            groupParameter = { getStringBlocking(Res.string.delete_group_confirmation_message) },
-          ),
-      )
-    )
-  }
-
-  private fun <T> deleteActionParameter(
-    alarmParameter: (AlarmComponent) -> T,
-    groupParameter: (GroupComponent) -> T,
-    fallback: () -> T = { throw IllegalStateException() },
-  ): T =
-    when (val active = bottomSheet.value.child?.instance) {
-      is BottomSheetChild.Alarm -> {
-        if (active.component.mode is AlarmComponent.Mode.Edit) {
-          alarmParameter(active.component)
-        } else {
-          fallback()
-        }
-      }
-      is BottomSheetChild.Group -> {
-        if (active.component.mode is GroupComponent.Mode.Edit) {
-          groupParameter(active.component)
-        } else {
-          fallback()
-        }
-      }
-      else -> {
-        fallback()
-      }
-    }
 
   override fun onAddAlarmClick() {
     bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Add))

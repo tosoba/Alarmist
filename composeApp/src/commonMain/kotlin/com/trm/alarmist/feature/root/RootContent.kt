@@ -164,7 +164,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           is BottomSheetChild.Alarm -> {
             AlarmContent(
               component = child.component,
-              onDeleteActionClick = component::onDeleteActionClick,
+              onDeleteActionClick = component.dialog::onDelete,
               onBackClick = ::hideBottomSheet,
               onConfirmClick = {
                 child.component.feature.onConfirmClick().invokeOnCompletion { hideBottomSheet() }
@@ -174,7 +174,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
           is BottomSheetChild.Group -> {
             GroupContent(
               component = child.component,
-              onDeleteActionClick = component::onDeleteActionClick,
+              onDeleteActionClick = component.dialog::onDelete,
               onBackClick = ::hideBottomSheet,
               onConfirmClick = {
                 child.component.feature.onConfirmClick()?.invokeOnCompletion { hideBottomSheet() }
@@ -210,7 +210,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       }
     }
 
-    val dialog by component.dialog.subscribeAsState()
+    val dialog by component.dialog.component.subscribeAsState()
     dialog.child?.instance?.let {
       DialogContent(component = it, onConfirmClick = ::hideBottomSheet)
     }
