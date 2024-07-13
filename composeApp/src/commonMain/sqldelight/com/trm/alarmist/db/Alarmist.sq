@@ -175,6 +175,16 @@ DELETE FROM alarm WHERE id = ?;
 insertGroup:
 INSERT OR REPLACE INTO alarmGroup VALUES (?,?,?);
 
+selectGroupById:
+SELECT alarmGroup.*,
+COALESCE((SELECT COUNT(*) FROM alarm WHERE alarm.groupId = alarmGroup.id), 0) AS alarmsCount,
+CASE
+    WHEN EXISTS (SELECT 1 FROM alarm WHERE alarm.groupId = alarmGroup.id AND alarm.isOn = 1) THEN 1
+    ELSE 0
+END AS isOn
+FROM alarmGroup
+WHERE id = ?;
+
 updateGroupById:
 UPDATE alarmGroup
 SET name = ?, color = ?

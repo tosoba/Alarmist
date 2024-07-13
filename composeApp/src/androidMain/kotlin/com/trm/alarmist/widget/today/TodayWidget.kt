@@ -25,10 +25,13 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
+import com.trm.alarmist.core.common.model.Initialized
+import com.trm.alarmist.core.common.model.Uninitialized
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
-import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
+import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
@@ -42,7 +45,9 @@ import com.trm.alarmist.widget.common.util.addAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.deepLinkAction
 import com.trm.alarmist.widget.common.util.stringResource
+import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
+import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -56,14 +61,13 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
     provideContent {
       val state = currentState<Preferences>()
       val widgetState by
-        produceState(Initializable(TodayWidgetState(emptyList(), emptyMap())), state) {
+        produceState<Initializable<TodayWidgetState>>(Uninitialized, state) {
           value =
-            Initializable(
+            Initialized(
               TodayWidgetState(
-                alarms = getTodayAlarmsUseCase(),
+                alarms = getTodayAlarmsUseCase().map(::WidgetAlarmListModel),
                 groups = repository.getAllAlarmGroups().associateBy(AlarmGroupModel::id),
-              ),
-              true,
+              )
             )
         }
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
@@ -74,7 +78,7 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
 }
 
 private data class TodayWidgetState(
-  val alarms: List<UpcomingAlarmListModel>,
+  val alarms: List<WidgetAlarmListModel>,
   val groups: Map<Long, AlarmGroupModel>,
 )
 
@@ -130,21 +134,28 @@ private fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetSt
 
 @Composable
 private fun TodayWidgetScaffoldContent(state: Initializable<TodayWidgetState>) {
-  when {
-    !state.initialized -> {
+  when (state) {
+    is Uninitialized -> {
       WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))
     }
-    state.data.alarms.isEmpty() -> {
+    is Initialized -> {
       val context = LocalContext.current
-      WidgetEmptyContent(
-        emptyText = context.getString(R.string.no_alarms_today),
-        actionButtonText = context.getString(R.string.add_alarm),
-        actionButtonIcon = null,
-        actionButtonOnClick = deepLinkAction(context.addAlarmDeeplinkUri()),
-      )
-    }
-    else -> {
-      WidgetAlarmListContent(alarms = state.data.alarms, getGroup = state.data.groups::get)
+      if (state.data.alarms.isEmpty()) {
+        WidgetEmptyContent(
+          emptyText = context.getString(R.string.no_alarms_today),
+          actionButtonText = context.getString(R.string.add_alarm),
+          actionButtonIcon = null,
+          actionButtonOnClick = deepLinkAction(context.addAlarmDeeplinkUri()),
+        )
+      } else {
+        WidgetAlarmListContent(
+          alarms = state.data.alarms,
+          getGroup = state.data.groups::get,
+          onCheckedChangeAction = { item ->
+            actionSendBroadcast(context.toggleAlarmOnOffIntent(item.id, LocalDate.now()))
+          },
+        )
+      }
     }
   }
 }

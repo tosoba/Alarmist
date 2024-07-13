@@ -149,6 +149,13 @@ class AlarmLocalRepository(
   override fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmListModel>> =
     queries.selectAlarmsByGroupId(groupId).asAlarmsListFlow()
 
+  override suspend fun getAlarmsInGroup(groupId: Long): List<AlarmListModel> {
+    val now = LocalDateTime.now()
+    return withContext(dispatcher) {
+      queries.selectAlarmsByGroupId(groupId).executeAsList().map { it.toListModel(now) }
+    }
+  }
+
   override fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>> =
     queries.selectUngroupedAlarms().asAlarmsListFlow()
 
@@ -472,6 +479,9 @@ class AlarmLocalRepository(
       }
     }
   }
+
+  override suspend fun getGroupById(id: Long): AlarmGroupModel =
+    withContext(dispatcher) { queries.selectGroupById(id).executeAsOne().toModel() }
 
   override suspend fun deleteGroup(id: Long) {
     withContext(dispatcher) {

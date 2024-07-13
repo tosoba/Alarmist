@@ -59,6 +59,8 @@ interface AlarmRepository {
 
   fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmListModel>>
 
+  suspend fun getAlarmsInGroup(groupId: Long): List<AlarmListModel>
+
   fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>>
 
   fun getAlarmsScheduledToFireOnDateFlow(date: LocalDate): Flow<List<UpcomingAlarmListModel>>
@@ -112,6 +114,8 @@ interface AlarmRepository {
   suspend fun addGroup(name: String, color: Int, alarmIds: Collection<Long>)
 
   suspend fun editGroup(id: Long, name: String, color: Int, alarmIds: Collection<Long>)
+
+  suspend fun getGroupById(id: Long): AlarmGroupModel
 
   suspend fun deleteGroup(id: Long)
 }
