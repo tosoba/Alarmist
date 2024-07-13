@@ -17,7 +17,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -36,11 +35,9 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.trm.alarmist.core.common.util.BackHandler
-import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.dialog.DialogContent
-import com.trm.alarmist.feature.group.GroupContent
-import com.trm.alarmist.feature.sheet.BottomSheetChild
+import com.trm.alarmist.feature.sheet.BottomSheetContent
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
 import com.trm.alarmist.feature.widgets.WidgetsContent
@@ -155,35 +152,14 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         .invokeOnCompletion { component.onBottomSheetDismissRequest() }
     }
 
-    bottomSheet.child?.instance?.let { child ->
-      ModalBottomSheet(
-        onDismissRequest = component::onBottomSheetDismissRequest,
-        sheetState = bottomSheetState,
-      ) {
-        when (child) {
-          is BottomSheetChild.Alarm -> {
-            AlarmContent(
-              component = child.component,
-              onDeleteActionClick = component.deleteDialog::onDelete,
-              onBackClick = ::hideBottomSheet,
-              onConfirmClick = {
-                child.component.feature.onConfirmClick().invokeOnCompletion { hideBottomSheet() }
-              },
-            )
-          }
-          is BottomSheetChild.Group -> {
-            GroupContent(
-              component = child.component,
-              onDeleteActionClick = component.deleteDialog::onDelete,
-              onBackClick = ::hideBottomSheet,
-              onConfirmClick = {
-                child.component.feature.onConfirmClick()?.invokeOnCompletion { hideBottomSheet() }
-              },
-            )
-          }
-        }
-      }
-    }
+    BottomSheetContent(
+      state = bottomSheetState,
+      slot = bottomSheet,
+      onDismissRequest = component::onBottomSheetDismissRequest,
+      onDeleteActionClick = component.deleteDialog::onDelete,
+      onBackClick = ::hideBottomSheet,
+      onConfirmCompletion = ::hideBottomSheet,
+    )
 
     Column(modifier = modifier) {
       RootAppBar(activeChild = childStack.active.instance, onMenuClick = ::openDrawer)

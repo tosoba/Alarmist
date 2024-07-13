@@ -29,7 +29,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -45,10 +44,8 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.arkivanov.essenty.lifecycle.asEssentyLifecycle
 import com.trm.alarmist.core.ui.theme.AppTheme
-import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.dialog.DialogContent
-import com.trm.alarmist.feature.group.GroupContent
-import com.trm.alarmist.feature.sheet.BottomSheetChild
+import com.trm.alarmist.feature.sheet.BottomSheetContent
 import com.trm.alarmist.feature.widget.config.group.DefaultGroupWidgetConfigComponent
 import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigContent
 import com.trm.alarmist.widget.common.util.showWidgetPinnedToast
@@ -160,39 +157,14 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                 .invokeOnCompletion { component.onBottomSheetDismissRequest() }
             }
 
-            bottomSheet.child?.instance?.let { child ->
-              ModalBottomSheet(
-                onDismissRequest = component::onBottomSheetDismissRequest,
-                sheetState = bottomSheetState,
-              ) {
-                when (child) {
-                  is BottomSheetChild.Alarm -> {
-                    AlarmContent(
-                      component = child.component,
-                      onDeleteActionClick = component.deleteDialog::onDelete,
-                      onBackClick = ::hideBottomSheet,
-                      onConfirmClick = {
-                        child.component.feature.onConfirmClick().invokeOnCompletion {
-                          hideBottomSheet()
-                        }
-                      },
-                    )
-                  }
-                  is BottomSheetChild.Group -> {
-                    GroupContent(
-                      component = child.component,
-                      onDeleteActionClick = component.deleteDialog::onDelete,
-                      onBackClick = ::hideBottomSheet,
-                      onConfirmClick = {
-                        child.component.feature.onConfirmClick()?.invokeOnCompletion {
-                          hideBottomSheet()
-                        }
-                      },
-                    )
-                  }
-                }
-              }
-            }
+            BottomSheetContent(
+              state = bottomSheetState,
+              slot = bottomSheet,
+              onDismissRequest = component::onBottomSheetDismissRequest,
+              onDeleteActionClick = component.deleteDialog::onDelete,
+              onBackClick = ::hideBottomSheet,
+              onConfirmCompletion = ::hideBottomSheet,
+            )
 
             val dialog by component.deleteDialog.component.subscribeAsState()
             dialog.child?.instance?.let { dialogComponent ->
