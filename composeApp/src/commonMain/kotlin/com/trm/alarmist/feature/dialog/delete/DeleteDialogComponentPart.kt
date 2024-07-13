@@ -19,21 +19,21 @@ import com.trm.alarmist.feature.dialog.DialogComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.sheet.BottomSheetChild
 
-interface DeleteDialog {
+interface DeleteDialogComponentPart {
   val component: Value<ChildSlot<*, DialogComponent>>
 
   fun onDelete()
 }
 
-class DefaultDeleteDialog(
+class DefaultDeleteDialogComponentPart(
   componentContext: ComponentContext,
   childSlotKey: String,
   private val bottomSheetChild: () -> BottomSheetChild?,
-) : DeleteDialog {
+) : DeleteDialogComponentPart, ComponentContext by componentContext {
   private val dialogNavigation = SlotNavigation<DialogComponent.Config>()
 
   override val component: Value<ChildSlot<*, DialogComponent>> =
-    componentContext.childSlot(
+    childSlot(
       key = childSlotKey,
       source = dialogNavigation,
       serializer = DialogComponent.Config.serializer(),

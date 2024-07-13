@@ -21,8 +21,8 @@ import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
 import com.trm.alarmist.feature.alarms.AlarmsComponent
 import com.trm.alarmist.feature.alarms.DefaultAlarmsComponent
-import com.trm.alarmist.feature.dialog.delete.DefaultDeleteDialog
-import com.trm.alarmist.feature.dialog.delete.DeleteDialog
+import com.trm.alarmist.feature.dialog.delete.DefaultDeleteDialogComponentPart
+import com.trm.alarmist.feature.dialog.delete.DeleteDialogComponentPart
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.sheet.BottomSheetChild
@@ -38,7 +38,7 @@ import kotlinx.serialization.Serializable
 interface RootComponent : BackHandlerOwner {
   val childStack: Value<ChildStack<*, Child>>
 
-  val deleteDialog: DeleteDialog
+  val deleteDialog: DeleteDialogComponentPart
 
   val bottomSheet: Value<ChildSlot<*, BottomSheetChild>>
 
@@ -124,8 +124,8 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
       }
     }
 
-  override val deleteDialog: DeleteDialog =
-    DefaultDeleteDialog(componentContext = componentContext, childSlotKey = "RootDialogSlot") {
+  override val deleteDialog: DeleteDialogComponentPart =
+    DefaultDeleteDialogComponentPart(componentContext = componentContext, childSlotKey = "RootDialogSlot") {
       bottomSheet.value.child?.instance
     }
 

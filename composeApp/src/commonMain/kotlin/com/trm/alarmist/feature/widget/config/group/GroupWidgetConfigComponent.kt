@@ -11,8 +11,8 @@ import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
-import com.trm.alarmist.feature.dialog.delete.DefaultDeleteDialog
-import com.trm.alarmist.feature.dialog.delete.DeleteDialog
+import com.trm.alarmist.feature.dialog.delete.DefaultDeleteDialogComponentPart
+import com.trm.alarmist.feature.dialog.delete.DeleteDialogComponentPart
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.sheet.BottomSheetChild
@@ -21,7 +21,7 @@ import com.trm.alarmist.feature.sheet.BottomSheetChildConfig
 interface GroupWidgetConfigComponent {
   val feature: GroupWidgetConfigFeature
 
-  val deleteDialog: DeleteDialog
+  val deleteDialog: DeleteDialogComponentPart
 
   val bottomSheet: Value<ChildSlot<*, BottomSheetChild>>
 
@@ -64,8 +64,8 @@ class DefaultGroupWidgetConfigComponent(componentContext: ComponentContext) :
       }
     }
 
-  override val deleteDialog: DeleteDialog =
-    DefaultDeleteDialog(
+  override val deleteDialog: DeleteDialogComponentPart =
+    DefaultDeleteDialogComponentPart(
       componentContext = componentContext,
       childSlotKey = "GroupWidgetDialogSlot",
     ) {
