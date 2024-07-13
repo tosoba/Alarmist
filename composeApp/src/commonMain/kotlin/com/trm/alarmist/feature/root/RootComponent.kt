@@ -38,7 +38,7 @@ import kotlinx.serialization.Serializable
 interface RootComponent : BackHandlerOwner {
   val childStack: Value<ChildStack<*, Child>>
 
-  val dialog: DeleteDialog
+  val deleteDialog: DeleteDialog
 
   val bottomSheet: Value<ChildSlot<*, BottomSheetChild>>
 
@@ -124,7 +124,7 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
       }
     }
 
-  override val dialog: DeleteDialog =
+  override val deleteDialog: DeleteDialog =
     DefaultDeleteDialog(componentContext = componentContext, childSlotKey = "RootDialogSlot") {
       bottomSheet.value.child?.instance
     }

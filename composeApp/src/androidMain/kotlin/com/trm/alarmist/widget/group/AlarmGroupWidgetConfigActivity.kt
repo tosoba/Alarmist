@@ -46,6 +46,7 @@ import com.arkivanov.essenty.backhandler.BackHandler
 import com.arkivanov.essenty.lifecycle.asEssentyLifecycle
 import com.trm.alarmist.core.ui.theme.AppTheme
 import com.trm.alarmist.feature.alarm.AlarmContent
+import com.trm.alarmist.feature.dialog.DialogContent
 import com.trm.alarmist.feature.group.GroupContent
 import com.trm.alarmist.feature.sheet.BottomSheetChild
 import com.trm.alarmist.feature.widget.config.group.DefaultGroupWidgetConfigComponent
@@ -168,7 +169,7 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                   is BottomSheetChild.Alarm -> {
                     AlarmContent(
                       component = child.component,
-                      onDeleteActionClick = { /*TODO*/ },
+                      onDeleteActionClick = component.deleteDialog::onDelete,
                       onBackClick = ::hideBottomSheet,
                       onConfirmClick = {
                         child.component.feature.onConfirmClick().invokeOnCompletion {
@@ -180,7 +181,7 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                   is BottomSheetChild.Group -> {
                     GroupContent(
                       component = child.component,
-                      onDeleteActionClick = { /*TODO*/ },
+                      onDeleteActionClick = component.deleteDialog::onDelete,
                       onBackClick = ::hideBottomSheet,
                       onConfirmClick = {
                         child.component.feature.onConfirmClick()?.invokeOnCompletion {
@@ -191,6 +192,11 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                   }
                 }
               }
+            }
+
+            val dialog by component.deleteDialog.component.subscribeAsState()
+            dialog.child?.instance?.let { dialogComponent ->
+              DialogContent(component = dialogComponent, onConfirmClick = ::hideBottomSheet)
             }
           }
         }

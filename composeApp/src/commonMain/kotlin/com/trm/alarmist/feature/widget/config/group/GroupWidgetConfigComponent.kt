@@ -11,6 +11,8 @@ import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
+import com.trm.alarmist.feature.dialog.delete.DefaultDeleteDialog
+import com.trm.alarmist.feature.dialog.delete.DeleteDialog
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
 import com.trm.alarmist.feature.sheet.BottomSheetChild
@@ -18,6 +20,8 @@ import com.trm.alarmist.feature.sheet.BottomSheetChildConfig
 
 interface GroupWidgetConfigComponent {
   val feature: GroupWidgetConfigFeature
+
+  val deleteDialog: DeleteDialog
 
   val bottomSheet: Value<ChildSlot<*, BottomSheetChild>>
 
@@ -36,14 +40,6 @@ class DefaultGroupWidgetConfigComponent(componentContext: ComponentContext) :
         stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
       )
     }
-
-  init {
-    stateKeeper.register(
-      key = SAVED_STATE_KEY,
-      strategy = SerializableContainer.serializer(),
-      supplier = feature::saveState,
-    )
-  }
 
   private val bottomSheetNavigation = SlotNavigation<BottomSheetChildConfig>()
 
@@ -67,6 +63,22 @@ class DefaultGroupWidgetConfigComponent(componentContext: ComponentContext) :
         }
       }
     }
+
+  override val deleteDialog: DeleteDialog =
+    DefaultDeleteDialog(
+      componentContext = componentContext,
+      childSlotKey = "GroupWidgetDialogSlot",
+    ) {
+      bottomSheet.value.child?.instance
+    }
+
+  init {
+    stateKeeper.register(
+      key = SAVED_STATE_KEY,
+      strategy = SerializableContainer.serializer(),
+      supplier = feature::saveState,
+    )
+  }
 
   override fun onBottomSheetDismissRequest() {
     bottomSheetNavigation.dismiss()
