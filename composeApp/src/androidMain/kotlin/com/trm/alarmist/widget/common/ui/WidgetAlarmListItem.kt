@@ -79,7 +79,7 @@ fun WidgetAlarmListItem(
           actionSendBroadcast(LocalContext.current.toggleAlarmOnOffIntent(item.id, LocalDate.now())),
       )
 
-      item.fireOnDateTime?.let { WidgetChronometer(timeTo = it) }
+      item.fireOnDateTime?.let { WidgetFireOnDateTimeCountdown(it) }
     }
   }
 

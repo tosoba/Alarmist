@@ -11,13 +11,13 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 @Composable
-fun WidgetChronometer(timeTo: LocalDateTime, configure: RemoteViews.() -> Unit = {}) {
+fun WidgetChronometerCountdown(dateTimeTo: LocalDateTime, configure: RemoteViews.() -> Unit = {}) {
   AndroidRemoteViews(
     remoteViews =
       RemoteViews(LocalContext.current.packageName, R.layout.widget_chronometer).apply {
         setChronometer(
           R.id.widget_chronometer,
-          timeTo.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds() -
+          dateTimeTo.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds() -
             now().toEpochMilliseconds(),
           null,
           true,
