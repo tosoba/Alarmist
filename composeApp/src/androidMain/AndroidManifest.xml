@@ -43,7 +43,7 @@
             android:launchMode="singleInstance" />
 
         <activity
-            android:name=".widget.group.AlarmGroupWidgetConfigActivity"
+            android:name=".widget.group.GroupWidgetConfigActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
             android:excludeFromRecents="true"
             android:exported="false"
@@ -89,7 +89,7 @@
         </service>
 
         <receiver
-            android:name=".widget.today.TodayAlarmsWidgetReceiver"
+            android:name=".widget.today.TodayWidgetReceiver"
             android:exported="false"
             android:label="@string/today_alarms">
 
@@ -99,7 +99,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/today_alarms_widget" />
+                android:resource="@xml/today_widget" />
         </receiver>
 
         <receiver
@@ -117,7 +117,7 @@
         </receiver>
 
         <receiver
-            android:name=".widget.group.AlarmGroupWidgetReceiver"
+            android:name=".widget.group.GroupWidgetReceiver"
             android:exported="false"
             android:label="@string/alarm_group">
 
@@ -127,7 +127,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/alarm_group_widget" />
+                android:resource="@xml/group_widget" />
         </receiver>
 
 

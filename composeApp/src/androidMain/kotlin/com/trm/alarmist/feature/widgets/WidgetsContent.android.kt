@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.pinWidget
 import com.trm.alarmist.core.common.util.widgetReceiverComponentName
 import com.trm.alarmist.widget.common.WidgetPinnedReceiver
-import com.trm.alarmist.widget.group.AlarmGroupWidgetConfigActivity
-import com.trm.alarmist.widget.group.AlarmGroupWidgetReceiver
+import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
+import com.trm.alarmist.widget.group.GroupWidgetReceiver
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -129,8 +129,8 @@ private fun WidgetInfoCard(providerInfo: AppWidgetProviderInfo, modifier: Modifi
 
 private fun AppWidgetProviderInfo.pinCallback(context: Context): PendingIntent =
   when (provider) {
-    context.widgetReceiverComponentName<AlarmGroupWidgetReceiver>() -> {
-      AlarmGroupWidgetConfigActivity.pendingIntent(context)
+    context.widgetReceiverComponentName<GroupWidgetReceiver>() -> {
+      GroupWidgetConfigActivity.pendingIntent(context)
     }
     else -> {
       WidgetPinnedReceiver.pendingIntent(context)

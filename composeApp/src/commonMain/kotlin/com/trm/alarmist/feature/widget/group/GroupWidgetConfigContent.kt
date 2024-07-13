@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.widget.config.group
+package com.trm.alarmist.feature.widget.group
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

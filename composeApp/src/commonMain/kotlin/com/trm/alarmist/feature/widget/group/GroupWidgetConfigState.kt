@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.widget.config.group
+package com.trm.alarmist.feature.widget.group
 
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel

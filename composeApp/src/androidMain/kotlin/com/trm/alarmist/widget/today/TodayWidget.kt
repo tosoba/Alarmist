@@ -46,7 +46,7 @@ import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
+class TodayWidget : GlanceAppWidget(), KoinComponent {
   private val getTodayAlarmsUseCase: GetTodayAlarmsUseCase by inject()
   private val repository: AlarmRepository by inject()
 
@@ -56,10 +56,10 @@ class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
     provideContent {
       val state = currentState<Preferences>()
       val widgetState by
-        produceState(Initializable(TodayAlarmsWidgetState(emptyList(), emptyMap())), state) {
+        produceState(Initializable(TodayWidgetState(emptyList(), emptyMap())), state) {
           value =
             Initializable(
-              TodayAlarmsWidgetState(
+              TodayWidgetState(
                 alarms = getTodayAlarmsUseCase(),
                 groups = repository.getAllAlarmGroups().associateBy(AlarmGroupModel::id),
               ),
@@ -67,19 +67,19 @@ class TodayAlarmsWidget : GlanceAppWidget(), KoinComponent {
             )
         }
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
-        TodayAlarmsWidgetScaffold(id = id, state = widgetState)
+        TodayWidgetScaffold(id = id, state = widgetState)
       }
     }
   }
 }
 
-private data class TodayAlarmsWidgetState(
+private data class TodayWidgetState(
   val alarms: List<UpcomingAlarmListModel>,
   val groups: Map<Long, AlarmGroupModel>,
 )
 
 @Composable
-private fun TodayAlarmsWidgetScaffold(id: GlanceId, state: Initializable<TodayAlarmsWidgetState>) {
+private fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetState>) {
   GlanceTheme {
     val context = LocalContext.current
     val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
@@ -112,7 +112,7 @@ private fun TodayAlarmsWidgetScaffold(id: GlanceId, state: Initializable<TodayAl
                 backgroundColor = null,
                 onClick =
                   actionSendBroadcast(
-                    context.updateWidgetIntent<TodayAlarmsWidgetReceiver>(
+                    context.updateWidgetIntent<TodayWidgetReceiver>(
                       widgetManager.getAppWidgetId(id)
                     )
                   ),
@@ -123,13 +123,13 @@ private fun TodayAlarmsWidgetScaffold(id: GlanceId, state: Initializable<TodayAl
           }
         },
     ) {
-      TodayAlarmsWidgetScaffoldContent(state = state)
+      TodayWidgetScaffoldContent(state = state)
     }
   }
 }
 
 @Composable
-private fun TodayAlarmsWidgetScaffoldContent(state: Initializable<TodayAlarmsWidgetState>) {
+private fun TodayWidgetScaffoldContent(state: Initializable<TodayWidgetState>) {
   when {
     !state.initialized -> {
       WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))

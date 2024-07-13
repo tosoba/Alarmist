@@ -11,8 +11,8 @@ import com.trm.alarmist.widget.common.util.actionIntent
 import com.trm.alarmist.widget.common.util.updateById
 import com.trm.alarmist.widget.handleAction
 
-class AlarmGroupWidgetReceiver : GlanceAppWidgetReceiver() {
-  override val glanceAppWidget: GlanceAppWidget = AlarmGroupWidget()
+class GroupWidgetReceiver : GlanceAppWidgetReceiver() {
+  override val glanceAppWidget: GlanceAppWidget = GroupWidget()
 
   override fun onReceive(context: Context, intent: Intent) {
     super.onReceive(context, intent)
@@ -43,7 +43,7 @@ class AlarmGroupWidgetReceiver : GlanceAppWidgetReceiver() {
 
     fun updateGroupIntent(context: Context, widgetId: Int, groupId: Long): Intent =
       context
-        .actionIntent<AlarmGroupWidgetReceiver>(ACTION_UPDATE_GROUP)
+        .actionIntent<GroupWidgetReceiver>(ACTION_UPDATE_GROUP)
         .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
         .putExtra(EXTRA_GROUP_ID, groupId)
   }

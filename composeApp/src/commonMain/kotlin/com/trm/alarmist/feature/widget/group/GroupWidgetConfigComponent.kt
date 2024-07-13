@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.widget.config.group
+package com.trm.alarmist.feature.widget.group
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot

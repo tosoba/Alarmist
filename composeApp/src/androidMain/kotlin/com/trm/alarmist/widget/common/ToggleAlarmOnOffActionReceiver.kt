@@ -9,8 +9,8 @@ import com.trm.alarmist.widget.clock.ClockWidgetReceiver
 import com.trm.alarmist.widget.common.util.WidgetAction
 import com.trm.alarmist.widget.common.util.WidgetExtra
 import com.trm.alarmist.widget.common.util.updateAllWidgetsIntent
-import com.trm.alarmist.widget.group.AlarmGroupWidgetReceiver
-import com.trm.alarmist.widget.today.TodayAlarmsWidgetReceiver
+import com.trm.alarmist.widget.group.GroupWidgetReceiver
+import com.trm.alarmist.widget.today.TodayWidgetReceiver
 import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -29,9 +29,9 @@ class ToggleAlarmOnOffActionReceiver : BroadcastReceiver(), KoinComponent {
         date = LocalDate.fromEpochDays(intent.getIntExtra(WidgetExtra.ALARM_FIRE_DATE, 0)),
       )
 
-      context.sendBroadcast(context.updateAllWidgetsIntent<AlarmGroupWidgetReceiver>())
+      context.sendBroadcast(context.updateAllWidgetsIntent<GroupWidgetReceiver>())
       context.sendBroadcast(context.updateAllWidgetsIntent<ClockWidgetReceiver>())
-      context.sendBroadcast(context.updateAllWidgetsIntent<TodayAlarmsWidgetReceiver>())
+      context.sendBroadcast(context.updateAllWidgetsIntent<TodayWidgetReceiver>())
     }
   }
 }

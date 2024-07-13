@@ -46,14 +46,14 @@ import com.arkivanov.essenty.lifecycle.asEssentyLifecycle
 import com.trm.alarmist.core.ui.theme.AppTheme
 import com.trm.alarmist.feature.dialog.DialogContent
 import com.trm.alarmist.feature.sheet.BottomSheetContent
-import com.trm.alarmist.feature.widget.config.group.DefaultGroupWidgetConfigComponent
-import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigContent
+import com.trm.alarmist.feature.widget.group.DefaultGroupWidgetConfigComponent
+import com.trm.alarmist.feature.widget.group.GroupWidgetConfigContent
 import com.trm.alarmist.widget.common.util.showWidgetPinnedToast
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
 
-class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
+class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -183,7 +183,7 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
       PendingIntent.getActivity(
         context,
         0,
-        Intent(context, AlarmGroupWidgetConfigActivity::class.java).putExtra(EXTRA_IS_PINNED, true),
+        Intent(context, GroupWidgetConfigActivity::class.java).putExtra(EXTRA_IS_PINNED, true),
         // must have FLAG_MUTABLE - otherwise EXTRA_APPWIDGET_ID will not be set
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
       )

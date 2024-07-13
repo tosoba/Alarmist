@@ -1,4 +1,4 @@
-package com.trm.alarmist.feature.widget.config.group
+package com.trm.alarmist.feature.widget.group
 
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.common.CoroutineFeature
