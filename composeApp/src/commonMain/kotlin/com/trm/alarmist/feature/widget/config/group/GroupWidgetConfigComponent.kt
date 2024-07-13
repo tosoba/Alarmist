@@ -10,11 +10,11 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
-import com.trm.alarmist.feature.alarm.AlarmComponent
 import com.trm.alarmist.feature.alarm.DefaultAlarmComponent
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
-import kotlinx.serialization.Serializable
+import com.trm.alarmist.feature.sheet.BottomSheetChild
+import com.trm.alarmist.feature.sheet.BottomSheetChildConfig
 
 interface GroupWidgetConfigComponent {
   val feature: GroupWidgetConfigFeature
@@ -26,12 +26,6 @@ interface GroupWidgetConfigComponent {
   fun onAddGroupClick()
 
   fun onEditGroupClick(group: AlarmGroupModel)
-
-  sealed interface BottomSheetChild {
-    class Alarm(val component: AlarmComponent) : BottomSheetChild
-
-    class Group(val component: GroupComponent) : BottomSheetChild
-  }
 }
 
 class DefaultGroupWidgetConfigComponent(componentContext: ComponentContext) :
@@ -53,7 +47,7 @@ class DefaultGroupWidgetConfigComponent(componentContext: ComponentContext) :
 
   private val bottomSheetNavigation = SlotNavigation<BottomSheetChildConfig>()
 
-  override val bottomSheet: Value<ChildSlot<*, GroupWidgetConfigComponent.BottomSheetChild>> =
+  override val bottomSheet: Value<ChildSlot<*, BottomSheetChild>> =
     childSlot(
       key = "GroupWidgetBottomSheetSlot",
       source = bottomSheetNavigation,
@@ -62,12 +56,12 @@ class DefaultGroupWidgetConfigComponent(componentContext: ComponentContext) :
     ) { config, childComponentContext ->
       when (config) {
         is BottomSheetChildConfig.Alarm -> {
-          GroupWidgetConfigComponent.BottomSheetChild.Alarm(
+          BottomSheetChild.Alarm(
             DefaultAlarmComponent(componentContext = childComponentContext, mode = config.mode)
           )
         }
         is BottomSheetChildConfig.Group -> {
-          GroupWidgetConfigComponent.BottomSheetChild.Group(
+          BottomSheetChild.Group(
             DefaultGroupComponent(componentContext = childComponentContext, mode = config.mode)
           )
         }
@@ -84,13 +78,6 @@ class DefaultGroupWidgetConfigComponent(componentContext: ComponentContext) :
 
   override fun onEditGroupClick(group: AlarmGroupModel) {
     bottomSheetNavigation.activate(BottomSheetChildConfig.Group(GroupComponent.Mode.Edit(group)))
-  }
-
-  @Serializable
-  private sealed interface BottomSheetChildConfig {
-    @Serializable data class Alarm(val mode: AlarmComponent.Mode) : BottomSheetChildConfig
-
-    @Serializable data class Group(val mode: GroupComponent.Mode) : BottomSheetChildConfig
   }
 
   companion object {

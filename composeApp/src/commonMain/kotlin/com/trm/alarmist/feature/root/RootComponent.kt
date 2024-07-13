@@ -31,6 +31,8 @@ import com.trm.alarmist.feature.dialog.DefaultDialogComponent
 import com.trm.alarmist.feature.dialog.DialogComponent
 import com.trm.alarmist.feature.group.DefaultGroupComponent
 import com.trm.alarmist.feature.group.GroupComponent
+import com.trm.alarmist.feature.sheet.BottomSheetChild
+import com.trm.alarmist.feature.sheet.BottomSheetChildConfig
 import com.trm.alarmist.feature.stopwatch.DefaultStopwatchComponent
 import com.trm.alarmist.feature.stopwatch.StopwatchComponent
 import com.trm.alarmist.feature.timer.DefaultTimerComponent
@@ -69,12 +71,6 @@ interface RootComponent : BackHandlerOwner {
   fun onBackClick()
 
   fun onBottomSheetDismissRequest()
-
-  sealed interface BottomSheetChild {
-    class Alarm(val component: AlarmComponent) : BottomSheetChild
-
-    class Group(val component: GroupComponent) : BottomSheetChild
-  }
 
   sealed interface Child {
     class Alarms(val component: AlarmsComponent) : Child
@@ -126,7 +122,7 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
 
   private val bottomSheetNavigation = SlotNavigation<BottomSheetChildConfig>()
 
-  override val bottomSheet: Value<ChildSlot<*, RootComponent.BottomSheetChild>> =
+  override val bottomSheet: Value<ChildSlot<*, BottomSheetChild>> =
     childSlot(
       key = "RootBottomSheetSlot",
       source = bottomSheetNavigation,
@@ -148,12 +144,12 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
     ) { config, childComponentContext ->
       when (config) {
         is BottomSheetChildConfig.Alarm -> {
-          RootComponent.BottomSheetChild.Alarm(
+          BottomSheetChild.Alarm(
             DefaultAlarmComponent(componentContext = childComponentContext, mode = config.mode)
           )
         }
         is BottomSheetChildConfig.Group -> {
-          RootComponent.BottomSheetChild.Group(
+          BottomSheetChild.Group(
             DefaultGroupComponent(componentContext = childComponentContext, mode = config.mode)
           )
         }
@@ -231,14 +227,14 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
     fallback: () -> T = { throw IllegalStateException() },
   ): T =
     when (val active = bottomSheet.value.child?.instance) {
-      is RootComponent.BottomSheetChild.Alarm -> {
+      is BottomSheetChild.Alarm -> {
         if (active.component.mode is AlarmComponent.Mode.Edit) {
           alarmParameter(active.component)
         } else {
           fallback()
         }
       }
-      is RootComponent.BottomSheetChild.Group -> {
+      is BottomSheetChild.Group -> {
         if (active.component.mode is GroupComponent.Mode.Edit) {
           groupParameter(active.component)
         } else {
@@ -276,13 +272,6 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
 
   override fun onBottomSheetDismissRequest() {
     bottomSheetNavigation.dismiss()
-  }
-
-  @Serializable
-  private sealed interface BottomSheetChildConfig {
-    @Serializable data class Alarm(val mode: AlarmComponent.Mode) : BottomSheetChildConfig
-
-    @Serializable data class Group(val mode: GroupComponent.Mode) : BottomSheetChildConfig
   }
 
   @Serializable

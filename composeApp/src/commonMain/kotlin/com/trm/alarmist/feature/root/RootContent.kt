@@ -40,6 +40,7 @@ import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.alarms.AlarmsContent
 import com.trm.alarmist.feature.dialog.DialogContent
 import com.trm.alarmist.feature.group.GroupContent
+import com.trm.alarmist.feature.sheet.BottomSheetChild
 import com.trm.alarmist.feature.stopwatch.StopwatchContent
 import com.trm.alarmist.feature.timer.TimerContent
 import com.trm.alarmist.feature.widgets.WidgetsContent
@@ -160,7 +161,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
         sheetState = bottomSheetState,
       ) {
         when (child) {
-          is RootComponent.BottomSheetChild.Alarm -> {
+          is BottomSheetChild.Alarm -> {
             AlarmContent(
               component = child.component,
               onDeleteActionClick = component::onDeleteActionClick,
@@ -170,7 +171,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
               },
             )
           }
-          is RootComponent.BottomSheetChild.Group -> {
+          is BottomSheetChild.Group -> {
             GroupContent(
               component = child.component,
               onDeleteActionClick = component::onDeleteActionClick,

@@ -47,8 +47,8 @@ import com.arkivanov.essenty.lifecycle.asEssentyLifecycle
 import com.trm.alarmist.core.ui.theme.AppTheme
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.group.GroupContent
+import com.trm.alarmist.feature.sheet.BottomSheetChild
 import com.trm.alarmist.feature.widget.config.group.DefaultGroupWidgetConfigComponent
-import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigComponent
 import com.trm.alarmist.feature.widget.config.group.GroupWidgetConfigContent
 import com.trm.alarmist.widget.common.util.showWidgetPinnedToast
 import kotlinx.coroutines.launch
@@ -165,7 +165,7 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                 sheetState = bottomSheetState,
               ) {
                 when (child) {
-                  is GroupWidgetConfigComponent.BottomSheetChild.Alarm -> {
+                  is BottomSheetChild.Alarm -> {
                     AlarmContent(
                       component = child.component,
                       onDeleteActionClick = { /*TODO*/ },
@@ -177,7 +177,7 @@ class AlarmGroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                       },
                     )
                   }
-                  is GroupWidgetConfigComponent.BottomSheetChild.Group -> {
+                  is BottomSheetChild.Group -> {
                     GroupContent(
                       component = child.component,
                       onDeleteActionClick = { /*TODO*/ },
