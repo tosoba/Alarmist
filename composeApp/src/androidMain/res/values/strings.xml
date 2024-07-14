@@ -27,6 +27,9 @@
 
     <string name="no_alarms_today">No alarms today.</string>
     <string name="add_alarm">Add alarm</string>
+    <string name="group_is_empty">Group is empty</string>
+    <string name="no_group_set">No group set</string>
+    <string name="choose_group">Choose a group</string>
 
     <string name="today_widget_description">Alarms scheduled for today</string>
     <string name="clock_widget_description">A clock with next scheduled alarm</string>

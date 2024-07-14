@@ -1,25 +1,20 @@
 package com.trm.alarmist.widget.common.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
-import androidx.glance.layout.RowScope
-import androidx.glance.layout.padding
 import com.trm.alarmist.R
 
 @Composable
-fun RowScope.WidgetAlarmListTextClock(widgetLayoutSize: WidgetLayoutSize) {
+fun WidgetAlarmListTextClock(
+  widgetLayoutSize: WidgetLayoutSize,
+  modifier: GlanceModifier = GlanceModifier,
+) {
   val context = LocalContext.current
 
-  Column(
-    modifier =
-      GlanceModifier.defaultWeight().run {
-        if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
-      }
-  ) {
+  Column(modifier = modifier) {
     Box {
       WidgetTextClock(
         format12Hour =
@@ -36,7 +31,15 @@ fun RowScope.WidgetAlarmListTextClock(widgetLayoutSize: WidgetLayoutSize) {
         setFloat(
           R.id.widget_text_clock,
           "setTextSize",
-          context.resources.getInteger(R.integer.widget_text_clock_large_font_size).toFloat(),
+          context.resources
+            .getInteger(
+              if (widgetLayoutSize == WidgetLayoutSize.Large) {
+                R.integer.widget_text_clock_large_font_size
+              } else {
+                R.integer.widget_text_clock_normal_font_size
+              }
+            )
+            .toFloat(),
         )
       }
     }

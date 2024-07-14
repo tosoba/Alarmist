@@ -33,7 +33,7 @@ fun WidgetTitleBar(
         Image(
           modifier = GlanceModifier.size(24.dp),
           provider = startIcon,
-          contentDescription = "",
+          contentDescription = null,
           colorFilter = iconColor?.let { ColorFilter.tint(iconColor) },
         )
       }

@@ -123,7 +123,13 @@ private fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetSt
               )
             },
           ) {
-            WidgetAlarmListTextClock(widgetLayoutSize)
+            WidgetAlarmListTextClock(
+              widgetLayoutSize = widgetLayoutSize,
+              modifier =
+                GlanceModifier.defaultWeight().run {
+                  if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
+                },
+            )
           }
         },
     ) {

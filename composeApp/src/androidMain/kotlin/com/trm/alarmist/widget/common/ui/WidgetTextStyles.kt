@@ -42,4 +42,13 @@ object WidgetTextStyles {
         fontSize = 12.sp, // M3 Label Medium
         color = GlanceTheme.colors.secondary,
       )
+
+  val largeHeaderText: TextStyle
+    @Composable
+    get() =
+      TextStyle(
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        color = GlanceTheme.colors.onSurface,
+      )
 }

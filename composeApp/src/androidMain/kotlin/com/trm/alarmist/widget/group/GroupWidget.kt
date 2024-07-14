@@ -21,18 +21,13 @@ import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.provideContent
-import androidx.glance.background
 import androidx.glance.currentState
-import androidx.glance.layout.Alignment
-import androidx.glance.layout.Box
+import androidx.glance.layout.Column
+import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
 import com.trm.alarmist.R
-import com.trm.alarmist.core.common.model.Initializable
-import com.trm.alarmist.core.common.model.Initialized
-import com.trm.alarmist.core.common.model.Uninitialized
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
@@ -43,6 +38,7 @@ import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
+import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.addAlarmDeeplinkUri
@@ -65,43 +61,36 @@ class GroupWidget : GlanceAppWidget(), KoinComponent {
 
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
         GlanceTheme {
-          if (groupId == null) {
-            // TODO: WidgetEmptyContent? with action to go to config
-            Box(
-              contentAlignment = Alignment.Center,
-              modifier = GlanceModifier.background(GlanceTheme.colors.widgetBackground),
-            ) {
-              Text(
-                text = "No group set",
-                style = TextStyle(color = GlanceTheme.colors.onBackground),
-              )
-            }
-          } else {
-            val widgetState by
-              produceState<Initializable<GroupWidgetState>>(Uninitialized, state) {
-                value =
-                  Initialized(
-                    GroupWidgetState(
-                      alarms = repository.getAlarmsInGroup(groupId).map(::WidgetAlarmListModel),
-                      group = repository.getGroupById(groupId),
-                    )
+          val widgetState by
+            produceState<GroupWidgetState>(GroupWidgetState.Uninitialized, state) {
+              value =
+                if (groupId != null) {
+                  GroupWidgetState.Initialized(
+                    alarms = repository.getAlarmsInGroup(groupId).map(::WidgetAlarmListModel),
+                    group = repository.getGroupById(groupId),
                   )
-              }
-            GroupWidgetScaffold(id = id, state = widgetState)
-          }
+                } else {
+                  GroupWidgetState.NoGroupSet
+                }
+            }
+          GroupWidgetScaffold(id = id, state = widgetState)
         }
       }
     }
   }
 }
 
-private data class GroupWidgetState(
-  val alarms: List<WidgetAlarmListModel>,
-  val group: AlarmGroupModel,
-)
+private sealed interface GroupWidgetState {
+  data object NoGroupSet : GroupWidgetState
+
+  data object Uninitialized : GroupWidgetState
+
+  data class Initialized(val alarms: List<WidgetAlarmListModel>, val group: AlarmGroupModel) :
+    GroupWidgetState
+}
 
 @Composable
-private fun GroupWidgetScaffold(id: GlanceId, state: Initializable<GroupWidgetState>) {
+private fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
   GlanceTheme {
     val context = LocalContext.current
     val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
@@ -118,13 +107,7 @@ private fun GroupWidgetScaffold(id: GlanceId, state: Initializable<GroupWidgetSt
           val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
 
           WidgetTitleBar(
-            // TODO: either app icon or icon representing today
-            startIcon =
-              if (widgetLayoutSize == WidgetLayoutSize.Large) {
-                ImageProvider(R.mipmap.ic_launcher_round)
-              } else {
-                null
-              },
+            startIcon = null,
             iconColor = GlanceTheme.colors.primary,
             actions = {
               CircleIconButton(
@@ -141,7 +124,25 @@ private fun GroupWidgetScaffold(id: GlanceId, state: Initializable<GroupWidgetSt
               )
             },
           ) {
-            WidgetAlarmListTextClock(widgetLayoutSize)
+            Column(
+              modifier =
+                GlanceModifier.defaultWeight().run {
+                  if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
+                }
+            ) {
+              if (state is GroupWidgetState.Initialized) {
+                Row {
+                  // TODO: group icon
+                  Text(
+                    text = state.group.name,
+                    style = WidgetTextStyles.largeHeaderText,
+                    maxLines = 1,
+                  )
+                }
+              }
+
+              WidgetAlarmListTextClock(widgetLayoutSize)
+            }
           }
         },
     ) {
@@ -151,16 +152,17 @@ private fun GroupWidgetScaffold(id: GlanceId, state: Initializable<GroupWidgetSt
 }
 
 @Composable
-private fun GroupWidgetScaffoldContent(state: Initializable<GroupWidgetState>) {
+private fun GroupWidgetScaffoldContent(state: GroupWidgetState) {
+  val context = LocalContext.current
+
   when (state) {
-    is Uninitialized -> {
+    is GroupWidgetState.Uninitialized -> {
       WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))
     }
-    is Initialized -> {
-      if (state.data.alarms.isEmpty()) {
-        val context = LocalContext.current
+    is GroupWidgetState.Initialized -> {
+      if (state.alarms.isEmpty()) {
         WidgetEmptyContent(
-          emptyText = context.getString(R.string.no_alarms_today),
+          emptyText = context.getString(R.string.group_is_empty),
           actionButtonText = context.getString(R.string.add_alarm),
           actionButtonIcon = null,
           actionButtonOnClick = deepLinkAction(context.addAlarmDeeplinkUri()),
@@ -168,11 +170,19 @@ private fun GroupWidgetScaffoldContent(state: Initializable<GroupWidgetState>) {
       } else {
         val action = action {} // TODO: toggle on/off (globally) action
         WidgetAlarmListContent(
-          alarms = state.data.alarms,
-          getGroup = { state.data.group },
+          alarms = state.alarms,
+          getGroup = { null },
           onCheckedChangeAction = { action },
         )
       }
+    }
+    GroupWidgetState.NoGroupSet -> {
+      WidgetEmptyContent(
+        emptyText = context.getString(R.string.no_group_set),
+        actionButtonText = context.getString(R.string.choose_group),
+        actionButtonIcon = null,
+        actionButtonOnClick = action {}, // TODO: launch config activity
+      )
     }
   }
 }
