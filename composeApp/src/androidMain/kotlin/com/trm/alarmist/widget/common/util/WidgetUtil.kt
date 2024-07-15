@@ -4,16 +4,21 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.runtime.Composable
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
+import androidx.glance.LocalContext
+import androidx.glance.action.Action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.state.updateAppWidgetState
 import com.trm.alarmist.R
 import com.trm.alarmist.widget.common.ToggleAlarmOnOffActionReceiver
+import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -89,3 +94,7 @@ internal fun updateUuid(prefs: MutablePreferences) {
 internal fun Context.showWidgetPinnedToast() {
   Toast.makeText(this, getString(R.string.widget_pinned_success_info), Toast.LENGTH_SHORT).show()
 }
+
+@Composable
+internal fun startGroupWidgetConfigAction(widgetId: Int): Action =
+  actionStartActivity(GroupWidgetConfigActivity.widgetActionIntent(LocalContext.current, widgetId))

@@ -54,6 +54,7 @@ import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.addAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.deepLinkAction
+import com.trm.alarmist.widget.common.util.startGroupWidgetConfigAction
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import org.koin.core.component.KoinComponent
@@ -159,13 +160,13 @@ private fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
           }
         },
     ) {
-      GroupWidgetScaffoldContent(state = state)
+      GroupWidgetScaffoldContent(id = id, state = state)
     }
   }
 }
 
 @Composable
-private fun GroupWidgetScaffoldContent(state: GroupWidgetState) {
+private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
   val context = LocalContext.current
 
   when (state) {
@@ -190,11 +191,12 @@ private fun GroupWidgetScaffoldContent(state: GroupWidgetState) {
       }
     }
     GroupWidgetState.NoGroupSet -> {
+      val widgetManager = remember { GlanceAppWidgetManager(context) }
       WidgetEmptyContent(
         emptyText = context.getString(R.string.no_group_set),
         actionButtonText = context.getString(R.string.choose_group),
         actionButtonIcon = null,
-        actionButtonOnClick = action {}, // TODO: launch config activity
+        actionButtonOnClick = startGroupWidgetConfigAction(widgetManager.getAppWidgetId(id)),
       )
     }
   }
