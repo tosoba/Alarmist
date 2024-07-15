@@ -38,4 +38,11 @@
     <string name="widget_pinned_success_info">Widget pinned. Check it on your home screen.</string>
 
     <string name="stopwatch_service_description">A foreground service used to display a notification for a currently running stopwatch.</string>
+
+    <string name="less_than_days">&lt; %1$s days</string>
+    <string name="less_than_hours">&lt; %1$s hours</string>
+    <string name="less_than_1_hour">&lt; 1 hour</string>
+    <string name="less_than_45_minutes">&lt; 45 minutes</string>
+    <string name="less_than_30_minutes">&lt; 30 minutes</string>
+    <string name="soon">Soon</string>
 </resources>

@@ -64,7 +64,7 @@ fun WidgetAlarmListItem(
   fun Trailing() {
     Column {
       Switch(checked = item.isOn, onCheckedChange = onCheckedChange)
-      item.fireOnDateTime?.let { WidgetFireOnDateTimeCountdown(it) }
+      item.fireOnDateTime?.let { WidgetFireOnDateTimeRemainingText(it) }
     }
   }
 
