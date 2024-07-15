@@ -6,11 +6,15 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.action
@@ -22,11 +26,17 @@ import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
+import androidx.glance.layout.width
 import androidx.glance.text.Text
+import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.R
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
@@ -131,8 +141,11 @@ private fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
                 }
             ) {
               if (state is GroupWidgetState.Initialized) {
-                Row {
-                  // TODO: group icon
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                  GroupIcon(color = state.group.color, size = 24.dp)
+
+                  Spacer(GlanceModifier.width(8.dp))
+
                   Text(
                     text = state.group.name,
                     style = WidgetTextStyles.largeHeaderText,
@@ -184,5 +197,22 @@ private fun GroupWidgetScaffoldContent(state: GroupWidgetState) {
         actionButtonOnClick = action {}, // TODO: launch config activity
       )
     }
+  }
+}
+
+@Composable
+private fun GroupIcon(color: Long, size: Dp, modifier: GlanceModifier = GlanceModifier) {
+  Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Image(
+      provider = ImageProvider(R.drawable.folder),
+      contentDescription = null,
+      modifier = GlanceModifier.size(size),
+      colorFilter = ColorFilter.tint(ColorProvider(Color(color))),
+    )
+    Image(
+      provider = ImageProvider(R.drawable.folder_open),
+      contentDescription = null,
+      modifier = GlanceModifier.size(size),
+    )
   }
 }
