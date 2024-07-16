@@ -107,6 +107,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -323,35 +324,12 @@ private fun AlarmContent(
         }
       }
 
-      val autoScheduleLabel = stringResource(Res.string.auto_schedule_label)
-      Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-          Modifier.clip(RoundedCornerShape(24.dp))
-            .toggleable(
-              value = state.isOn,
-              role = Role.Switch,
-              onValueChange = remember { { onToggleIsOnChange() } },
-            )
-            .padding(horizontal = 24.dp, vertical = 16.dp)
-            .semantics { contentDescription = autoScheduleLabel },
-      ) {
-        Icon(
-          imageVector = Icons.Default.AlarmOn,
-          contentDescription = null,
-          modifier = Modifier.padding(end = 12.dp),
-        )
-
-        Text(
-          text = autoScheduleLabel,
-          style = MaterialTheme.typography.titleLarge,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
-        )
-
-        Spacer(Modifier.weight(1f))
-
-        Switch(checked = state.isOn, onCheckedChange = null)
-      }
+      ToggleableSwitchRow(
+        value = state.isOn,
+        label = stringResource(Res.string.auto_schedule_label),
+        imageVector = Icons.Default.AlarmOn,
+        onValueChange = remember { { onToggleIsOnChange() } },
+      )
 
       Row(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
         Icon(
@@ -460,32 +438,12 @@ private fun AlarmContent(
         )
       }
 
-      Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-          Modifier.clip(RoundedCornerShape(24.dp))
-            .clickable(onClick = onToggleVibrationEnabled)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-      ) {
-        Icon(
-          imageVector = Icons.Default.Vibration,
-          contentDescription = stringResource(Res.string.vibration_label),
-          modifier = Modifier.padding(end = 12.dp),
-        )
-
-        Text(
-          text = stringResource(Res.string.vibration_label),
-          style = MaterialTheme.typography.titleLarge,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
-        )
-
-        Spacer(Modifier.weight(1f))
-
-        Switch(
-          checked = state.vibrationEnabled,
-          onCheckedChange = remember { { onToggleVibrationEnabled() } },
-        )
-      }
+      ToggleableSwitchRow(
+        value = state.vibrationEnabled,
+        label = stringResource(Res.string.vibration_label),
+        imageVector = Icons.Default.Vibration,
+        onValueChange = remember { { onToggleVibrationEnabled() } },
+      )
 
       Row(
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
@@ -525,19 +483,12 @@ private fun AlarmContent(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
       )
 
-      Row(
-        modifier =
-          Modifier.clip(RoundedCornerShape(24.dp))
-            .clickable(onClick = onToggleSnoozeEnabled)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+      ToggleableSwitchRow(
+        value = state.snoozeEnabled,
+        label = stringResource(Res.string.snooze_label),
+        imageVector = Icons.Default.Snooze,
+        onValueChange = remember { { onToggleSnoozeEnabled() } },
       ) {
-        Icon(
-          imageVector = Icons.Default.Snooze,
-          contentDescription = stringResource(Res.string.snooze_label),
-          modifier = Modifier.padding(end = 12.dp),
-        )
-
         Column {
           Text(
             text = stringResource(Res.string.snooze_label),
@@ -557,13 +508,6 @@ private fun AlarmContent(
             )
           }
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Switch(
-          checked = state.snoozeEnabled,
-          onCheckedChange = remember { { onToggleSnoozeEnabled() } },
-        )
       }
 
       AnimatedVisibility(visible = state.snoozeEnabled, enter = fadeIn(), exit = fadeOut()) {
@@ -589,19 +533,12 @@ private fun AlarmContent(
         }
       }
 
-      Row(
-        modifier =
-          Modifier.clip(RoundedCornerShape(24.dp))
-            .clickable(onClick = onToggleReminderEnabled)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+      ToggleableSwitchRow(
+        value = state.reminderEnabled,
+        label = stringResource(Res.string.reminder_label),
+        imageVector = Icons.Default.IncompleteCircle,
+        onValueChange = remember { { onToggleReminderEnabled() } },
       ) {
-        Icon(
-          imageVector = Icons.Default.IncompleteCircle,
-          contentDescription = stringResource(Res.string.reminder_label),
-          modifier = Modifier.padding(end = 12.dp),
-        )
-
         Column {
           Text(
             text = stringResource(Res.string.reminder_label),
@@ -618,13 +555,6 @@ private fun AlarmContent(
             )
           }
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Switch(
-          checked = state.reminderEnabled,
-          onCheckedChange = remember { { onToggleReminderEnabled() } },
-        )
       }
 
       AnimatedVisibility(visible = state.reminderEnabled, enter = fadeIn(), exit = fadeOut()) {
@@ -704,17 +634,51 @@ private fun AlarmContent(
       AlarmSoundDialog(component = it, modifier = Modifier.heightIn(max = 500.dp))
     }
 
-    val permissionsHandler = postNotificationsPermissionHandler(onGranted = onConfirmClick)
-
     FloatingActionButton(
       modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-      onClick = permissionsHandler,
+      onClick = postNotificationsPermissionHandler(onGranted = onConfirmClick),
     ) {
       Icon(
         imageVector = Icons.Default.Check,
         contentDescription = stringResource(Res.string.confirm),
       )
     }
+  }
+}
+
+@Composable
+private fun ToggleableSwitchRow(
+  value: Boolean,
+  label: String,
+  imageVector: ImageVector,
+  onValueChange: (Boolean) -> Unit,
+  content: @Composable () -> Unit = {
+    Text(
+      text = label,
+      style = MaterialTheme.typography.titleLarge,
+      color = MaterialTheme.colorScheme.onPrimaryContainer,
+    )
+  },
+) {
+  Row(
+    verticalAlignment = Alignment.CenterVertically,
+    modifier =
+      Modifier.clip(RoundedCornerShape(24.dp))
+        .toggleable(value = value, role = Role.Switch, onValueChange = onValueChange)
+        .padding(horizontal = 24.dp, vertical = 16.dp)
+        .semantics { contentDescription = label },
+  ) {
+    Icon(
+      imageVector = imageVector,
+      contentDescription = null,
+      modifier = Modifier.padding(end = 12.dp),
+    )
+
+    content()
+
+    Spacer(Modifier.weight(1f))
+
+    Switch(checked = value, onCheckedChange = null)
   }
 }
 
