@@ -130,11 +130,12 @@
                 android:resource="@xml/group_widget" />
         </receiver>
 
+        <receiver android:name=".widget.common.system.ToggleAlarmOnOffOnDateActionReceiver" />
 
-        <receiver android:name=".widget.common.ToggleAlarmOnOffActionReceiver" />
+        <receiver android:name=".widget.common.system.ToggleAlarmOnOffActionReceiver" />
 
         <receiver
-            android:name=".widget.common.WidgetPinnedReceiver"
+            android:name=".widget.common.system.WidgetPinnedReceiver"
             android:exported="false" />
 
     </application>

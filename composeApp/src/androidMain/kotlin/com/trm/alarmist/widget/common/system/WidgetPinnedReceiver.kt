@@ -1,4 +1,4 @@
-package com.trm.alarmist.widget.common
+package com.trm.alarmist.widget.common.system
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver

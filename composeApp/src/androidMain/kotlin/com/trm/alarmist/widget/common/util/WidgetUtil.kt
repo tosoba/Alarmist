@@ -17,7 +17,8 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.state.updateAppWidgetState
 import com.trm.alarmist.R
-import com.trm.alarmist.widget.common.ToggleAlarmOnOffActionReceiver
+import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffActionReceiver
+import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffOnDateActionReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
@@ -59,6 +60,7 @@ private fun Context.getGlanceIdByWidgetId(widgetId: Int): GlanceId =
 internal object WidgetAction {
   const val UPDATE_ALL_WIDGETS = "ACTION_UPDATE_ALL_WIDGETS"
   const val UPDATE_WIDGET = "ACTION_UPDATE_WIDGET"
+  const val TOGGLE_ALARM_ON_OFF_ON_DATE = "TOGGLE_ALARM_ON_OFF_ON_DATE"
   const val TOGGLE_ALARM_ON_OFF = "TOGGLE_ALARM_ON_OFF"
 }
 
@@ -73,13 +75,17 @@ internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateWidgetIn
   actionIntent<T>(WidgetAction.UPDATE_WIDGET)
     .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
 
-internal fun Context.toggleAlarmOnOffIntent(alarmId: Long, alarmFireDate: LocalDate): Intent =
-  actionIntent<ToggleAlarmOnOffActionReceiver>(WidgetAction.TOGGLE_ALARM_ON_OFF)
-    .putExtra(WidgetExtra.ALARM_ID, alarmId)
-    .putExtra(WidgetExtra.ALARM_FIRE_DATE, alarmFireDate.toEpochDays())
-
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.updateAllWidgetsIntent(): Intent =
   actionIntent<T>(WidgetAction.UPDATE_ALL_WIDGETS)
+
+internal fun Context.toggleAlarmOnOffIntent(alarmId: Long): Intent =
+  actionIntent<ToggleAlarmOnOffActionReceiver>(WidgetAction.TOGGLE_ALARM_ON_OFF)
+    .putExtra(WidgetExtra.ALARM_ID, alarmId)
+
+internal fun Context.toggleAlarmOnOffOnDateIntent(alarmId: Long, alarmFireDate: LocalDate): Intent =
+  actionIntent<ToggleAlarmOnOffOnDateActionReceiver>(WidgetAction.TOGGLE_ALARM_ON_OFF_ON_DATE)
+    .putExtra(WidgetExtra.ALARM_ID, alarmId)
+    .putExtra(WidgetExtra.ALARM_FIRE_DATE, alarmFireDate.toEpochDays())
 
 internal inline fun <reified T> Context.actionIntent(action: String): Intent =
   Intent(this, T::class.java).also { it.action = action }

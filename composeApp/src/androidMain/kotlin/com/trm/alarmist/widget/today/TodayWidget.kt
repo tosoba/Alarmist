@@ -45,7 +45,7 @@ import com.trm.alarmist.widget.common.util.addAlarmDeeplinkUri
 import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.deepLinkAction
 import com.trm.alarmist.widget.common.util.stringResource
-import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
+import com.trm.alarmist.widget.common.util.toggleAlarmOnOffOnDateIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
@@ -70,6 +70,7 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
               )
             )
         }
+
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
         TodayWidgetScaffold(id = id, state = widgetState)
       }
@@ -158,7 +159,7 @@ private fun TodayWidgetScaffoldContent(state: Initializable<TodayWidgetState>) {
           alarms = state.data.alarms,
           getGroup = state.data.groups::get,
           onCheckedChangeAction = { item ->
-            actionSendBroadcast(context.toggleAlarmOnOffIntent(item.id, LocalDate.now()))
+            actionSendBroadcast(context.toggleAlarmOnOffOnDateIntent(item.id, LocalDate.now()))
           },
         )
       }

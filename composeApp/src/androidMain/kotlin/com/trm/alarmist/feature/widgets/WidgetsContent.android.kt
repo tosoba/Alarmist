@@ -33,7 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.pinWidget
 import com.trm.alarmist.core.common.util.widgetReceiverComponentName
-import com.trm.alarmist.widget.common.WidgetPinnedReceiver
+import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
 import org.jetbrains.compose.resources.stringResource

@@ -17,7 +17,6 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.action.action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
@@ -56,6 +55,7 @@ import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.deepLinkAction
 import com.trm.alarmist.widget.common.util.startGroupWidgetConfigAction
 import com.trm.alarmist.widget.common.util.stringResource
+import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -68,24 +68,19 @@ class GroupWidget : GlanceAppWidget(), KoinComponent {
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       val state = currentState<Preferences>()
-      val groupId = state[GroupWidgetReceiver.groupIdKey]
+      val widgetState by
+        produceState<GroupWidgetState>(GroupWidgetState.Uninitialized, state) {
+          value =
+            state[GroupWidgetReceiver.groupIdKey]?.let {
+              GroupWidgetState.Initialized(
+                alarms = repository.getAlarmsInGroup(it).map(::WidgetAlarmListModel),
+                group = repository.getGroupById(it),
+              )
+            } ?: GroupWidgetState.NoGroupSet
+        }
 
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
-        GlanceTheme {
-          val widgetState by
-            produceState<GroupWidgetState>(GroupWidgetState.Uninitialized, state) {
-              value =
-                if (groupId != null) {
-                  GroupWidgetState.Initialized(
-                    alarms = repository.getAlarmsInGroup(groupId).map(::WidgetAlarmListModel),
-                    group = repository.getGroupById(groupId),
-                  )
-                } else {
-                  GroupWidgetState.NoGroupSet
-                }
-            }
-          GroupWidgetScaffold(id = id, state = widgetState)
-        }
+        GroupWidgetScaffold(id = id, state = widgetState)
       }
     }
   }
@@ -182,11 +177,10 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
           actionButtonOnClick = deepLinkAction(context.addAlarmDeeplinkUri()),
         )
       } else {
-        val action = action {} // TODO: toggle on/off (globally) action
         WidgetAlarmListContent(
           alarms = state.alarms,
           getGroup = { null },
-          onCheckedChangeAction = { action },
+          onCheckedChangeAction = { actionSendBroadcast(context.toggleAlarmOnOffIntent(it.id)) },
         )
       }
     }

@@ -5,14 +5,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import com.trm.alarmist.widget.common.util.actionIntent
 import com.trm.alarmist.widget.common.util.updateById
 import com.trm.alarmist.widget.handleAction
 
 class GroupWidgetReceiver : GlanceAppWidgetReceiver() {
-  override val glanceAppWidget: GlanceAppWidget = GroupWidget()
+  override val glanceAppWidget: GroupWidget = GroupWidget()
 
   override fun onReceive(context: Context, intent: Intent) {
     super.onReceive(context, intent)
