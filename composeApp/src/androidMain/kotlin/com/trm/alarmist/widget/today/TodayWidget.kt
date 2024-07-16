@@ -134,13 +134,13 @@ private fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetSt
           }
         },
     ) {
-      TodayWidgetScaffoldContent(state = state)
+      TodayWidgetScaffoldContent(id = id, state = state)
     }
   }
 }
 
 @Composable
-private fun TodayWidgetScaffoldContent(state: Initializable<TodayWidgetState>) {
+private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayWidgetState>) {
   when (state) {
     is Uninitialized -> {
       WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))
@@ -155,11 +155,23 @@ private fun TodayWidgetScaffoldContent(state: Initializable<TodayWidgetState>) {
           actionButtonOnClick = deepLinkAction(context.addAlarmDeeplinkUri()),
         )
       } else {
+        val today = LocalDate.now()
         WidgetAlarmListContent(
           alarms = state.data.alarms,
           getGroup = state.data.groups::get,
           onCheckedChangeAction = { item ->
-            actionSendBroadcast(context.toggleAlarmOnOffOnDateIntent(item.id, LocalDate.now()))
+            val now = LocalDate.now()
+            actionSendBroadcast(
+              if (today == now) {
+                context.toggleAlarmOnOffOnDateIntent(item.id, today)
+              } else {
+                // if the user tries to toggle the alarm just after midnight and the latest widget
+                // update was before midnight then update a widget
+                context.updateWidgetIntent<TodayWidgetReceiver>(
+                  GlanceAppWidgetManager(context).getAppWidgetId(id)
+                )
+              }
+            )
           },
         )
       }
