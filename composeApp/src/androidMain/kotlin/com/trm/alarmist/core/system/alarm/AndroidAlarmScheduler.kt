@@ -78,7 +78,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
 
   override fun cancelAlarm(id: Long) {
     context.cancelNotification(id.toInt())
-
+    alarmManager.cancel(cancelAlarmUpcomingPendingIntent(id))
     alarmManager.cancel(cancelAlarmFiredPendingIntent(id))
   }
 
@@ -87,7 +87,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
       context,
       settings.id.toInt(),
       AlarmFiredBroadcastReceiver.intent(context, settings),
-      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+      pendingIntentFlags(),
     )
 
   // used only for alarm cancellation - no need to pass extras
@@ -96,7 +96,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
       context,
       id.toInt(),
       AlarmFiredBroadcastReceiver.intent(context),
-      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+      pendingIntentFlags(),
     )
 
   private fun alarmUpcomingPendingIntent(settings: AlarmFireSettings): PendingIntent =
@@ -104,6 +104,18 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
       context,
       settings.id.toInt(),
       AlarmUpcomingBroadcastReceiver.intent(context, settings),
-      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+      pendingIntentFlags(),
     )
+
+  // used only for alarm cancellation - no need to pass extras
+  private fun cancelAlarmUpcomingPendingIntent(id: Long): PendingIntent =
+    PendingIntent.getBroadcast(
+      context,
+      id.toInt(),
+      AlarmUpcomingBroadcastReceiver.intent(context),
+      pendingIntentFlags(),
+    )
+
+  private fun pendingIntentFlags(): Int =
+    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 }

@@ -13,7 +13,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class AlarmUpcomingBroadcastReceiver : BroadcastReceiver(), KoinComponent {
-  private val isAlarmScheduledToFireAtDateTimeUseCase: IsAlarmScheduledToFireAtDateTimeUseCase by inject()
+  private val isAlarmScheduledToFireAtDateTimeUseCase: IsAlarmScheduledToFireAtDateTimeUseCase by
+    inject()
 
   override fun onReceive(context: Context?, intent: Intent?) {
     if (intent?.action != ACTION_ALARM_UPCOMING) return
@@ -29,9 +30,10 @@ class AlarmUpcomingBroadcastReceiver : BroadcastReceiver(), KoinComponent {
   companion object {
     private const val ACTION_ALARM_UPCOMING = "ALARM_UPCOMING"
 
+    fun intent(context: Context) =
+      Intent(context, AlarmUpcomingBroadcastReceiver::class.java).setAction(ACTION_ALARM_UPCOMING)
+
     fun intent(context: Context, settings: AlarmFireSettings): Intent =
-      Intent(context, AlarmUpcomingBroadcastReceiver::class.java)
-        .setAction(ACTION_ALARM_UPCOMING)
-        .putExtra(EXTRA_ALARM_FIRE_SETTINGS, settings)
+      intent(context).putExtra(EXTRA_ALARM_FIRE_SETTINGS, settings)
   }
 }
