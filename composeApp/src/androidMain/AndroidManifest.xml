@@ -135,6 +135,10 @@
         <receiver android:name=".widget.common.system.ToggleAlarmOnOffActionReceiver" />
 
         <receiver
+            android:name=".widget.common.system.WidgetUpdateAlarmReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name=".widget.common.system.WidgetPinnedReceiver"
             android:exported="false" />
 

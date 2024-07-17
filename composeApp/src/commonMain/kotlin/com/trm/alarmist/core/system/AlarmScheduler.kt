@@ -3,6 +3,8 @@ package com.trm.alarmist.core.system
 import kotlinx.datetime.LocalDateTime
 
 interface AlarmScheduler {
+  fun scheduleNextWidgetUpdate()
+
   fun scheduleAlarm(
     id: Long,
     name: String?,
@@ -12,7 +14,7 @@ interface AlarmScheduler {
     soundEnabled: Boolean,
     soundId: String?,
     vibrationEnabled: Boolean,
-    reminderOffsetHours: Long
+    reminderOffsetHours: Long,
   )
 
   fun cancelAlarm(id: Long)

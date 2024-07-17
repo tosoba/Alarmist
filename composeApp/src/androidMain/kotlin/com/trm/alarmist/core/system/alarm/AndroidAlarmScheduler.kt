@@ -4,17 +4,34 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.system.AlarmScheduler
 import com.trm.alarmist.core.system.alarm.receiver.AlarmFiredBroadcastReceiver
 import com.trm.alarmist.core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver
+import com.trm.alarmist.widget.common.system.WidgetUpdateAlarmReceiver
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 
 class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
   private val alarmManager = context.getSystemService(AlarmManager::class.java)
+
+  override fun scheduleNextWidgetUpdate() {
+    alarmManager.setExact(
+      AlarmManager.RTC,
+      LocalDate.now()
+        .plus(1, DateTimeUnit.DAY)
+        .atTime(0, 0, 1)
+        .toInstant(TimeZone.currentSystemDefault())
+        .toEpochMilliseconds(),
+      WidgetUpdateAlarmReceiver.pendingIntent(context),
+    )
+  }
 
   override fun scheduleAlarm(
     id: Long,

@@ -22,4 +22,8 @@ class AndroidWidgetManager(private val context: Context) : WidgetManager {
       )
     )
   }
+
+  override fun updateTodayWidgets() {
+    context.sendBroadcast(context.updateAllWidgetsIntent<TodayWidgetReceiver>())
+  }
 }
