@@ -1,21 +1,32 @@
 package com.trm.alarmist.feature.stopwatch
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.RestartAlt
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,15 +42,20 @@ fun StopwatchDuration(
   onCancelClick: () -> Unit,
 ) {
   Column(
-    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface).padding(30.dp),
+    modifier =
+      Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(30.dp),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
+    // TODO: different layouts for different screens
+
     Spacer(modifier = Modifier.weight(1f))
 
     val (hours, minutes, seconds, fraction) =
       remember(duration) { duration.toComponents(::DurationComponents) }
 
+    // TODO: varying sizes for duration components
+    // TODO: hide component if for example hour == 0
     Text(
       text = hours,
       style =
@@ -82,29 +98,59 @@ fun StopwatchDuration(
 
     Spacer(modifier = Modifier.weight(1f))
 
-    Row(modifier = Modifier.fillMaxWidth()) {
-      Button(modifier = Modifier.weight(1f), onClick = onStartStopClick) {
-        Text(
-          text =
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
+    ) {
+      // TODO: consider replacing AnimatedContent with shrink size to 0?
+      AnimatedContent(state != StopwatchState.IDLE) {
+        if (it) {
+          FloatingActionButton(onClick = onCancelClick) {
+            Icon(imageVector = Icons.Default.RestartAlt, contentDescription = "Reset stopwatch")
+          }
+        } else {
+          Box(
+            modifier =
+              Modifier.size(56.dp)
+                .clip(FloatingActionButtonDefaults.shape)
+                .background(MaterialTheme.colorScheme.background)
+          )
+        }
+      }
+
+      LargeFloatingActionButton(onClick = onStartStopClick) {
+        Icon(
+          imageVector =
+            if (state == StopwatchState.STARTED) Icons.Default.Pause else Icons.Default.PlayArrow,
+          contentDescription =
             when (state) {
-              StopwatchState.STARTED -> "Stop"
-              StopwatchState.STOPPED -> "Resume"
-              else -> "Start"
-            }
+              StopwatchState.STARTED -> "Pause stopwatch"
+              StopwatchState.STOPPED -> "Resume stopwatch"
+              else -> "Start stopwatch"
+            },
         )
       }
 
-      Spacer(modifier = Modifier.width(30.dp))
-
-      Button(
-        modifier = Modifier.weight(1f),
-        onClick = onCancelClick,
-        enabled = state != StopwatchState.IDLE,
-      ) {
-        Text(text = "Cancel")
+      // TODO: on lap click
+      AnimatedContent(state == StopwatchState.STARTED) {
+        if (it) {
+          FloatingActionButton(onClick = {}) {
+            Icon(imageVector = Icons.Default.Timer, contentDescription = "Record lap")
+          }
+        } else {
+          Box(
+            modifier =
+              Modifier.size(56.dp)
+                .clip(FloatingActionButtonDefaults.shape)
+                .background(MaterialTheme.colorScheme.background)
+          )
+        }
       }
     }
   }
+
+  // TODO: scrollable lap list
 }
 
 private data class DurationComponents(
