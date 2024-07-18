@@ -1,6 +1,8 @@
 package com.trm.alarmist.feature.stopwatch
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
@@ -58,50 +60,43 @@ fun StopwatchDuration(
 
     Spacer(modifier = Modifier.weight(1f))
 
-    val (hours, minutes, seconds, fraction) =
-      remember(duration) { duration.toComponents(::DurationComponents) }
+    val (time, fractionOfSecond) =
+      remember(duration) {
+        duration.toComponents { hours, minutes, seconds, nanoseconds ->
+          buildString {
+            if (hours > 0L) {
+              append(hours.toInt())
+              append(':')
+            }
+            if (hours > 0L || minutes > 0) {
+              append(minutes)
+              append(':')
+            }
+            append(seconds.zeroPadded())
+          } to (nanoseconds / 10_000_000L).toInt().zeroPadded()
+        }
+      }
 
-    // TODO: varying sizes for duration components
-    // TODO: hide component if for example hour == 0
-    Text(
-      text = hours,
-      style =
-        TextStyle(
-          fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        ),
-    )
-
-    Text(
-      text = minutes,
-      style =
-        TextStyle(
-          fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        ),
-    )
-
-    Text(
-      text = seconds,
-      style =
-        TextStyle(
-          fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        ),
-    )
-
-    Text(
-      text = fraction,
-      style =
-        TextStyle(
-          fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        ),
-    )
+    Column(horizontalAlignment = Alignment.End) {
+      Text(
+        text = time,
+        style =
+          TextStyle(
+            fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+          ),
+      )
+      Text(
+        text = fractionOfSecond,
+        style =
+          TextStyle(
+            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+          ),
+      )
+    }
 
     Spacer(modifier = Modifier.weight(1f))
 
@@ -112,7 +107,8 @@ fun StopwatchDuration(
     ) {
       AnimatedContent(
         targetState = state != StopwatchState.IDLE,
-        transitionSpec = { sideFloatingActionButtonTransitionSpec() },
+        transitionSpec =
+          AnimatedContentTransitionScope<Boolean>::sideFloatingActionButtonTransitionSpec,
       ) {
         if (it) {
           FloatingActionButton(
@@ -144,7 +140,8 @@ fun StopwatchDuration(
       // TODO: on lap click
       AnimatedContent(
         targetState = state == StopwatchState.STARTED,
-        transitionSpec = { sideFloatingActionButtonTransitionSpec() },
+        transitionSpec =
+          AnimatedContentTransitionScope<Boolean>::sideFloatingActionButtonTransitionSpec,
       ) {
         if (it) {
           FloatingActionButton(
@@ -173,24 +170,6 @@ private fun FloatingActionButtonSpacerBox() {
   )
 }
 
-private fun sideFloatingActionButtonTransitionSpec() =
+private fun <S> AnimatedContentTransitionScope<S>.sideFloatingActionButtonTransitionSpec():
+  ContentTransform =
   scaleIn(animationSpec = tween(220)).togetherWith(scaleOut(animationSpec = tween(90)))
-
-private data class DurationComponents(
-  val hours: String,
-  val minutes: String,
-  val seconds: String,
-  val fraction: String,
-) {
-  constructor(
-    hours: Long,
-    minutes: Int,
-    seconds: Int,
-    nanoseconds: Int,
-  ) : this(
-    hours = hours.toInt().zeroPadded(),
-    minutes = minutes.zeroPadded(),
-    seconds = seconds.zeroPadded(),
-    fraction = (nanoseconds / 10_000_000L).toInt().zeroPadded(),
-  )
-}
