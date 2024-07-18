@@ -1,6 +1,11 @@
 package com.trm.alarmist.feature.stopwatch
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,6 +40,7 @@ import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
 import kotlin.time.Duration
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun StopwatchDuration(
   duration: Duration,
@@ -103,19 +110,21 @@ fun StopwatchDuration(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
     ) {
-      // TODO: consider replacing AnimatedContent with shrink size to 0?
-      AnimatedContent(state != StopwatchState.IDLE) {
+      AnimatedContent(
+        targetState = state != StopwatchState.IDLE,
+        transitionSpec = { sideFloatingActionButtonTransitionSpec() },
+      ) {
         if (it) {
-          FloatingActionButton(onClick = onCancelClick) {
+          FloatingActionButton(
+            onClick = onCancelClick,
+            elevation =
+              if (transition.isRunning) FloatingActionButtonDefaults.bottomAppBarFabElevation()
+              else FloatingActionButtonDefaults.loweredElevation(),
+          ) {
             Icon(imageVector = Icons.Default.RestartAlt, contentDescription = "Reset stopwatch")
           }
         } else {
-          Box(
-            modifier =
-              Modifier.size(56.dp)
-                .clip(FloatingActionButtonDefaults.shape)
-                .background(MaterialTheme.colorScheme.background)
-          )
+          FloatingActionButtonSpacerBox()
         }
       }
 
@@ -133,18 +142,21 @@ fun StopwatchDuration(
       }
 
       // TODO: on lap click
-      AnimatedContent(state == StopwatchState.STARTED) {
+      AnimatedContent(
+        targetState = state == StopwatchState.STARTED,
+        transitionSpec = { sideFloatingActionButtonTransitionSpec() },
+      ) {
         if (it) {
-          FloatingActionButton(onClick = {}) {
+          FloatingActionButton(
+            onClick = {},
+            elevation =
+              if (transition.isRunning) FloatingActionButtonDefaults.bottomAppBarFabElevation()
+              else FloatingActionButtonDefaults.loweredElevation(),
+          ) {
             Icon(imageVector = Icons.Default.Timer, contentDescription = "Record lap")
           }
         } else {
-          Box(
-            modifier =
-              Modifier.size(56.dp)
-                .clip(FloatingActionButtonDefaults.shape)
-                .background(MaterialTheme.colorScheme.background)
-          )
+          FloatingActionButtonSpacerBox()
         }
       }
     }
@@ -152,6 +164,17 @@ fun StopwatchDuration(
 
   // TODO: scrollable lap list
 }
+
+@Composable
+private fun FloatingActionButtonSpacerBox() {
+  Box(
+    modifier =
+      Modifier.size(56.dp).clip(FloatingActionButtonDefaults.shape).background(Color.Transparent)
+  )
+}
+
+private fun sideFloatingActionButtonTransitionSpec() =
+  scaleIn(animationSpec = tween(220)).togetherWith(scaleOut(animationSpec = tween(90)))
 
 private data class DurationComponents(
   val hours: String,
