@@ -3,7 +3,6 @@ package com.trm.alarmist.feature.stopwatch
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -42,7 +41,6 @@ import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
 import kotlin.time.Duration
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun StopwatchDuration(
   duration: Duration,
@@ -113,9 +111,7 @@ fun StopwatchDuration(
         if (it) {
           FloatingActionButton(
             onClick = onCancelClick,
-            elevation =
-              if (transition.isRunning) FloatingActionButtonDefaults.bottomAppBarFabElevation()
-              else FloatingActionButtonDefaults.loweredElevation(),
+            elevation = FloatingActionButtonDefaults.loweredElevation(),
           ) {
             Icon(imageVector = Icons.Default.RestartAlt, contentDescription = "Reset stopwatch")
           }
@@ -146,9 +142,7 @@ fun StopwatchDuration(
         if (it) {
           FloatingActionButton(
             onClick = {},
-            elevation =
-              if (transition.isRunning) FloatingActionButtonDefaults.bottomAppBarFabElevation()
-              else FloatingActionButtonDefaults.loweredElevation(),
+            elevation = FloatingActionButtonDefaults.loweredElevation(),
           ) {
             Icon(imageVector = Icons.Default.Timer, contentDescription = "Record lap")
           }
