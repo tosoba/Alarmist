@@ -88,7 +88,6 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
           RootStartMode.Stopwatch -> ChildConfig.Stopwatch
           else -> ChildConfig.Alarms
         },
-      handleBackButton = true,
       childFactory = ::createChild,
     )
 
