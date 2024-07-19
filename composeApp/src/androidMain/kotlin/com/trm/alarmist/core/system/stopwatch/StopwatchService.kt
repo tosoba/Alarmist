@@ -192,8 +192,7 @@ class StopwatchService : Service() {
 
     private const val NOTIFICATION_CHANNEL_ID = "STOPWATCH_NOTIFICATION_ID"
     private const val NOTIFICATION_CHANNEL_NAME = "STOPWATCH_NOTIFICATION"
-    // TODO: change it to prevent collisions with alarm notifications
-    private const val NOTIFICATION_ID = 10
+    private const val NOTIFICATION_ID = -200
 
     private const val TIMER_PERIOD_MILLIS = 10L
 
