@@ -101,13 +101,6 @@ private fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetSt
           val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
 
           WidgetTitleBar(
-            // TODO: either app icon or icon representing today
-            startIcon =
-              if (widgetLayoutSize == WidgetLayoutSize.Large) {
-                ImageProvider(R.mipmap.ic_launcher_round)
-              } else {
-                null
-              },
             iconColor = GlanceTheme.colors.primary,
             actions = {
               CircleIconButton(
