@@ -29,8 +29,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.plus
+import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
+import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -45,7 +49,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalDecomposeApi::class)
 @Composable
 fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   val childStack by component.childStack.subscribeAsState()
@@ -168,7 +172,12 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       Children(
         modifier = Modifier.fillMaxWidth().weight(1f),
         stack = childStack,
-        animation = stackAnimation(fade()),
+        animation =
+          predictiveBackAnimation(
+            backHandler = component.backHandler,
+            fallbackAnimation = stackAnimation(fade() + scale()),
+            onBack = component::onBackClick,
+          ),
       ) {
         when (val child = it.instance) {
           is RootComponent.Child.Alarms -> {
