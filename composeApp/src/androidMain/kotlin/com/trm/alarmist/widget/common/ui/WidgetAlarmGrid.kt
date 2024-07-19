@@ -8,7 +8,7 @@ import androidx.glance.layout.fillMaxSize
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.util.deepLinkAction
-import com.trm.alarmist.widget.common.util.editAlarmDeeplinkUri
+import com.trm.alarmist.core.common.util.editAlarmDeeplinkUri
 
 @Composable
 fun WidgetAlarmGrid(

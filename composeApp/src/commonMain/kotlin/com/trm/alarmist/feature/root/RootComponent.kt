@@ -83,7 +83,11 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
     childStack(
       source = navigation,
       serializer = ChildConfig.serializer(),
-      initialConfiguration = ChildConfig.Alarms,
+      initialConfiguration =
+        when (startMode) {
+          RootStartMode.Stopwatch -> ChildConfig.Stopwatch
+          else -> ChildConfig.Alarms
+        },
       handleBackButton = true,
       childFactory = ::createChild,
     )
@@ -103,7 +107,7 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
           is RootStartMode.EditAlarm -> {
             BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(startMode.id))
           }
-          RootStartMode.Normal -> {
+          else -> {
             null
           }
         }
@@ -125,7 +129,10 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
     }
 
   override val deleteDialog: DeleteDialogComponentPart =
-    DefaultDeleteDialogComponentPart(componentContext = componentContext, childSlotKey = "RootDialogSlot") {
+    DefaultDeleteDialogComponentPart(
+      componentContext = componentContext,
+      childSlotKey = "RootDialogSlot",
+    ) {
       bottomSheet.value.child?.instance
     }
 

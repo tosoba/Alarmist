@@ -1,5 +1,7 @@
 package com.trm.alarmist.core.system.stopwatch
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.stopwatch
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,6 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
 import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
+import com.trm.alarmist.core.common.util.getStringBlocking
+import com.trm.alarmist.core.common.util.stopwatchDeeplinkUri
 import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
 import java.util.Timer
@@ -82,7 +86,7 @@ class StopwatchService : Service() {
 
   private fun buildNotification(vararg actions: NotificationCompat.Action): Notification =
     NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-      .setContentTitle("Stopwatch")
+      .setContentTitle(getStringBlocking(Res.string.stopwatch))
       .setContentText(duration.formatted())
       .setSmallIcon(R.drawable.ic_launcher_foreground)
       .setOngoing(true)
@@ -136,15 +140,13 @@ class StopwatchService : Service() {
   private fun cancelNotificationAction(): NotificationCompat.Action =
     NotificationCompat.Action(null, "Cancel", cancelPendingIntent(this))
 
-  private fun clickPendingIntent(context: Context): PendingIntent {
-    // TODO: deeplink to stopwatch?
-    return PendingIntent.getActivity(
+  private fun clickPendingIntent(context: Context): PendingIntent =
+    PendingIntent.getActivity(
       context,
       CLICK_REQUEST_CODE,
-      Intent(context, MainActivity::class.java),
+      Intent(Intent.ACTION_VIEW, context.stopwatchDeeplinkUri(), context, MainActivity::class.java),
       PendingIntent.FLAG_IMMUTABLE,
     )
-  }
 
   private fun stopPendingIntent(context: Context): PendingIntent =
     PendingIntent.getService(

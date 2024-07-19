@@ -6,4 +6,6 @@ sealed interface RootStartMode {
   data class EditAlarm(val id: Long) : RootStartMode
 
   data object AddAlarm : RootStartMode
+
+  data object Stopwatch : RootStartMode
 }

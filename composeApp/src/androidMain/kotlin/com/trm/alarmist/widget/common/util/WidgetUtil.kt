@@ -3,6 +3,7 @@ package com.trm.alarmist.widget.common.util
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.datastore.preferences.core.MutablePreferences
@@ -16,6 +17,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.state.updateAppWidgetState
+import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffActionReceiver
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffOnDateActionReceiver
@@ -104,3 +106,9 @@ internal fun Context.showWidgetPinnedToast() {
 @Composable
 internal fun startGroupWidgetConfigAction(widgetId: Int): Action =
   actionStartActivity(GroupWidgetConfigActivity.widgetActionIntent(LocalContext.current, widgetId))
+
+@Composable
+internal fun deepLinkAction(uri: Uri): Action =
+  actionStartActivity(
+    Intent(Intent.ACTION_VIEW, uri, LocalContext.current, MainActivity::class.java)
+  )

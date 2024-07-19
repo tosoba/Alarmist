@@ -46,6 +46,9 @@ private fun Context.rootStartModeFrom(uri: Uri?): RootStartMode =
     uri?.path?.contains(getString(R.string.deeplink_path_edit_alarm)) == true -> {
       RootStartMode.EditAlarm(uri.pathSegments.last().toLong())
     }
+    uri?.path?.contains(getString(R.string.deeplink_path_stopwatch)) == true -> {
+      RootStartMode.Stopwatch
+    }
     else -> {
       RootStartMode.Normal
     }
