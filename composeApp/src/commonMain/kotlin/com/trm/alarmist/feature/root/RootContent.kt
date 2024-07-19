@@ -65,6 +65,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
   )
 
   ModalNavigationDrawer(
+    modifier = modifier,
     drawerState = drawerState,
     gesturesEnabled = drawerState.isOpen,
     drawerContent = {
@@ -161,7 +162,7 @@ fun RootContent(modifier: Modifier = Modifier, component: RootComponent) {
       onConfirmCompletion = ::hideBottomSheet,
     )
 
-    Column(modifier = modifier) {
+    Column(modifier = Modifier.fillMaxSize()) {
       RootAppBar(activeChild = childStack.active.instance, onMenuClick = ::openDrawer)
 
       Children(
