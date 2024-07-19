@@ -68,10 +68,13 @@ import com.trm.alarmist.core.ui.AlarmFireAtTime
 import com.trm.alarmist.core.ui.AlarmFireOnDateTimeCountdown
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.AlarmScheduleDescription
+import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.NoRippleInteractionSource
+import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.core.ui.keyboardAsState
+import com.trm.alarmist.core.ui.theme.bottomSheetBackgroundColor
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
 import org.jetbrains.compose.resources.stringResource
@@ -277,6 +280,9 @@ fun GroupContent(
         AnimatedVisibility(state.blankNameError) { Text(stringResource(Res.string.invalid_input)) }
       },
     )
+
+    TopGradientBackground(color = bottomSheetBackgroundColor())
+    BottomGradientBackground(color = bottomSheetBackgroundColor())
   }
 }
 

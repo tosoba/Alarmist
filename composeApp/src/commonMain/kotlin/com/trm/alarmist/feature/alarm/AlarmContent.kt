@@ -126,11 +126,14 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
+import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
+import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.core.ui.keyboardAsState
+import com.trm.alarmist.core.ui.theme.bottomSheetBackgroundColor
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
 import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
@@ -643,6 +646,9 @@ private fun AlarmContent(
         contentDescription = stringResource(Res.string.confirm),
       )
     }
+
+    TopGradientBackground(color = bottomSheetBackgroundColor())
+    BottomGradientBackground(color = bottomSheetBackgroundColor())
   }
 }
 

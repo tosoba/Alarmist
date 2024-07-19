@@ -1,5 +1,7 @@
 package com.trm.alarmist.core.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF415F91)
@@ -217,3 +219,7 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF191C20)
 val surfaceContainerDarkHighContrast = Color(0xFF1D2024)
 val surfaceContainerHighDarkHighContrast = Color(0xFF282A2F)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF33353A)
+
+@Composable
+fun bottomSheetBackgroundColor() =
+  if (isSystemInDarkTheme()) Color(25, 28, 36) else Color(240, 241, 249)
