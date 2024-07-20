@@ -39,6 +39,7 @@ import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.R
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
+import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
@@ -50,10 +51,9 @@ import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
-import com.trm.alarmist.core.common.util.addAlarmDeeplinkUri
+import com.trm.alarmist.widget.common.util.actionStartGroupWidgetConfigActivity
+import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
-import com.trm.alarmist.widget.common.util.deepLinkAction
-import com.trm.alarmist.widget.common.util.startGroupWidgetConfigAction
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
@@ -174,7 +174,7 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
           emptyText = context.getString(R.string.group_is_empty),
           actionButtonText = context.getString(R.string.add_alarm),
           actionButtonIcon = null,
-          actionButtonOnClick = deepLinkAction(context.addAlarmDeeplinkUri()),
+          actionButtonOnClick = actionStartMainActivity(RootStartMode.AddAlarm),
         )
       } else {
         WidgetAlarmListContent(
@@ -190,7 +190,7 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
         emptyText = context.getString(R.string.no_group_set),
         actionButtonText = context.getString(R.string.choose_group),
         actionButtonIcon = null,
-        actionButtonOnClick = startGroupWidgetConfigAction(widgetManager.getAppWidgetId(id)),
+        actionButtonOnClick = actionStartGroupWidgetConfigActivity(widgetManager.getAppWidgetId(id)),
       )
     }
   }

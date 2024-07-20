@@ -1,7 +1,7 @@
 package com.trm.alarmist
 
-import android.content.Context
-import android.net.Uri
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,25 +15,24 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.defaultComponentContext
-import com.arkivanov.decompose.handleDeepLink
 import com.trm.alarmist.core.ui.theme.AppTheme
 import com.trm.alarmist.feature.root.DefaultRootComponent
 import com.trm.alarmist.feature.root.RootContent
 import com.trm.alarmist.feature.root.RootStartMode
 
 class MainActivity : ComponentActivity() {
-  @OptIn(ExperimentalDecomposeApi::class)
+  private val component by
+    lazy(LazyThreadSafetyMode.NONE) {
+      DefaultRootComponent(
+        componentContext = defaultComponentContext(),
+        startMode = intent.rootStartMode() ?: RootStartMode.Normal,
+      )
+    }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
-
-    val component =
-      DefaultRootComponent(
-        componentContext = defaultComponentContext(),
-        startMode = handleDeepLink(::rootStartModeFrom) ?: RootStartMode.Normal,
-      )
 
     setContent {
       AppTheme {
@@ -48,20 +47,16 @@ class MainActivity : ComponentActivity() {
       }
     }
   }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    component.onStartModeChanged(intent.rootStartMode())
+  }
 }
 
-private fun Context.rootStartModeFrom(uri: Uri?): RootStartMode =
-  when {
-    uri?.path?.contains(getString(R.string.deeplink_path_add_alarm)) == true -> {
-      RootStartMode.AddAlarm
-    }
-    uri?.path?.contains(getString(R.string.deeplink_path_edit_alarm)) == true -> {
-      RootStartMode.EditAlarm(uri.pathSegments.last().toLong())
-    }
-    uri?.path?.contains(getString(R.string.deeplink_path_stopwatch)) == true -> {
-      RootStartMode.Stopwatch
-    }
-    else -> {
-      RootStartMode.Normal
-    }
+private fun Intent.rootStartMode(): RootStartMode? =
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    getParcelableExtra(RootStartMode.EXTRA_KEY, RootStartMode::class.java)
+  } else {
+    @Suppress("DEPRECATION") getParcelableExtra(RootStartMode.EXTRA_KEY)
   }

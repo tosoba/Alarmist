@@ -1,11 +1,18 @@
 package com.trm.alarmist.feature.root
 
-sealed interface RootStartMode {
-  data object Normal : RootStartMode
+import com.trm.alarmist.core.common.model.CommonParcelable
+import com.trm.alarmist.core.common.model.CommonParcelize
 
-  data class EditAlarm(val id: Long) : RootStartMode
+sealed interface RootStartMode : CommonParcelable {
+  @CommonParcelize data object Normal : RootStartMode
 
-  data object AddAlarm : RootStartMode
+  @CommonParcelize data class EditAlarm(val id: Long) : RootStartMode
 
-  data object Stopwatch : RootStartMode
+  @CommonParcelize data object AddAlarm : RootStartMode
+
+  @CommonParcelize data object Stopwatch : RootStartMode
+
+  companion object {
+    const val EXTRA_KEY = "RootStartMode"
+  }
 }

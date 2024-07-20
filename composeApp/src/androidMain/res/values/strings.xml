@@ -20,12 +20,6 @@
     <string name="alarm_not_fired_due_to_permission">Alarm was not fired due to denied notification permission.</string>
     <string name="named_alarm_not_fired_due_to_permission">Alarm %1$s was not fired due to denied notification permission.</string>
 
-    <string name="deeplink_scheme" translatable="false">deeplink</string>
-    <string name="deeplink_host" translatable="false">alarmist</string>
-    <string name="deeplink_path_add_alarm" translatable="false">add_alarm</string>
-    <string name="deeplink_path_edit_alarm" translatable="false">edit_alarm</string>
-    <string name="deeplink_path_stopwatch" translatable="false">stopwatch</string>
-
     <string name="no_alarms_today">No alarms today.</string>
     <string name="add_alarm">Add alarm</string>
     <string name="group_is_empty">Group is empty</string>

@@ -17,9 +17,9 @@ import androidx.core.app.NotificationCompat
 import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.getStringBlocking
-import com.trm.alarmist.core.common.util.stopwatchDeeplinkUri
 import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
+import com.trm.alarmist.feature.root.RootStartMode
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
@@ -144,8 +144,9 @@ class StopwatchService : Service() {
     PendingIntent.getActivity(
       context,
       CLICK_REQUEST_CODE,
-      Intent(Intent.ACTION_VIEW, context.stopwatchDeeplinkUri(), context, MainActivity::class.java),
-      PendingIntent.FLAG_IMMUTABLE,
+      Intent(context, MainActivity::class.java)
+        .putExtra(RootStartMode.EXTRA_KEY, RootStartMode.Stopwatch),
+      PendingIntent.FLAG_MUTABLE,
     )
 
   private fun stopPendingIntent(context: Context): PendingIntent =

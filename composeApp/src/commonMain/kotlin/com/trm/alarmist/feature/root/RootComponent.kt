@@ -64,6 +64,8 @@ interface RootComponent : BackHandlerOwner {
 
   fun onBottomSheetDismissRequest()
 
+  fun onStartModeChanged(startMode: RootStartMode?)
+
   sealed interface Child {
     class Alarms(val component: AlarmsComponent) : Child
 
@@ -168,6 +170,10 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
     }
 
   override fun onAlarmsDrawerItemClick() {
+    goToAlarms()
+  }
+
+  private fun goToAlarms() {
     navigation.replaceAll(ChildConfig.Alarms)
   }
 
@@ -180,15 +186,27 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
   }
 
   override fun onStopwatchDrawerItemClick() {
+    goToStopwatch()
+  }
+
+  private fun goToStopwatch() {
     navigation.replaceAll(ChildConfig.Stopwatch)
   }
 
   override fun onAddAlarmClick() {
+    goToAddAlarm()
+  }
+
+  private fun goToAddAlarm() {
     bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Add))
   }
 
   override fun onEditAlarmClick(alarm: AlarmListModel) {
-    bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(alarm.id)))
+    goToEditAlarm(alarm.id)
+  }
+
+  private fun goToEditAlarm(alarmId: Long) {
+    bottomSheetNavigation.activate(BottomSheetChildConfig.Alarm(AlarmComponent.Mode.Edit(alarmId)))
   }
 
   override fun onEditUpcomingAlarmClick(alarm: UpcomingAlarmListModel) {
@@ -209,6 +227,28 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
 
   override fun onBottomSheetDismissRequest() {
     bottomSheetNavigation.dismiss()
+  }
+
+  override fun onStartModeChanged(startMode: RootStartMode?) {
+    when (startMode) {
+      RootStartMode.AddAlarm -> {
+        goToAlarms()
+        goToAddAlarm()
+      }
+      is RootStartMode.EditAlarm -> {
+        goToAlarms()
+        goToEditAlarm(startMode.id)
+      }
+      RootStartMode.Stopwatch -> {
+        goToStopwatch()
+      }
+      RootStartMode.Normal -> {
+        goToAlarms()
+      }
+      null -> {
+        return
+      }
+    }
   }
 
   @Serializable

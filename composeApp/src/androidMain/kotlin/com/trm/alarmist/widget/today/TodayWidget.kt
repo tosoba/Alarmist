@@ -41,9 +41,9 @@ import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
-import com.trm.alarmist.core.common.util.addAlarmDeeplinkUri
+import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.util.composableIfOrNull
-import com.trm.alarmist.widget.common.util.deepLinkAction
+import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.toggleAlarmOnOffOnDateIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
@@ -145,7 +145,7 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
           emptyText = context.getString(R.string.no_alarms_today),
           actionButtonText = context.getString(R.string.add_alarm),
           actionButtonIcon = null,
-          actionButtonOnClick = deepLinkAction(context.addAlarmDeeplinkUri()),
+          actionButtonOnClick = actionStartMainActivity(RootStartMode.AddAlarm),
         )
       } else {
         val today = LocalDate.now()

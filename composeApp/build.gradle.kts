@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidApplication)
@@ -10,7 +12,17 @@ plugins {
 }
 
 kotlin {
-  androidTarget { compilations.all { kotlinOptions { jvmTarget = "1.8" } } }
+  androidTarget {
+    compilations.all { kotlinOptions { jvmTarget = "1.8" } }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+      freeCompilerArgs.addAll(
+        "-P",
+        "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=com.trm.alarmist.core.common.model.CommonParcelize",
+      )
+    }
+  }
 
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
