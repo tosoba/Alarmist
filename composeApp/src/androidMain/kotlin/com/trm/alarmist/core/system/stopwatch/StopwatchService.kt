@@ -1,6 +1,9 @@
 package com.trm.alarmist.core.system.stopwatch
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.cancel
+import alarmist.composeapp.generated.resources.pause
+import alarmist.composeapp.generated.resources.resume
 import alarmist.composeapp.generated.resources.stopwatch
 import android.app.Notification
 import android.app.NotificationChannel
@@ -132,13 +135,13 @@ class StopwatchService : Service() {
     buildNotification(resumeNotificationAction(), cancelNotificationAction())
 
   private fun pauseNotificationAction(): NotificationCompat.Action =
-    NotificationCompat.Action(null, "Pause", stopPendingIntent(this))
+    NotificationCompat.Action(null, getStringBlocking(Res.string.pause), stopPendingIntent(this))
 
   private fun resumeNotificationAction(): NotificationCompat.Action =
-    NotificationCompat.Action(null, "Resume", resumePendingIntent(this))
+    NotificationCompat.Action(null, getStringBlocking(Res.string.resume), resumePendingIntent(this))
 
   private fun cancelNotificationAction(): NotificationCompat.Action =
-    NotificationCompat.Action(null, "Cancel", cancelPendingIntent(this))
+    NotificationCompat.Action(null, getStringBlocking(Res.string.cancel), cancelPendingIntent(this))
 
   private fun clickPendingIntent(context: Context): PendingIntent =
     PendingIntent.getActivity(

@@ -69,6 +69,7 @@
     <string name="snooze_description">%1$s minute(s), at most %2$s time(s)</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
     <string name="upcoming_alarm">Upcoming alarm</string>
     <string name="missed_alarm">Missed alarm</string>
     <string name="paused_on">Paused on %1$s</string>
