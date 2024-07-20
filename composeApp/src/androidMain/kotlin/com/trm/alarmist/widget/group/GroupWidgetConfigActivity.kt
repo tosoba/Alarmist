@@ -3,6 +3,7 @@ package com.trm.alarmist.widget.group
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.add
 import alarmist.composeapp.generated.resources.cancel
+import alarmist.composeapp.generated.resources.edit_group_widget
 import alarmist.composeapp.generated.resources.new_group_widget
 import alarmist.composeapp.generated.resources.ok
 import android.app.PendingIntent
@@ -65,6 +66,7 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
     if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) finish()
 
     val isPinned = intent.getBooleanExtra(EXTRA_IS_PINNED, false)
+    val widgetAction = intent.getBooleanExtra(EXTRA_WIDGET_ACTION, false)
 
     val component =
       DefaultGroupWidgetConfigComponent(
@@ -83,7 +85,18 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
             modifier = Modifier.fillMaxSize(),
             topBar = {
               CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(Res.string.new_group_widget)) },
+                title = {
+                  Text(
+                    text =
+                      stringResource(
+                        if (widgetAction) {
+                          Res.string.edit_group_widget
+                        } else {
+                          Res.string.new_group_widget
+                        }
+                      )
+                  )
+                },
                 navigationIcon = {
                   IconButton(onClick = { finish() }) {
                     Icon(
@@ -178,6 +191,7 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
 
   companion object {
     private const val EXTRA_IS_PINNED = "IS_PINNED"
+    private const val EXTRA_WIDGET_ACTION = "WIDGET_ACTION"
 
     fun pendingIntent(context: Context): PendingIntent =
       PendingIntent.getActivity(
@@ -191,6 +205,7 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
     fun widgetActionIntent(context: Context, widgetId: Int): Intent =
       Intent(context, GroupWidgetConfigActivity::class.java)
         .putExtra(EXTRA_IS_PINNED, true)
+        .putExtra(EXTRA_WIDGET_ACTION, true)
         .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
   }
 }
