@@ -56,6 +56,9 @@ class TimerService : Service() {
           startForegroundService()
           startTimer(it.duration)
         }
+        is Action.Resume -> {
+          startTimer(duration)
+        }
         Action.Stop -> {
           stopTimer()
           updateNotification(buildStoppedNotification())
@@ -76,10 +79,10 @@ class TimerService : Service() {
     timer =
       fixedRateTimer(period = TIMER_PERIOD_MILLIS) {
         duration -= TIMER_PERIOD_MILLIS.milliseconds
-        if (initialDuration.inWholeMilliseconds == 0L) {
+        if (duration.inWholeMilliseconds == 0L) {
           // TODO: play sound/vibrate on elapsed
           elapseTimer()
-        } else if (initialDuration.inWholeMilliseconds % 1_000L == 0L) {
+        } else if (duration.inWholeMilliseconds % 1_000L == 0L) {
           updateNotification(buildStartedNotification())
         }
       }
@@ -100,6 +103,7 @@ class TimerService : Service() {
     timer?.cancel()
     duration = Duration.ZERO
     state = TimerState.ELAPSED
+    stopForegroundService()
   }
 
   private fun buildNotification(vararg actions: NotificationCompat.Action): Notification =
@@ -173,7 +177,7 @@ class TimerService : Service() {
     PendingIntent.getService(
       context,
       RESUME_REQUEST_CODE,
-      Intent(context, TimerService::class.java).putExtra(EXTRA_ACTION, Action.Start(duration)),
+      Intent(context, TimerService::class.java).putExtra(EXTRA_ACTION, Action.Resume),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -191,6 +195,8 @@ class TimerService : Service() {
 
   sealed interface Action : Parcelable {
     @Parcelize data class Start(val duration: Duration) : Action
+
+    @Parcelize data object Resume : Action
 
     @Parcelize data object Stop : Action
 

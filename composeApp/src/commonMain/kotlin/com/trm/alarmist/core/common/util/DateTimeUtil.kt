@@ -107,6 +107,6 @@ fun LocalTime.amPmString(
   return format(LocalTime.Format { if (!use24Hours) amPmMarker("AM", "PM") })
 }
 
-fun Duration.toNotificationFormat(): String = toComponents { hours, minutes, seconds, _ ->
-  "${hours.toInt().zeroPadded()}:${minutes.zeroPadded()}:${seconds.zeroPadded()}"
+fun Duration.toNotificationFormat(): String = toComponents { hours, minutes, seconds, nanoseconds ->
+  "${hours.toInt().zeroPadded()}:${minutes.zeroPadded()}:${if (nanoseconds > 0L) { seconds + 1 } else { seconds }.zeroPadded()}"
 }

@@ -2,8 +2,7 @@ package com.trm.alarmist.feature.timer
 
 import com.arkivanov.decompose.ComponentContext
 
-interface TimerComponent {}
+interface TimerComponent
 
-class DefaultTimerComponent(
-  componentContext: ComponentContext,
-) : TimerComponent, ComponentContext by componentContext
+class DefaultTimerComponent(componentContext: ComponentContext) :
+  TimerComponent, ComponentContext by componentContext
