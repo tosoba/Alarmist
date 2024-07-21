@@ -182,6 +182,10 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
   }
 
   override fun onTimerDrawerItemClick() {
+    goToTimer()
+  }
+
+  private fun goToTimer() {
     navigation.replaceAll(ChildConfig.Timer)
   }
 
@@ -241,6 +245,9 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
       }
       RootStartMode.Stopwatch -> {
         goToStopwatch()
+      }
+      RootStartMode.Timer -> {
+        goToTimer()
       }
       RootStartMode.Normal -> {
         goToAlarms()

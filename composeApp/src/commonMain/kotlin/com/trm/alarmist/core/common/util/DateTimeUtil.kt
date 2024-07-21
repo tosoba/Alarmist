@@ -106,3 +106,7 @@ fun LocalTime.amPmString(
   val use24Hours = using24HoursFormat()
   return format(LocalTime.Format { if (!use24Hours) amPmMarker("AM", "PM") })
 }
+
+fun Duration.toNotificationFormat(): String = toComponents { hours, minutes, seconds, _ ->
+  "${hours.toInt().zeroPadded()}:${minutes.zeroPadded()}:${seconds.zeroPadded()}"
+}

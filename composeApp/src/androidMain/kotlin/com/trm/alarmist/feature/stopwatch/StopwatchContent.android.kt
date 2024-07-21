@@ -57,7 +57,7 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
     duration = duration,
     state = state,
     onStartStopClick = {
-      StopwatchService.start(
+      StopwatchService.startWithAction(
         context = context,
         action =
           if (state == StopwatchState.STARTED) StopwatchService.Action.STOP
@@ -65,7 +65,7 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
       )
     },
     onCancelClick = {
-      StopwatchService.start(context = context, action = StopwatchService.Action.CANCEL)
+      StopwatchService.startWithAction(context = context, action = StopwatchService.Action.CANCEL)
     },
   )
 }

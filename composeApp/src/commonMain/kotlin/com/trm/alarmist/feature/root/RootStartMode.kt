@@ -12,6 +12,8 @@ sealed interface RootStartMode : CommonParcelable {
 
   @CommonParcelize data object Stopwatch : RootStartMode
 
+  @CommonParcelize data object Timer : RootStartMode
+
   companion object {
     const val EXTRA_KEY = "RootStartMode"
   }

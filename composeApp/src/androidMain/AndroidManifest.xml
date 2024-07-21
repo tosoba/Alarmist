@@ -88,6 +88,17 @@
 
         </service>
 
+        <service
+            android:name=".core.system.timer.TimerService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="@string/timer_service_description" />
+
+        </service>
+
         <receiver
             android:name=".widget.today.TodayWidgetReceiver"
             android:exported="false"
