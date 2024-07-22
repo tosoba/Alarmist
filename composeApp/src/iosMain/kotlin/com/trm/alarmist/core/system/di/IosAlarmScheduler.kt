@@ -4,6 +4,8 @@ import com.trm.alarmist.core.system.AlarmScheduler
 import kotlinx.datetime.LocalDateTime
 
 class IosAlarmScheduler : AlarmScheduler {
+  override fun scheduleNextWidgetUpdate() {}
+
   override fun scheduleAlarm(
     id: Long,
     name: String?,

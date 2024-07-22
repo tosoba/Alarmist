@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.pages.Pages
-import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.TopGradientBackground
@@ -103,7 +102,6 @@ private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = M
       modifier = Modifier.fillMaxSize(),
       pages = component.pages,
       onPageSelected = component::onPageSelected,
-      scrollAnimation = PagesScrollAnimation.Default,
     ) { _, page ->
       when (page) {
         is AlarmsComponent.Page.AlarmsList -> {

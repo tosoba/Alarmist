@@ -79,6 +79,8 @@ interface RootComponent : BackHandlerOwner {
 
 class DefaultRootComponent(componentContext: ComponentContext, startMode: RootStartMode) :
   RootComponent, ComponentContext by componentContext {
+  constructor(componentContext: ComponentContext) : this(componentContext, RootStartMode.Normal)
+
   private val navigation = StackNavigation<ChildConfig>()
 
   override val childStack: Value<ChildStack<*, RootComponent.Child>> =
