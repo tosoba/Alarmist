@@ -5,6 +5,7 @@ import alarmist.composeapp.generated.resources.days_count
 import alarmist.composeapp.generated.resources.one_day
 import androidx.compose.runtime.Composable
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -107,6 +108,12 @@ fun LocalTime.amPmString(
   return format(LocalTime.Format { if (!use24Hours) amPmMarker("AM", "PM") })
 }
 
-fun Duration.toNotificationFormat(): String = toComponents { hours, minutes, seconds, nanoseconds ->
-  "${hours.toInt().zeroPadded()}:${minutes.zeroPadded()}:${if (nanoseconds > 0L) { seconds + 1 } else { seconds }.zeroPadded()}"
-}
+fun Duration.toNotificationFormat(): String =
+  if (inWholeMilliseconds % 1_000L != 0L) {
+      plus(1.seconds)
+    } else {
+      this
+    }
+    .toComponents { hours, minutes, seconds, _ ->
+      "${hours.toInt().zeroPadded()}:${minutes.zeroPadded()}:${seconds.zeroPadded()}"
+    }
