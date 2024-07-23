@@ -72,16 +72,17 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    // TODO: max box size for large screens
     BoxWithConstraints {
-      val space = 10.dp
+      val space = 5.dp
       val columnCount = 3
       val rowCount = 4
       val buttonModifier =
         Modifier.requiredSize(
           minOf(
             (maxWidth - space * (columnCount - 1)) / columnCount,
-            (maxHeight - space * (rowCount - 1)) / rowCount,
+            // TODO: - 96.dp only for column based layout
+            (maxHeight - space * (rowCount - 1) - 96.dp) / rowCount,
+            96.dp,
           )
         )
 
@@ -92,10 +93,13 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
         }
       }
 
-      Column {
+      Column(
+        verticalArrangement = Arrangement.spacedBy(space, alignment = Alignment.CenterVertically)
+      ) {
         Row(
           verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.Center,
+          horizontalArrangement =
+            Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
           TimerInputTextButton("1")
           TimerInputTextButton("2")
@@ -104,7 +108,8 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
 
         Row(
           verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.Center,
+          horizontalArrangement =
+            Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
           TimerInputTextButton("4")
           TimerInputTextButton("5")
@@ -113,7 +118,8 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
 
         Row(
           verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.Center,
+          horizontalArrangement =
+            Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
           TimerInputTextButton("7")
           TimerInputTextButton("8")
@@ -122,7 +128,8 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
 
         Row(
           verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.Center,
+          horizontalArrangement =
+            Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
           TimerInputTextButton("00")
           TimerInputTextButton("0")
@@ -156,7 +163,6 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
 private fun TimerInputButtonText(text: String) {
   // TODO: AutoSizeText
   Text(
-    modifier = Modifier.padding(5.dp),
     text = text,
     style =
       TextStyle(
