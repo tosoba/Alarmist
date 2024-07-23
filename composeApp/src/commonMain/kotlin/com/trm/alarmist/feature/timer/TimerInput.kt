@@ -5,13 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
@@ -36,6 +37,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun TimerInput(onStartClick: (Duration) -> Unit) {
+  // TODO: row based layout for short screens (phone in landscape)
   Column(
     modifier =
       Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(30.dp),
@@ -68,20 +70,73 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
       }
     }
 
-    // TODO: consistent sizing for all buttons regardless of screen size/orientation
-    TimerInputButtonsRow(listOf("1", "2", "3"), ::onTextInputButtonClick)
-    TimerInputButtonsRow(listOf("4", "5", "6"), ::onTextInputButtonClick)
-    TimerInputButtonsRow(listOf("7", "8", "9"), ::onTextInputButtonClick)
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Center,
-    ) {
-      TimerInputButton(onClick = { onTextInputButtonClick("00") }) { TimerInputButtonText("00") }
-      TimerInputButton(onClick = { onTextInputButtonClick("0") }) { TimerInputButtonText("0") }
-      TimerInputButton(onClick = { if (input.isNotEmpty()) input.removeFirst() }) {
-        Icon(Icons.AutoMirrored.Filled.Backspace, "Backspace")
+    Spacer(modifier = Modifier.height(16.dp))
+
+    // TODO: max box size for large screens
+    BoxWithConstraints {
+      val space = 10.dp
+      val columnCount = 3
+      val rowCount = 4
+      val buttonModifier =
+        Modifier.requiredSize(
+          minOf(
+            (maxWidth - space * (columnCount - 1)) / columnCount,
+            (maxHeight - space * (rowCount - 1)) / rowCount,
+          )
+        )
+
+      @Composable
+      fun TimerInputTextButton(text: String) {
+        TimerInputButton(onClick = { onTextInputButtonClick(text) }, modifier = buttonModifier) {
+          TimerInputButtonText(text)
+        }
+      }
+
+      Column {
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.Center,
+        ) {
+          TimerInputTextButton("1")
+          TimerInputTextButton("2")
+          TimerInputTextButton("3")
+        }
+
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.Center,
+        ) {
+          TimerInputTextButton("4")
+          TimerInputTextButton("5")
+          TimerInputTextButton("6")
+        }
+
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.Center,
+        ) {
+          TimerInputTextButton("7")
+          TimerInputTextButton("8")
+          TimerInputTextButton("9")
+        }
+
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.Center,
+        ) {
+          TimerInputTextButton("00")
+          TimerInputTextButton("0")
+          TimerInputButton(
+            onClick = { if (input.isNotEmpty()) input.removeFirst() },
+            modifier = buttonModifier,
+          ) {
+            Icon(Icons.AutoMirrored.Filled.Backspace, "Backspace")
+          }
+        }
       }
     }
+
+    Spacer(modifier = Modifier.height(16.dp))
 
     LargeFloatingActionButton(
       onClick = {
@@ -98,16 +153,8 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
 }
 
 @Composable
-private fun TimerInputButtonsRow(texts: List<String>, onClick: (String) -> Unit) {
-  Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-    texts.forEach { text ->
-      TimerInputButton(onClick = { onClick(text) }) { TimerInputButtonText(text) }
-    }
-  }
-}
-
-@Composable
 private fun TimerInputButtonText(text: String) {
+  // TODO: AutoSizeText
   Text(
     modifier = Modifier.padding(5.dp),
     text = text,
@@ -121,13 +168,14 @@ private fun TimerInputButtonText(text: String) {
 }
 
 @Composable
-private fun TimerInputButton(onClick: () -> Unit, content: @Composable BoxScope.() -> Unit) {
+private fun TimerInputButton(
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  content: @Composable BoxScope.() -> Unit,
+) {
   Box(
     modifier =
-      Modifier.heightIn(max = 64.dp)
-        .widthIn(max = 64.dp)
-        .aspectRatio(1f)
-        .padding(5.dp)
+      modifier
         .clip(CircleShape)
         .background(MaterialTheme.colorScheme.primaryContainer)
         .clickable(onClick = onClick),
