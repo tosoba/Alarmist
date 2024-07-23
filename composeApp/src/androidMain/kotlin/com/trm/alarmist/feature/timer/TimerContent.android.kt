@@ -19,7 +19,6 @@ import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.timer.TimerService
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 
 @Composable
 actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
@@ -54,16 +53,18 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
   val state by remember { derivedStateOf { service?.state ?: TimerState.IDLE } }
   val duration by remember { derivedStateOf { service?.duration ?: Duration.ZERO } }
 
-  // TODO: show duration only for start/stop TimerState
-  // TODO: for idle show duration input keyboard - UI should be in common
-  // TODO: for elapsed show elapsed at info and reset button and back to idle keyboard button - UI
   when (state) {
-    TimerState.IDLE -> {
-      TimerInput()
+    TimerState.IDLE,
+    TimerState.ELAPSED -> {
+      // TODO: for elapsed show elapsed at info and reset button and back to idle keyboard button
+      TimerInput(
+        onStartClick = {
+          TimerService.startWithAction(context = context, TimerService.Action.Start(it))
+        }
+      )
     }
     TimerState.STARTED,
-    TimerState.STOPPED,
-    TimerState.ELAPSED -> {
+    TimerState.STOPPED -> {
       TimerDuration(
         duration = duration,
         state = state,
@@ -74,7 +75,7 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
               when (state) {
                 TimerState.STARTED -> TimerService.Action.Stop
                 TimerState.STOPPED -> TimerService.Action.Resume
-                else -> TimerService.Action.Start(1.minutes)
+                else -> TimerService.Action.Cancel
               },
           )
         },

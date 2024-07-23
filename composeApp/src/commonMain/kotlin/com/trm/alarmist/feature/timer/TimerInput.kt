@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,9 +29,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun TimerInput() {
+fun TimerInput(onStartClick: (Duration) -> Unit) {
   Column(
     modifier =
       Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(30.dp),
@@ -75,6 +81,18 @@ fun TimerInput() {
       TimerInputButton(onClick = { if (input.isNotEmpty()) input.removeFirst() }) {
         Icon(Icons.AutoMirrored.Filled.Backspace, "Backspace")
       }
+    }
+
+    LargeFloatingActionButton(
+      onClick = {
+        onStartClick(
+          "${getInputAt(5)}${getInputAt(4)}".toInt().hours +
+            "${getInputAt(3)}${getInputAt(2)}".toInt().minutes +
+            "${getInputAt(1)}${getInputAt(0)}".toInt().seconds
+        )
+      }
+    ) {
+      Icon(Icons.Default.PlayArrow, "Start timer")
     }
   }
 }
