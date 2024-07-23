@@ -5,6 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -15,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.timer.TimerService
@@ -58,9 +63,11 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
     TimerState.ELAPSED -> {
       // TODO: for elapsed show elapsed at info and reset button and back to idle keyboard button
       TimerInput(
+        modifier =
+          Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(16.dp),
         onStartClick = {
           TimerService.startWithAction(context = context, TimerService.Action.Start(it))
-        }
+        },
       )
     }
     TimerState.STARTED,

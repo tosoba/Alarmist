@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
@@ -21,6 +22,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -29,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trm.alarmist.core.ui.AutoSizeText
@@ -37,19 +43,16 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun TimerInput(onStartClick: (Duration) -> Unit) {
-  // TODO: row based layout for short screens (phone in landscape)
-  Column(
-    modifier =
-      Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(30.dp),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally,
-  ) {
-    val input = remember { mutableStateListOf<Char>() }
+fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) {
+  val windowSizeClass = calculateWindowSizeClass()
 
-    fun getInputAt(index: Int): Char = input.getOrNull(index) ?: '0'
+  val input = remember { mutableStateListOf<Char>() }
+  fun getInputAt(index: Int): Char = input.getOrNull(index) ?: '0'
 
+  @Composable
+  fun TimerDurationText() {
     Text(
       text =
         "${getInputAt(5)}${getInputAt(4)}h ${getInputAt(3)}${getInputAt(2)}m ${getInputAt(1)}${getInputAt(0)}s",
@@ -60,40 +63,50 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
           color = MaterialTheme.colorScheme.onBackground,
         ),
     )
+  }
 
-    fun onTextInputButtonClick(text: String) {
-      var charIndex = 0
-      while (input.size < 6 && charIndex < text.length) {
-        if (text[charIndex] != '0' || input.isNotEmpty()) {
-          input.add(0, text[charIndex++])
-        } else {
-          break
+  @Composable
+  fun TimerInputTextButton(text: String, modifier: Modifier) {
+    TimerInputButton(
+      onClick = {
+        var charIndex = 0
+        while (input.size < 6 && charIndex < text.length) {
+          if (text[charIndex] != '0' || input.isNotEmpty()) {
+            input.add(0, text[charIndex++])
+          } else {
+            break
+          }
         }
-      }
+      },
+      modifier = modifier,
+    ) {
+      TimerInputButtonText(text)
     }
+  }
 
-    Spacer(modifier = Modifier.height(16.dp))
-
-    BoxWithConstraints {
-      val space = 5.dp
-      val columnCount = 3
-      val rowCount = 4
-      val buttonModifier =
-        Modifier.requiredSize(
-          minOf(
-            (maxWidth - space * (columnCount - 1)) / columnCount,
-            // TODO: - 96.dp only for column based layout
-            (maxHeight - space * (rowCount - 1) - 96.dp) / rowCount,
-            96.dp,
-          )
+  @Composable
+  fun TimerStartButton() {
+    LargeFloatingActionButton(
+      onClick = {
+        onStartClick(
+          "${getInputAt(5)}${getInputAt(4)}".toInt().hours +
+            "${getInputAt(3)}${getInputAt(2)}".toInt().minutes +
+            "${getInputAt(1)}${getInputAt(0)}".toInt().seconds
         )
-
-      @Composable
-      fun TimerInputTextButton(text: String) {
-        TimerInputButton(onClick = { onTextInputButtonClick(text) }, modifier = buttonModifier) {
-          TimerInputButtonText(text)
-        }
       }
+    ) {
+      Icon(Icons.Default.PlayArrow, "Start timer")
+    }
+  }
+
+  @Composable
+  fun TimerInputKeyboard(
+    space: Dp = 5.dp,
+    modifier: Modifier = Modifier,
+    calculateButtonModifier: BoxWithConstraintsScope.(Dp) -> Modifier,
+  ) {
+    BoxWithConstraints(modifier = modifier) {
+      val buttonModifier = calculateButtonModifier(space)
 
       Column(
         verticalArrangement = Arrangement.spacedBy(space, alignment = Alignment.CenterVertically)
@@ -103,9 +116,9 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
           horizontalArrangement =
             Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
-          TimerInputTextButton("1")
-          TimerInputTextButton("2")
-          TimerInputTextButton("3")
+          TimerInputTextButton("1", modifier = buttonModifier)
+          TimerInputTextButton("2", modifier = buttonModifier)
+          TimerInputTextButton("3", modifier = buttonModifier)
         }
 
         Row(
@@ -113,9 +126,9 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
           horizontalArrangement =
             Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
-          TimerInputTextButton("4")
-          TimerInputTextButton("5")
-          TimerInputTextButton("6")
+          TimerInputTextButton("4", modifier = buttonModifier)
+          TimerInputTextButton("5", modifier = buttonModifier)
+          TimerInputTextButton("6", modifier = buttonModifier)
         }
 
         Row(
@@ -123,9 +136,9 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
           horizontalArrangement =
             Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
-          TimerInputTextButton("7")
-          TimerInputTextButton("8")
-          TimerInputTextButton("9")
+          TimerInputTextButton("7", modifier = buttonModifier)
+          TimerInputTextButton("8", modifier = buttonModifier)
+          TimerInputTextButton("9", modifier = buttonModifier)
         }
 
         Row(
@@ -133,8 +146,9 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
           horizontalArrangement =
             Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
-          TimerInputTextButton("00")
-          TimerInputTextButton("0")
+          TimerInputTextButton("00", modifier = buttonModifier)
+          TimerInputTextButton("0", modifier = buttonModifier)
+          // TODO: different color for backspace button
           TimerInputButton(
             onClick = { if (input.isNotEmpty()) input.removeFirst() },
             modifier = buttonModifier,
@@ -148,19 +162,67 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
         }
       }
     }
+  }
 
-    Spacer(modifier = Modifier.height(16.dp))
+  val keyboardColumnsCount = 3
+  val keyboardRowsCount = 4
 
-    LargeFloatingActionButton(
-      onClick = {
-        onStartClick(
-          "${getInputAt(5)}${getInputAt(4)}".toInt().hours +
-            "${getInputAt(3)}${getInputAt(2)}".toInt().minutes +
-            "${getInputAt(1)}${getInputAt(0)}".toInt().seconds
-        )
-      }
+  // TODO: spacing between layout elements + their alignments
+  if (
+    windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
+      windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+  ) {
+    Row(
+      modifier = modifier,
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Center,
     ) {
-      Icon(Icons.Default.PlayArrow, "Start timer")
+      TimerDurationText()
+
+      Spacer(modifier = Modifier.width(16.dp))
+
+      TimerInputKeyboard(
+        modifier = Modifier.padding(vertical = 16.dp),
+        calculateButtonModifier = { space ->
+          Modifier.requiredSize(
+            minOf(
+              (maxWidth - space * (keyboardColumnsCount - 1)) / keyboardColumnsCount,
+              (maxHeight - space * (keyboardRowsCount - 1)) / keyboardRowsCount,
+              96.dp,
+            )
+          )
+        },
+      )
+
+      Spacer(modifier = Modifier.width(16.dp))
+
+      TimerStartButton()
+    }
+  } else {
+    Column(
+      modifier = modifier,
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      TimerDurationText()
+
+      Spacer(modifier = Modifier.height(16.dp))
+
+      TimerInputKeyboard(
+        calculateButtonModifier = { space ->
+          Modifier.requiredSize(
+            minOf(
+              (maxWidth - space * (keyboardColumnsCount - 1)) / keyboardColumnsCount,
+              (maxHeight - space * (keyboardRowsCount - 1) - 96.dp) / keyboardRowsCount,
+              96.dp,
+            )
+          )
+        }
+      )
+
+      Spacer(modifier = Modifier.height(16.dp))
+
+      TimerStartButton()
     }
   }
 }
