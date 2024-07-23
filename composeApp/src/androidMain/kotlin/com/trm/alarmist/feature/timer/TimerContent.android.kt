@@ -57,23 +57,31 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
   // TODO: show duration only for start/stop TimerState
   // TODO: for idle show duration input keyboard - UI should be in common
   // TODO: for elapsed show elapsed at info and reset button and back to idle keyboard button - UI
-  // should be in common
-  TimerDuration(
-    duration = duration,
-    state = state,
-    onStartStopClick = {
-      TimerService.startWithAction(
-        context = context,
-        action =
-          when (state) {
-            TimerState.STARTED -> TimerService.Action.Stop
-            TimerState.STOPPED -> TimerService.Action.Resume
-            else -> TimerService.Action.Start(1.minutes)
-          },
+  when (state) {
+    TimerState.IDLE -> {
+      TimerInput()
+    }
+    TimerState.STARTED,
+    TimerState.STOPPED,
+    TimerState.ELAPSED -> {
+      TimerDuration(
+        duration = duration,
+        state = state,
+        onStartStopClick = {
+          TimerService.startWithAction(
+            context = context,
+            action =
+              when (state) {
+                TimerState.STARTED -> TimerService.Action.Stop
+                TimerState.STOPPED -> TimerService.Action.Resume
+                else -> TimerService.Action.Start(1.minutes)
+              },
+          )
+        },
+        onCancelClick = {
+          TimerService.startWithAction(context = context, action = TimerService.Action.Cancel)
+        },
       )
-    },
-    onCancelClick = {
-      TimerService.startWithAction(context = context, action = TimerService.Action.Cancel)
-    },
-  )
+    }
+  }
 }
