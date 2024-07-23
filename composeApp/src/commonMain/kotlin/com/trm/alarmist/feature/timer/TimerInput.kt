@@ -30,6 +30,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.trm.alarmist.core.ui.AutoSizeText
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -137,7 +139,11 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
             onClick = { if (input.isNotEmpty()) input.removeFirst() },
             modifier = buttonModifier,
           ) {
-            Icon(Icons.AutoMirrored.Filled.Backspace, "Backspace")
+            Icon(
+              imageVector = Icons.AutoMirrored.Filled.Backspace,
+              contentDescription = "Backspace",
+              modifier = Modifier.padding(2.dp),
+            )
           }
         }
       }
@@ -161,9 +167,11 @@ fun TimerInput(onStartClick: (Duration) -> Unit) {
 
 @Composable
 private fun TimerInputButtonText(text: String) {
-  // TODO: AutoSizeText
-  Text(
+  AutoSizeText(
+    modifier = Modifier.padding(2.dp),
     text = text,
+    alignment = Alignment.Center,
+    maxTextSize = 32.sp,
     style =
       TextStyle(
         fontSize = MaterialTheme.typography.headlineLarge.fontSize,
