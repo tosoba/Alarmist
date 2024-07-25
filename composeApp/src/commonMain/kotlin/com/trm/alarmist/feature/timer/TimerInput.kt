@@ -167,19 +167,14 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
   val keyboardColumnsCount = 3
   val keyboardRowsCount = 4
 
-  // TODO: spacing between layout elements + their alignments
   if (
     windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
   ) {
-    Row(
-      modifier = modifier,
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Center,
-    ) {
-      TimerDurationText()
-
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
       Spacer(modifier = Modifier.width(16.dp))
+      TimerDurationText()
+      Spacer(modifier = Modifier.weight(1f))
 
       TimerInputKeyboard(
         modifier = Modifier.padding(vertical = 16.dp),
@@ -194,19 +189,15 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
         },
       )
 
-      Spacer(modifier = Modifier.width(16.dp))
-
+      Spacer(modifier = Modifier.weight(1f))
       TimerStartButton()
+      Spacer(modifier = Modifier.width(16.dp))
     }
   } else {
-    Column(
-      modifier = modifier,
-      verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      TimerDurationText()
-
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
       Spacer(modifier = Modifier.height(16.dp))
+      TimerDurationText()
+      Spacer(modifier = Modifier.weight(1f))
 
       TimerInputKeyboard(
         calculateButtonModifier = { space ->
@@ -220,9 +211,9 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
         }
       )
 
-      Spacer(modifier = Modifier.height(16.dp))
-
+      Spacer(modifier = Modifier.weight(1f))
       TimerStartButton()
+      Spacer(modifier = Modifier.height(16.dp))
     }
   }
 }
