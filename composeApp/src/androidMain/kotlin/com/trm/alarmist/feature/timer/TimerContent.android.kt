@@ -66,7 +66,9 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
         modifier =
           Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(16.dp),
         onStartClick = {
-          TimerService.startWithAction(context = context, TimerService.Action.Start(it))
+          if (it.inWholeSeconds > 0L) {
+            TimerService.startWithAction(context = context, TimerService.Action.Start(it))
+          }
         },
       )
     }
