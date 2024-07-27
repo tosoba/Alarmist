@@ -67,6 +67,10 @@ class TimerService : Service() {
           stopTimer()
           updateNotification(buildStoppedNotification())
         }
+        Action.Reset -> {
+          stopTimer()
+          duration = initialDuration
+        }
         Action.Cancel -> {
           cancelTimer()
           stopForegroundService()
@@ -203,6 +207,8 @@ class TimerService : Service() {
     @Parcelize data object Resume : Action
 
     @Parcelize data object Stop : Action
+
+    @Parcelize data object Reset : Action
 
     @Parcelize data object Cancel : Action
   }

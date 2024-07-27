@@ -93,6 +93,9 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
         onCancelClick = {
           TimerService.startWithAction(context = context, action = TimerService.Action.Cancel)
         },
+        onResetClick = {
+          TimerService.startWithAction(context = context, action = TimerService.Action.Reset)
+        },
       )
     }
   }
