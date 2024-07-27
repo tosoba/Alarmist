@@ -122,11 +122,11 @@ fun StopwatchDuration(
       LargeFloatingActionButton(onClick = onStartStopClick) {
         Icon(
           imageVector =
-            if (state == StopwatchState.STARTED) Icons.Default.Pause else Icons.Default.PlayArrow,
+            if (state == StopwatchState.RUNNING) Icons.Default.Pause else Icons.Default.PlayArrow,
           contentDescription =
             when (state) {
-              StopwatchState.STARTED -> "Pause stopwatch"
-              StopwatchState.STOPPED -> "Resume stopwatch"
+              StopwatchState.RUNNING -> "Pause stopwatch"
+              StopwatchState.PAUSED -> "Resume stopwatch"
               else -> "Start stopwatch"
             },
         )
@@ -134,7 +134,7 @@ fun StopwatchDuration(
 
       // TODO: on lap click
       AnimatedContent(
-        targetState = state == StopwatchState.STARTED,
+        targetState = state == StopwatchState.RUNNING,
         transitionSpec =
           AnimatedContentTransitionScope<Boolean>::sideFloatingActionButtonTransitionSpec,
       ) {

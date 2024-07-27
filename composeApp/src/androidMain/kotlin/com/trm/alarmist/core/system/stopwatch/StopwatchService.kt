@@ -48,38 +48,43 @@ class StopwatchService : Service() {
   override fun onBind(intent: Intent?): StopwatchBinder = binder
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    intent?.getSerializable<Action>(EXTRA_ACTION)?.let {
-      when (it) {
-        Action.START -> {
-          startForegroundService()
-          startStopwatch()
-        }
-        Action.STOP -> {
-          stopStopwatch()
-          updateNotificationWhenStopped()
-        }
-        Action.CANCEL -> {
-          cancelStopwatch()
-          stopForegroundService()
-        }
-      }
-    } ?: throw IllegalArgumentException("Missing StopwatchServiceAction.")
-
+    intent?.getSerializable<Action>(EXTRA_ACTION)?.let { handleAction(it) }
+      ?: throw IllegalArgumentException("Missing StopwatchServiceAction.")
     return super.onStartCommand(intent, flags, startId)
   }
 
+  private fun handleAction(action: Action) {
+    when (action) {
+      Action.TOGGLE_RUNNING -> {
+        if (state == StopwatchState.RUNNING) {
+          stopStopwatch()
+          updateNotification(buildPausedNotification())
+        } else {
+          startForegroundService()
+          startStopwatch()
+        }
+      }
+      Action.CANCEL -> {
+        cancelStopwatch()
+        stopForegroundService()
+      }
+    }
+  }
+
   private fun startStopwatch() {
-    state = StopwatchState.STARTED
     timer =
       fixedRateTimer(period = TIMER_PERIOD_MILLIS) {
         duration += TIMER_PERIOD_MILLIS.milliseconds
-        if (duration.inWholeMilliseconds % 1_000L == 0L) updateNotificationWhenStarted()
+        if (duration.inWholeMilliseconds % 1_000L == 0L) {
+          updateNotification(buildRunningNotification())
+        }
       }
+    state = StopwatchState.RUNNING
   }
 
   private fun stopStopwatch() {
     timer?.cancel()
-    state = StopwatchState.STOPPED
+    state = StopwatchState.PAUSED
   }
 
   private fun cancelStopwatch() {
@@ -99,7 +104,7 @@ class StopwatchService : Service() {
       .build()
 
   private fun startForegroundService() {
-    startForeground(NOTIFICATION_ID, buildStartedNotification())
+    startForeground(NOTIFICATION_ID, buildRunningNotification())
   }
 
   private fun stopForegroundService() {
@@ -119,27 +124,29 @@ class StopwatchService : Service() {
       )
   }
 
-  private fun updateNotificationWhenStarted() {
-    getSystemService(NotificationManager::class.java)
-      .notify(NOTIFICATION_ID, buildStartedNotification())
+  private fun updateNotification(notification: Notification) {
+    getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, notification)
   }
 
-  private fun updateNotificationWhenStopped() {
-    getSystemService(NotificationManager::class.java)
-      .notify(NOTIFICATION_ID, buildStoppedNotification())
-  }
-
-  private fun buildStartedNotification(): Notification =
+  private fun buildRunningNotification(): Notification =
     buildNotification(pauseNotificationAction(), cancelNotificationAction())
 
-  private fun buildStoppedNotification(): Notification =
+  private fun buildPausedNotification(): Notification =
     buildNotification(resumeNotificationAction(), cancelNotificationAction())
 
   private fun pauseNotificationAction(): NotificationCompat.Action =
-    NotificationCompat.Action(null, getStringBlocking(Res.string.pause), stopPendingIntent(this))
+    NotificationCompat.Action(
+      null,
+      getStringBlocking(Res.string.pause),
+      toggleRunningPendingIntent(this),
+    )
 
   private fun resumeNotificationAction(): NotificationCompat.Action =
-    NotificationCompat.Action(null, getStringBlocking(Res.string.resume), resumePendingIntent(this))
+    NotificationCompat.Action(
+      null,
+      getStringBlocking(Res.string.resume),
+      toggleRunningPendingIntent(this),
+    )
 
   private fun cancelNotificationAction(): NotificationCompat.Action =
     NotificationCompat.Action(null, getStringBlocking(Res.string.cancel), cancelPendingIntent(this))
@@ -153,19 +160,11 @@ class StopwatchService : Service() {
       PendingIntent.FLAG_MUTABLE,
     )
 
-  private fun stopPendingIntent(context: Context): PendingIntent =
+  private fun toggleRunningPendingIntent(context: Context): PendingIntent =
     PendingIntent.getService(
       context,
-      STOP_REQUEST_CODE,
-      Intent(context, StopwatchService::class.java).putExtra(EXTRA_ACTION, Action.STOP),
-      PendingIntent.FLAG_IMMUTABLE,
-    )
-
-  private fun resumePendingIntent(context: Context): PendingIntent =
-    PendingIntent.getService(
-      context,
-      RESUME_REQUEST_CODE,
-      Intent(context, StopwatchService::class.java).putExtra(EXTRA_ACTION, Action.START),
+      TOGGLE_RUNNING_REQUEST_CODE,
+      Intent(context, StopwatchService::class.java).putExtra(EXTRA_ACTION, Action.TOGGLE_RUNNING),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -182,16 +181,14 @@ class StopwatchService : Service() {
   }
 
   enum class Action {
-    START,
-    STOP,
+    TOGGLE_RUNNING,
     CANCEL,
   }
 
   companion object {
     private const val CLICK_REQUEST_CODE = 100
     private const val CANCEL_REQUEST_CODE = 101
-    private const val STOP_REQUEST_CODE = 102
-    private const val RESUME_REQUEST_CODE = 103
+    private const val TOGGLE_RUNNING_REQUEST_CODE = 102
 
     private const val NOTIFICATION_CHANNEL_ID = "STOPWATCH_NOTIFICATION_ID"
     private const val NOTIFICATION_CHANNEL_NAME = "STOPWATCH_NOTIFICATION"
