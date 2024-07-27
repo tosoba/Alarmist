@@ -77,6 +77,8 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
     TimerState.STARTED,
     TimerState.STOPPED -> {
       TimerDuration(
+        modifier =
+          Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(16.dp),
         duration = duration,
         initialDuration = initialDuration,
         state = state,
