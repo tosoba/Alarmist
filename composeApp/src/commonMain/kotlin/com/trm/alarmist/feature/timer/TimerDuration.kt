@@ -85,7 +85,7 @@ fun TimerDuration(
 
       Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Spacer(modifier = Modifier.width(32.dp))
-
+        // TODO: move this to center of the screen for WindowWidthSizeClass.Expanded
         Column(horizontalAlignment = Alignment.End) {
           TimerDuration(duration = duration)
           Spacer(modifier = Modifier.height(16.dp))

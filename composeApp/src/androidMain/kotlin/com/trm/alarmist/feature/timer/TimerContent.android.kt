@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -19,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.timer.TimerService
@@ -60,60 +60,62 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
   val duration by remember { derivedStateOf { service?.duration ?: Duration.ZERO } }
   val initialDuration by remember { derivedStateOf { service?.initialDuration ?: Duration.ZERO } }
 
-  when (state) {
-    TimerState.IDLE,
-    TimerState.ELAPSED -> {
-      // TODO: for elapsed show elapsed at info and reset button and back to idle keyboard button
-      TimerInput(
-        modifier =
-          Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(16.dp),
-        onStartClick = {
-          if (it.inWholeSeconds > 0L) {
-            TimerService.startWithAction(context = context, TimerService.Action.Start(it))
-          }
-        },
-      )
-    }
-    TimerState.STARTED,
-    TimerState.STOPPED -> {
-      TimerDuration(
-        modifier =
-          Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(16.dp),
-        duration = duration,
-        initialDuration = initialDuration,
-        state = state,
-        onStartStopClick = {
-          TimerService.startWithAction(
-            context = context,
-            action =
-              when (state) {
-                TimerState.STARTED -> TimerService.Action.Stop
-                TimerState.STOPPED -> TimerService.Action.Resume
-                else -> TimerService.Action.Cancel
-              },
-          )
-        },
-        onCancelClick = {
-          TimerService.startWithAction(context = context, action = TimerService.Action.Cancel)
-        },
-        onResetClick = {
-          TimerService.startWithAction(context = context, action = TimerService.Action.Reset)
-        },
-        onAddMinuteClick = {
-          TimerService.startWithAction(
-            context = context,
-            action = TimerService.Action.AddDuration(1.minutes),
-          )
-        },
-        onSubtractMinuteClick = {
-          if (duration > 1.minutes) {
+  Scaffold(modifier = modifier) {
+    when (state) {
+      TimerState.IDLE,
+      TimerState.ELAPSED -> {
+        // TODO: for elapsed show elapsed at info and reset button and back to idle keyboard button
+        TimerInput(
+          modifier =
+            Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(it),
+          onStartClick = {
+            if (it.inWholeSeconds > 0L) {
+              TimerService.startWithAction(context = context, TimerService.Action.Start(it))
+            }
+          },
+        )
+      }
+      TimerState.STARTED,
+      TimerState.STOPPED -> {
+        TimerDuration(
+          modifier =
+            Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(it),
+          duration = duration,
+          initialDuration = initialDuration,
+          state = state,
+          onStartStopClick = {
             TimerService.startWithAction(
               context = context,
-              action = TimerService.Action.SubtractDuration(1.minutes),
+              action =
+                when (state) {
+                  TimerState.STARTED -> TimerService.Action.Stop
+                  TimerState.STOPPED -> TimerService.Action.Resume
+                  else -> TimerService.Action.Cancel
+                },
             )
-          }
-        },
-      )
+          },
+          onCancelClick = {
+            TimerService.startWithAction(context = context, action = TimerService.Action.Cancel)
+          },
+          onResetClick = {
+            TimerService.startWithAction(context = context, action = TimerService.Action.Reset)
+          },
+          onAddMinuteClick = {
+            TimerService.startWithAction(
+              context = context,
+              action = TimerService.Action.AddDuration(1.minutes),
+            )
+          },
+          onSubtractMinuteClick = {
+            if (duration > 1.minutes) {
+              TimerService.startWithAction(
+                context = context,
+                action = TimerService.Action.SubtractDuration(1.minutes),
+              )
+            }
+          },
+        )
+      }
     }
   }
 }

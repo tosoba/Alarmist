@@ -14,20 +14,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,20 +46,33 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
   val context = LocalContext.current
   val widgetManager = AppWidgetManager.getInstance(context)
 
-  if (!widgetManager.isRequestPinAppWidgetSupported) {
-    Box(modifier = modifier) {
-      WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
-    }
-  } else {
-    LazyColumn(
-      modifier = modifier,
-      contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-    ) {
-      items(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
-        WidgetInfoCard(
-          providerInfo = it,
-          modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        )
+  Scaffold(modifier = modifier) {
+    // TODO: different layouts for different screen sizes
+
+    if (!widgetManager.isRequestPinAppWidgetSupported) {
+      Box(modifier = Modifier.padding(it)) {
+        WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
+      }
+    } else {
+      // TODO: add top/bottom gradients for scrolling
+
+      LazyColumn(
+        contentPadding =
+          PaddingValues(
+            top = it.calculateTopPadding(),
+            bottom = it.calculateBottomPadding(),
+            start = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
+            end = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
+          )
+      ) {
+        itemsIndexed(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
+          index,
+          providerInfo ->
+          WidgetInfoCard(
+            providerInfo = providerInfo,
+            modifier = Modifier.fillMaxWidth().padding(vertical = if (index == 0) 0.dp else 8.dp),
+          )
+        }
       }
     }
   }

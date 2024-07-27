@@ -5,6 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -53,19 +58,23 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
   val state by remember { derivedStateOf { service?.state ?: StopwatchState.IDLE } }
   val duration by remember { derivedStateOf { service?.duration ?: Duration.ZERO } }
 
-  StopwatchDuration(
-    duration = duration,
-    state = state,
-    onStartStopClick = {
-      StopwatchService.startWithAction(
-        context = context,
-        action =
-          if (state == StopwatchState.STARTED) StopwatchService.Action.STOP
-          else StopwatchService.Action.START,
-      )
-    },
-    onCancelClick = {
-      StopwatchService.startWithAction(context = context, action = StopwatchService.Action.CANCEL)
-    },
-  )
+  Scaffold(modifier = modifier) {
+    StopwatchDuration(
+      modifier =
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(it),
+      duration = duration,
+      state = state,
+      onStartStopClick = {
+        StopwatchService.startWithAction(
+          context = context,
+          action =
+            if (state == StopwatchState.STARTED) StopwatchService.Action.STOP
+            else StopwatchService.Action.START,
+        )
+      },
+      onCancelClick = {
+        StopwatchService.startWithAction(context = context, action = StopwatchService.Action.CANCEL)
+      },
+    )
+  }
 }
