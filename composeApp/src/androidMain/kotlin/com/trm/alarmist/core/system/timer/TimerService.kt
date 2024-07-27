@@ -53,39 +53,41 @@ class TimerService : Service() {
   override fun onBind(intent: Intent?): TimerBinder = binder
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    intent?.getParcelable<Action>(EXTRA_ACTION)?.let {
-      when (it) {
-        is Action.Start -> {
-          startForegroundService()
-          initialDuration = it.duration
-          startTimer(it.duration)
-        }
-        is Action.ToggleRunning -> {
-          if (state == TimerState.RUNNING) {
-            pauseTimer()
-            updateNotification(buildPausedNotification())
-          } else if (state == TimerState.PAUSED) {
-            startTimer(duration)
-          }
-        }
-        is Action.AddDuration -> {
-          modifyTimer { duration += it.duration }
-        }
-        is Action.SubtractDuration -> {
-          modifyTimer { duration -= it.duration }
-        }
-        Action.Reset -> {
+    intent?.getParcelable<Action>(EXTRA_ACTION)?.let(::handleAction)
+      ?: throw IllegalArgumentException("TimerService.Action extra is missing.")
+    return super.onStartCommand(intent, flags, startId)
+  }
+
+  private fun handleAction(action: Action) {
+    when (action) {
+      is Action.Start -> {
+        startForegroundService()
+        initialDuration = action.duration
+        startTimer(action.duration)
+      }
+      is Action.ToggleRunning -> {
+        if (state == TimerState.RUNNING) {
           pauseTimer()
-          duration = initialDuration
-        }
-        Action.Cancel -> {
-          cancelTimer()
-          stopForegroundService()
+          updateNotification(buildPausedNotification())
+        } else if (state == TimerState.PAUSED) {
+          startTimer(duration)
         }
       }
-    } ?: throw IllegalArgumentException("Missing TimerServiceAction.")
-
-    return super.onStartCommand(intent, flags, startId)
+      is Action.AddDuration -> {
+        updateDuration(duration + action.duration)
+      }
+      is Action.SubtractDuration -> {
+        updateDuration(duration - action.duration)
+      }
+      Action.Reset -> {
+        pauseTimer()
+        duration = initialDuration
+      }
+      Action.Cancel -> {
+        cancelTimer()
+        stopForegroundService()
+      }
+    }
   }
 
   private fun startTimer(initialDuration: Duration) {
@@ -108,11 +110,19 @@ class TimerService : Service() {
     state = TimerState.PAUSED
   }
 
-  private fun modifyTimer(modification: () -> Unit) {
-    val isRunning = state == TimerState.RUNNING
-    pauseTimer()
-    modification()
-    if (isRunning) startTimer(duration)
+  private fun updateDuration(newDuration: Duration) {
+    when {
+      newDuration <= Duration.ZERO -> {
+        return
+      }
+      state == TimerState.RUNNING -> {
+        timer?.cancel()
+        startTimer(newDuration)
+      }
+      else -> {
+        duration = newDuration
+      }
+    }
   }
 
   private fun cancelTimer() {

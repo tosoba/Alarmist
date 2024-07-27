@@ -106,12 +106,10 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
             )
           },
           onSubtractMinuteClick = {
-            if (duration > 1.minutes) {
-              TimerService.startWithAction(
-                context = context,
-                action = TimerService.Action.SubtractDuration(1.minutes),
-              )
-            }
+            TimerService.startWithAction(
+              context = context,
+              action = TimerService.Action.SubtractDuration(1.minutes),
+            )
           },
         )
       }
