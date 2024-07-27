@@ -37,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.formatHMS
 import com.trm.alarmist.core.common.util.zeroPadded
-import com.trm.alarmist.core.domain.model.TimerState
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -46,8 +45,8 @@ import kotlin.time.Duration.Companion.minutes
 fun TimerDuration(
   duration: Duration,
   initialDuration: Duration,
-  state: TimerState,
-  onStartStopClick: () -> Unit,
+  isRunning: Boolean,
+  onToggleRunningClick: () -> Unit,
   onCancelClick: () -> Unit,
   onResetClick: () -> Unit,
   onAddMinuteClick: () -> Unit,
@@ -96,8 +95,8 @@ fun TimerDuration(
 
         TimerDurationControls(
           duration = duration,
-          state = state,
-          onStartStopClick = onStartStopClick,
+          isRunning = isRunning,
+          onToggleRunningClick = onToggleRunningClick,
           onAddMinuteClick = onAddMinuteClick,
           onSubtractMinuteClick = onSubtractMinuteClick,
         )
@@ -115,8 +114,8 @@ fun TimerDuration(
 
       TimerDurationControls(
         duration = duration,
-        state = state,
-        onStartStopClick = onStartStopClick,
+        isRunning = isRunning,
+        onToggleRunningClick = onToggleRunningClick,
         onAddMinuteClick = onAddMinuteClick,
         onSubtractMinuteClick = onSubtractMinuteClick,
         modifier = Modifier.fillMaxWidth(),
@@ -181,8 +180,8 @@ private fun TimerDuration(duration: Duration) {
 @Composable
 private fun TimerDurationControls(
   duration: Duration,
-  state: TimerState,
-  onStartStopClick: () -> Unit,
+  isRunning: Boolean,
+  onToggleRunningClick: () -> Unit,
   onAddMinuteClick: () -> Unit,
   onSubtractMinuteClick: () -> Unit,
   modifier: Modifier = Modifier,
@@ -207,11 +206,10 @@ private fun TimerDurationControls(
       }
     }
 
-    LargeFloatingActionButton(onClick = onStartStopClick) {
+    LargeFloatingActionButton(onClick = onToggleRunningClick) {
       Icon(
-        imageVector =
-          if (state == TimerState.STARTED) Icons.Default.Pause else Icons.Default.PlayArrow,
-        contentDescription = if (state == TimerState.STARTED) "Pause timer" else "Resume timer",
+        imageVector = if (isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
+        contentDescription = if (isRunning) "Pause timer" else "Resume timer",
       )
     }
 

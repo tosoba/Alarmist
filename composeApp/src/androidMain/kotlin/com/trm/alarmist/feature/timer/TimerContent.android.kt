@@ -60,14 +60,16 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
   val duration by remember { derivedStateOf { service?.duration ?: Duration.ZERO } }
   val initialDuration by remember { derivedStateOf { service?.initialDuration ?: Duration.ZERO } }
 
-  Scaffold(modifier = modifier) {
+  Scaffold(modifier = modifier) { padding ->
     when (state) {
       TimerState.IDLE,
       TimerState.ELAPSED -> {
         // TODO: for elapsed show elapsed at info and reset button and back to idle keyboard button
         TimerInput(
           modifier =
-            Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(it),
+            Modifier.fillMaxSize()
+              .background(MaterialTheme.colorScheme.background)
+              .padding(padding),
           onStartClick = {
             if (it.inWholeSeconds > 0L) {
               TimerService.startWithAction(context = context, TimerService.Action.Start(it))
@@ -75,23 +77,20 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
           },
         )
       }
-      TimerState.STARTED,
-      TimerState.STOPPED -> {
+      TimerState.RUNNING,
+      TimerState.PAUSED -> {
         TimerDuration(
           modifier =
-            Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(it),
+            Modifier.fillMaxSize()
+              .background(MaterialTheme.colorScheme.background)
+              .padding(padding),
           duration = duration,
           initialDuration = initialDuration,
-          state = state,
-          onStartStopClick = {
+          isRunning = state == TimerState.RUNNING,
+          onToggleRunningClick = {
             TimerService.startWithAction(
               context = context,
-              action =
-                when (state) {
-                  TimerState.STARTED -> TimerService.Action.Stop
-                  TimerState.STOPPED -> TimerService.Action.Resume
-                  else -> TimerService.Action.Cancel
-                },
+              action = TimerService.Action.ToggleRunning,
             )
           },
           onCancelClick = {

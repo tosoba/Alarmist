@@ -60,12 +60,13 @@ class TimerService : Service() {
           initialDuration = it.duration
           startTimer(it.duration)
         }
-        is Action.Resume -> {
-          startTimer(duration)
-        }
-        Action.Stop -> {
-          stopTimer()
-          updateNotification(buildStoppedNotification())
+        is Action.ToggleRunning -> {
+          if (state == TimerState.RUNNING) {
+            pauseTimer()
+            updateNotification(buildPausedNotification())
+          } else if (state == TimerState.PAUSED) {
+            startTimer(duration)
+          }
         }
         is Action.AddDuration -> {
           modifyTimer { duration += it.duration }
@@ -74,7 +75,7 @@ class TimerService : Service() {
           modifyTimer { duration -= it.duration }
         }
         Action.Reset -> {
-          stopTimer()
+          pauseTimer()
           duration = initialDuration
         }
         Action.Cancel -> {
@@ -89,7 +90,6 @@ class TimerService : Service() {
 
   private fun startTimer(initialDuration: Duration) {
     duration = initialDuration
-    state = TimerState.STARTED
     timer =
       fixedRateTimer(period = TIMER_PERIOD_MILLIS) {
         duration -= TIMER_PERIOD_MILLIS.milliseconds
@@ -97,21 +97,22 @@ class TimerService : Service() {
           // TODO: play sound/vibrate on elapsed
           elapseTimer()
         } else if (duration.inWholeMilliseconds % 1_000L == 0L) {
-          updateNotification(buildStartedNotification())
+          updateNotification(buildRunningNotification())
         }
       }
+    state = TimerState.RUNNING
   }
 
-  private fun stopTimer() {
+  private fun pauseTimer() {
     timer?.cancel()
-    state = TimerState.STOPPED
+    state = TimerState.PAUSED
   }
 
   private fun modifyTimer(modification: () -> Unit) {
-    val wasStarted = state == TimerState.STARTED
-    stopTimer()
+    val isRunning = state == TimerState.RUNNING
+    pauseTimer()
     modification()
-    if (wasStarted) startTimer(duration)
+    if (isRunning) startTimer(duration)
   }
 
   private fun cancelTimer() {
@@ -138,7 +139,7 @@ class TimerService : Service() {
       .build()
 
   private fun startForegroundService() {
-    startForeground(NOTIFICATION_ID, buildStartedNotification())
+    startForeground(NOTIFICATION_ID, buildRunningNotification())
   }
 
   private fun stopForegroundService() {
@@ -162,17 +163,25 @@ class TimerService : Service() {
     getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, notification)
   }
 
-  private fun buildStartedNotification(): Notification =
+  private fun buildRunningNotification(): Notification =
     buildNotification(pauseNotificationAction(), cancelNotificationAction())
 
-  private fun buildStoppedNotification(): Notification =
+  private fun buildPausedNotification(): Notification =
     buildNotification(resumeNotificationAction(), cancelNotificationAction())
 
   private fun pauseNotificationAction(): NotificationCompat.Action =
-    NotificationCompat.Action(null, getStringBlocking(Res.string.pause), stopPendingIntent(this))
+    NotificationCompat.Action(
+      null,
+      getStringBlocking(Res.string.pause),
+      toggleRunningPendingIntent(this),
+    )
 
   private fun resumeNotificationAction(): NotificationCompat.Action =
-    NotificationCompat.Action(null, getStringBlocking(Res.string.resume), resumePendingIntent(this))
+    NotificationCompat.Action(
+      null,
+      getStringBlocking(Res.string.resume),
+      toggleRunningPendingIntent(this),
+    )
 
   private fun cancelNotificationAction(): NotificationCompat.Action =
     NotificationCompat.Action(null, getStringBlocking(Res.string.cancel), cancelPendingIntent(this))
@@ -186,19 +195,11 @@ class TimerService : Service() {
       PendingIntent.FLAG_MUTABLE,
     )
 
-  private fun stopPendingIntent(context: Context): PendingIntent =
+  private fun toggleRunningPendingIntent(context: Context): PendingIntent =
     PendingIntent.getService(
       context,
-      STOP_REQUEST_CODE,
-      Intent(context, TimerService::class.java).putExtra(EXTRA_ACTION, Action.Stop),
-      PendingIntent.FLAG_IMMUTABLE,
-    )
-
-  private fun resumePendingIntent(context: Context): PendingIntent =
-    PendingIntent.getService(
-      context,
-      RESUME_REQUEST_CODE,
-      Intent(context, TimerService::class.java).putExtra(EXTRA_ACTION, Action.Resume),
+      TOGGLE_RUNNING_REQUEST_CODE,
+      Intent(context, TimerService::class.java).putExtra(EXTRA_ACTION, Action.ToggleRunning),
       PendingIntent.FLAG_IMMUTABLE,
     )
 
@@ -217,9 +218,7 @@ class TimerService : Service() {
   sealed interface Action : Parcelable {
     @Parcelize data class Start(val duration: Duration) : Action
 
-    @Parcelize data object Resume : Action
-
-    @Parcelize data object Stop : Action
+    @Parcelize data object ToggleRunning : Action
 
     @Parcelize data class AddDuration(val duration: Duration) : Action
 
@@ -233,8 +232,7 @@ class TimerService : Service() {
   companion object {
     private const val CLICK_REQUEST_CODE = 200
     private const val CANCEL_REQUEST_CODE = 201
-    private const val STOP_REQUEST_CODE = 202
-    private const val RESUME_REQUEST_CODE = 203
+    private const val TOGGLE_RUNNING_REQUEST_CODE = 202
 
     private const val NOTIFICATION_CHANNEL_ID = "TIMER_NOTIFICATION_ID"
     private const val NOTIFICATION_CHANNEL_NAME = "TIMER_NOTIFICATION"
