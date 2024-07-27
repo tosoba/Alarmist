@@ -57,6 +57,7 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
 
   val state by remember { derivedStateOf { service?.state ?: TimerState.IDLE } }
   val duration by remember { derivedStateOf { service?.duration ?: Duration.ZERO } }
+  val initialDuration by remember { derivedStateOf { service?.initialDuration ?: Duration.ZERO } }
 
   when (state) {
     TimerState.IDLE,
@@ -76,6 +77,7 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
     TimerState.STOPPED -> {
       TimerDuration(
         duration = duration,
+        initialDuration = initialDuration,
         state = state,
         onStartStopClick = {
           TimerService.startWithAction(

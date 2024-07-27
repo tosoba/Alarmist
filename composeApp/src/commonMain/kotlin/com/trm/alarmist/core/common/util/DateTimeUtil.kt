@@ -68,6 +68,15 @@ fun Duration.formatCountdown(): String =
     }
   }
 
+@Composable
+fun Duration.formatHMS(): String = toComponents { hours, minutes, seconds, _ ->
+  when {
+    hours > 0L -> "${hours}h ${minutes}m ${seconds}s"
+    minutes > 0L -> "${minutes}m ${seconds}s"
+    else -> "${seconds}s"
+  }
+}
+
 fun LocalDate.previousDayOfWeek(dayOfWeek: DayOfWeek): LocalDate {
   var current = this
   while (current.dayOfWeek != dayOfWeek) {

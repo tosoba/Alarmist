@@ -38,6 +38,9 @@ class TimerService : Service() {
   var duration by mutableStateOf(Duration.ZERO)
     private set
 
+  var initialDuration by mutableStateOf(Duration.ZERO)
+    private set
+
   private var timer: Timer? = null
 
   private val binder = TimerBinder()
@@ -54,6 +57,7 @@ class TimerService : Service() {
       when (it) {
         is Action.Start -> {
           startForegroundService()
+          initialDuration = it.duration
           startTimer(it.duration)
         }
         is Action.Resume -> {

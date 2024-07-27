@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.common.util.formatHMS
 import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.ui.sideFloatingActionButtonTransitionSpec
@@ -36,6 +37,7 @@ import kotlin.time.Duration
 @Composable
 fun TimerDuration(
   duration: Duration,
+  initialDuration: Duration,
   state: TimerState,
   onStartStopClick: () -> Unit,
   onCancelClick: () -> Unit,
@@ -46,7 +48,16 @@ fun TimerDuration(
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    // TODO: different layouts for different screens
+    // TODO: different layouts for different screens - conditions like in TimerInput
+    Text(
+      text = "${initialDuration.formatHMS()} timer",
+      style =
+        TextStyle(
+          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+          fontWeight = FontWeight.Bold,
+          color = MaterialTheme.colorScheme.onBackground,
+        ),
+    )
 
     Spacer(modifier = Modifier.weight(1f))
 
@@ -102,10 +113,13 @@ fun TimerDuration(
       ) {
         if (it) {
           FloatingActionButton(
-            onClick = onCancelClick,
+            onClick = onCancelClick, // TODO: have separate cancel button next to timer title
             elevation = FloatingActionButtonDefaults.loweredElevation(),
           ) {
-            Icon(imageVector = Icons.Default.RestartAlt, contentDescription = "Reset timer")
+            Icon(
+              imageVector = Icons.Default.RestartAlt,
+              contentDescription = "Reset timer",
+            ) // TODO: reset timer should restart it
           }
         } else {
           FloatingActionButtonSpacerBox()
@@ -125,7 +139,7 @@ fun TimerDuration(
         )
       }
 
-      // TODO: add 1 minute button?
+      // TODO: add/subtract 1 minute button on each side
       FloatingActionButtonSpacerBox()
     }
   }
