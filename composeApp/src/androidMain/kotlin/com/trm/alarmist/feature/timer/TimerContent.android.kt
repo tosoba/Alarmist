@@ -24,6 +24,7 @@ import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.timer.TimerService
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
@@ -95,6 +96,20 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
         },
         onResetClick = {
           TimerService.startWithAction(context = context, action = TimerService.Action.Reset)
+        },
+        onAddMinuteClick = {
+          TimerService.startWithAction(
+            context = context,
+            action = TimerService.Action.AddDuration(1.minutes),
+          )
+        },
+        onSubtractMinuteClick = {
+          if (duration > 1.minutes) {
+            TimerService.startWithAction(
+              context = context,
+              action = TimerService.Action.SubtractDuration(1.minutes),
+            )
+          }
         },
       )
     }

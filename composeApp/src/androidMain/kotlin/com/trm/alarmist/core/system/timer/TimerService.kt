@@ -67,6 +67,12 @@ class TimerService : Service() {
           stopTimer()
           updateNotification(buildStoppedNotification())
         }
+        is Action.AddDuration -> {
+          modifyTimer { duration += it.duration }
+        }
+        is Action.SubtractDuration -> {
+          modifyTimer { duration -= it.duration }
+        }
         Action.Reset -> {
           stopTimer()
           duration = initialDuration
@@ -99,6 +105,13 @@ class TimerService : Service() {
   private fun stopTimer() {
     timer?.cancel()
     state = TimerState.STOPPED
+  }
+
+  private fun modifyTimer(modification: () -> Unit) {
+    val wasStarted = state == TimerState.STARTED
+    stopTimer()
+    modification()
+    if (wasStarted) startTimer(duration)
   }
 
   private fun cancelTimer() {
@@ -207,6 +220,10 @@ class TimerService : Service() {
     @Parcelize data object Resume : Action
 
     @Parcelize data object Stop : Action
+
+    @Parcelize data class AddDuration(val duration: Duration) : Action
+
+    @Parcelize data class SubtractDuration(val duration: Duration) : Action
 
     @Parcelize data object Reset : Action
 

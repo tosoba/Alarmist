@@ -1,5 +1,6 @@
 package com.trm.alarmist.feature.timer
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,6 +36,7 @@ import com.trm.alarmist.core.common.util.formatHMS
 import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.TimerState
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun TimerDuration(
@@ -42,6 +46,8 @@ fun TimerDuration(
   onStartStopClick: () -> Unit,
   onCancelClick: () -> Unit,
   onResetClick: () -> Unit,
+  onAddMinuteClick: () -> Unit,
+  onSubtractMinuteClick: () -> Unit,
 ) {
   Column(
     modifier =
@@ -124,8 +130,20 @@ fun TimerDuration(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
     ) {
-      // TODO: subtract 1 minute button
-      FloatingActionButtonSpacerBox()
+      AnimatedContent(targetState = duration > 1.minutes) {
+        if (it) {
+          FloatingActionButton(
+            onClick = onSubtractMinuteClick,
+            elevation = FloatingActionButtonDefaults.loweredElevation(),
+            modifier =
+              Modifier.semantics { contentDescription = "Subtract 1 minute from timer duration" },
+          ) {
+            Text("-1:00")
+          }
+        } else {
+          FloatingActionButtonSpacerBox()
+        }
+      }
 
       LargeFloatingActionButton(onClick = onStartStopClick) {
         Icon(
@@ -135,8 +153,13 @@ fun TimerDuration(
         )
       }
 
-      // TODO: add 1 minute button
-      FloatingActionButtonSpacerBox()
+      FloatingActionButton(
+        onClick = onAddMinuteClick,
+        elevation = FloatingActionButtonDefaults.loweredElevation(),
+        modifier = Modifier.semantics { contentDescription = "Add 1 minute to timer duration" },
+      ) {
+        Text("+1:00")
+      }
     }
   }
 }
