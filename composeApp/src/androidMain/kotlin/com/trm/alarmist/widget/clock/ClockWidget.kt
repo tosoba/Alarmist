@@ -2,6 +2,7 @@ package com.trm.alarmist.widget.clock
 
 import android.content.Context
 import android.text.format.DateFormat
+import android.util.TypedValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -9,6 +10,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
@@ -30,6 +32,8 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.text.FontWeight
+import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.now
@@ -37,8 +41,8 @@ import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextTodayAlarmUseCase
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
+import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
-import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.spToDp
@@ -75,8 +79,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
     ) {
       val context = LocalContext.current
       val contentColorProvider = GlanceTheme.colors.widgetBackground
-
-      // TODO: variable text sizes depending on widget size
+      val layoutSize = WidgetLayoutSize.fromLocalSize()
 
       Box {
         WidgetTextClock(
@@ -88,6 +91,15 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
             R.id.widget_text_clock,
             "setTextColor",
             contentColorProvider.getColor(context).toArgb(),
+          )
+          setTextViewTextSize(
+            R.id.widget_text_clock,
+            TypedValue.COMPLEX_UNIT_SP,
+            when (layoutSize) {
+              WidgetLayoutSize.Small -> 16f
+              WidgetLayoutSize.Medium -> 20f
+              WidgetLayoutSize.Large -> 24f
+            },
           )
         }
       }
@@ -103,10 +115,14 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
             "setTextColor",
             contentColorProvider.getColor(context).toArgb(),
           )
-          setFloat(
+          setTextViewTextSize(
             R.id.widget_text_clock,
-            "setTextSize",
-            context.resources.getInteger(R.integer.widget_text_clock_am_pm_font_size).toFloat(),
+            TypedValue.COMPLEX_UNIT_SP,
+            when (layoutSize) {
+              WidgetLayoutSize.Small -> 12f
+              WidgetLayoutSize.Medium -> 16f
+              WidgetLayoutSize.Large -> 20f
+            },
           )
         }
       }
@@ -136,7 +152,17 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
             is24HourFormat = DateFormat.is24HourFormat(context),
             useFullFormat = true,
             useShadow = true,
-            style = WidgetTextStyles.titleText.copy(color = contentColorProvider),
+            style =
+              TextStyle(
+                fontWeight = FontWeight.Normal,
+                fontSize =
+                  when (layoutSize) {
+                    WidgetLayoutSize.Small -> 12
+                    WidgetLayoutSize.Medium -> 16
+                    WidgetLayoutSize.Large -> 20
+                  }.sp,
+                color = contentColorProvider,
+              ),
           )
         }
       }
