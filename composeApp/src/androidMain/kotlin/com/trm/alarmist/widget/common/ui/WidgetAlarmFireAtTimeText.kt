@@ -26,62 +26,68 @@ fun WidgetAlarmFireAtTimeText(
   fireAtTime: LocalTime,
   is24HourFormat: Boolean,
   useFullFormat: Boolean,
+  useShadow: Boolean = false,
   modifier: GlanceModifier = GlanceModifier,
   style: TextStyle = TextDefaults.defaultTextStyle,
 ) {
   Box(modifier = modifier) {
     AndroidRemoteViews(
       remoteViews =
-        RemoteViews(LocalContext.current.packageName, R.layout.widget_shadow_text_view).apply {
-          val fireAtTimeText =
-            if (useFullFormat) {
-                """${fireAtTime.toFormattedString { is24HourFormat }} ${fireAtTime.amPmString { is24HourFormat }}"""
-                  .trim()
-              } else {
-                fireAtTime.toFormattedString { is24HourFormat }
-              }
-              .replace(" ", "\u200A")
+        RemoteViews(
+            LocalContext.current.packageName,
+            if (useShadow) R.layout.widget_shadow_alarm_fire_at_time_text_view
+            else R.layout.widget_text_alarm_fire_at_time_view,
+          )
+          .apply {
+            val fireAtTimeText =
+              if (useFullFormat) {
+                  """${fireAtTime.toFormattedString { is24HourFormat }} ${fireAtTime.amPmString { is24HourFormat }}"""
+                    .trim()
+                } else {
+                  fireAtTime.toFormattedString { is24HourFormat }
+                }
+                .replace(" ", "\u200A")
 
-          setTextViewText(
-            R.id.widget_text_view,
-            SpannableString(fireAtTimeText).apply {
-              val amPmIndex = fireAtTimeText.indexOfAny(listOf("am", "pm"), ignoreCase = true)
+            setTextViewText(
+              R.id.widget_text_view,
+              SpannableString(fireAtTimeText).apply {
+                val amPmIndex = fireAtTimeText.indexOfAny(listOf("am", "pm"), ignoreCase = true)
 
-              setSpan(
-                RelativeSizeSpan(1f),
-                0,
-                if (amPmIndex != -1) amPmIndex else fireAtTimeText.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-              )
-
-              if (amPmIndex != -1) {
                 setSpan(
-                  RelativeSizeSpan(.5f),
-                  amPmIndex,
-                  fireAtTimeText.length,
+                  RelativeSizeSpan(1f),
+                  0,
+                  if (amPmIndex != -1) amPmIndex else fireAtTimeText.length,
                   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
                 )
-              }
 
-              if (style.fontWeight?.value != FontWeight.Normal.value) {
-                setSpan(
-                  StyleSpan(Typeface.BOLD),
-                  0,
-                  fireAtTimeText.length,
-                  Spannable.SPAN_INCLUSIVE_INCLUSIVE,
-                )
-              }
-            },
-          )
+                if (amPmIndex != -1) {
+                  setSpan(
+                    RelativeSizeSpan(.5f),
+                    amPmIndex,
+                    fireAtTimeText.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+                  )
+                }
 
-          setInt(
-            R.id.widget_text_view,
-            "setTextColor",
-            style.color.getColor(LocalContext.current).toArgb(),
-          )
+                if (style.fontWeight?.value != FontWeight.Normal.value) {
+                  setSpan(
+                    StyleSpan(Typeface.BOLD),
+                    0,
+                    fireAtTimeText.length,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE,
+                  )
+                }
+              },
+            )
 
-          style.fontSize?.value?.let { setFloat(R.id.widget_text_view, "setTextSize", it) }
-        }
+            setInt(
+              R.id.widget_text_view,
+              "setTextColor",
+              style.color.getColor(LocalContext.current).toArgb(),
+            )
+
+            style.fontSize?.value?.let { setFloat(R.id.widget_text_view, "setTextSize", it) }
+          }
     )
   }
 }

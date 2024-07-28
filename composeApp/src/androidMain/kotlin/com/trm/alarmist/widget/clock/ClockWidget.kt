@@ -135,6 +135,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
             fireAtTime = alarm.nextFireAtTime,
             is24HourFormat = DateFormat.is24HourFormat(context),
             useFullFormat = true,
+            useShadow = true,
             style = WidgetTextStyles.titleText.copy(color = contentColorProvider),
           )
         }
