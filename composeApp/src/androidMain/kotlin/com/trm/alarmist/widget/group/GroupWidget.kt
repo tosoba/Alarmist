@@ -138,7 +138,7 @@ private fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
             ) {
               if (state is GroupWidgetState.Initialized) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                  GroupIcon(color = state.group.color, size = 24.dp)
+                  GroupIcon(color = state.group.color, iconSize = 24.dp)
 
                   Spacer(GlanceModifier.width(8.dp))
 
@@ -197,18 +197,18 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
 }
 
 @Composable
-private fun GroupIcon(color: Long, size: Dp, modifier: GlanceModifier = GlanceModifier) {
+private fun GroupIcon(color: Long, iconSize: Dp, modifier: GlanceModifier = GlanceModifier) {
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     Image(
       provider = ImageProvider(R.drawable.folder),
       contentDescription = null,
-      modifier = GlanceModifier.size(size),
+      modifier = GlanceModifier.size(iconSize),
       colorFilter = ColorFilter.tint(ColorProvider(Color(color))),
     )
     Image(
       provider = ImageProvider(R.drawable.folder_open),
       contentDescription = null,
-      modifier = GlanceModifier.size(size),
+      modifier = GlanceModifier.size(iconSize),
     )
   }
 }

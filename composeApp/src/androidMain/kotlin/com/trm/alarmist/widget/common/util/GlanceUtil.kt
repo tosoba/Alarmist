@@ -1,8 +1,10 @@
 package com.trm.alarmist.widget.common.util
 
+import android.util.TypedValue
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.unit.Dp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
@@ -22,3 +24,12 @@ internal fun composableIfOrNull(
   condition: Boolean,
   content: @Composable () -> Unit,
 ): (@Composable () -> Unit)? = if (condition) content else null
+
+@Composable
+fun Float.spToDp(): Dp {
+  val context = LocalContext.current
+  return Dp(
+    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, this, context.resources.displayMetrics) /
+      context.resources.displayMetrics.density
+  )
+}
