@@ -52,22 +52,20 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
   val widgetManager = AppWidgetManager.getInstance(context)
 
   Scaffold(modifier = modifier) {
-    if (!widgetManager.isRequestPinAppWidgetSupported) {
-      Box(modifier = Modifier.padding(it)) {
-        WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
-      }
-    } else {
-      Box(modifier = Modifier.fillMaxSize()) {
-        LazyVerticalGrid(
-          columns = GridCells.Adaptive(minSize = 250.dp),
-          contentPadding =
-            PaddingValues(
-              top = 0.dp,
-              bottom = it.calculateBottomPadding(),
-              start = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
-              end = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
-            ),
-        ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+      LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 250.dp),
+        contentPadding =
+          PaddingValues(
+            top = 0.dp,
+            bottom = it.calculateBottomPadding(),
+            start = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
+            end = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
+          ),
+      ) {
+        if (!widgetManager.isRequestPinAppWidgetSupported) {
+          item { WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(8.dp)) }
+        } else {
           items(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
             providerInfo ->
             WidgetInfoCard(
@@ -76,10 +74,10 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
             )
           }
         }
-
-        TopGradientBackground()
-        BottomGradientBackground()
       }
+
+      TopGradientBackground()
+      BottomGradientBackground()
     }
   }
 }
