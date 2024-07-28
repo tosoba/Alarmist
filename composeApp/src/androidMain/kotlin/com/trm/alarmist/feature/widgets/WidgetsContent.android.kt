@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.pinWidget
 import com.trm.alarmist.core.common.util.widgetReceiverComponentName
+import com.trm.alarmist.core.ui.BottomGradientBackground
+import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
@@ -54,24 +57,27 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
         WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
       }
     } else {
-      // TODO: add top/bottom gradients for scrolling
-
-      LazyColumn(
-        contentPadding =
-          PaddingValues(
-            top = 0.dp,
-            bottom = it.calculateBottomPadding(),
-            start = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
-            end = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
-          )
-      ) {
-        items(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
-          providerInfo ->
-          WidgetInfoCard(
-            providerInfo = providerInfo,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-          )
+      Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+          contentPadding =
+            PaddingValues(
+              top = 0.dp,
+              bottom = it.calculateBottomPadding(),
+              start = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
+              end = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
+            )
+        ) {
+          items(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
+            providerInfo ->
+            WidgetInfoCard(
+              providerInfo = providerInfo,
+              modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            )
+          }
         }
+
+        TopGradientBackground()
+        BottomGradientBackground()
       }
     }
   }
