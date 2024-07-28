@@ -69,7 +69,7 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
           modifier =
             Modifier.fillMaxSize()
               .background(MaterialTheme.colorScheme.background)
-              .padding(padding),
+              .padding(bottom = padding.calculateBottomPadding()),
           onStartClick = {
             if (it.inWholeSeconds > 0L) {
               TimerService.startWithAction(context = context, TimerService.Action.Start(it))
@@ -83,7 +83,7 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
           modifier =
             Modifier.fillMaxSize()
               .background(MaterialTheme.colorScheme.background)
-              .padding(padding),
+              .padding(bottom = padding.calculateBottomPadding()),
           duration = duration,
           initialDuration = initialDuration,
           isRunning = state == TimerState.RUNNING,

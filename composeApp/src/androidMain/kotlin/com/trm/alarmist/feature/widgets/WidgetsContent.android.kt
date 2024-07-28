@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
@@ -59,18 +59,17 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
       LazyColumn(
         contentPadding =
           PaddingValues(
-            top = it.calculateTopPadding(),
+            top = 0.dp,
             bottom = it.calculateBottomPadding(),
             start = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
             end = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
           )
       ) {
-        itemsIndexed(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
-          index,
+        items(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
           providerInfo ->
           WidgetInfoCard(
             providerInfo = providerInfo,
-            modifier = Modifier.fillMaxWidth().padding(vertical = if (index == 0) 0.dp else 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
           )
         }
       }

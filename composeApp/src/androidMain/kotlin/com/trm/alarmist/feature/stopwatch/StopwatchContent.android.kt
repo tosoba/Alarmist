@@ -61,7 +61,9 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
   Scaffold(modifier = modifier) {
     StopwatchDuration(
       modifier =
-        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(it),
+        Modifier.fillMaxSize()
+          .background(MaterialTheme.colorScheme.background)
+          .padding(bottom = it.calculateBottomPadding()),
       duration = duration,
       state = state,
       onStartStopClick = {
