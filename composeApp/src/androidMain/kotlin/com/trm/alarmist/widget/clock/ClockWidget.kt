@@ -54,12 +54,11 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
       val context = LocalContext.current
       val textColor = GlanceTheme.colors.widgetBackground
 
-      // TODO: add shadow to widget texts
-
       Box {
         WidgetTextClock(
           format12Hour = context.getString(R.string.time_format_12_h_full),
           format24Hour = context.getString(R.string.time_format_24_h_full),
+          showShadow = true,
         ) {
           setInt(R.id.widget_text_clock, "setTextColor", textColor.getColor(context).toArgb())
         }
@@ -69,6 +68,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
         WidgetTextClock(
           format12Hour = context.getString(R.string.time_format_am_pm_date_short),
           format24Hour = context.getString(R.string.time_format_am_pm_date_short),
+          showShadow = true,
         ) {
           setInt(R.id.widget_text_clock, "setTextColor", textColor.getColor(context).toArgb())
           setFloat(
