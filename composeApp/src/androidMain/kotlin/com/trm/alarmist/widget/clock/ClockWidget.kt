@@ -32,8 +32,9 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.R
+import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.domain.usecase.GetNextAlarmUseCase
+import com.trm.alarmist.core.domain.usecase.GetNextTodayAlarmUseCase
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
@@ -41,18 +42,22 @@ import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.spToDp
+import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class ClockWidget : GlanceAppWidget(), KoinComponent {
-  private val getNextAlarmUseCase: GetNextAlarmUseCase by inject()
+  private val getNextTodayAlarmUseCase: GetNextTodayAlarmUseCase by inject()
 
   override val sizeMode: SizeMode = SizeMode.Exact
 
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       val state = currentState<Preferences>()
-      val alarm by produceState<AlarmListModel?>(null, state) { value = getNextAlarmUseCase() }
+      val alarm by
+        produceState<AlarmListModel?>(null, state) {
+          value = getNextTodayAlarmUseCase(LocalDateTime.now())
+        }
 
       CompositionLocalProvider(LocalIsPreviewProvider provides false) {
         ClockWidgetContent(alarm = alarm)

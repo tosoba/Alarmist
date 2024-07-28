@@ -5,5 +5,5 @@ class IosWidgetManager : WidgetManager {
 
   override fun updateWidgetGroup(widgetId: Int, groupId: Long) {}
 
-  override fun updateTodayWidgets() {}
+  override fun updateDateSensitiveWidgets() {}
 }

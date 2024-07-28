@@ -5,5 +5,5 @@ interface WidgetManager {
 
   fun updateWidgetGroup(widgetId: Int, groupId: Long)
 
-  fun updateTodayWidgets()
+  fun updateDateSensitiveWidgets()
 }

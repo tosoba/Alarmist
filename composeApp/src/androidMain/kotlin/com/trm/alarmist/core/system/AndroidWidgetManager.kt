@@ -23,7 +23,8 @@ class AndroidWidgetManager(private val context: Context) : WidgetManager {
     )
   }
 
-  override fun updateTodayWidgets() {
+  override fun updateDateSensitiveWidgets() {
     context.sendBroadcast(context.updateAllWidgetsIntent<TodayWidgetReceiver>())
+    context.sendBroadcast(context.updateAllWidgetsIntent<ClockWidgetReceiver>())
   }
 }

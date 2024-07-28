@@ -16,7 +16,7 @@ class WidgetUpdateAlarmReceiver : BroadcastReceiver(), KoinComponent {
   override fun onReceive(context: Context, intent: Intent) {
     if (intent.action != ACTION_ALARM_UPDATE) return
 
-    widgetManager.updateTodayWidgets()
+    widgetManager.updateDateSensitiveWidgets()
     alarmScheduler.scheduleNextWidgetUpdate()
   }
 
