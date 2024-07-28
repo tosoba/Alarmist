@@ -32,7 +32,7 @@ fun WidgetAlarmFireAtTimeText(
   Box(modifier = modifier) {
     AndroidRemoteViews(
       remoteViews =
-        RemoteViews(LocalContext.current.packageName, R.layout.widget_text_view).apply {
+        RemoteViews(LocalContext.current.packageName, R.layout.widget_shadow_text_view).apply {
           val fireAtTimeText =
             if (useFullFormat) {
                 """${fireAtTime.toFormattedString { is24HourFormat }} ${fireAtTime.amPmString { is24HourFormat }}"""

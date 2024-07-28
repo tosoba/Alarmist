@@ -54,6 +54,8 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
       val context = LocalContext.current
       val textColor = GlanceTheme.colors.widgetBackground
 
+      // TODO: variable text sizes depending on widget size
+
       Box {
         WidgetTextClock(
           format12Hour = context.getString(R.string.time_format_12_h_full),
@@ -80,8 +82,6 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
       }
 
       if (alarm != null) {
-        // TODO: current date (maybe do it via TextClock that just displays a date to avoid needing
-        // to update it)
         // TODO: alarm icon next to alarm fireAtTime
         WidgetAlarmFireAtTimeText(
           fireAtTime = alarm.nextFireAtTime,
