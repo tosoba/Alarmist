@@ -20,7 +20,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -50,28 +52,27 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
   val widgetManager = AppWidgetManager.getInstance(context)
 
   Scaffold(modifier = modifier) {
-    // TODO: different layouts for different screen sizes
-
     if (!widgetManager.isRequestPinAppWidgetSupported) {
       Box(modifier = Modifier.padding(it)) {
         WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
       }
     } else {
       Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
+        LazyVerticalGrid(
+          columns = GridCells.Adaptive(minSize = 250.dp),
           contentPadding =
             PaddingValues(
               top = 0.dp,
               bottom = it.calculateBottomPadding(),
-              start = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
-              end = it.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
-            )
+              start = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
+              end = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
+            ),
         ) {
           items(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
             providerInfo ->
             WidgetInfoCard(
               providerInfo = providerInfo,
-              modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+              modifier = Modifier.fillMaxWidth().padding(8.dp),
             )
           }
         }
@@ -149,11 +150,8 @@ private fun WidgetInfoCard(providerInfo: AppWidgetProviderInfo, modifier: Modifi
 }
 
 private fun AppWidgetProviderInfo.pinCallback(context: Context): PendingIntent =
-  when (provider) {
-    context.widgetReceiverComponentName<GroupWidgetReceiver>() -> {
-      GroupWidgetConfigActivity.pendingIntent(context)
-    }
-    else -> {
-      WidgetPinnedReceiver.pendingIntent(context)
-    }
+  if (provider == context.widgetReceiverComponentName<GroupWidgetReceiver>()) {
+    GroupWidgetConfigActivity.pendingIntent(context)
+  } else {
+    WidgetPinnedReceiver.pendingIntent(context)
   }
