@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
@@ -51,6 +50,24 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
   val context = LocalContext.current
   val widgetManager = AppWidgetManager.getInstance(context)
 
+  WidgetsGrid(
+    isRequestPinAppWidgetSupported = widgetManager.isRequestPinAppWidgetSupported,
+    providers =
+      if (widgetManager.isRequestPinAppWidgetSupported) {
+        widgetManager.getInstalledProvidersForPackage(context.packageName, null)
+      } else {
+        emptyList()
+      },
+    modifier = modifier,
+  )
+}
+
+@Composable
+private fun WidgetsGrid(
+  isRequestPinAppWidgetSupported: Boolean,
+  providers: List<AppWidgetProviderInfo>,
+  modifier: Modifier = Modifier,
+) {
   Scaffold(modifier = modifier) {
     Box(modifier = Modifier.fillMaxSize()) {
       LazyVerticalGrid(
@@ -63,15 +80,11 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
             end = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
           ),
       ) {
-        if (!widgetManager.isRequestPinAppWidgetSupported) {
+        if (!isRequestPinAppWidgetSupported) {
           item { WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(8.dp)) }
         } else {
-          items(widgetManager.getInstalledProvidersForPackage(context.packageName, null)) {
-            providerInfo ->
-            WidgetInfoCard(
-              providerInfo = providerInfo,
-              modifier = Modifier.fillMaxWidth().padding(8.dp),
-            )
+          items(providers) { provider ->
+            WidgetInfoCard(provider = provider, modifier = Modifier.fillMaxWidth().padding(8.dp))
           }
         }
       }
@@ -108,12 +121,11 @@ private fun WidgetPinUnavailableCard(modifier: Modifier) {
 }
 
 @Composable
-private fun WidgetInfoCard(providerInfo: AppWidgetProviderInfo, modifier: Modifier = Modifier) {
+private fun WidgetInfoCard(provider: AppWidgetProviderInfo, modifier: Modifier = Modifier) {
   val context = LocalContext.current
-  val label = providerInfo.loadLabel(context.packageManager)
   val description =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      providerInfo.loadDescription(context)?.toString()
+      provider.loadDescription(context)?.toString()
     } else {
       null
     }
@@ -121,13 +133,13 @@ private fun WidgetInfoCard(providerInfo: AppWidgetProviderInfo, modifier: Modifi
   Card(
     modifier = modifier,
     onClick = {
-      context.pinWidget(providerInfo = providerInfo, callback = providerInfo.pinCallback(context))
+      context.pinWidget(providerInfo = provider, callback = provider.pinCallback(context))
     },
   ) {
     Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
       Column(modifier = Modifier.padding(end = 8.dp).weight(.5f)) {
         Text(
-          text = label,
+          text = provider.loadLabel(context.packageManager),
           style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
         )
         description?.let {
@@ -139,7 +151,7 @@ private fun WidgetInfoCard(providerInfo: AppWidgetProviderInfo, modifier: Modifi
       Spacer(modifier = Modifier.width(8.dp))
 
       Image(
-        painter = painterResource(providerInfo.previewImage),
+        painter = painterResource(provider.previewImage),
         contentDescription = description,
         modifier = Modifier.weight(.5f),
       )
