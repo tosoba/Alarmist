@@ -17,6 +17,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
@@ -33,10 +34,12 @@ import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.R
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextAlarmUseCase
+import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.spToDp
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -61,7 +64,10 @@ class ClockWidget : GlanceAppWidget(), KoinComponent {
 @Composable
 private fun ClockWidgetContent(alarm: AlarmListModel?) {
   GlanceTheme {
-    Column(modifier = GlanceModifier.padding(8.dp)) { // TODO: on click go to app
+    Column(
+      modifier =
+        GlanceModifier.padding(8.dp).clickable(actionStartMainActivity(RootStartMode.Normal))
+    ) {
       val context = LocalContext.current
       val contentColorProvider = GlanceTheme.colors.widgetBackground
 
