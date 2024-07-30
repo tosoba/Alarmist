@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
@@ -118,22 +116,37 @@ fun UpcomingAlarmsContent(
   val alarmPermissionGranted = isPostNotificationPermissionGranted()
   val windowSizeClass = calculateWindowSizeClass()
 
-  if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
-    LazyColumn(
-      modifier = modifier,
-      contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-    ) {
-      item {
+  Row(modifier = modifier) {
+    if (windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact) {
+      Column(modifier = Modifier.width(300.dp).verticalScroll(rememberScrollState())) {
         WeeklyMonthlyCalendar(
           initialState = initialState,
           alarmCounts = alarmCounts,
           onSelectedDateChange = onSelectedDateChange,
           onMonthlyDateRangeChange = onMonthlyDateRangeChange,
+          modifier = Modifier.padding(8.dp),
         )
+      }
+    }
+
+    LazyVerticalStaggeredGrid(
+      modifier = Modifier.weight(1f),
+      columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+      contentPadding = PaddingValues(8.dp),
+    ) {
+      if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+        item(span = StaggeredGridItemSpan.FullLine) {
+          WeeklyMonthlyCalendar(
+            initialState = initialState,
+            alarmCounts = alarmCounts,
+            onSelectedDateChange = onSelectedDateChange,
+            onMonthlyDateRangeChange = onMonthlyDateRangeChange,
+          )
+        }
       }
 
       if (selectedDateAlarms.isEmpty()) {
-        item {
+        item(span = StaggeredGridItemSpan.FullLine) {
           NoUpcomingAlarmsCard(
             Modifier.fillMaxWidth()
               .padding(vertical = 32.dp, horizontal = 16.dp)
@@ -149,7 +162,7 @@ fun UpcomingAlarmsContent(
       items(selectedDateAlarms) { alarm ->
         UpcomingAlarmListItem(
           item = alarm,
-          modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItemPlacement(),
+          modifier = Modifier.fillMaxWidth().padding(8.dp).animateItemPlacement(),
           group = alarm.groupId?.let(groups::get),
           onItemClick = onAlarmItemClick,
           onOffButtonClick = onOffButtonClick,
@@ -159,52 +172,6 @@ fun UpcomingAlarmsContent(
       }
 
       floatingActionButtonSpacerItem()
-    }
-  } else {
-    Row(modifier = modifier) {
-      Column(modifier = Modifier.width(300.dp).verticalScroll(rememberScrollState())) {
-        WeeklyMonthlyCalendar(
-          initialState = initialState,
-          alarmCounts = alarmCounts,
-          onSelectedDateChange = onSelectedDateChange,
-          onMonthlyDateRangeChange = onMonthlyDateRangeChange,
-          modifier = Modifier.padding(8.dp),
-        )
-      }
-
-      LazyVerticalStaggeredGrid(
-        modifier = Modifier.weight(1f),
-        columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-      ) {
-        if (selectedDateAlarms.isEmpty()) {
-          item(span = StaggeredGridItemSpan.FullLine) {
-            NoUpcomingAlarmsCard(
-              Modifier.fillMaxWidth()
-                .padding(vertical = 32.dp, horizontal = 16.dp)
-                .animateItemPlacement()
-            )
-          }
-        } else if (!alarmPermissionGranted) {
-          item {
-            AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
-          }
-        }
-
-        items(selectedDateAlarms) { alarm ->
-          UpcomingAlarmListItem(
-            item = alarm,
-            modifier = Modifier.fillMaxWidth().padding(8.dp).animateItemPlacement(),
-            group = alarm.groupId?.let(groups::get),
-            onItemClick = onAlarmItemClick,
-            onOffButtonClick = onOffButtonClick,
-            onOffOnDateButtonClick = onOffOnDateButtonClick,
-            onOnButtonClick = onOnButtonClick,
-          )
-        }
-
-        floatingActionButtonSpacerItem()
-      }
     }
   }
 }
