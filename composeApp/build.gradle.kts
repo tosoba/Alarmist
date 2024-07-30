@@ -58,8 +58,6 @@ kotlin {
 
       implementation(libs.koin.android)
 
-      implementation(libs.material)
-
       implementation(libs.permission.flow.compose)
 
       implementation(libs.sqldelight.android.driver)
