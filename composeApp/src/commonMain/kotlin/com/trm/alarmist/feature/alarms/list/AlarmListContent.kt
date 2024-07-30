@@ -12,8 +12,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlarmAdd
 import androidx.compose.runtime.Composable
@@ -22,12 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.system.permission.isPostNotificationPermissionGranted
 import com.trm.alarmist.core.ui.AlarmListItem
 import com.trm.alarmist.core.ui.EmptyPlaceholder
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
-import com.trm.alarmist.core.system.permission.isPostNotificationPermissionGranted
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -59,9 +60,10 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
       } else {
         val alarmPermissionGranted = isPostNotificationPermissionGranted()
 
-        LazyColumn(
+        LazyVerticalStaggeredGrid(
           modifier = Modifier.fillMaxSize(),
-          contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+          columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+          contentPadding = PaddingValues(8.dp),
         ) {
           if (!alarmPermissionGranted) {
             item {
@@ -73,7 +75,7 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
             AlarmListItem(
               item = it,
               group = it.groupId?.let(groups::get),
-              modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+              modifier = Modifier.fillMaxWidth().padding(8.dp),
               onItemClick = component::onAlarmClick,
               onToggleOnOff = component::onToggleAlarmOnOff,
             )
