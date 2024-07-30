@@ -11,16 +11,24 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material3.Badge
@@ -29,6 +37,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +62,7 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.previousDayOfWeek
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
+import com.trm.alarmist.core.system.permission.isPostNotificationPermissionGranted
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
@@ -59,7 +71,6 @@ import com.trm.alarmist.core.ui.UpcomingAlarmListItem
 import com.trm.alarmist.core.ui.WeekArrowsRow
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
-import com.trm.alarmist.core.system.permission.isPostNotificationPermissionGranted
 import epicarchitect.calendar.compose.basis.EpicCalendarConstants
 import epicarchitect.calendar.compose.basis.EpicMonth
 import epicarchitect.calendar.compose.basis.atDay
@@ -89,7 +100,7 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun UpcomingAlarmsContent(
   initialState: UpcomingAlarmsCalendarState,
@@ -105,72 +116,127 @@ fun UpcomingAlarmsContent(
   onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit = {},
 ) {
   val alarmPermissionGranted = isPostNotificationPermissionGranted()
+  val windowSizeClass = calculateWindowSizeClass()
 
-  LazyColumn(
-    modifier = modifier,
-    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-  ) {
-    item {
-      WeeklyMonthlyCalendar(
-        initialState = initialState,
-        alarmCounts = alarmCounts,
-        onSelectedDateChange = onSelectedDateChange,
-        onMonthlyDateRangeChange = onMonthlyDateRangeChange,
-      )
-    }
-
-    if (selectedDateAlarms.isEmpty()) {
+  if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
+    LazyColumn(
+      modifier = modifier,
+      contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+    ) {
       item {
-        Column(
-          modifier =
+        WeeklyMonthlyCalendar(
+          initialState = initialState,
+          alarmCounts = alarmCounts,
+          onSelectedDateChange = onSelectedDateChange,
+          onMonthlyDateRangeChange = onMonthlyDateRangeChange,
+        )
+      }
+
+      if (selectedDateAlarms.isEmpty()) {
+        item {
+          NoUpcomingAlarmsCard(
             Modifier.fillMaxWidth()
               .padding(vertical = 32.dp, horizontal = 16.dp)
-              .animateItemPlacement(),
-          verticalArrangement = Arrangement.Center,
-          horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-          Icon(
-            modifier = Modifier.size(100.dp),
-            imageVector = Icons.Default.EditCalendar,
-            contentDescription = stringResource(Res.string.no_upcoming_alarms),
-          )
-
-          Spacer(Modifier.height(16.dp))
-
-          Text(
-            text = stringResource(Res.string.no_upcoming_alarms),
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center,
-          )
-
-          Spacer(Modifier.height(8.dp))
-
-          Text(
-            text = stringResource(Res.string.create_alarm_using_button),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
+              .animateItemPlacement()
           )
         }
+      } else if (!alarmPermissionGranted) {
+        item {
+          AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
+        }
       }
-    } else if (!alarmPermissionGranted) {
-      item {
-        AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
+
+      items(selectedDateAlarms) { alarm ->
+        UpcomingAlarmListItem(
+          item = alarm,
+          modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItemPlacement(),
+          group = alarm.groupId?.let(groups::get),
+          onItemClick = onAlarmItemClick,
+          onOffButtonClick = onOffButtonClick,
+          onOffOnDateButtonClick = onOffOnDateButtonClick,
+          onOnButtonClick = onOnButtonClick,
+        )
+      }
+
+      floatingActionButtonSpacerItem()
+    }
+  } else {
+    Row(modifier = modifier) {
+      Column(modifier = Modifier.width(300.dp).verticalScroll(rememberScrollState())) {
+        WeeklyMonthlyCalendar(
+          initialState = initialState,
+          alarmCounts = alarmCounts,
+          onSelectedDateChange = onSelectedDateChange,
+          onMonthlyDateRangeChange = onMonthlyDateRangeChange,
+          modifier = Modifier.padding(8.dp),
+        )
+      }
+
+      LazyVerticalGrid(
+        modifier = Modifier.weight(1f),
+        columns = GridCells.Adaptive(minSize = 300.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+      ) {
+        if (selectedDateAlarms.isEmpty()) {
+          item(span = { GridItemSpan(maxLineSpan) }) {
+            NoUpcomingAlarmsCard(
+              Modifier.fillMaxWidth()
+                .padding(vertical = 32.dp, horizontal = 16.dp)
+                .animateItemPlacement()
+            )
+          }
+        } else if (!alarmPermissionGranted) {
+          item {
+            AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
+          }
+        }
+
+        items(selectedDateAlarms) { alarm ->
+          UpcomingAlarmListItem(
+            item = alarm,
+            modifier = Modifier.fillMaxWidth().padding(8.dp).animateItemPlacement(),
+            group = alarm.groupId?.let(groups::get),
+            onItemClick = onAlarmItemClick,
+            onOffButtonClick = onOffButtonClick,
+            onOffOnDateButtonClick = onOffOnDateButtonClick,
+            onOnButtonClick = onOnButtonClick,
+          )
+        }
+
+        floatingActionButtonSpacerItem()
       }
     }
+  }
+}
 
-    items(selectedDateAlarms) { alarm ->
-      UpcomingAlarmListItem(
-        item = alarm,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItemPlacement(),
-        group = alarm.groupId?.let(groups::get),
-        onItemClick = onAlarmItemClick,
-        onOffButtonClick = onOffButtonClick,
-        onOffOnDateButtonClick = onOffOnDateButtonClick,
-        onOnButtonClick = onOnButtonClick,
-      )
-    }
+@Composable
+private fun NoUpcomingAlarmsCard(modifier: Modifier = Modifier) {
+  Column(
+    modifier = modifier,
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Icon(
+      modifier = Modifier.size(100.dp),
+      imageVector = Icons.Default.EditCalendar,
+      contentDescription = stringResource(Res.string.no_upcoming_alarms),
+    )
 
-    floatingActionButtonSpacerItem()
+    Spacer(Modifier.height(16.dp))
+
+    Text(
+      text = stringResource(Res.string.no_upcoming_alarms),
+      style = MaterialTheme.typography.headlineMedium,
+      textAlign = TextAlign.Center,
+    )
+
+    Spacer(Modifier.height(8.dp))
+
+    Text(
+      text = stringResource(Res.string.create_alarm_using_button),
+      style = MaterialTheme.typography.bodyLarge,
+      textAlign = TextAlign.Center,
+    )
   }
 }
 
