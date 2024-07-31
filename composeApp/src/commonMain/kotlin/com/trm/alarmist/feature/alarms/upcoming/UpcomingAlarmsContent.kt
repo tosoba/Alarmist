@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -129,13 +129,13 @@ fun UpcomingAlarmsContent(
       }
     }
 
-    LazyVerticalStaggeredGrid(
+    LazyVerticalGrid(
       modifier = Modifier.weight(1f),
-      columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
+      columns = GridCells.Adaptive(minSize = 300.dp),
       contentPadding = PaddingValues(8.dp),
     ) {
       if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
-        item(span = StaggeredGridItemSpan.FullLine) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
           WeeklyMonthlyCalendar(
             initialState = initialState,
             alarmCounts = alarmCounts,
@@ -146,7 +146,7 @@ fun UpcomingAlarmsContent(
       }
 
       if (selectedDateAlarms.isEmpty()) {
-        item(span = StaggeredGridItemSpan.FullLine) {
+        item {
           NoUpcomingAlarmsCard(
             Modifier.fillMaxWidth()
               .padding(vertical = 32.dp, horizontal = 16.dp)
