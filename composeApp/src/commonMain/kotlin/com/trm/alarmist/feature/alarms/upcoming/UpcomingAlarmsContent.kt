@@ -32,9 +32,9 @@ import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -50,6 +50,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
@@ -65,6 +67,7 @@ import com.trm.alarmist.core.ui.DatePickerYearMonthControls
 import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.DaysOfWeekLabelsRow
 import com.trm.alarmist.core.ui.DaysOfWeekRow
+import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.UpcomingAlarmListItem
 import com.trm.alarmist.core.ui.WeekArrowsRow
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
@@ -293,15 +296,41 @@ private fun WeeklyMonthlyCalendar(
 
   Crossfade(targetState = calendarMode, modifier = modifier) { mode ->
     Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
-      monthlyCalendarState.selectedDates.firstOrNull()?.let {
-        Text(
-          text =
-            "${it.dayOfWeek.localized()}, ${it.month.name.take(3).lowercase().capitalize(Locale.current)} ${it.dayOfMonth}",
-          style = MaterialTheme.typography.headlineMedium,
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-          modifier = Modifier.padding(start = 16.dp),
-        )
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        monthlyCalendarState.selectedDates.firstOrNull()?.let {
+          Text(
+            text =
+              "${it.dayOfWeek.localized()}, ${it.month.name.take(3).lowercase().capitalize(Locale.current)} ${it.dayOfMonth}",
+            style = MaterialTheme.typography.headlineMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 16.dp),
+          )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        val expandCollapseContentDescription =
+          stringResource(
+            when (mode) {
+              CalendarMode.WEEKLY -> Res.string.expand
+              CalendarMode.MONTHLY -> Res.string.collapse
+            }
+          )
+        IconButton(
+          modifier =
+            Modifier.clearAndSetSemantics { contentDescription = expandCollapseContentDescription },
+          onClick = {
+            calendarMode =
+              if (calendarMode == CalendarMode.MONTHLY) CalendarMode.WEEKLY
+              else CalendarMode.MONTHLY
+          },
+        ) {
+          ExpandableIcon(
+            isExpanded = mode == CalendarMode.MONTHLY,
+            transitionLabel = "WeeklyMonthlyCalendarExpandable",
+          )
+        }
       }
 
       fun onDayOfMonthClick(date: LocalDate) {
@@ -347,13 +376,6 @@ private fun WeeklyMonthlyCalendar(
                 )
               }
             }
-          }
-
-          TextButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { calendarMode = CalendarMode.MONTHLY },
-          ) {
-            Text(stringResource(Res.string.expand))
           }
         }
         CalendarMode.MONTHLY -> {
@@ -426,13 +448,6 @@ private fun WeeklyMonthlyCalendar(
                 }
               },
             )
-          }
-
-          TextButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { calendarMode = CalendarMode.WEEKLY },
-          ) {
-            Text(stringResource(Res.string.collapse))
           }
         }
       }
