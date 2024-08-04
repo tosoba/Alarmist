@@ -2,8 +2,14 @@ package com.trm.alarmist.feature.timer
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -16,10 +22,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
@@ -29,10 +36,12 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -70,10 +79,14 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
   }
 
   @Composable
-  fun TimerInputTextButton(text: String, modifier: Modifier) {
+  fun TimerInputTextButton(
+    text: String,
+    size: Dp,
+    color: Color = MaterialTheme.colorScheme.primaryContainer,
+  ) {
     Box(
       modifier =
-        modifier.clickable {
+        Modifier.inputTextButton(size, color) {
           var charIndex = 0
           while (input.size < 6 && charIndex < text.length) {
             if (text[charIndex] != '0' || input.isNotEmpty()) {
@@ -118,17 +131,10 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
   fun TimerInputKeyboard(
     space: Dp = 5.dp,
     modifier: Modifier = Modifier,
-    inputButtonRequiredSizeModifier: BoxWithConstraintsScope.(Dp) -> Modifier,
+    inputButtonSize: BoxWithConstraintsScope.(Dp) -> Dp,
   ) {
     BoxWithConstraints(modifier = modifier) {
-      val inputButtonSizeModifier = inputButtonRequiredSizeModifier(space)
-
-      @Composable
-      fun Modifier.inputButtonAppearanceModifier(
-        color: Color = MaterialTheme.colorScheme.primaryContainer
-      ): Modifier = then(Modifier.clip(CircleShape).background(color))
-
-      val defaultInputButtonModifier = inputButtonSizeModifier.inputButtonAppearanceModifier()
+      val buttonSize = inputButtonSize(space)
 
       Column(
         verticalArrangement = Arrangement.spacedBy(space, alignment = Alignment.CenterVertically)
@@ -138,9 +144,9 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
           horizontalArrangement =
             Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
-          TimerInputTextButton("1", modifier = defaultInputButtonModifier)
-          TimerInputTextButton("2", modifier = defaultInputButtonModifier)
-          TimerInputTextButton("3", modifier = defaultInputButtonModifier)
+          TimerInputTextButton("1", size = buttonSize)
+          TimerInputTextButton("2", size = buttonSize)
+          TimerInputTextButton("3", size = buttonSize)
         }
 
         Row(
@@ -148,9 +154,9 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
           horizontalArrangement =
             Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
-          TimerInputTextButton("4", modifier = defaultInputButtonModifier)
-          TimerInputTextButton("5", modifier = defaultInputButtonModifier)
-          TimerInputTextButton("6", modifier = defaultInputButtonModifier)
+          TimerInputTextButton("4", size = buttonSize)
+          TimerInputTextButton("5", size = buttonSize)
+          TimerInputTextButton("6", size = buttonSize)
         }
 
         Row(
@@ -158,9 +164,9 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
           horizontalArrangement =
             Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
-          TimerInputTextButton("7", modifier = defaultInputButtonModifier)
-          TimerInputTextButton("8", modifier = defaultInputButtonModifier)
-          TimerInputTextButton("9", modifier = defaultInputButtonModifier)
+          TimerInputTextButton("7", size = buttonSize)
+          TimerInputTextButton("8", size = buttonSize)
+          TimerInputTextButton("9", size = buttonSize)
         }
 
         Row(
@@ -168,13 +174,16 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
           horizontalArrangement =
             Arrangement.spacedBy(space, alignment = Alignment.CenterHorizontally),
         ) {
-          TimerInputTextButton("00", modifier = defaultInputButtonModifier)
-          TimerInputTextButton("0", modifier = defaultInputButtonModifier)
+          TimerInputTextButton("00", size = buttonSize)
+          TimerInputTextButton("0", size = buttonSize)
           Box(
             modifier =
-              inputButtonSizeModifier
-                .inputButtonAppearanceModifier(MaterialTheme.colorScheme.errorContainer)
-                .clickable { if (input.isNotEmpty()) input.removeFirst() },
+              Modifier.inputTextButton(
+                size = buttonSize,
+                color = MaterialTheme.colorScheme.errorContainer,
+              ) {
+                if (input.isNotEmpty()) input.removeFirst()
+              },
             contentAlignment = Alignment.Center,
           ) {
             Icon(
@@ -202,13 +211,11 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
 
       TimerInputKeyboard(
         modifier = Modifier.padding(vertical = 16.dp),
-        inputButtonRequiredSizeModifier = { space ->
-          Modifier.requiredSize(
-            minOf(
-              (maxWidth - space * (keyboardColumnsCount - 1)) / keyboardColumnsCount,
-              (maxHeight - space * (keyboardRowsCount - 1)) / keyboardRowsCount,
-              96.dp,
-            )
+        inputButtonSize = { space ->
+          minOf(
+            (maxWidth - space * (keyboardColumnsCount - 1)) / keyboardColumnsCount,
+            (maxHeight - space * (keyboardRowsCount - 1)) / keyboardRowsCount,
+            96.dp,
           )
         },
       )
@@ -224,13 +231,11 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
       Spacer(modifier = Modifier.weight(1f))
 
       TimerInputKeyboard(
-        inputButtonRequiredSizeModifier = { space ->
-          Modifier.requiredSize(
-            minOf(
-              (maxWidth - space * (keyboardColumnsCount - 1)) / keyboardColumnsCount,
-              (maxHeight - space * (keyboardRowsCount - 1) - 96.dp) / keyboardRowsCount,
-              96.dp,
-            )
+        inputButtonSize = { space ->
+          minOf(
+            (maxWidth - space * (keyboardColumnsCount - 1)) / keyboardColumnsCount,
+            (maxHeight - space * (keyboardRowsCount - 1) - 96.dp) / keyboardRowsCount,
+            96.dp,
           )
         }
       )
@@ -256,4 +261,29 @@ private fun TimerInputButtonText(text: String) {
         color = MaterialTheme.colorScheme.onBackground,
       ),
   )
+}
+
+@Composable
+private fun Modifier.inputTextButton(
+  size: Dp,
+  color: Color = MaterialTheme.colorScheme.primaryContainer,
+  onClick: () -> Unit,
+): Modifier = composed {
+  val interactionSource = remember(::MutableInteractionSource)
+  val isFocused by interactionSource.collectIsPressedAsState()
+  val cornerRadius by
+    animateDpAsState(
+      targetValue = if (isFocused) 16.dp else size / 2,
+      animationSpec =
+        spring(visibilityThreshold = Dp.VisibilityThreshold, stiffness = Spring.StiffnessLow),
+    )
+
+  Modifier.requiredSize(size)
+    .clip(RoundedCornerShape(cornerRadius))
+    .clickable(
+      interactionSource = interactionSource,
+      indication = rememberRipple(),
+      onClick = onClick,
+    )
+    .background(color)
 }
