@@ -14,9 +14,8 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 
 class CalculateMissedAlarmDateTimesUseCaseTests {
-  // TODO: split/modify tests so they make more sense
   @Test
-  fun `given alarm with null lastNotificationDate that was not missed - then return emptyList`() {
+  fun `given alarm with null lastNotificationDate that was not missed and will fire in 1 hour - then return emptyList`() {
     val now = Clock.System.now()
     assertEquals(
       expected = emptyList(),
@@ -25,23 +24,30 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
           alarmModel(
             fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTime(),
             lastModificationDateTime = now.minus(1, DateTimeUnit.HOUR).toLocalDateTime(),
-          )
-        ),
-    )
-    assertEquals(
-      expected = emptyList(),
-      actual =
-        calculateAlarmMissedDateTimes(
-          alarmModel(
-            fireAtTime = now.minus(2, DateTimeUnit.HOUR).toLocalTime(),
-            lastModificationDateTime = now.minus(1, DateTimeUnit.HOUR).toLocalDateTime(),
+            lastNotificationDate = null,
           )
         ),
     )
   }
 
   @Test
-  fun `given only alarm with non null lastNotificationDate that was not missed - then return emptyList`() {
+  fun `given alarm with null lastNotificationDate that was not missed and will fire in 23 hours - then return emptyList`() {
+    val now = Clock.System.now()
+    assertEquals(
+      expected = emptyList(),
+      actual =
+        calculateAlarmMissedDateTimes(
+          alarmModel(
+            fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTime(),
+            lastModificationDateTime = now.toLocalDateTime(),
+            lastNotificationDate = null,
+          )
+        ),
+    )
+  }
+
+  @Test
+  fun `given not missed one time alarm with that fired 1 hour ago - then return emptyList`() {
     val now = Clock.System.now()
     assertEquals(
       expected = emptyList(),
@@ -54,6 +60,11 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
           )
         ),
     )
+  }
+
+  @Test
+  fun `given not missed one time alarm with that fired 23 hours ago - then return emptyList`() {
+    val now = Clock.System.now()
     assertEquals(
       expected = emptyList(),
       actual =
@@ -73,41 +84,23 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
   }
 
   @Test
-  fun `given one time alarms one of which was missed - then return missed alarm with single dateTime`() {
+  fun `given missed one time alarm that was missed once - then return single missed dateTime`() {
     val now = Clock.System.now()
-    val alarms =
-      listOf(
-        alarmModel(
-          id = 1L,
-          fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTime(),
-          lastModificationDateTime =
-            LocalDateTime(
-              date = now.toLocalDate().minus(2, DateTimeUnit.DAY),
-              time = now.minus(2, DateTimeUnit.HOUR).toLocalTime(),
-            ),
-          lastNotificationDate = null,
-        ),
-        alarmModel(
-          id = 2L,
-          fireAtTime = now.plus(1, DateTimeUnit.HOUR).toLocalTime(),
-          lastModificationDateTime =
-            LocalDateTime(
-              date = now.toLocalDate().minus(2, DateTimeUnit.DAY),
-              time = now.minus(2, DateTimeUnit.HOUR).toLocalTime(),
-            ),
-          lastNotificationDate = now.toLocalDate().minus(2, DateTimeUnit.DAY),
-        ),
+    val alarm =
+      alarmModel(
+        fireAtTime = now.minus(1, DateTimeUnit.HOUR).toLocalTime(),
+        lastModificationDateTime =
+          LocalDateTime(
+            date = now.toLocalDate().minus(1, DateTimeUnit.DAY),
+            time = now.minus(2, DateTimeUnit.HOUR).toLocalTime(),
+          ),
+        lastNotificationDate = null,
       )
 
     assertEquals(
       expected =
-        listOf(
-          LocalDateTime(
-            date = alarms.first().lastModificationDateTime.date,
-            time = alarms.first().fireAtTime,
-          )
-        ),
-      actual = calculateAlarmMissedDateTimes(alarms.first()),
+        listOf(LocalDateTime(date = alarm.lastModificationDateTime.date, time = alarm.fireAtTime)),
+      actual = calculateAlarmMissedDateTimes(alarm),
     )
   }
 
