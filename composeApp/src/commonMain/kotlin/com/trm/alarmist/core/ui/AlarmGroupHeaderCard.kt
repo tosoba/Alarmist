@@ -30,12 +30,14 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AlarmGroupHeaderCard(
   group: AlarmGroupModel,
+  onClick: () -> Unit,
   modifier: Modifier = Modifier,
   shape: Shape = ShapeDefaults.Medium,
   trailing: @Composable () -> Unit = {},
 ) {
   Card(
     modifier = modifier,
+    onClick = onClick,
     shape = shape,
     elevation = CardDefaults.elevatedIf(group.isOn),
     colors = CardDefaults.onOffCardColors(group.isOn),

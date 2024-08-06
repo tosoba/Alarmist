@@ -607,7 +607,8 @@ private fun AlarmContent(
           Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
             AlarmGroupHeaderCard(
               group = group,
-              modifier = Modifier.fillMaxWidth().clip(shape).clickable { onGroupClick(group) },
+              onClick = { onGroupClick(group) },
+              modifier = Modifier.fillMaxWidth(),
               shape = shape,
               trailing = {
                 Checkbox(

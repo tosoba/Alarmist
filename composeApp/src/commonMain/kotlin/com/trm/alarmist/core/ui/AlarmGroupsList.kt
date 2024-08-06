@@ -5,7 +5,6 @@ import alarmist.composeapp.generated.resources.create_alarm_using_button
 import alarmist.composeapp.generated.resources.edit_group
 import alarmist.composeapp.generated.resources.no_alarm_groups_created
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.elevatedIf
@@ -90,17 +88,14 @@ fun AlarmGroupsList(
               }
             AlarmGroupHeaderCard(
               group = group,
-              modifier =
-                Modifier.fillMaxWidth()
-                  .padding(top = if (groupIndex > 0) 16.dp else 0.dp)
-                  .clip(shape)
-                  .clickable {
-                    if (group.alarmsCount > 0L) {
-                      if (isExpanded) onCollapseGroup() else onExpandGroup(group)
-                    } else {
-                      onEditGroupClick(group)
-                    }
-                  },
+              onClick = {
+                if (group.alarmsCount > 0L) {
+                  if (isExpanded) onCollapseGroup() else onExpandGroup(group)
+                } else {
+                  onEditGroupClick(group)
+                }
+              },
+              modifier = Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp),
               shape = shape,
               trailing = { groupHeaderCardTrailing(group) },
             )

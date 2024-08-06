@@ -134,7 +134,8 @@ fun GroupContent(
       item {
         AlarmGroupHeaderCard(
           group = group,
-          modifier = modifier.clickable(onClick = { toggleGroupExpanded(group.id) }),
+          onClick = { toggleGroupExpanded(group.id) },
+          modifier = modifier,
           shape =
             if (isExpanded) {
               ShapeDefaults.Medium.copy(
