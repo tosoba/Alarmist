@@ -149,7 +149,7 @@ fun UpcomingAlarmsContent(
       }
 
       if (selectedDateAlarms.isEmpty()) {
-        item {
+        item(span = { GridItemSpan(maxLineSpan) }) {
           NoUpcomingAlarmsCard(
             Modifier.fillMaxWidth()
               .padding(vertical = 32.dp, horizontal = 16.dp)
