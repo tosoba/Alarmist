@@ -1,12 +1,14 @@
 package com.trm.alarmist.feature.group
 
 import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.add_alarms_after_creating_group
 import alarmist.composeapp.generated.resources.back
 import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.delete_group
 import alarmist.composeapp.generated.resources.group_name
 import alarmist.composeapp.generated.resources.group_name_blank_validation_error
 import alarmist.composeapp.generated.resources.invalid_input
+import alarmist.composeapp.generated.resources.no_alarms_created
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +35,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AlarmOff
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
@@ -60,6 +64,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
@@ -227,6 +232,10 @@ fun GroupContent(
           selectedColor = Color(state.color),
           onColorClick = onColorChange,
         )
+      }
+
+      if (state.groups.values.all { it.alarmsCount == 0L }) {
+        item { NoAlarmsCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) }
       }
 
       if (mode is GroupComponent.Mode.Edit) {
@@ -397,5 +406,36 @@ private fun GroupColor(color: Color, isSelected: Boolean, onClick: () -> Unit) {
         contentDescription = null,
       )
     }
+  }
+}
+
+@Composable
+private fun NoAlarmsCard(modifier: Modifier = Modifier) {
+  Column(
+    modifier = modifier,
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Icon(
+      modifier = Modifier.size(100.dp),
+      imageVector = Icons.Default.AlarmOff,
+      contentDescription = stringResource(Res.string.no_alarms_created),
+    )
+
+    Spacer(Modifier.height(16.dp))
+
+    Text(
+      text = stringResource(Res.string.no_alarms_created),
+      style = MaterialTheme.typography.headlineMedium,
+      textAlign = TextAlign.Center,
+    )
+
+    Spacer(Modifier.height(8.dp))
+
+    Text(
+      text = stringResource(Res.string.add_alarms_after_creating_group),
+      style = MaterialTheme.typography.bodyLarge,
+      textAlign = TextAlign.Center,
+    )
   }
 }

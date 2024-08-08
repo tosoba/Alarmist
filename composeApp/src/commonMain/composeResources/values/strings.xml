@@ -46,6 +46,7 @@
     <string name="create_alarm_using_button">Create one using the button in bottom right.</string>
     <string name="no_alarm_groups_created">No alarm groups created</string>
     <string name="no_alarms_created">No alarms created</string>
+    <string name="add_alarms_after_creating_group">You can add alarms after creating a group.</string>
     <string name="fire_at_label">Fire at</string>
     <string name="repeat_weekly_label">Repeat weekly</string>
     <string name="snooze_label">Snooze</string>
