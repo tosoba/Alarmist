@@ -40,7 +40,7 @@ fun AlarmGroupsContent(
     onAlarmItemClick = onAlarmItemClick,
     onToggleAlarmOnOff = onToggleAlarmOnOff,
     headerItems = {
-      if (!alarmPermissionGranted) {
+      if (!alarmPermissionGranted && state.groups.any { it.alarmsCount > 0L }) {
         item {
           AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
         }
