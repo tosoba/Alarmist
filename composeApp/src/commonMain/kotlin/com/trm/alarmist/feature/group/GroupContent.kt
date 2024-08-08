@@ -353,10 +353,18 @@ private fun GroupColors(
   onColorClick: (Color) -> Unit = {},
 ) {
   val boxColors = remember {
-    listOf(Color.Transparent, Color.Red, Color.Yellow, Color.Green, Color.Blue, Color.Magenta)
+    listOf(
+      Color.Transparent,
+      Color.Red,
+      Color.Yellow,
+      Color.Green,
+      Color.Cyan,
+      Color.Blue,
+      Color.Magenta,
+      Color.Black,
+    )
   }
   LazyRow(modifier = modifier) {
-    // TODO: add a gradient circle to show a color picker dialog to pick a custom color
     items(boxColors) { color ->
       GroupColor(
         color = color,
