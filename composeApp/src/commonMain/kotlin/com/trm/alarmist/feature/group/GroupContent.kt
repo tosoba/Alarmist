@@ -57,6 +57,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -121,7 +124,15 @@ fun GroupContent(
 ) {
   Box(modifier = modifier) {
     val groupsExpandedState =
-      remember(state.groups, state.alarms) {
+      rememberSaveable(
+        state.groups,
+        state.alarms,
+        saver =
+          listSaver(
+            save = { stateList -> stateList.toList() },
+            restore = { it.toMutableStateMap() },
+          ),
+      ) {
         mutableStateMapOf<Long, Boolean>().apply { putAll(state.groups.mapValues { false }) }
       }
 
