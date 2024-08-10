@@ -8,6 +8,7 @@ import alarmist.composeapp.generated.resources.no_upcoming_alarms
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,13 +27,13 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -50,8 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
@@ -135,7 +135,7 @@ fun UpcomingAlarmsContent(
     LazyVerticalGrid(
       modifier = Modifier.weight(1f),
       columns = GridCells.Adaptive(minSize = 300.dp),
-      contentPadding = PaddingValues(8.dp),
+      contentPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 8.dp),
     ) {
       if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -297,7 +297,22 @@ private fun WeeklyMonthlyCalendar(
 
   Crossfade(targetState = calendarMode, modifier = modifier) { mode ->
     Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
-      Row(verticalAlignment = Alignment.CenterVertically) {
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+          Modifier.padding(vertical = 4.dp).clip(RoundedCornerShape(8.dp)).clickable(
+            onClickLabel =
+              stringResource(
+                when (mode) {
+                  CalendarMode.WEEKLY -> Res.string.expand
+                  CalendarMode.MONTHLY -> Res.string.collapse
+                }
+              )
+          ) {
+            calendarMode =
+              if (calendarMode == CalendarMode.WEEKLY) CalendarMode.MONTHLY else CalendarMode.WEEKLY
+          },
+      ) {
         monthlyCalendarState.selectedDates.firstOrNull()?.let {
           Text(
             text =
@@ -311,27 +326,11 @@ private fun WeeklyMonthlyCalendar(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        val expandCollapseContentDescription =
-          stringResource(
-            when (mode) {
-              CalendarMode.WEEKLY -> Res.string.expand
-              CalendarMode.MONTHLY -> Res.string.collapse
-            }
-          )
-        IconButton(
-          modifier =
-            Modifier.clearAndSetSemantics { contentDescription = expandCollapseContentDescription },
-          onClick = {
-            calendarMode =
-              if (calendarMode == CalendarMode.MONTHLY) CalendarMode.WEEKLY
-              else CalendarMode.MONTHLY
-          },
-        ) {
-          ExpandableIcon(
-            isExpanded = mode == CalendarMode.MONTHLY,
-            transitionLabel = "WeeklyMonthlyCalendarExpandable",
-          )
-        }
+        ExpandableIcon(
+          isExpanded = mode == CalendarMode.MONTHLY,
+          transitionLabel = "WeeklyMonthlyCalendarExpandable",
+          modifier = Modifier.padding(end = 8.dp),
+        )
       }
 
       fun onDayOfMonthClick(date: LocalDate) {
