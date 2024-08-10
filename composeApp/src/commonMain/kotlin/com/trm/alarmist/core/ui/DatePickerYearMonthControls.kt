@@ -33,7 +33,7 @@ fun DatePickerYearMonthControls(pagerState: EpicCalendarPagerState, modifier: Mo
       text =
         "${pagerState.currentMonth.month.name.lowercase().capitalize(Locale.current)} ${pagerState.currentMonth.year}",
       style = MaterialTheme.typography.titleMedium,
-    ) // TODO: copy over year selection expandable menu from material DatePicker
+    )
 
     Spacer(Modifier.weight(1f))
 

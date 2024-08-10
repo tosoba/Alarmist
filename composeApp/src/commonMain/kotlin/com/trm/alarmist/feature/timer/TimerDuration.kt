@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RestartAlt
@@ -24,19 +24,21 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.trm.alarmist.core.common.util.formatHMS
 import com.trm.alarmist.core.common.util.zeroPadded
+import com.trm.alarmist.core.ui.AutoSizeText
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -59,85 +61,78 @@ fun TimerDuration(
       verticalAlignment = Alignment.CenterVertically,
     ) {
       Text(
-        text = "${initialDuration.formatHMS()} Timer",
-        style =
-          TextStyle(
-            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-          ),
+        text = initialDuration.formatHMS(),
+        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Medium),
       )
 
       Spacer(modifier = Modifier.weight(1f))
 
-      SmallFloatingActionButton(onClick = onCancelClick) {
-        Icon(imageVector = Icons.Default.Cancel, contentDescription = "Cancel timer")
+      SmallFloatingActionButton(
+        onClick = onCancelClick,
+        containerColor = MaterialTheme.colorScheme.errorContainer,
+        modifier =
+          Modifier.clearAndSetSemantics {
+            contentDescription = "Cancel timer"
+            role = Role.Button
+          },
+      ) {
+        Icon(imageVector = Icons.Default.Close, contentDescription = null)
       }
     }
 
-    val windowSizeClass = calculateWindowSizeClass()
-    if (
-      windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
-        windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
-    ) {
-      Spacer(modifier = Modifier.weight(1f))
+    Spacer(modifier = Modifier.weight(1f))
 
-      Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Spacer(modifier = Modifier.width(32.dp))
-        // TODO: move this to center of the screen for WindowWidthSizeClass.Expanded
-        Column(horizontalAlignment = Alignment.End) {
-          TimerDuration(duration = duration)
-          Spacer(modifier = Modifier.height(16.dp))
-          TimerResetButton(onResetClick)
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        TimerDurationControls(
-          duration = duration,
-          isRunning = isRunning,
-          onToggleRunningClick = onToggleRunningClick,
-          onAddMinuteClick = onAddMinuteClick,
-          onSubtractMinuteClick = onSubtractMinuteClick,
-        )
-
-        Spacer(modifier = Modifier.width(32.dp))
+    if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        SmallFloatingActionButtonSizedSpacer()
+        Spacer(modifier = Modifier.width(24.dp))
+        TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
+        Spacer(modifier = Modifier.width(24.dp))
+        TimerResetButton(onResetClick)
       }
     } else {
-      Spacer(modifier = Modifier.weight(1f))
-
-      TimerDuration(duration = duration)
+      TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Vertical)
       Spacer(modifier = Modifier.height(16.dp))
       TimerResetButton(onResetClick)
-
-      Spacer(modifier = Modifier.weight(1f))
-
-      TimerDurationControls(
-        duration = duration,
-        isRunning = isRunning,
-        onToggleRunningClick = onToggleRunningClick,
-        onAddMinuteClick = onAddMinuteClick,
-        onSubtractMinuteClick = onSubtractMinuteClick,
-        modifier = Modifier.fillMaxWidth(),
-      )
     }
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.weight(1f))
+
+    TimerDurationControls(
+      duration = duration,
+      isRunning = isRunning,
+      onToggleRunningClick = onToggleRunningClick,
+      onAddMinuteClick = onAddMinuteClick,
+      onSubtractMinuteClick = onSubtractMinuteClick,
+      modifier = Modifier.fillMaxWidth(),
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
   }
 }
 
 @Composable
-private fun TimerResetButton(onResetClick: () -> Unit) {
-  FloatingActionButton(
-    onClick = onResetClick,
+private fun TimerResetButton(onClick: () -> Unit) {
+  SmallFloatingActionButton(
+    onClick = onClick,
     elevation = FloatingActionButtonDefaults.loweredElevation(),
+    modifier =
+      Modifier.clearAndSetSemantics {
+        contentDescription = "Reset timer"
+        role = Role.Button
+      },
   ) {
-    Icon(imageVector = Icons.Default.RestartAlt, contentDescription = "Reset timer")
+    Icon(imageVector = Icons.Default.RestartAlt, contentDescription = null)
   }
 }
 
+private enum class TimerDurationLayoutType {
+  Vertical,
+  Horizontal,
+}
+
 @Composable
-private fun TimerDuration(duration: Duration) {
+private fun TimerDuration(duration: Duration, layoutType: TimerDurationLayoutType) {
   val (time, fractionOfSecond) =
     remember(duration) {
       duration.toComponents { hours, minutes, seconds, nanoseconds ->
@@ -155,26 +150,41 @@ private fun TimerDuration(duration: Duration) {
       }
     }
 
-  Column(horizontalAlignment = Alignment.End) {
-    Text(
-      text = time,
-      style =
-        TextStyle(
-          fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        ),
-    )
-    Text(
-      text = fractionOfSecond,
-      style =
-        TextStyle(
-          fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        ),
-    )
+  when (layoutType) {
+    TimerDurationLayoutType.Vertical -> {
+      Column(horizontalAlignment = Alignment.End) {
+        TimeText(text = time)
+        FractionOfSecondText(text = fractionOfSecond)
+      }
+    }
+    TimerDurationLayoutType.Horizontal -> {
+      Row(verticalAlignment = Alignment.Bottom) {
+        TimeText(text = time, modifier = Modifier.alignByBaseline())
+        Spacer(modifier = Modifier.width(8.dp))
+        FractionOfSecondText(text = fractionOfSecond, modifier = Modifier.alignByBaseline())
+      }
+    }
   }
+}
+
+@Composable
+private fun TimeText(text: String, modifier: Modifier = Modifier) {
+  AutoSizeText(
+    text = text,
+    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+    modifier = modifier,
+    maxTextSize = 72.sp,
+  )
+}
+
+@Composable
+private fun FractionOfSecondText(text: String, modifier: Modifier = Modifier) {
+  AutoSizeText(
+    text = text,
+    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+    modifier = modifier,
+    maxTextSize = 36.sp,
+  )
 }
 
 @Composable
@@ -197,26 +207,40 @@ private fun TimerDurationControls(
           onClick = onSubtractMinuteClick,
           elevation = FloatingActionButtonDefaults.loweredElevation(),
           modifier =
-            Modifier.semantics { contentDescription = "Subtract 1 minute from timer duration" },
+            Modifier.clearAndSetSemantics {
+              contentDescription = "Subtract 1 minute from timer duration"
+              role = Role.Button
+            },
         ) {
           Text("-1:00")
         }
       } else {
-        FloatingActionButtonSpacerBox()
+        FloatingActionButtonSizedSpacer()
       }
     }
 
-    LargeFloatingActionButton(onClick = onToggleRunningClick) {
+    LargeFloatingActionButton(
+      onClick = onToggleRunningClick,
+      modifier =
+        Modifier.clearAndSetSemantics {
+          contentDescription = if (isRunning) "Pause timer" else "Resume timer"
+          role = Role.Button
+        },
+    ) {
       Icon(
         imageVector = if (isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
-        contentDescription = if (isRunning) "Pause timer" else "Resume timer",
+        contentDescription = null,
       )
     }
 
     FloatingActionButton(
       onClick = onAddMinuteClick,
       elevation = FloatingActionButtonDefaults.loweredElevation(),
-      modifier = Modifier.semantics { contentDescription = "Add 1 minute to timer duration" },
+      modifier =
+        Modifier.clearAndSetSemantics {
+          contentDescription = "Add 1 minute to timer duration"
+          role = Role.Button
+        },
     ) {
       Text("+1:00")
     }
@@ -224,6 +248,11 @@ private fun TimerDurationControls(
 }
 
 @Composable
-private fun FloatingActionButtonSpacerBox() {
+private fun FloatingActionButtonSizedSpacer() {
   Spacer(modifier = Modifier.size(56.dp))
+}
+
+@Composable
+private fun SmallFloatingActionButtonSizedSpacer() {
+  Spacer(modifier = Modifier.size(40.dp))
 }

@@ -69,12 +69,7 @@ fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) 
     Text(
       text =
         "${getInputAt(5)}${getInputAt(4)}h ${getInputAt(3)}${getInputAt(2)}m ${getInputAt(1)}${getInputAt(0)}s",
-      style =
-        TextStyle(
-          fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onBackground,
-        ),
+      style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Medium),
     )
   }
 
@@ -275,7 +270,7 @@ private fun Modifier.inputTextButton(
     animateDpAsState(
       targetValue = if (isFocused) 16.dp else size / 2,
       animationSpec =
-        spring(visibilityThreshold = Dp.VisibilityThreshold, stiffness = Spring.StiffnessLow),
+        spring(visibilityThreshold = Dp.VisibilityThreshold, stiffness = Spring.StiffnessMediumLow),
     )
 
   Modifier.requiredSize(size)

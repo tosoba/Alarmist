@@ -72,7 +72,10 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
               .padding(bottom = padding.calculateBottomPadding()),
           onStartClick = {
             if (it.inWholeSeconds > 0L) {
-              TimerService.startWithAction(context = context, TimerService.Action.Start(it))
+              TimerService.startWithAction(
+                context = context,
+                action = TimerService.Action.Start(it),
+              )
             }
           },
         )
