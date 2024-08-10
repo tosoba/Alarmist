@@ -112,7 +112,7 @@ class TimerService : Service() {
 
   private fun updateDuration(newDuration: Duration) {
     when {
-      newDuration <= Duration.ZERO -> {
+      newDuration <= Duration.ZERO || state == TimerState.ELAPSED -> {
         return
       }
       state == TimerState.RUNNING -> {

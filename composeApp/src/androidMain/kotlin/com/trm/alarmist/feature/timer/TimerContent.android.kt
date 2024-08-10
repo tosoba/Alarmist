@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -61,27 +62,23 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
   val initialDuration by remember { derivedStateOf { service?.initialDuration ?: Duration.ZERO } }
 
   Scaffold(modifier = modifier) { padding ->
-    when (state) {
-      TimerState.IDLE,
-      TimerState.ELAPSED -> {
-        // TODO: for elapsed show elapsed at info and reset button and back to idle keyboard button
+    Crossfade(targetState = state == TimerState.IDLE, label = "TimerContent") {
+      if (it) {
         TimerInput(
           modifier =
             Modifier.fillMaxSize()
               .background(MaterialTheme.colorScheme.background)
               .padding(bottom = padding.calculateBottomPadding()),
-          onStartClick = {
-            if (it.inWholeSeconds > 0L) {
+          onStartClick = { initialDuration ->
+            if (initialDuration.inWholeSeconds > 0L) {
               TimerService.startWithAction(
                 context = context,
-                action = TimerService.Action.Start(it),
+                action = TimerService.Action.Start(initialDuration),
               )
             }
           },
         )
-      }
-      TimerState.RUNNING,
-      TimerState.PAUSED -> {
+      } else {
         TimerDuration(
           modifier =
             Modifier.fillMaxSize()
@@ -89,7 +86,7 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
               .padding(bottom = padding.calculateBottomPadding()),
           duration = duration,
           initialDuration = initialDuration,
-          isRunning = state == TimerState.RUNNING,
+          state = state,
           onToggleRunningClick = {
             TimerService.startWithAction(
               context = context,

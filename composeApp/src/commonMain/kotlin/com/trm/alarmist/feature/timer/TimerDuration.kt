@@ -1,6 +1,7 @@
 package com.trm.alarmist.feature.timer
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RestartAlt
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trm.alarmist.core.common.util.formatHMS
 import com.trm.alarmist.core.common.util.zeroPadded
+import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.ui.AutoSizeText
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -47,7 +50,7 @@ import kotlin.time.Duration.Companion.minutes
 fun TimerDuration(
   duration: Duration,
   initialDuration: Duration,
-  isRunning: Boolean,
+  state: TimerState,
   onToggleRunningClick: () -> Unit,
   onCancelClick: () -> Unit,
   onResetClick: () -> Unit,
@@ -84,26 +87,37 @@ fun TimerDuration(
 
     if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
       Row(verticalAlignment = Alignment.CenterVertically) {
-        SmallFloatingActionButtonSizedSpacer()
-        Spacer(modifier = Modifier.width(24.dp))
-        TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
-        Spacer(modifier = Modifier.width(24.dp))
-        TimerResetButton(onResetClick)
+        AnimatedContent(state != TimerState.ELAPSED) {
+          if (it) {
+            SmallFloatingActionButtonSizedSpacer()
+            Spacer(modifier = Modifier.width(24.dp))
+            TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
+            Spacer(modifier = Modifier.width(24.dp))
+            TimerResetButton(onResetClick)
+          } else {
+            TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
+          }
+        }
       }
     } else {
       TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Vertical)
-      Spacer(modifier = Modifier.height(16.dp))
-      TimerResetButton(onResetClick)
+      AnimatedVisibility(state != TimerState.ELAPSED) {
+        Column {
+          Spacer(modifier = Modifier.height(16.dp))
+          TimerResetButton(onResetClick)
+        }
+      }
     }
 
     Spacer(modifier = Modifier.weight(1f))
 
     TimerDurationControls(
       duration = duration,
-      isRunning = isRunning,
+      state = state,
       onToggleRunningClick = onToggleRunningClick,
       onAddMinuteClick = onAddMinuteClick,
       onSubtractMinuteClick = onSubtractMinuteClick,
+      onStopElapsedAlarmClick = onResetClick,
       modifier = Modifier.fillMaxWidth(),
     )
 
@@ -190,10 +204,11 @@ private fun FractionOfSecondText(text: String, modifier: Modifier = Modifier) {
 @Composable
 private fun TimerDurationControls(
   duration: Duration,
-  isRunning: Boolean,
+  state: TimerState,
   onToggleRunningClick: () -> Unit,
   onAddMinuteClick: () -> Unit,
   onSubtractMinuteClick: () -> Unit,
+  onStopElapsedAlarmClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   Row(
@@ -201,7 +216,7 @@ private fun TimerDurationControls(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
   ) {
-    AnimatedContent(targetState = duration > 1.minutes) {
+    AnimatedContent(targetState = state != TimerState.ELAPSED && duration > 1.minutes) {
       if (it) {
         FloatingActionButton(
           onClick = onSubtractMinuteClick,
@@ -220,29 +235,45 @@ private fun TimerDurationControls(
     }
 
     LargeFloatingActionButton(
-      onClick = onToggleRunningClick,
+      onClick = if (state == TimerState.ELAPSED) onStopElapsedAlarmClick else onToggleRunningClick,
       modifier =
         Modifier.clearAndSetSemantics {
-          contentDescription = if (isRunning) "Pause timer" else "Resume timer"
+          contentDescription =
+            when (state) {
+              TimerState.RUNNING -> "Pause timer"
+              TimerState.PAUSED -> "Resume timer"
+              else -> "Stop elapsed timer alarm"
+            }
           role = Role.Button
         },
     ) {
       Icon(
-        imageVector = if (isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
+        imageVector =
+          when (state) {
+            TimerState.RUNNING -> Icons.Default.Pause
+            TimerState.PAUSED -> Icons.Default.PlayArrow
+            else -> Icons.Default.Stop
+          },
         contentDescription = null,
       )
     }
 
-    FloatingActionButton(
-      onClick = onAddMinuteClick,
-      elevation = FloatingActionButtonDefaults.loweredElevation(),
-      modifier =
-        Modifier.clearAndSetSemantics {
-          contentDescription = "Add 1 minute to timer duration"
-          role = Role.Button
-        },
-    ) {
-      Text("+1:00")
+    AnimatedContent(targetState = state != TimerState.ELAPSED) {
+      if (it) {
+        FloatingActionButton(
+          onClick = onAddMinuteClick,
+          elevation = FloatingActionButtonDefaults.loweredElevation(),
+          modifier =
+            Modifier.clearAndSetSemantics {
+              contentDescription = "Add 1 minute to timer duration"
+              role = Role.Button
+            },
+        ) {
+          Text("+1:00")
+        }
+      } else {
+        FloatingActionButtonSizedSpacer()
+      }
     }
   }
 }
