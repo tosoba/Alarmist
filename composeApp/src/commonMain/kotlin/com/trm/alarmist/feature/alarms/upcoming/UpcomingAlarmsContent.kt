@@ -144,6 +144,7 @@ fun UpcomingAlarmsContent(
             alarmCounts = alarmCounts,
             onSelectedDateChange = onSelectedDateChange,
             onMonthlyDateRangeChange = onMonthlyDateRangeChange,
+            modifier = Modifier.padding(8.dp),
           )
         }
       }
