@@ -16,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,11 +27,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -81,6 +84,7 @@ import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.NoRippleInteractionSource
 import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
+import com.trm.alarmist.core.ui.groupedAlarmItemShape
 import com.trm.alarmist.core.ui.keyboardAsState
 import com.trm.alarmist.core.ui.theme.bottomSheetBackgroundColor
 import com.trm.alarmist.core.ui.theme.onOffCardColors
@@ -140,170 +144,195 @@ fun GroupContent(
       groupsExpandedState[id] = groupsExpandedState[id]?.not() ?: false
     }
 
-    fun LazyListScope.expandableAlarmsGroupItems(
-      group: AlarmGroupModel,
-      modifier: Modifier = Modifier,
-    ) {
-      if (group.alarmsCount == 0L) return
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+      val cellMinSize = 300.dp
+      val contentPaddingHorizontal = 16.dp
 
-      val isExpanded = groupsExpandedState[group.id] == true
-      item {
-        AlarmGroupHeaderCard(
-          group = group,
-          onClick = { toggleGroupExpanded(group.id) },
-          modifier = modifier,
-          shape =
-            if (isExpanded) {
-              ShapeDefaults.Medium.copy(
-                bottomStart = CornerSize(0.dp),
-                bottomEnd = CornerSize(0.dp),
-              )
-            } else {
-              ShapeDefaults.Medium
-            },
-          trailing = {
-            Box(modifier = Modifier.padding(end = 16.dp)) {
-              ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
-            }
-          },
-        )
-      }
+      fun LazyGridScope.expandableAlarmsGroupItems(
+        group: AlarmGroupModel,
+        modifier: Modifier = Modifier,
+      ) {
+        if (group.alarmsCount == 0L) return
 
-      if (isExpanded) {
-        val alarms = state.alarmsInGroup(group.id)
-        itemsIndexed(alarms) { index, alarm ->
-          Box(modifier = Modifier.fillMaxWidth()) {
-            GroupedAlarmCard(
-              alarm = alarm,
-              modifier = Modifier.fillMaxWidth(),
-              shape =
-                if (index == alarms.lastIndex) {
-                  ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
-                } else {
-                  RectangleShape
-                },
-              isSelected = alarm.id in state.selectedAlarmIds,
-              onToggleAlarmSelection = remember(alarm) { { onToggleAlarmSelection(alarm) } },
-            )
-
-            HorizontalDivider(
-              modifier =
-                Modifier.fillMaxWidth().padding(horizontal = 16.dp).align(Alignment.TopCenter)
-            )
-          }
-        }
-      }
-    }
-
-    LazyColumn(
-      modifier = Modifier.fillMaxSize(),
-      contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
-    ) {
-      item {
-        val isKeyboardOpen by keyboardAsState()
-        val focusManager = LocalFocusManager.current
-        LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
-
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-          IconButton(onClick = onBackClick, modifier = Modifier.padding(bottom = 8.dp)) {
-            Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = stringResource(Res.string.back),
-            )
-          }
-
-          OutlinedTextField(
-            modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
-            value = state.name,
-            onValueChange = onNameChange,
-            label = { Text(stringResource(Res.string.group_name)) },
-            singleLine = true,
-            isError = state.blankNameError,
-            supportingText = {
-              AnimatedVisibility(state.blankNameError) {
-                Text(stringResource(Res.string.group_name_blank_validation_error))
+        val isExpanded = groupsExpandedState[group.id] == true
+        item(span = { GridItemSpan(maxLineSpan) }) {
+          AlarmGroupHeaderCard(
+            group = group,
+            onClick = { toggleGroupExpanded(group.id) },
+            modifier = modifier,
+            shape =
+              if (isExpanded) {
+                ShapeDefaults.Medium.copy(
+                  bottomStart = CornerSize(0.dp),
+                  bottomEnd = CornerSize(0.dp),
+                )
+              } else {
+                ShapeDefaults.Medium
+              },
+            trailing = {
+              Box(modifier = Modifier.padding(end = 16.dp)) {
+                ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
               }
             },
           )
+        }
 
-          onDeleteClick?.let {
-            IconButton(onClick = it, modifier = Modifier.padding(bottom = 8.dp)) {
-              Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(Res.string.delete_group),
+        if (isExpanded) {
+          val alarms = state.alarmsInGroup(group.id)
+
+          val fullSpan =
+            maxOf(
+              ((maxWidth - contentPaddingHorizontal - contentPaddingHorizontal) / cellMinSize)
+                .toInt(),
+              1,
+            )
+          val firstInLastRowAlarmIndex = alarms.indices.lastOrNull { it % fullSpan == 0 }
+          val lastInLastRowAlarmIndex = alarms.indices.lastOrNull { it % fullSpan == fullSpan - 1 }
+
+          itemsIndexed(alarms) { index, alarm ->
+            Box(modifier = Modifier.fillMaxWidth()) {
+              GroupedAlarmCard(
+                alarm = alarm,
+                modifier = Modifier.fillMaxWidth(),
+                shape =
+                  groupedAlarmItemShape(
+                    index = index,
+                    firstInLastRowAlarmIndex = firstInLastRowAlarmIndex,
+                    lastInLastRowAlarmIndex = lastInLastRowAlarmIndex,
+                    fullSpan = fullSpan,
+                    groupAlarmsCount = alarms.size,
+                  ),
+                isSelected = alarm.id in state.selectedAlarmIds,
+                onToggleAlarmSelection = remember(alarm) { { onToggleAlarmSelection(alarm) } },
+              )
+
+              HorizontalDivider(
+                modifier =
+                  Modifier.fillMaxWidth().padding(horizontal = 16.dp).align(Alignment.TopCenter)
               )
             }
           }
         }
       }
 
-      item {
-        GroupColors(
-          modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-          selectedColor = Color(state.color),
-          onColorClick = onColorChange,
-        )
-      }
+      LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
+        columns = GridCells.Adaptive(minSize = cellMinSize),
+        contentPadding =
+          PaddingValues(
+            start = contentPaddingHorizontal,
+            end = contentPaddingHorizontal,
+            bottom = 16.dp,
+          ),
+      ) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+          val isKeyboardOpen by keyboardAsState()
+          val focusManager = LocalFocusManager.current
+          LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
-      if (state.groups.values.all { it.alarmsCount == 0L }) {
-        item { NoAlarmsCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) }
-      }
+          Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onBackClick, modifier = Modifier.padding(bottom = 8.dp)) {
+              Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.back),
+              )
+            }
 
-      if (mode is GroupComponent.Mode.Edit) {
-        state.groups[mode.group.id]?.let {
+            OutlinedTextField(
+              modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
+              value = state.name,
+              onValueChange = onNameChange,
+              label = { Text(stringResource(Res.string.group_name)) },
+              singleLine = true,
+              isError = state.blankNameError,
+              supportingText = {
+                AnimatedVisibility(state.blankNameError) {
+                  Text(stringResource(Res.string.group_name_blank_validation_error))
+                }
+              },
+            )
+
+            onDeleteClick?.let {
+              IconButton(onClick = it, modifier = Modifier.padding(bottom = 8.dp)) {
+                Icon(
+                  imageVector = Icons.Default.Delete,
+                  contentDescription = stringResource(Res.string.delete_group),
+                )
+              }
+            }
+          }
+        }
+
+        item(span = { GridItemSpan(maxLineSpan) }) {
+          GroupColors(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+            selectedColor = Color(state.color),
+            onColorClick = onColorChange,
+          )
+        }
+
+        if (state.groups.values.all { it.alarmsCount == 0L }) {
+          item { NoAlarmsCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) }
+        }
+
+        if (mode is GroupComponent.Mode.Edit) {
+          state.groups[mode.group.id]?.let {
+            expandableAlarmsGroupItems(
+              group = it,
+              modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            )
+          }
+        }
+
+        state.groups[AlarmGroupModel.UNGROUPED_ID]?.let {
           expandableAlarmsGroupItems(
             group = it,
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
           )
         }
+
+        state.groups.forEach { (id, group) ->
+          if (id == AlarmGroupModel.UNGROUPED_ID) return@forEach
+          if (mode is GroupComponent.Mode.Edit && id == mode.group.id) return@forEach
+          expandableAlarmsGroupItems(
+            group = group,
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+          )
+        }
+
+        floatingActionButtonSpacerItem()
       }
 
-      state.groups[AlarmGroupModel.UNGROUPED_ID]?.let {
-        expandableAlarmsGroupItems(
-          group = it,
-          modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-        )
-      }
+      val interactionSource = remember(::MutableInteractionSource)
+      val noRippleInteractionSource = remember(::NoRippleInteractionSource)
+      ExtendedFloatingActionButton(
+        modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+        expanded = state.blankNameError,
+        containerColor =
+          if (state.blankNameError) MaterialTheme.colorScheme.errorContainer
+          else FloatingActionButtonDefaults.containerColor,
+        elevation =
+          if (state.blankNameError) FloatingActionButtonDefaults.bottomAppBarFabElevation()
+          else FloatingActionButtonDefaults.elevation(),
+        onClick = onConfirmClick,
+        icon = {
+          Icon(
+            imageVector = if (state.blankNameError) Icons.Default.Error else Icons.Default.Check,
+            contentDescription = stringResource(Res.string.confirm),
+          )
+        },
+        interactionSource =
+          if (state.blankNameError) noRippleInteractionSource else interactionSource,
+        text = {
+          AnimatedVisibility(state.blankNameError) {
+            Text(stringResource(Res.string.invalid_input))
+          }
+        },
+      )
 
-      state.groups.forEach { (id, group) ->
-        if (id == AlarmGroupModel.UNGROUPED_ID) return@forEach
-        if (mode is GroupComponent.Mode.Edit && id == mode.group.id) return@forEach
-        expandableAlarmsGroupItems(
-          group = group,
-          modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-        )
-      }
-
-      floatingActionButtonSpacerItem()
+      TopGradientBackground(color = bottomSheetBackgroundColor())
+      BottomGradientBackground(color = bottomSheetBackgroundColor())
     }
-
-    val interactionSource = remember(::MutableInteractionSource)
-    val noRippleInteractionSource = remember(::NoRippleInteractionSource)
-    ExtendedFloatingActionButton(
-      modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-      expanded = state.blankNameError,
-      containerColor =
-        if (state.blankNameError) MaterialTheme.colorScheme.errorContainer
-        else FloatingActionButtonDefaults.containerColor,
-      elevation =
-        if (state.blankNameError) FloatingActionButtonDefaults.bottomAppBarFabElevation()
-        else FloatingActionButtonDefaults.elevation(),
-      onClick = onConfirmClick,
-      icon = {
-        Icon(
-          imageVector = if (state.blankNameError) Icons.Default.Error else Icons.Default.Check,
-          contentDescription = stringResource(Res.string.confirm),
-        )
-      },
-      interactionSource =
-        if (state.blankNameError) noRippleInteractionSource else interactionSource,
-      text = {
-        AnimatedVisibility(state.blankNameError) { Text(stringResource(Res.string.invalid_input)) }
-      },
-    )
-
-    TopGradientBackground(color = bottomSheetBackgroundColor())
-    BottomGradientBackground(color = bottomSheetBackgroundColor())
   }
 }
 

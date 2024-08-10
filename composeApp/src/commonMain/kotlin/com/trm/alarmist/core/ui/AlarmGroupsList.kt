@@ -84,15 +84,6 @@ fun AlarmGroupsList(
             val isExpanded = expandedGroupId == group.id
 
             item(key = "group-${group.id}", span = { GridItemSpan(maxLineSpan) }) {
-              val shape =
-                if (isExpanded) {
-                  ShapeDefaults.Medium.copy(
-                    bottomStart = CornerSize(0.dp),
-                    bottomEnd = CornerSize(0.dp),
-                  )
-                } else {
-                  ShapeDefaults.Medium
-                }
               AlarmGroupHeaderCard(
                 group = group,
                 onClick = {
@@ -104,7 +95,15 @@ fun AlarmGroupsList(
                 },
                 modifier =
                   Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp),
-                shape = shape,
+                shape =
+                  if (isExpanded) {
+                    ShapeDefaults.Medium.copy(
+                      bottomStart = CornerSize(0.dp),
+                      bottomEnd = CornerSize(0.dp),
+                    )
+                  } else {
+                    ShapeDefaults.Medium
+                  },
                 trailing = { groupHeaderCardTrailing(group) },
               )
             }
@@ -130,27 +129,12 @@ fun AlarmGroupsList(
                     item = alarm,
                     modifier = Modifier.fillMaxWidth(),
                     shape =
-                      ShapeDefaults.Medium.copy(
-                        topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp),
-                        bottomStart =
-                          if (
-                            index == firstInLastRowAlarmIndex &&
-                              group.alarmsCount.toInt() % fullSpan != 0
-                          ) {
-                            ShapeDefaults.Medium.bottomStart
-                          } else {
-                            CornerSize(0.dp)
-                          },
-                        bottomEnd =
-                          if (
-                            (index == lastInLastRowAlarmIndex ||
-                              index == expandedGroupAlarms.lastIndex) && fullSpan != 1
-                          ) {
-                            ShapeDefaults.Medium.bottomEnd
-                          } else {
-                            CornerSize(0.dp)
-                          },
+                      groupedAlarmItemShape(
+                        index = index,
+                        firstInLastRowAlarmIndex = firstInLastRowAlarmIndex,
+                        lastInLastRowAlarmIndex = lastInLastRowAlarmIndex,
+                        fullSpan = fullSpan,
+                        groupAlarmsCount = expandedGroupAlarms.size,
                       ),
                     onItemClick = onAlarmItemClick,
                     onToggleOnOff = remember(alarm) { { onToggleAlarmOnOff(alarm) } },
