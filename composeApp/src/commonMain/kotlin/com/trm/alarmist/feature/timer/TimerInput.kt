@@ -58,7 +58,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun TimerInput(onStartClick: (Duration) -> Unit, modifier: Modifier = Modifier) {
+fun TimerInput(modifier: Modifier = Modifier, onStartClick: (Duration) -> Unit) {
   val windowSizeClass = calculateWindowSizeClass()
 
   val input = remember { mutableStateListOf<Char>() }
