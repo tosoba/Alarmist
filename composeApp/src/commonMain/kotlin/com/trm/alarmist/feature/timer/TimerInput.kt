@@ -26,11 +26,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -275,10 +275,6 @@ private fun Modifier.inputTextButton(
 
   Modifier.requiredSize(size)
     .clip(RoundedCornerShape(cornerRadius))
-    .clickable(
-      interactionSource = interactionSource,
-      indication = rememberRipple(),
-      onClick = onClick,
-    )
+    .clickable(interactionSource = interactionSource, indication = ripple(), onClick = onClick)
     .background(color)
 }

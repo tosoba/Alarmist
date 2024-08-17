@@ -1,7 +1,6 @@
 package com.trm.alarmist.feature.alarms
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.router.children.ChildNavState
 import com.arkivanov.decompose.router.pages.ChildPages
 import com.arkivanov.decompose.router.pages.Pages
@@ -20,7 +19,6 @@ import com.trm.alarmist.feature.alarms.upcoming.DefaultUpcomingAlarmsComponent
 import com.trm.alarmist.feature.alarms.upcoming.UpcomingAlarmsComponent
 import kotlinx.serialization.Serializable
 
-@OptIn(ExperimentalDecomposeApi::class)
 interface AlarmsComponent {
   val pages: Value<ChildPages<*, Page>>
 
@@ -37,7 +35,6 @@ interface AlarmsComponent {
   }
 }
 
-@OptIn(ExperimentalDecomposeApi::class)
 class DefaultAlarmsComponent(
   componentContext: ComponentContext,
   private val onAddAlarmClick: () -> Unit,

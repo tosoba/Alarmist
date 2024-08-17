@@ -28,8 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.pages.Pages
+import com.arkivanov.decompose.extensions.compose.pages.ChildPages
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.TopGradientBackground
@@ -40,7 +39,7 @@ import com.trm.alarmist.feature.alarms.ui.AlarmsNavigationRail
 import com.trm.alarmist.feature.alarms.upcoming.UpcomingAlarmsContent
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalDecomposeApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
   val windowSizeClass = calculateWindowSizeClass()
@@ -94,11 +93,10 @@ fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
   }
 }
 
-@OptIn(ExperimentalDecomposeApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun AlarmsMainContent(component: AlarmsComponent, modifier: Modifier = Modifier) {
   Box(modifier = modifier) {
-    Pages(
+    ChildPages(
       modifier = Modifier.fillMaxSize(),
       pages = component.pages,
       onPageSelected = component::onPageSelected,

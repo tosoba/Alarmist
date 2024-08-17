@@ -86,17 +86,17 @@ fun TimerDuration(
     Spacer(modifier = Modifier.weight(1f))
 
     if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
-      Row(verticalAlignment = Alignment.CenterVertically) {
-        AnimatedContent(state != TimerState.ELAPSED) {
-          if (it) {
+      AnimatedContent(targetState = state != TimerState.ELAPSED) {
+        if (it) {
+          Row(verticalAlignment = Alignment.CenterVertically) {
             SmallFloatingActionButtonSizedSpacer()
             Spacer(modifier = Modifier.width(24.dp))
             TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
             Spacer(modifier = Modifier.width(24.dp))
             TimerResetButton(onResetClick)
-          } else {
-            TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
           }
+        } else {
+          TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
         }
       }
     } else {
