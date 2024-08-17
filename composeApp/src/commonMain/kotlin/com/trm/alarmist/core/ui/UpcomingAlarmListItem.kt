@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -36,7 +35,6 @@ import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpcomingAlarmListItem(
   item: UpcomingAlarmListModel,

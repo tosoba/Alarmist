@@ -7,7 +7,6 @@ import alarmist.composeapp.generated.resources.expand
 import alarmist.composeapp.generated.resources.no_upcoming_alarms
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -101,7 +100,7 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun UpcomingAlarmsContent(
   initialState: UpcomingAlarmsCalendarState,
@@ -152,9 +151,7 @@ fun UpcomingAlarmsContent(
       if (selectedDateAlarms.isEmpty()) {
         item(span = { GridItemSpan(maxLineSpan) }) {
           NoUpcomingAlarmsCard(
-            Modifier.fillMaxWidth()
-              .padding(vertical = 32.dp, horizontal = 16.dp)
-              .animateItemPlacement()
+            Modifier.fillMaxWidth().padding(vertical = 32.dp, horizontal = 16.dp).animateItem()
           )
         }
       } else if (!alarmPermissionGranted) {
@@ -166,7 +163,7 @@ fun UpcomingAlarmsContent(
       items(selectedDateAlarms) { alarm ->
         UpcomingAlarmListItem(
           item = alarm,
-          modifier = Modifier.fillMaxWidth().padding(8.dp).animateItemPlacement(),
+          modifier = Modifier.fillMaxWidth().padding(8.dp).animateItem(),
           group = alarm.groupId?.let(groups::get),
           onItemClick = onAlarmItemClick,
           onOffButtonClick = onOffButtonClick,
@@ -228,7 +225,6 @@ private fun rememberMonthlyCalendarState(
     selectedDates = listOfNotNull(initialState.selectedDate),
   )
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun WeeklyMonthlyCalendar(
   initialState: UpcomingAlarmsCalendarState,
