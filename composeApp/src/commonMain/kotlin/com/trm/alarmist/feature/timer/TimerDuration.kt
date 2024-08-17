@@ -86,27 +86,31 @@ fun TimerDuration(
     Spacer(modifier = Modifier.weight(1f))
 
     if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
-      AnimatedContent(targetState = state != TimerState.ELAPSED) {
-        if (it) {
-          Row(verticalAlignment = Alignment.CenterVertically) {
-            SmallFloatingActionButtonSizedSpacer()
-            Spacer(modifier = Modifier.width(24.dp))
-            TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
-            Spacer(modifier = Modifier.width(24.dp))
-            TimerResetButton(onResetClick)
-          }
-        } else {
-          TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Horizontal)
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        AnimatedVisibility(visible = state != TimerState.ELAPSED) {
+          SmallFloatingActionButtonSizedSpacer()
         }
+
+        TimerDuration(
+          duration = duration,
+          layoutType = TimerDurationLayoutType.Horizontal,
+          modifier = Modifier.padding(horizontal = 24.dp),
+        )
+
+        AnimatedVisibility(visible = state != TimerState.ELAPSED) { TimerResetButton(onResetClick) }
       }
     } else {
-      TimerDuration(duration = duration, layoutType = TimerDurationLayoutType.Vertical)
-      AnimatedVisibility(state != TimerState.ELAPSED) {
-        Column {
-          Spacer(modifier = Modifier.height(16.dp))
-          TimerResetButton(onResetClick)
-        }
+      AnimatedVisibility(visible = state != TimerState.ELAPSED) {
+        SmallFloatingActionButtonSizedSpacer()
       }
+
+      TimerDuration(
+        duration = duration,
+        layoutType = TimerDurationLayoutType.Vertical,
+        modifier = Modifier.padding(vertical = 16.dp),
+      )
+
+      AnimatedVisibility(state != TimerState.ELAPSED) { TimerResetButton(onResetClick) }
     }
 
     Spacer(modifier = Modifier.weight(1f))
@@ -146,7 +150,11 @@ private enum class TimerDurationLayoutType {
 }
 
 @Composable
-private fun TimerDuration(duration: Duration, layoutType: TimerDurationLayoutType) {
+private fun TimerDuration(
+  duration: Duration,
+  layoutType: TimerDurationLayoutType,
+  modifier: Modifier = Modifier,
+) {
   val (time, fractionOfSecond) =
     remember(duration) {
       duration.toComponents { hours, minutes, seconds, nanoseconds ->
@@ -166,13 +174,13 @@ private fun TimerDuration(duration: Duration, layoutType: TimerDurationLayoutTyp
 
   when (layoutType) {
     TimerDurationLayoutType.Vertical -> {
-      Column(horizontalAlignment = Alignment.End) {
+      Column(horizontalAlignment = Alignment.End, modifier = modifier) {
         TimeText(text = time)
         FractionOfSecondText(text = fractionOfSecond)
       }
     }
     TimerDurationLayoutType.Horizontal -> {
-      Row(verticalAlignment = Alignment.Bottom) {
+      Row(verticalAlignment = Alignment.Bottom, modifier = modifier) {
         TimeText(text = time, modifier = Modifier.alignByBaseline())
         Spacer(modifier = Modifier.width(8.dp))
         FractionOfSecondText(text = fractionOfSecond, modifier = Modifier.alignByBaseline())
