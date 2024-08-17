@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
@@ -25,21 +26,21 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
+import com.trm.alarmist.core.ui.DurationText
+import com.trm.alarmist.core.ui.DurationTextLayoutType
 import kotlin.time.Duration
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun StopwatchDuration(
   duration: Duration,
@@ -53,47 +54,22 @@ fun StopwatchDuration(
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    // TODO: different layouts for different screen sizes
-
     Spacer(modifier = Modifier.weight(1f))
 
-    val (time, fractionOfSecond) =
-      remember(duration) {
-        duration.toComponents { hours, minutes, seconds, nanoseconds ->
-          buildString {
-            if (hours > 0L) {
-              append(hours.toInt())
-              append(':')
-            }
-            if (hours > 0L || minutes > 0) {
-              append(minutes)
-              append(':')
-            }
-            append(seconds.zeroPadded())
-          } to (nanoseconds / 10_000_000L).toInt().zeroPadded()
-        }
-      }
-
-    Column(horizontalAlignment = Alignment.End) {
-      Text(
-        text = time,
-        style =
-          TextStyle(
-            fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-          ),
+    if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
+      DurationText(
+        duration = duration,
+        layoutType = DurationTextLayoutType.Horizontal,
+        modifier = Modifier.padding(horizontal = 24.dp),
       )
-      Text(
-        text = fractionOfSecond,
-        style =
-          TextStyle(
-            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-          ),
+    } else {
+      DurationText(
+        duration = duration,
+        layoutType = DurationTextLayoutType.Vertical,
+        modifier = Modifier.padding(vertical = 16.dp),
       )
     }
+    // TODO: scrollable lap list next to duration
 
     Spacer(modifier = Modifier.weight(1f))
 
@@ -132,7 +108,6 @@ fun StopwatchDuration(
         )
       }
 
-      // TODO: on lap click
       AnimatedContent(
         targetState = state == StopwatchState.RUNNING,
         transitionSpec =
@@ -140,7 +115,7 @@ fun StopwatchDuration(
       ) {
         if (it) {
           FloatingActionButton(
-            onClick = {},
+            onClick = {}, // TODO: on lap click
             elevation = FloatingActionButtonDefaults.loweredElevation(),
           ) {
             Icon(imageVector = Icons.Default.Timer, contentDescription = "Record lap")
@@ -153,8 +128,6 @@ fun StopwatchDuration(
 
     Spacer(modifier = Modifier.height(16.dp))
   }
-
-  // TODO: scrollable lap list
 }
 
 @Composable

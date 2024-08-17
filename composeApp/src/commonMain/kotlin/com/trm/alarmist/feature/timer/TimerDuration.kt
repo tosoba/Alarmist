@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Pause
@@ -28,7 +27,6 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
@@ -37,11 +35,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.trm.alarmist.core.common.util.formatHMS
-import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.TimerState
-import com.trm.alarmist.core.ui.AutoSizeText
+import com.trm.alarmist.core.ui.DurationText
+import com.trm.alarmist.core.ui.DurationTextLayoutType
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -91,9 +88,9 @@ fun TimerDuration(
           SmallFloatingActionButtonSizedSpacer()
         }
 
-        TimerDuration(
+        DurationText(
           duration = duration,
-          layoutType = TimerDurationLayoutType.Horizontal,
+          layoutType = DurationTextLayoutType.Horizontal,
           modifier = Modifier.padding(horizontal = 24.dp),
         )
 
@@ -104,9 +101,9 @@ fun TimerDuration(
         SmallFloatingActionButtonSizedSpacer()
       }
 
-      TimerDuration(
+      DurationText(
         duration = duration,
-        layoutType = TimerDurationLayoutType.Vertical,
+        layoutType = DurationTextLayoutType.Vertical,
         modifier = Modifier.padding(vertical = 16.dp),
       )
 
@@ -142,71 +139,6 @@ private fun TimerResetButton(onClick: () -> Unit) {
   ) {
     Icon(imageVector = Icons.Default.RestartAlt, contentDescription = null)
   }
-}
-
-private enum class TimerDurationLayoutType {
-  Vertical,
-  Horizontal,
-}
-
-@Composable
-private fun TimerDuration(
-  duration: Duration,
-  layoutType: TimerDurationLayoutType,
-  modifier: Modifier = Modifier,
-) {
-  val (time, fractionOfSecond) =
-    remember(duration) {
-      duration.toComponents { hours, minutes, seconds, nanoseconds ->
-        buildString {
-          if (hours > 0L) {
-            append(hours.toInt())
-            append(':')
-          }
-          if (hours > 0L || minutes > 0) {
-            append(minutes)
-            append(':')
-          }
-          append(seconds.zeroPadded())
-        } to (nanoseconds / 10_000_000L).toInt().zeroPadded()
-      }
-    }
-
-  when (layoutType) {
-    TimerDurationLayoutType.Vertical -> {
-      Column(horizontalAlignment = Alignment.End, modifier = modifier) {
-        TimeText(text = time)
-        FractionOfSecondText(text = fractionOfSecond)
-      }
-    }
-    TimerDurationLayoutType.Horizontal -> {
-      Row(verticalAlignment = Alignment.Bottom, modifier = modifier) {
-        TimeText(text = time, modifier = Modifier.alignByBaseline())
-        Spacer(modifier = Modifier.width(8.dp))
-        FractionOfSecondText(text = fractionOfSecond, modifier = Modifier.alignByBaseline())
-      }
-    }
-  }
-}
-
-@Composable
-private fun TimeText(text: String, modifier: Modifier = Modifier) {
-  AutoSizeText(
-    text = text,
-    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-    modifier = modifier,
-    maxTextSize = 72.sp,
-  )
-}
-
-@Composable
-private fun FractionOfSecondText(text: String, modifier: Modifier = Modifier) {
-  AutoSizeText(
-    text = text,
-    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-    modifier = modifier,
-    maxTextSize = 36.sp,
-  )
 }
 
 @Composable
