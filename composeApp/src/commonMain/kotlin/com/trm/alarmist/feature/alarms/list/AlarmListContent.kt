@@ -67,7 +67,9 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
         ) {
           if (!alarmPermissionGranted) {
             item {
-              AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
+              AlarmPermissionStatusCard(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItem()
+              )
             }
           }
 
@@ -75,7 +77,7 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
             AlarmListItem(
               item = it,
               group = it.groupId?.let(groups::get),
-              modifier = Modifier.fillMaxWidth().padding(8.dp),
+              modifier = Modifier.fillMaxWidth().padding(8.dp).animateItem(),
               onItemClick = component::onAlarmClick,
               onToggleOnOff = component::onToggleAlarmOnOff,
             )
