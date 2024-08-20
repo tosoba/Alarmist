@@ -3,9 +3,9 @@ package com.trm.alarmist.core.ui
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import epicarchitect.calendar.compose.basis.BasisDayOfWeekContent
-import epicarchitect.calendar.compose.basis.config.LocalBasisEpicCalendarConfig
-import epicarchitect.calendar.compose.basis.localized
+import com.trm.alarmist.core.ui.calendar.basis.BasisDayOfWeekContent
+import com.trm.alarmist.core.ui.calendar.basis.config.LocalBasisEpicCalendarConfig
+import com.trm.alarmist.core.ui.calendar.basis.localized
 
 val DayOfWeekEllipsizedContent: BasisDayOfWeekContent = { dayOfWeek ->
   val config = LocalBasisEpicCalendarConfig.current

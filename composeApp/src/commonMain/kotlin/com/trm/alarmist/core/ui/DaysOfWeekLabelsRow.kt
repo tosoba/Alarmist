@@ -10,10 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import epicarchitect.calendar.compose.basis.BasisDayOfWeekContent
-import epicarchitect.calendar.compose.basis.config.DefaultBasisEpicCalendarConfig
-import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
-import epicarchitect.calendar.compose.basis.firstDayOfWeek
+import com.trm.alarmist.core.ui.calendar.basis.BasisDayOfWeekContent
+import com.trm.alarmist.core.ui.calendar.basis.config.DefaultBasisEpicCalendarConfig
+import com.trm.alarmist.core.ui.calendar.basis.daysOfWeekSortedBy
+import com.trm.alarmist.core.ui.calendar.basis.firstDayOfWeek
 import kotlinx.datetime.DayOfWeek
 
 @Composable

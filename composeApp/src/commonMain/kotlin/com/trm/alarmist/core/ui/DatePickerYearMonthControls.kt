@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
-import epicarchitect.calendar.compose.pager.state.EpicCalendarPagerState
+import com.trm.alarmist.core.ui.calendar.pager.state.EpicCalendarPagerState
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 

@@ -15,8 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import com.trm.alarmist.core.ui.theme.onOffContainer
-import epicarchitect.calendar.compose.basis.daysOfWeekSortedBy
-import epicarchitect.calendar.compose.basis.firstDayOfWeek
+import com.trm.alarmist.core.ui.calendar.basis.daysOfWeekSortedBy
+import com.trm.alarmist.core.ui.calendar.basis.firstDayOfWeek
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.stringResource

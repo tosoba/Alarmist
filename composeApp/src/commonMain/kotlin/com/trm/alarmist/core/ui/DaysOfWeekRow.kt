@@ -18,12 +18,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import com.trm.alarmist.core.common.util.now
-import epicarchitect.calendar.compose.basis.BasisDayOfMonthContent
-import epicarchitect.calendar.compose.basis.EpicMonth
-import epicarchitect.calendar.compose.basis.config.DefaultBasisEpicCalendarConfig
-import epicarchitect.calendar.compose.basis.contains
-import epicarchitect.calendar.compose.datepicker.config.LocalEpicDatePickerConfig
-import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
+import com.trm.alarmist.core.ui.calendar.basis.BasisDayOfMonthContent
+import com.trm.alarmist.core.ui.calendar.basis.EpicMonth
+import com.trm.alarmist.core.ui.calendar.basis.config.DefaultBasisEpicCalendarConfig
+import com.trm.alarmist.core.ui.calendar.basis.contains
+import com.trm.alarmist.core.ui.calendar.datepicker.config.LocalEpicDatePickerConfig
+import com.trm.alarmist.core.ui.calendar.datepicker.state.LocalEpicDatePickerState
 import kotlinx.datetime.LocalDate
 
 @Composable
