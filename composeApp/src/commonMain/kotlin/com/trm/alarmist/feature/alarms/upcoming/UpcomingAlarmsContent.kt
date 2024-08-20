@@ -137,19 +137,19 @@ fun UpcomingAlarmsContent(
       contentPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 8.dp),
     ) {
       if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        item(span = { GridItemSpan(maxLineSpan) }, key = -2L) {
           WeeklyMonthlyCalendar(
             initialState = initialState,
             alarmCounts = alarmCounts,
             onSelectedDateChange = onSelectedDateChange,
             onMonthlyDateRangeChange = onMonthlyDateRangeChange,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(8.dp).animateItem(),
           )
         }
       }
 
       if (selectedDateAlarms.isEmpty()) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        item(span = { GridItemSpan(maxLineSpan) }, key = -1L) {
           NoUpcomingAlarmsCard(
             Modifier.fillMaxWidth().padding(vertical = 32.dp, horizontal = 16.dp).animateItem()
           )
@@ -160,7 +160,7 @@ fun UpcomingAlarmsContent(
         }
       }
 
-      items(selectedDateAlarms) { alarm ->
+      items(selectedDateAlarms, key = UpcomingAlarmListModel::id) { alarm ->
         UpcomingAlarmListItem(
           item = alarm,
           modifier = Modifier.fillMaxWidth().padding(8.dp).animateItem(),
@@ -172,7 +172,7 @@ fun UpcomingAlarmsContent(
         )
       }
 
-      floatingActionButtonSpacerItem()
+      floatingActionButtonSpacerItem(key = -3L)
     }
   }
 }
