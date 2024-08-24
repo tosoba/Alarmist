@@ -6,24 +6,27 @@ import alarmist.composeapp.generated.resources.no_alarms_created
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlarmAdd
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.system.permission.isPostNotificationPermissionGranted
 import com.trm.alarmist.core.ui.AlarmListItem
-import com.trm.alarmist.core.ui.AlarmListShimmerItem
 import com.trm.alarmist.core.ui.EmptyPlaceholder
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
@@ -35,9 +38,26 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
   val alarms by component.alarms.collectAsState()
   val groups by component.groups.collectAsState()
 
-  Crossfade(targetState = alarms.initialized && alarms.data.isEmpty(), modifier = modifier) {
-    showEmptyPlaceholder ->
-    if (showEmptyPlaceholder) {
+  data class AlarmsListState(val initialized: Boolean, val empty: Boolean)
+
+  val alarmsListState by remember {
+    derivedStateOf {
+      AlarmsListState(initialized = alarms.initialized, empty = alarms.data.isEmpty())
+    }
+  }
+
+  Crossfade(targetState = alarmsListState, modifier = modifier) { (initialized, empty) ->
+    if (!initialized) {
+      Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+      ) {
+        Spacer(modifier = Modifier.weight(1f))
+        CircularProgressIndicator(modifier = Modifier.size(96.dp), strokeWidth = 8.dp)
+        Spacer(modifier = Modifier.weight(1f))
+        FloatingActionButtonSpacer()
+      }
+    } else if (empty) {
       Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,13 +80,7 @@ fun AlarmListContent(component: AlarmListComponent, modifier: Modifier = Modifie
         contentPadding = PaddingValues(8.dp),
         userScrollEnabled = alarms.initialized,
       ) {
-        if (!alarms.initialized) {
-          items(25) {
-            AlarmListShimmerItem(
-              modifier = Modifier.fillMaxWidth().padding(8.dp).alpha(.5f).animateItem()
-            )
-          }
-        } else if (!alarmPermissionGranted) {
+        if (!alarmPermissionGranted) {
           item {
             AlarmPermissionStatusCard(
               modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItem()
