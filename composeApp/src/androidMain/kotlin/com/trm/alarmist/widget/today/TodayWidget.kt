@@ -6,6 +6,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
@@ -31,6 +32,7 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
+import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
@@ -41,9 +43,8 @@ import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
-import com.trm.alarmist.feature.root.RootStartMode
-import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
+import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.toggleAlarmOnOffOnDateIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
@@ -75,6 +76,17 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
         TodayWidgetScaffold(id = id, state = widgetState)
       }
     }
+  }
+}
+
+@Preview
+@Composable
+private fun TodayWidgetPreview() {
+  CompositionLocalProvider(LocalIsPreviewProvider provides false) {
+    TodayWidgetScaffold(
+      id = object : GlanceId {},
+      state = Initialized(TodayWidgetState(alarms = emptyList(), groups = emptyMap())),
+    )
   }
 }
 
