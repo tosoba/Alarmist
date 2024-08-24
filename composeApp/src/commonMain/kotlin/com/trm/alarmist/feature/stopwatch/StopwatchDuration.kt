@@ -2,11 +2,6 @@ package com.trm.alarmist.feature.stopwatch
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.StopwatchState
 import com.trm.alarmist.core.ui.DurationText
 import com.trm.alarmist.core.ui.DurationTextLayoutType
+import com.trm.alarmist.core.ui.sideFloatingActionButtonTransitionSpec
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -137,7 +133,3 @@ private fun FloatingActionButtonSpacerBox() {
       Modifier.size(56.dp).clip(FloatingActionButtonDefaults.shape).background(Color.Transparent)
   )
 }
-
-private fun <S> AnimatedContentTransitionScope<S>.sideFloatingActionButtonTransitionSpec():
-  ContentTransform =
-  scaleIn(animationSpec = tween(220)).togetherWith(scaleOut(animationSpec = tween(90)))
