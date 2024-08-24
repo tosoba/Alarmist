@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -439,8 +440,17 @@ private fun WeeklyMonthlyCalendar(
 
                   alarmCounts[date]
                     ?.takeIf { it > 0 }
-                    ?.let { BadgedBox(badge = { Badge { Text(it.toString()) } }) { DayText() } }
-                    ?: DayText()
+                    ?.let {
+                      BadgedBox(
+                        badge = {
+                          Badge(modifier = Modifier.offset(y = (-4).dp, x = 4.dp)) {
+                            Text(it.toString())
+                          }
+                        }
+                      ) {
+                        DayText()
+                      }
+                    } ?: DayText()
                 }
               },
             )

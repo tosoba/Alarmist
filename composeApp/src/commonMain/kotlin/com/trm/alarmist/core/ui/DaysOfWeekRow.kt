@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.ui.calendar.basis.BasisDayOfMonthContent
 import com.trm.alarmist.core.ui.calendar.basis.EpicMonth
@@ -59,7 +61,15 @@ fun DaysOfWeekRow(
 
       alarmCounts[date]
         ?.takeIf { it > 0 }
-        ?.let { BadgedBox(badge = { Badge { Text(it.toString()) } }) { DayText() } } ?: DayText()
+        ?.let {
+          BadgedBox(
+            badge = {
+              Badge(modifier = Modifier.offset(y = (-4).dp, x = 4.dp)) { Text(it.toString()) }
+            }
+          ) {
+            DayText()
+          }
+        } ?: DayText()
     }
   },
 ) {
