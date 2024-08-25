@@ -44,6 +44,7 @@ import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
@@ -65,7 +66,10 @@ class ClockWidget : GlanceAppWidget(), KoinComponent {
           value = getNextTodayAlarmUseCase(LocalDateTime.now())
         }
 
-      CompositionLocalProvider(LocalIsPreviewProvider provides false) {
+      CompositionLocalProvider(
+        LocalIsPreviewProvider provides false,
+        LocalWidgetLayoutSizeProvider provides WidgetLayoutSize.fromLocalSize(),
+      ) {
         ClockWidgetContent(alarm = alarm)
       }
     }
@@ -82,7 +86,6 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
     ) {
       val context = LocalContext.current
       val contentColorProvider = GlanceTheme.colors.widgetBackground
-      val layoutSize = WidgetLayoutSize.fromLocalSize()
 
       Box {
         WidgetTextClock(
@@ -98,7 +101,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
           setTextViewTextSize(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
-            when (layoutSize) {
+            when (LocalWidgetLayoutSizeProvider.current) {
               WidgetLayoutSize.Small -> 16f
               WidgetLayoutSize.Medium -> 20f
               WidgetLayoutSize.Large -> 24f
@@ -121,7 +124,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
           setTextViewTextSize(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
-            when (layoutSize) {
+            when (LocalWidgetLayoutSizeProvider.current) {
               WidgetLayoutSize.Small -> 12f
               WidgetLayoutSize.Medium -> 16f
               WidgetLayoutSize.Large -> 20f
@@ -159,7 +162,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
               TextStyle(
                 fontWeight = FontWeight.Normal,
                 fontSize =
-                  when (layoutSize) {
+                  when (LocalWidgetLayoutSizeProvider.current) {
                     WidgetLayoutSize.Small -> 12
                     WidgetLayoutSize.Medium -> 16
                     WidgetLayoutSize.Large -> 20

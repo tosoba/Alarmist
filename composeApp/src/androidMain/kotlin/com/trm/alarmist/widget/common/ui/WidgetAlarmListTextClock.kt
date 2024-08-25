@@ -5,14 +5,13 @@ import androidx.glance.GlanceModifier
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import com.trm.alarmist.R
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
 import com.trm.alarmist.widget.common.util.integerResource
 import com.trm.alarmist.widget.common.util.stringResource
 
 @Composable
-fun WidgetAlarmListTextClock(
-  widgetLayoutSize: WidgetLayoutSize,
-  modifier: GlanceModifier = GlanceModifier,
-) {
+fun WidgetAlarmListTextClock(modifier: GlanceModifier = GlanceModifier) {
+  val widgetLayoutSize = LocalWidgetLayoutSizeProvider.current
   Column(modifier = modifier) {
     Box {
       WidgetTextClock(

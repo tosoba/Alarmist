@@ -10,6 +10,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
+import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 
 @Composable
 internal fun stringResource(@StringRes id: Int, args: List<Any> = emptyList()): String =
@@ -20,6 +21,8 @@ internal fun integerResource(@IntegerRes id: Int): Int =
   LocalContext.current.resources.getInteger(id)
 
 internal val LocalIsPreviewProvider = staticCompositionLocalOf { false }
+
+internal val LocalWidgetLayoutSizeProvider = staticCompositionLocalOf { WidgetLayoutSize.Small }
 
 internal fun GlanceModifier.clickableIfNotNull(action: Action?): GlanceModifier =
   if (action != null) this.clickable(action) else this

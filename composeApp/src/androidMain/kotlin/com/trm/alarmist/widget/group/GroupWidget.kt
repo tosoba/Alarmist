@@ -51,6 +51,7 @@ import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
 import com.trm.alarmist.widget.common.util.actionStartGroupWidgetConfigActivity
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
@@ -80,7 +81,10 @@ class GroupWidget : GlanceAppWidget(), KoinComponent {
             } ?: GroupWidgetState.NoGroupSet
         }
 
-      CompositionLocalProvider(LocalIsPreviewProvider provides false) {
+      CompositionLocalProvider(
+        LocalIsPreviewProvider provides false,
+        LocalWidgetLayoutSizeProvider provides WidgetLayoutSize.fromLocalSize(),
+      ) {
         GroupWidgetScaffold(id = id, state = widgetState)
       }
     }
@@ -111,8 +115,6 @@ private fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
         ),
       titleBar =
         composableIfOrNull(condition = showTitleBar()) {
-          val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
-
           WidgetTitleBar(
             startIcon = null,
             iconColor = GlanceTheme.colors.primary,
@@ -136,7 +138,11 @@ private fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
             Column(
               modifier =
                 GlanceModifier.defaultWeight().run {
-                  if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
+                  if (LocalWidgetLayoutSizeProvider.current != WidgetLayoutSize.Large) {
+                    padding(start = 16.dp)
+                  } else {
+                    this
+                  }
                 }
             ) {
               if (state is GroupWidgetState.Initialized) {
@@ -153,7 +159,7 @@ private fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
                 }
               }
 
-              WidgetAlarmListTextClock(widgetLayoutSize)
+              WidgetAlarmListTextClock()
             }
           }
         },

@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceTheme
 import androidx.glance.text.FontWeight
 import androidx.glance.text.TextStyle
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
 
 object WidgetTextStyles {
   @Composable
@@ -12,7 +13,7 @@ object WidgetTextStyles {
     TextStyle(
       fontWeight = fontWeight,
       fontSize =
-        if (WidgetLayoutSize.fromLocalSize() == WidgetLayoutSize.Small) {
+        if (LocalWidgetLayoutSizeProvider.current == WidgetLayoutSize.Small) {
           18.sp
         } else {
           22.sp // M3 Title Large
@@ -26,7 +27,7 @@ object WidgetTextStyles {
       TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize =
-          if (WidgetLayoutSize.fromLocalSize() == WidgetLayoutSize.Small) {
+          if (LocalWidgetLayoutSizeProvider.current == WidgetLayoutSize.Small) {
             14.sp // M3 Title Small
           } else {
             16.sp // M3 Title Medium

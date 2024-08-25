@@ -27,6 +27,7 @@ import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
@@ -50,8 +51,6 @@ internal fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetS
         ),
       titleBar =
         composableIfOrNull(condition = WidgetLayoutSize.showTitleBar()) {
-          val widgetLayoutSize = WidgetLayoutSize.fromLocalSize()
-
           WidgetTitleBar(
             iconColor = GlanceTheme.colors.primary,
             actions = {
@@ -72,11 +71,14 @@ internal fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetS
             },
           ) {
             WidgetAlarmListTextClock(
-              widgetLayoutSize = widgetLayoutSize,
               modifier =
                 GlanceModifier.defaultWeight().run {
-                  if (widgetLayoutSize != WidgetLayoutSize.Large) padding(start = 16.dp) else this
-                },
+                  if (LocalWidgetLayoutSizeProvider.current != WidgetLayoutSize.Large) {
+                    padding(start = 16.dp)
+                  } else {
+                    this
+                  }
+                }
             )
           }
         },
