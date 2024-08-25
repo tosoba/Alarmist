@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
@@ -24,6 +23,8 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.model.Initialized
@@ -79,6 +80,7 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
   }
 }
 
+@OptIn(ExperimentalGlancePreviewApi::class)
 @Preview
 @Composable
 private fun TodayWidgetPreview() {
