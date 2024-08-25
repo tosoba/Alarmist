@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -43,6 +44,7 @@ import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -130,10 +132,13 @@ private fun WidgetInfoCard(provider: AppWidgetProviderInfo, modifier: Modifier =
       null
     }
 
+  val scope = rememberCoroutineScope()
   Card(
     modifier = modifier,
     onClick = {
-      context.pinWidget(providerInfo = provider, callback = provider.pinCallback(context))
+      scope.launch {
+        context.pinWidget(providerInfo = provider, callback = provider.pinCallback(context))
+      }
     },
   ) {
     Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
