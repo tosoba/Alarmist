@@ -46,6 +46,7 @@ import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.spToDp
+import com.trm.alarmist.widget.common.util.stringResource
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -83,8 +84,8 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
 
       Box {
         WidgetTextClock(
-          format12Hour = context.getString(R.string.time_format_12_h_full),
-          format24Hour = context.getString(R.string.time_format_24_h_full),
+          format12Hour = stringResource(R.string.time_format_12_h_full),
+          format24Hour = stringResource(R.string.time_format_24_h_full),
           showShadow = true,
         ) {
           setInt(
@@ -106,8 +107,8 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
 
       Box {
         WidgetTextClock(
-          format12Hour = context.getString(R.string.time_format_am_pm_date_short),
-          format24Hour = context.getString(R.string.time_format_am_pm_date_short),
+          format12Hour = stringResource(R.string.time_format_am_pm_date_short),
+          format24Hour = stringResource(R.string.time_format_am_pm_date_short),
           showShadow = true,
         ) {
           setInt(

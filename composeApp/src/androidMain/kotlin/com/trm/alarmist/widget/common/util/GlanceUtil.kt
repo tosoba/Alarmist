@@ -1,6 +1,7 @@
 package com.trm.alarmist.widget.common.util
 
 import android.util.TypedValue
+import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -13,6 +14,10 @@ import androidx.glance.action.clickable
 @Composable
 internal fun stringResource(@StringRes id: Int, args: List<Any> = emptyList()): String =
   LocalContext.current.getString(id, *args.toTypedArray())
+
+@Composable
+internal fun integerResource(@IntegerRes id: Int): Int =
+  LocalContext.current.resources.getInteger(id)
 
 internal val LocalIsPreviewProvider = staticCompositionLocalOf { false }
 

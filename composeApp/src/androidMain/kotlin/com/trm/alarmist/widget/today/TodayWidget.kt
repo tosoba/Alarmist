@@ -154,8 +154,8 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
       val context = LocalContext.current
       if (state.data.alarms.isEmpty()) {
         WidgetEmptyContent(
-          emptyText = context.getString(R.string.no_alarms_today),
-          actionButtonText = context.getString(R.string.add_alarm),
+          emptyText = stringResource(R.string.no_alarms_today),
+          actionButtonText = stringResource(R.string.add_alarm),
           actionButtonIcon = null,
           actionButtonOnClick = actionStartMainActivity(RootStartMode.AddAlarm),
         )

@@ -171,8 +171,8 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
     is GroupWidgetState.Initialized -> {
       if (state.alarms.isEmpty()) {
         WidgetEmptyContent(
-          emptyText = context.getString(R.string.group_is_empty),
-          actionButtonText = context.getString(R.string.add_alarm),
+          emptyText = stringResource(R.string.group_is_empty),
+          actionButtonText = stringResource(R.string.add_alarm),
           actionButtonIcon = null,
           actionButtonOnClick = actionStartMainActivity(RootStartMode.AddAlarm),
         )
@@ -187,8 +187,8 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
     GroupWidgetState.NoGroupSet -> {
       val widgetManager = remember { GlanceAppWidgetManager(context) }
       WidgetEmptyContent(
-        emptyText = context.getString(R.string.no_group_set),
-        actionButtonText = context.getString(R.string.choose_group),
+        emptyText = stringResource(R.string.no_group_set),
+        actionButtonText = stringResource(R.string.choose_group),
         actionButtonIcon = null,
         actionButtonOnClick = actionStartGroupWidgetConfigActivity(widgetManager.getAppWidgetId(id)),
       )

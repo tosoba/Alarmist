@@ -11,7 +11,7 @@ fun WidgetTextClock(
   format12Hour: CharSequence,
   format24Hour: CharSequence,
   showShadow: Boolean = false,
-  configure: RemoteViews.() -> Unit = {},
+  configure: @Composable RemoteViews.() -> Unit = {},
 ) {
   AndroidRemoteViews(
     remoteViews =
