@@ -8,6 +8,7 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
+import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 
 @Composable
 fun WidgetAlarmGrid(
@@ -25,8 +26,9 @@ fun WidgetAlarmGrid(
       item = item,
       group = item.groupId?.let(getGroup),
       displayHeaderSupporting = true,
-      onClick = actionStartMainActivity(RootStartMode.EditAlarm(item.id)),
-      onCheckedChange = onCheckedChangeAction(item),
+      onClick =
+        emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.EditAlarm(item.id))),
+      onCheckedChange = emptyActionIfPreviewOrElse(onCheckedChangeAction(item)),
       modifier = GlanceModifier.fillMaxSize(),
     )
   }

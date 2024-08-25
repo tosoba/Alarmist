@@ -54,6 +54,7 @@ import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.actionStartGroupWidgetConfigActivity
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
+import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
@@ -122,9 +123,11 @@ private fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
                 contentColor = GlanceTheme.colors.secondary,
                 backgroundColor = null,
                 onClick =
-                  actionSendBroadcast(
-                    context.updateWidgetIntent<GroupWidgetReceiver>(
-                      widgetManager.getAppWidgetId(id)
+                  emptyActionIfPreviewOrElse(
+                    actionSendBroadcast(
+                      context.updateWidgetIntent<GroupWidgetReceiver>(
+                        widgetManager.getAppWidgetId(id)
+                      )
                     )
                   ),
               )
@@ -174,7 +177,8 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
           emptyText = stringResource(R.string.group_is_empty),
           actionButtonText = stringResource(R.string.add_alarm),
           actionButtonIcon = null,
-          actionButtonOnClick = actionStartMainActivity(RootStartMode.AddAlarm),
+          actionButtonOnClick =
+            emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.AddAlarm)),
         )
       } else {
         WidgetAlarmListContent(
@@ -190,7 +194,10 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
         emptyText = stringResource(R.string.no_group_set),
         actionButtonText = stringResource(R.string.choose_group),
         actionButtonIcon = null,
-        actionButtonOnClick = actionStartGroupWidgetConfigActivity(widgetManager.getAppWidgetId(id)),
+        actionButtonOnClick =
+          emptyActionIfPreviewOrElse(
+            actionStartGroupWidgetConfigActivity(widgetManager.getAppWidgetId(id))
+          ),
       )
     }
   }

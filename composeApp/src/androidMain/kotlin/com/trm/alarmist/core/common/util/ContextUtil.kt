@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import com.trm.alarmist.widget.today.TodayWidgetPinPreview
+import com.trm.alarmist.widget.today.TodayWidgetReceiver
 
 fun Context.getActivity(): Activity? =
   when (this) {
@@ -23,7 +25,10 @@ suspend fun Context.pinWidget(
   GlanceAppWidgetManager(this)
     .requestPinGlanceAppWidget(
       getWidgetReceiverClassFor(providerInfo.provider),
-      null,
+      when (providerInfo.provider) {
+        widgetReceiverComponentName<TodayWidgetReceiver>() -> TodayWidgetPinPreview()
+        else -> null
+      },
       null,
       callback,
     )

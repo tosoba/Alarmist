@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
+import androidx.glance.action.action
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
@@ -113,3 +114,7 @@ internal fun actionStartMainActivity(startMode: RootStartMode): Action =
     Intent(LocalContext.current, MainActivity::class.java)
       .putExtra(RootStartMode.EXTRA_KEY, startMode)
   )
+
+@Composable
+internal fun emptyActionIfPreviewOrElse(action: Action): Action =
+  if (LocalIsPreviewProvider.current) action {} else action

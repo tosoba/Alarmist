@@ -16,6 +16,7 @@ import androidx.glance.layout.height
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 
 @Composable
 fun WidgetEmptyContent(
@@ -44,7 +45,7 @@ fun WidgetEmptyContent(
     FilledButton(
       text = actionButtonText,
       icon = actionButtonIcon?.let(::ImageProvider),
-      onClick = actionButtonOnClick,
+      onClick = emptyActionIfPreviewOrElse(actionButtonOnClick),
     )
   }
 }

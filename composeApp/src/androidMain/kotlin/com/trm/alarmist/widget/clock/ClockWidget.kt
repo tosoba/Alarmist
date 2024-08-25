@@ -45,6 +45,7 @@ import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
+import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
 import com.trm.alarmist.widget.common.util.stringResource
 import kotlinx.datetime.LocalDateTime
@@ -76,7 +77,8 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
   GlanceTheme {
     Column(
       modifier =
-        GlanceModifier.padding(8.dp).clickable(actionStartMainActivity(RootStartMode.Normal))
+        GlanceModifier.padding(8.dp)
+          .clickable(emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.Normal)))
     ) {
       val context = LocalContext.current
       val contentColorProvider = GlanceTheme.colors.widgetBackground
