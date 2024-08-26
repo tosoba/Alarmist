@@ -14,7 +14,6 @@ import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.actionSendBroadcast
-import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -29,6 +28,7 @@ import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.R
 import com.trm.alarmist.feature.root.RootStartMode
+import com.trm.alarmist.widget.common.WidgetRefreshButton
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
@@ -69,11 +69,7 @@ internal fun GroupWidgetScaffold(
             startIcon = null,
             iconColor = GlanceTheme.colors.primary,
             actions = {
-              CircleIconButton(
-                imageProvider = ImageProvider(R.drawable.refresh),
-                contentDescription = stringResource(R.string.refresh),
-                contentColor = GlanceTheme.colors.secondary,
-                backgroundColor = null,
+              WidgetRefreshButton(
                 onClick =
                   emptyActionIfPreviewOrElse {
                     actionSendBroadcast(
@@ -81,7 +77,7 @@ internal fun GroupWidgetScaffold(
                         widgetManager.getAppWidgetId(id)
                       )
                     )
-                  },
+                  }
               )
             },
           ) {

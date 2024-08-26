@@ -6,11 +6,9 @@ import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
-import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.actionSendBroadcast
-import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
@@ -20,6 +18,7 @@ import com.trm.alarmist.core.common.model.Initialized
 import com.trm.alarmist.core.common.model.Uninitialized
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.feature.root.RootStartMode
+import com.trm.alarmist.widget.common.WidgetRefreshButton
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions
@@ -58,11 +57,7 @@ internal fun TodayWidgetScaffold(
           WidgetTitleBar(
             iconColor = GlanceTheme.colors.primary,
             actions = {
-              CircleIconButton(
-                imageProvider = ImageProvider(R.drawable.refresh),
-                contentDescription = stringResource(R.string.refresh),
-                contentColor = GlanceTheme.colors.secondary,
-                backgroundColor = null,
+              WidgetRefreshButton(
                 onClick =
                   emptyActionIfPreviewOrElse {
                     actionSendBroadcast(
@@ -70,7 +65,7 @@ internal fun TodayWidgetScaffold(
                         widgetManager.getAppWidgetId(id)
                       )
                     )
-                  },
+                  }
               )
             },
           ) {
