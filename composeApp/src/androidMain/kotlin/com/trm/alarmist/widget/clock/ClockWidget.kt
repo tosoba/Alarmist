@@ -43,8 +43,8 @@ import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
-import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
+import com.trm.alarmist.widget.common.util.LocalIsPreview
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
@@ -68,8 +68,8 @@ class ClockWidget : GlanceAppWidget(), KoinComponent {
         }
 
       CompositionLocalProvider(
-        LocalIsPreviewProvider provides false,
-        LocalWidgetLayoutSizeProvider provides WidgetLayoutSize.fromLocalSize(),
+        LocalIsPreview provides false,
+        LocalWidgetLayoutSize provides WidgetLayoutSize.fromLocalSize(),
       ) {
         ClockWidgetContent(alarm = alarm)
       }
@@ -83,8 +83,8 @@ internal class ClockWidgetPinPreview : GlanceAppWidget() {
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       CompositionLocalProvider(
-        LocalIsPreviewProvider provides true,
-        LocalWidgetLayoutSizeProvider provides WidgetLayoutSize.Medium,
+        LocalIsPreview provides true,
+        LocalWidgetLayoutSize provides WidgetLayoutSize.Medium,
       ) {
         ClockWidgetContent(
           alarm =
@@ -117,7 +117,7 @@ private fun ClockWidgetContent(
     Column(
       modifier =
         GlanceModifier.padding(8.dp)
-          .clickable(emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.Normal)))
+          .clickable(emptyActionIfPreviewOrElse { actionStartMainActivity(RootStartMode.Normal) })
     ) {
       val context = LocalContext.current
 
@@ -135,7 +135,7 @@ private fun ClockWidgetContent(
           setTextViewTextSize(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
-            when (LocalWidgetLayoutSizeProvider.current) {
+            when (LocalWidgetLayoutSize.current) {
               WidgetLayoutSize.Small -> 16f
               WidgetLayoutSize.Medium -> 20f
               WidgetLayoutSize.Large -> 24f
@@ -158,7 +158,7 @@ private fun ClockWidgetContent(
           setTextViewTextSize(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
-            when (LocalWidgetLayoutSizeProvider.current) {
+            when (LocalWidgetLayoutSize.current) {
               WidgetLayoutSize.Small -> 12f
               WidgetLayoutSize.Medium -> 16f
               WidgetLayoutSize.Large -> 20f
@@ -196,7 +196,7 @@ private fun ClockWidgetContent(
               TextStyle(
                 fontWeight = FontWeight.Normal,
                 fontSize =
-                  when (LocalWidgetLayoutSizeProvider.current) {
+                  when (LocalWidgetLayoutSize.current) {
                     WidgetLayoutSize.Small -> 12
                     WidgetLayoutSize.Medium -> 16
                     WidgetLayoutSize.Large -> 20

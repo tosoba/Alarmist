@@ -119,8 +119,8 @@ internal fun actionStartMainActivity(startMode: RootStartMode): Action =
   )
 
 @Composable
-internal fun emptyActionIfPreviewOrElse(action: Action): Action =
-  if (LocalIsPreviewProvider.current) action {} else action
+internal fun emptyActionIfPreviewOrElse(action: @Composable () -> Action): Action =
+  if (LocalIsPreview.current) action {} else action()
 
 internal fun widgetPinPreviewAlarms(groupId: Long? = null): List<WidgetAlarmListModel> =
   listOf(

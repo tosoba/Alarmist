@@ -8,8 +8,8 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import com.trm.alarmist.core.common.model.Initialized
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
-import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
+import com.trm.alarmist.widget.common.util.LocalIsPreview
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.widgetPinPreviewAlarms
 
 internal class TodayWidgetPinPreview : GlanceAppWidget() {
@@ -18,13 +18,14 @@ internal class TodayWidgetPinPreview : GlanceAppWidget() {
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       CompositionLocalProvider(
-        LocalIsPreviewProvider provides true,
-        LocalWidgetLayoutSizeProvider provides WidgetLayoutSize.Medium,
+        LocalIsPreview provides true,
+        LocalWidgetLayoutSize provides WidgetLayoutSize.Medium,
       ) {
         TodayWidgetScaffold(
           id = object : GlanceId {},
           state =
             Initialized(TodayWidgetState(alarms = widgetPinPreviewAlarms(), groups = emptyMap())),
+          showTitleBar = true,
         )
       }
     }

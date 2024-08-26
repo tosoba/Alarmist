@@ -45,7 +45,7 @@ fun WidgetEmptyContent(
     FilledButton(
       text = actionButtonText,
       icon = actionButtonIcon?.let(::ImageProvider),
-      onClick = emptyActionIfPreviewOrElse(actionButtonOnClick),
+      onClick = emptyActionIfPreviewOrElse { actionButtonOnClick },
     )
   }
 }

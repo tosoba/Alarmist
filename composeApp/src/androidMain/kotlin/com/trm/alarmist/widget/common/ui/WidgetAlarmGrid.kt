@@ -27,8 +27,8 @@ fun WidgetAlarmGrid(
       group = item.groupId?.let(getGroup),
       displayHeaderSupporting = true,
       onClick =
-        emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.EditAlarm(item.id))),
-      onCheckedChange = emptyActionIfPreviewOrElse(onCheckedChangeAction(item)),
+        emptyActionIfPreviewOrElse { actionStartMainActivity(RootStartMode.EditAlarm(item.id)) },
+      onCheckedChange = emptyActionIfPreviewOrElse { onCheckedChangeAction(item) },
       modifier = GlanceModifier.fillMaxSize(),
     )
   }

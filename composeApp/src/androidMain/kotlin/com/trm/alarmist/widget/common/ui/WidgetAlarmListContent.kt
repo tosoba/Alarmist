@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.glance.action.Action
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 
 @Composable
 fun WidgetAlarmListContent(
@@ -12,7 +12,7 @@ fun WidgetAlarmListContent(
   getGroup: (Long) -> AlarmGroupModel?,
   onCheckedChangeAction: (WidgetAlarmListModel) -> Action,
 ) {
-  when (LocalWidgetLayoutSizeProvider.current) {
+  when (LocalWidgetLayoutSize.current) {
     WidgetLayoutSize.Small -> {
       WidgetAlarmList(
         alarms = alarms,

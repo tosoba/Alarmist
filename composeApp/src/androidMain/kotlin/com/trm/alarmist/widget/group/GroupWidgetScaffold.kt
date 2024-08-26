@@ -34,11 +34,10 @@ import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
-import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.actionStartGroupWidgetConfigActivity
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
@@ -48,20 +47,24 @@ import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
 
 @Composable
-internal fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
+internal fun GroupWidgetScaffold(
+  id: GlanceId,
+  state: GroupWidgetState,
+  showTitleBar: Boolean = WidgetLayoutSize.showTitleBar(),
+) {
   GlanceTheme {
     val context = LocalContext.current
-    val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
+    val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 
     Scaffold(
       backgroundColor = GlanceTheme.colors.widgetBackground,
       modifier =
         GlanceModifier.padding(
-          top = if (showTitleBar()) 0.dp else widgetPadding,
+          top = if (showTitleBar) 0.dp else widgetPadding,
           bottom = widgetPadding,
         ),
       titleBar =
-        composableIfOrNull(condition = showTitleBar()) {
+        composableIfOrNull(condition = showTitleBar) {
           WidgetTitleBar(
             startIcon = null,
             iconColor = GlanceTheme.colors.primary,
@@ -72,20 +75,20 @@ internal fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
                 contentColor = GlanceTheme.colors.secondary,
                 backgroundColor = null,
                 onClick =
-                  emptyActionIfPreviewOrElse(
+                  emptyActionIfPreviewOrElse {
                     actionSendBroadcast(
                       context.updateWidgetIntent<GroupWidgetReceiver>(
                         widgetManager.getAppWidgetId(id)
                       )
                     )
-                  ),
+                  },
               )
             },
           ) {
             Column(
               modifier =
                 GlanceModifier.defaultWeight().run {
-                  if (LocalWidgetLayoutSizeProvider.current != WidgetLayoutSize.Large) {
+                  if (LocalWidgetLayoutSize.current != WidgetLayoutSize.Large) {
                     padding(start = 16.dp)
                   } else {
                     this
@@ -131,7 +134,7 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
           actionButtonText = stringResource(R.string.add_alarm),
           actionButtonIcon = null,
           actionButtonOnClick =
-            emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.AddAlarm)),
+            emptyActionIfPreviewOrElse { actionStartMainActivity(RootStartMode.AddAlarm) },
         )
       } else {
         WidgetAlarmListContent(
@@ -148,9 +151,9 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
         actionButtonText = stringResource(R.string.choose_group),
         actionButtonIcon = null,
         actionButtonOnClick =
-          emptyActionIfPreviewOrElse(
+          emptyActionIfPreviewOrElse {
             actionStartGroupWidgetConfigActivity(widgetManager.getAppWidgetId(id))
-          ),
+          },
       )
     }
   }

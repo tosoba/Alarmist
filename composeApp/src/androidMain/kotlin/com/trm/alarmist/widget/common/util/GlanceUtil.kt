@@ -20,9 +20,9 @@ internal fun stringResource(@StringRes id: Int, args: List<Any> = emptyList()): 
 internal fun integerResource(@IntegerRes id: Int): Int =
   LocalContext.current.resources.getInteger(id)
 
-internal val LocalIsPreviewProvider = staticCompositionLocalOf { false }
+internal val LocalIsPreview = staticCompositionLocalOf { false }
 
-internal val LocalWidgetLayoutSizeProvider = staticCompositionLocalOf { WidgetLayoutSize.Small }
+internal val LocalWidgetLayoutSize = staticCompositionLocalOf { WidgetLayoutSize.Small }
 
 internal fun GlanceModifier.clickableIfNotNull(action: Action?): GlanceModifier =
   if (action != null) this.clickable(action) else this

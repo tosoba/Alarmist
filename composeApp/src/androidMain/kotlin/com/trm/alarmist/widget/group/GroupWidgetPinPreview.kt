@@ -11,8 +11,8 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
-import com.trm.alarmist.widget.common.util.LocalIsPreviewProvider
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
+import com.trm.alarmist.widget.common.util.LocalIsPreview
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.widgetPinPreviewAlarms
 
 internal class GroupWidgetPinPreview : GlanceAppWidget() {
@@ -21,8 +21,8 @@ internal class GroupWidgetPinPreview : GlanceAppWidget() {
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       CompositionLocalProvider(
-        LocalIsPreviewProvider provides true,
-        LocalWidgetLayoutSizeProvider provides WidgetLayoutSize.Medium,
+        LocalIsPreview provides true,
+        LocalWidgetLayoutSize provides WidgetLayoutSize.Medium,
       ) {
         GroupWidgetScaffold(
           id = id,
@@ -32,6 +32,7 @@ internal class GroupWidgetPinPreview : GlanceAppWidget() {
               group =
                 AlarmGroupModel(1L, "Daily routine", Color.Red.toArgb().toColorLong(), 5, true),
             ),
+          showTitleBar = true,
         )
       }
     }

@@ -27,7 +27,7 @@ import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
@@ -37,20 +37,24 @@ import com.trm.alarmist.widget.common.util.updateWidgetIntent
 import kotlinx.datetime.LocalDate
 
 @Composable
-internal fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetState>) {
+internal fun TodayWidgetScaffold(
+  id: GlanceId,
+  state: Initializable<TodayWidgetState>,
+  showTitleBar: Boolean = WidgetLayoutSize.showTitleBar(),
+) {
   GlanceTheme {
     val context = LocalContext.current
-    val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
+    val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 
     Scaffold(
       backgroundColor = GlanceTheme.colors.widgetBackground,
       modifier =
         GlanceModifier.padding(
-          top = if (WidgetLayoutSize.showTitleBar()) 0.dp else WidgetDimensions.widgetPadding,
+          top = if (showTitleBar) 0.dp else WidgetDimensions.widgetPadding,
           bottom = WidgetDimensions.widgetPadding,
         ),
       titleBar =
-        composableIfOrNull(condition = WidgetLayoutSize.showTitleBar()) {
+        composableIfOrNull(condition = showTitleBar) {
           WidgetTitleBar(
             iconColor = GlanceTheme.colors.primary,
             actions = {
@@ -60,20 +64,20 @@ internal fun TodayWidgetScaffold(id: GlanceId, state: Initializable<TodayWidgetS
                 contentColor = GlanceTheme.colors.secondary,
                 backgroundColor = null,
                 onClick =
-                  emptyActionIfPreviewOrElse(
+                  emptyActionIfPreviewOrElse {
                     actionSendBroadcast(
                       context.updateWidgetIntent<TodayWidgetReceiver>(
                         widgetManager.getAppWidgetId(id)
                       )
                     )
-                  ),
+                  },
               )
             },
           ) {
             WidgetAlarmListTextClock(
               modifier =
                 GlanceModifier.defaultWeight().run {
-                  if (LocalWidgetLayoutSizeProvider.current != WidgetLayoutSize.Large) {
+                  if (LocalWidgetLayoutSize.current != WidgetLayoutSize.Large) {
                     padding(start = 16.dp)
                   } else {
                     this
@@ -102,7 +106,7 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
           actionButtonText = stringResource(R.string.add_alarm),
           actionButtonIcon = null,
           actionButtonOnClick =
-            emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.AddAlarm)),
+            emptyActionIfPreviewOrElse { actionStartMainActivity(RootStartMode.AddAlarm) },
         )
       } else {
         val today = LocalDate.now()
