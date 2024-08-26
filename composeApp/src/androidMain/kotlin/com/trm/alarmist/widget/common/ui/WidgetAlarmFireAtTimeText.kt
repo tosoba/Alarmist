@@ -35,7 +35,7 @@ fun WidgetAlarmFireAtTimeText(
       remoteViews =
         RemoteViews(
             LocalContext.current.packageName,
-            if (useShadow) R.layout.widget_shadow_alarm_fire_at_time_text_view
+            if (useShadow) R.layout.widget_dark_shadow_alarm_fire_at_time_text_view
             else R.layout.widget_text_alarm_fire_at_time_view,
           )
           .apply {

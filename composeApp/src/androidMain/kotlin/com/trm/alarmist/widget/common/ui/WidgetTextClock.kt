@@ -7,17 +7,21 @@ import androidx.glance.appwidget.AndroidRemoteViews
 import com.trm.alarmist.R
 
 @Composable
-fun WidgetTextClock(
+internal fun WidgetTextClock(
   format12Hour: CharSequence,
   format24Hour: CharSequence,
-  showShadow: Boolean = false,
+  shadowMode: WidgetTextClockShadowMode = WidgetTextClockShadowMode.None,
   configure: @Composable RemoteViews.() -> Unit = {},
 ) {
   AndroidRemoteViews(
     remoteViews =
       RemoteViews(
           LocalContext.current.packageName,
-          if (showShadow) R.layout.widget_shadow_text_clock else R.layout.widget_text_clock,
+          when (shadowMode) {
+            WidgetTextClockShadowMode.Dark -> R.layout.widget_dark_shadow_text_clock
+            WidgetTextClockShadowMode.Light -> R.layout.widget_light_shadow_text_clock
+            WidgetTextClockShadowMode.None -> R.layout.widget_text_clock
+          },
         )
         .apply {
           setCharSequence(R.id.widget_text_clock, "setFormat12Hour", format12Hour)
@@ -25,4 +29,10 @@ fun WidgetTextClock(
           configure()
         }
   )
+}
+
+internal enum class WidgetTextClockShadowMode {
+  Dark,
+  Light,
+  None,
 }

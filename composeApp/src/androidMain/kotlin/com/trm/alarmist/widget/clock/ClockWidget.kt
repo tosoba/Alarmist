@@ -22,7 +22,9 @@ import androidx.glance.LocalContext
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
+import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -39,16 +41,20 @@ import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextTodayAlarmUseCase
+import com.trm.alarmist.core.ui.theme.lightScheme
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
+import com.trm.alarmist.widget.common.ui.WidgetTextClockShadowMode
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
 import com.trm.alarmist.widget.common.util.stringResource
+import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
@@ -102,6 +108,7 @@ internal class ClockWidgetPinPreview : GlanceAppWidget() {
               snoozedFireAtTime = null,
             ),
           textColorProvider = ColorProvider(Color.Black),
+          backgroundColor = lightScheme.secondaryContainer,
         )
       }
     }
@@ -112,33 +119,42 @@ internal class ClockWidgetPinPreview : GlanceAppWidget() {
 private fun ClockWidgetContent(
   alarm: AlarmListModel?,
   textColorProvider: ColorProvider = GlanceTheme.colors.widgetBackground,
+  backgroundColor: Color = Color.Transparent,
 ) {
+  val textColor = textColorProvider.getColor(LocalContext.current)
+  val shadowMode =
+    if (colorDistance(textColor, Color.Black) > colorDistance(textColor, Color.White)) {
+      WidgetTextClockShadowMode.Dark
+    } else {
+      WidgetTextClockShadowMode.Light
+    }
+
   GlanceTheme {
     Column(
       modifier =
-        GlanceModifier.padding(8.dp)
+        GlanceModifier.background(backgroundColor)
+          .cornerRadius(28.dp)
+          .padding(8.dp)
           .clickable(emptyActionIfPreviewOrElse { actionStartMainActivity(RootStartMode.Normal) })
     ) {
-      val context = LocalContext.current
-
       Box {
         WidgetTextClock(
           format12Hour = stringResource(R.string.time_format_12_h_full),
           format24Hour = stringResource(R.string.time_format_24_h_full),
-          showShadow = true,
+          shadowMode = shadowMode,
         ) {
           setInt(
             R.id.widget_text_clock,
             "setTextColor",
-            textColorProvider.getColor(context).toArgb(),
+            textColorProvider.getColor(LocalContext.current).toArgb(),
           )
           setTextViewTextSize(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
             when (LocalWidgetLayoutSize.current) {
-              WidgetLayoutSize.Small -> 16f
-              WidgetLayoutSize.Medium -> 20f
-              WidgetLayoutSize.Large -> 24f
+              WidgetLayoutSize.Small -> 20f
+              WidgetLayoutSize.Medium -> 24f
+              WidgetLayoutSize.Large -> 28f
             },
           )
         }
@@ -148,12 +164,12 @@ private fun ClockWidgetContent(
         WidgetTextClock(
           format12Hour = stringResource(R.string.time_format_am_pm_date_short),
           format24Hour = stringResource(R.string.time_format_am_pm_date_short),
-          showShadow = true,
+          shadowMode = shadowMode,
         ) {
           setInt(
             R.id.widget_text_clock,
             "setTextColor",
-            textColorProvider.getColor(context).toArgb(),
+            textColorProvider.getColor(LocalContext.current).toArgb(),
           )
           setTextViewTextSize(
             R.id.widget_text_clock,
@@ -189,17 +205,17 @@ private fun ClockWidgetContent(
 
           WidgetAlarmFireAtTimeText(
             fireAtTime = alarm.nextFireAtTime,
-            is24HourFormat = DateFormat.is24HourFormat(context),
+            is24HourFormat = DateFormat.is24HourFormat(LocalContext.current),
             useFullFormat = true,
             useShadow = true,
             style =
               TextStyle(
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 fontSize =
                   when (LocalWidgetLayoutSize.current) {
-                    WidgetLayoutSize.Small -> 12
-                    WidgetLayoutSize.Medium -> 16
-                    WidgetLayoutSize.Large -> 20
+                    WidgetLayoutSize.Small -> 14
+                    WidgetLayoutSize.Medium -> 18
+                    WidgetLayoutSize.Large -> 22
                   }.sp,
                 color = textColorProvider,
               ),
@@ -209,3 +225,6 @@ private fun ClockWidgetContent(
     }
   }
 }
+
+private fun colorDistance(c1: Color, c2: Color): Float =
+  sqrt((c1.red - c2.red).pow(2) + (c1.green - c2.green).pow(2) + (c1.blue - c2.blue).pow(2))
