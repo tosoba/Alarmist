@@ -20,6 +20,7 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
 import com.trm.alarmist.feature.root.RootStartMode
+import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffActionReceiver
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffOnDateActionReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
@@ -29,6 +30,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 
 internal fun GlanceAppWidget.updateById(
   widgetId: Int,
@@ -118,3 +121,52 @@ internal fun actionStartMainActivity(startMode: RootStartMode): Action =
 @Composable
 internal fun emptyActionIfPreviewOrElse(action: Action): Action =
   if (LocalIsPreviewProvider.current) action {} else action
+
+internal fun widgetPinPreviewAlarms(groupId: Long? = null): List<WidgetAlarmListModel> =
+  listOf(
+    WidgetAlarmListModel(
+      id = 1L,
+      groupId = groupId,
+      fireAtTime = LocalTime(7, 30),
+      name = "Morning Alarm",
+      isOn = true,
+      fireOnDateTime = LocalDateTime(2024, 8, 25, 7, 30),
+      isCustomScheduled = false,
+    ),
+    WidgetAlarmListModel(
+      id = 2L,
+      groupId = groupId,
+      fireAtTime = LocalTime(12, 0),
+      name = "Lunch Reminder",
+      isOn = true,
+      fireOnDateTime = LocalDateTime(2024, 8, 25, 12, 0),
+      isCustomScheduled = true,
+    ),
+    WidgetAlarmListModel(
+      id = 3L,
+      groupId = groupId,
+      fireAtTime = LocalTime(18, 0),
+      name = "Evening Workout",
+      isOn = false,
+      fireOnDateTime = LocalDateTime(2024, 8, 25, 18, 0),
+      isCustomScheduled = false,
+    ),
+    WidgetAlarmListModel(
+      id = 4L,
+      groupId = groupId,
+      fireAtTime = LocalTime(22, 0),
+      name = "Bedtime",
+      isOn = true,
+      fireOnDateTime = LocalDateTime(2024, 8, 25, 22, 0),
+      isCustomScheduled = true,
+    ),
+    WidgetAlarmListModel(
+      id = 5L,
+      groupId = groupId,
+      fireAtTime = LocalTime(14, 30),
+      name = "Afternoon Break",
+      isOn = false,
+      fireOnDateTime = null,
+      isCustomScheduled = false,
+    ),
+  )

@@ -1,0 +1,174 @@
+package com.trm.alarmist.widget.group
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.glance.ColorFilter
+import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.action.actionSendBroadcast
+import androidx.glance.appwidget.components.CircleIconButton
+import androidx.glance.appwidget.components.Scaffold
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Column
+import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.padding
+import androidx.glance.layout.size
+import androidx.glance.layout.width
+import androidx.glance.text.Text
+import androidx.glance.unit.ColorProvider
+import com.trm.alarmist.R
+import com.trm.alarmist.feature.root.RootStartMode
+import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
+import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
+import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
+import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
+import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
+import com.trm.alarmist.widget.common.ui.WidgetLayoutSize.Companion.showTitleBar
+import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
+import com.trm.alarmist.widget.common.ui.WidgetTextStyles
+import com.trm.alarmist.widget.common.ui.WidgetTitleBar
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSizeProvider
+import com.trm.alarmist.widget.common.util.actionStartGroupWidgetConfigActivity
+import com.trm.alarmist.widget.common.util.actionStartMainActivity
+import com.trm.alarmist.widget.common.util.composableIfOrNull
+import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
+import com.trm.alarmist.widget.common.util.stringResource
+import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
+import com.trm.alarmist.widget.common.util.updateWidgetIntent
+
+@Composable
+internal fun GroupWidgetScaffold(id: GlanceId, state: GroupWidgetState) {
+  GlanceTheme {
+    val context = LocalContext.current
+    val widgetManager = remember(id) { GlanceAppWidgetManager(context) }
+
+    Scaffold(
+      backgroundColor = GlanceTheme.colors.widgetBackground,
+      modifier =
+        GlanceModifier.padding(
+          top = if (showTitleBar()) 0.dp else widgetPadding,
+          bottom = widgetPadding,
+        ),
+      titleBar =
+        composableIfOrNull(condition = showTitleBar()) {
+          WidgetTitleBar(
+            startIcon = null,
+            iconColor = GlanceTheme.colors.primary,
+            actions = {
+              CircleIconButton(
+                imageProvider = ImageProvider(R.drawable.refresh),
+                contentDescription = stringResource(R.string.refresh),
+                contentColor = GlanceTheme.colors.secondary,
+                backgroundColor = null,
+                onClick =
+                  emptyActionIfPreviewOrElse(
+                    actionSendBroadcast(
+                      context.updateWidgetIntent<GroupWidgetReceiver>(
+                        widgetManager.getAppWidgetId(id)
+                      )
+                    )
+                  ),
+              )
+            },
+          ) {
+            Column(
+              modifier =
+                GlanceModifier.defaultWeight().run {
+                  if (LocalWidgetLayoutSizeProvider.current != WidgetLayoutSize.Large) {
+                    padding(start = 16.dp)
+                  } else {
+                    this
+                  }
+                }
+            ) {
+              if (state is GroupWidgetState.Initialized) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                  GroupIcon(color = state.group.color, iconSize = 24.dp)
+
+                  Spacer(GlanceModifier.width(8.dp))
+
+                  Text(
+                    text = state.group.name,
+                    style = WidgetTextStyles.largeHeaderText,
+                    maxLines = 1,
+                  )
+                }
+              }
+
+              WidgetAlarmListTextClock()
+            }
+          }
+        },
+    ) {
+      GroupWidgetScaffoldContent(id = id, state = state)
+    }
+  }
+}
+
+@Composable
+private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
+  val context = LocalContext.current
+
+  when (state) {
+    is GroupWidgetState.Uninitialized -> {
+      WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))
+    }
+    is GroupWidgetState.Initialized -> {
+      if (state.alarms.isEmpty()) {
+        WidgetEmptyContent(
+          emptyText = stringResource(R.string.group_is_empty),
+          actionButtonText = stringResource(R.string.add_alarm),
+          actionButtonIcon = null,
+          actionButtonOnClick =
+            emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.AddAlarm)),
+        )
+      } else {
+        WidgetAlarmListContent(
+          alarms = state.alarms,
+          getGroup = { null },
+          onCheckedChangeAction = { actionSendBroadcast(context.toggleAlarmOnOffIntent(it.id)) },
+        )
+      }
+    }
+    GroupWidgetState.NoGroupSet -> {
+      val widgetManager = remember { GlanceAppWidgetManager(context) }
+      WidgetEmptyContent(
+        emptyText = stringResource(R.string.no_group_set),
+        actionButtonText = stringResource(R.string.choose_group),
+        actionButtonIcon = null,
+        actionButtonOnClick =
+          emptyActionIfPreviewOrElse(
+            actionStartGroupWidgetConfigActivity(widgetManager.getAppWidgetId(id))
+          ),
+      )
+    }
+  }
+}
+
+@Composable
+private fun GroupIcon(color: Long, iconSize: Dp, modifier: GlanceModifier = GlanceModifier) {
+  Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Image(
+      provider = ImageProvider(R.drawable.folder),
+      contentDescription = null,
+      modifier = GlanceModifier.size(iconSize),
+      colorFilter = ColorFilter.tint(ColorProvider(Color(color))),
+    )
+    Image(
+      provider = ImageProvider(R.drawable.folder_open),
+      contentDescription = null,
+      modifier = GlanceModifier.size(iconSize),
+    )
+  }
+}
