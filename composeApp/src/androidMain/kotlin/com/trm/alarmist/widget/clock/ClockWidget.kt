@@ -50,6 +50,7 @@ import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
 import com.trm.alarmist.widget.common.util.stringResource
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -76,8 +77,42 @@ class ClockWidget : GlanceAppWidget(), KoinComponent {
   }
 }
 
+internal class ClockWidgetPinPreview : GlanceAppWidget() {
+  override val sizeMode: SizeMode = SizeMode.Exact
+
+  override suspend fun provideGlance(context: Context, id: GlanceId) {
+    provideContent {
+      CompositionLocalProvider(
+        LocalIsPreviewProvider provides true,
+        LocalWidgetLayoutSizeProvider provides WidgetLayoutSize.Medium,
+      ) {
+        ClockWidgetContent(
+          alarm =
+            AlarmListModel(
+              id = 1L,
+              groupId = null,
+              fireAtTime = LocalTime(7, 30),
+              name = "Wake Up Alarm",
+              isOn = true,
+              fireOnDateTime = LocalDateTime(2024, 5, 10, 7, 30),
+              scheduledOnDaysOfWeek = emptySet(),
+              closestScheduledOnDate = null,
+              offOnAllScheduledDates = false,
+              scheduledOnMultipleDates = false,
+              snoozedFireAtTime = null,
+            ),
+          textColorProvider = ColorProvider(Color.Black),
+        )
+      }
+    }
+  }
+}
+
 @Composable
-private fun ClockWidgetContent(alarm: AlarmListModel?) {
+private fun ClockWidgetContent(
+  alarm: AlarmListModel?,
+  textColorProvider: ColorProvider = GlanceTheme.colors.widgetBackground,
+) {
   GlanceTheme {
     Column(
       modifier =
@@ -85,7 +120,6 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
           .clickable(emptyActionIfPreviewOrElse(actionStartMainActivity(RootStartMode.Normal)))
     ) {
       val context = LocalContext.current
-      val contentColorProvider = GlanceTheme.colors.widgetBackground
 
       Box {
         WidgetTextClock(
@@ -96,7 +130,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
           setInt(
             R.id.widget_text_clock,
             "setTextColor",
-            contentColorProvider.getColor(context).toArgb(),
+            textColorProvider.getColor(context).toArgb(),
           )
           setTextViewTextSize(
             R.id.widget_text_clock,
@@ -119,7 +153,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
           setInt(
             R.id.widget_text_clock,
             "setTextColor",
-            contentColorProvider.getColor(context).toArgb(),
+            textColorProvider.getColor(context).toArgb(),
           )
           setTextViewTextSize(
             R.id.widget_text_clock,
@@ -147,7 +181,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
               provider = ImageProvider(R.drawable.alarm),
               contentDescription = null,
               modifier = GlanceModifier.size(16f.spToDp()),
-              colorFilter = ColorFilter.tint(contentColorProvider),
+              colorFilter = ColorFilter.tint(textColorProvider),
             )
           }
 
@@ -167,7 +201,7 @@ private fun ClockWidgetContent(alarm: AlarmListModel?) {
                     WidgetLayoutSize.Medium -> 16
                     WidgetLayoutSize.Large -> 20
                   }.sp,
-                color = contentColorProvider,
+                color = textColorProvider,
               ),
           )
         }

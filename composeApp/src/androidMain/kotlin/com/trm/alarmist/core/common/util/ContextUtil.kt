@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import com.trm.alarmist.widget.clock.ClockWidgetPinPreview
+import com.trm.alarmist.widget.clock.ClockWidgetReceiver
 import com.trm.alarmist.widget.today.TodayWidgetPinPreview
 import com.trm.alarmist.widget.today.TodayWidgetReceiver
 
@@ -27,6 +29,7 @@ suspend fun Context.pinWidget(
       getWidgetReceiverClassFor(providerInfo.provider),
       when (providerInfo.provider) {
         widgetReceiverComponentName<TodayWidgetReceiver>() -> TodayWidgetPinPreview()
+        widgetReceiverComponentName<ClockWidgetReceiver>() -> ClockWidgetPinPreview()
         else -> null
       },
       null,
