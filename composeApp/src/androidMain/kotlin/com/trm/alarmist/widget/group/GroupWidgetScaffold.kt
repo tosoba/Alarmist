@@ -24,9 +24,12 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.material3.ColorProviders
 import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.R
+import com.trm.alarmist.core.ui.theme.darkScheme
+import com.trm.alarmist.core.ui.theme.lightScheme
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.WidgetRefreshButton
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
@@ -52,7 +55,7 @@ internal fun GroupWidgetScaffold(
   state: GroupWidgetState,
   showTitleBar: Boolean = WidgetLayoutSize.showTitleBar(),
 ) {
-  GlanceTheme {
+  GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
     val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 

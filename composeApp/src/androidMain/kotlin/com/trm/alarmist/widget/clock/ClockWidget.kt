@@ -34,6 +34,7 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.material3.ColorProviders
 import androidx.glance.text.FontWeight
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
@@ -41,6 +42,7 @@ import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextTodayAlarmUseCase
+import com.trm.alarmist.core.ui.theme.darkScheme
 import com.trm.alarmist.core.ui.theme.lightScheme
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
@@ -129,7 +131,7 @@ private fun ClockWidgetContent(
       WidgetTextClockShadowMode.Light
     }
 
-  GlanceTheme {
+  GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     Column(
       modifier =
         GlanceModifier.background(backgroundColor)

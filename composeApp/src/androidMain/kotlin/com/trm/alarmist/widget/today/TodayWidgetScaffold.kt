@@ -12,11 +12,14 @@ import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
+import androidx.glance.material3.ColorProviders
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.model.Initialized
 import com.trm.alarmist.core.common.model.Uninitialized
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.ui.theme.darkScheme
+import com.trm.alarmist.core.ui.theme.lightScheme
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.WidgetRefreshButton
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
@@ -41,7 +44,7 @@ internal fun TodayWidgetScaffold(
   state: Initializable<TodayWidgetState>,
   showTitleBar: Boolean = WidgetLayoutSize.showTitleBar(),
 ) {
-  GlanceTheme {
+  GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
     val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 
