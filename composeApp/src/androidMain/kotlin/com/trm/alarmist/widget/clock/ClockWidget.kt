@@ -35,6 +35,8 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.material3.ColorProviders
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
@@ -52,13 +54,13 @@ import com.trm.alarmist.widget.common.ui.WidgetTextShadowMode
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
+import com.trm.alarmist.widget.common.util.clockWidgetPreviewAlarm
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
 import com.trm.alarmist.widget.common.util.stringResource
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -95,20 +97,7 @@ internal class ClockWidgetPinPreview : GlanceAppWidget() {
         LocalWidgetLayoutSize provides WidgetLayoutSize.Medium,
       ) {
         ClockWidgetContent(
-          alarm =
-            AlarmListModel(
-              id = 1L,
-              groupId = null,
-              fireAtTime = LocalTime(7, 30),
-              name = "Wake Up Alarm",
-              isOn = true,
-              fireOnDateTime = LocalDateTime(2024, 5, 10, 7, 30),
-              scheduledOnDaysOfWeek = emptySet(),
-              closestScheduledOnDate = null,
-              offOnAllScheduledDates = false,
-              scheduledOnMultipleDates = false,
-              snoozedFireAtTime = null,
-            ),
+          alarm = clockWidgetPreviewAlarm(),
           textColorProvider = ColorProvider(Color.Black),
           backgroundColor = lightScheme.secondaryContainer,
         )
@@ -235,6 +224,17 @@ private fun ClockWidgetContent(
       }
     }
   }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview
+@Composable
+private fun ClockWidgetContentPreview() {
+  ClockWidgetContent(
+    alarm = clockWidgetPreviewAlarm(),
+    textColorProvider = ColorProvider(Color.Black),
+    backgroundColor = lightScheme.secondaryContainer,
+  )
 }
 
 @Composable

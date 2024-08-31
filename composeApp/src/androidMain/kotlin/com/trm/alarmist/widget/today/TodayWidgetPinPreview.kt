@@ -10,7 +10,7 @@ import com.trm.alarmist.core.common.model.Initialized
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
-import com.trm.alarmist.widget.common.util.widgetPinPreviewAlarms
+import com.trm.alarmist.widget.common.util.widgetPreviewAlarmList
 
 internal class TodayWidgetPinPreview : GlanceAppWidget() {
   override val sizeMode: SizeMode = SizeMode.Exact
@@ -24,7 +24,7 @@ internal class TodayWidgetPinPreview : GlanceAppWidget() {
         TodayWidgetScaffold(
           id = object : GlanceId {},
           state =
-            Initialized(TodayWidgetState(alarms = widgetPinPreviewAlarms(), groups = emptyMap())),
+            Initialized(TodayWidgetState(alarms = widgetPreviewAlarmList(), groups = emptyMap())),
           showTitleBar = true,
         )
       }

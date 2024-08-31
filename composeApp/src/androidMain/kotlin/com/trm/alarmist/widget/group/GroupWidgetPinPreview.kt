@@ -13,7 +13,7 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
-import com.trm.alarmist.widget.common.util.widgetPinPreviewAlarms
+import com.trm.alarmist.widget.common.util.widgetPreviewAlarmList
 
 internal class GroupWidgetPinPreview : GlanceAppWidget() {
   override val sizeMode: SizeMode = SizeMode.Exact
@@ -28,7 +28,7 @@ internal class GroupWidgetPinPreview : GlanceAppWidget() {
           id = id,
           state =
             GroupWidgetState.Initialized(
-              alarms = widgetPinPreviewAlarms(1L),
+              alarms = widgetPreviewAlarmList(1L),
               group =
                 AlarmGroupModel(1L, "Daily routine", Color.Red.toArgb().toColorLong(), 5, true),
             ),

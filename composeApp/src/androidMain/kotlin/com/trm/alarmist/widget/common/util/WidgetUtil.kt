@@ -19,6 +19,7 @@ import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.state.updateAppWidgetState
 import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
+import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffActionReceiver
@@ -122,7 +123,7 @@ internal fun actionStartMainActivity(startMode: RootStartMode): Action =
 internal fun emptyActionIfPreviewOrElse(action: @Composable () -> Action): Action =
   if (LocalIsPreview.current) action {} else action()
 
-internal fun widgetPinPreviewAlarms(groupId: Long? = null): List<WidgetAlarmListModel> =
+internal fun widgetPreviewAlarmList(groupId: Long? = null): List<WidgetAlarmListModel> =
   listOf(
     WidgetAlarmListModel(
       id = 1L,
@@ -160,4 +161,19 @@ internal fun widgetPinPreviewAlarms(groupId: Long? = null): List<WidgetAlarmList
       fireOnDateTime = LocalDateTime(2024, 8, 25, 22, 0),
       isCustomScheduled = true,
     ),
+  )
+
+internal fun clockWidgetPreviewAlarm(): AlarmListModel =
+  AlarmListModel(
+    id = 1L,
+    groupId = null,
+    fireAtTime = LocalTime(7, 30),
+    name = "Wake Up Alarm",
+    isOn = true,
+    fireOnDateTime = LocalDateTime(2024, 5, 10, 7, 30),
+    scheduledOnDaysOfWeek = emptySet(),
+    closestScheduledOnDate = null,
+    offOnAllScheduledDates = false,
+    scheduledOnMultipleDates = false,
+    snoozedFireAtTime = null,
   )
