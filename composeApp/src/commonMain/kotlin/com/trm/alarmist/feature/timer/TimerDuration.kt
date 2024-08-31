@@ -2,6 +2,12 @@ package com.trm.alarmist.feature.timer
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,8 +33,10 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -82,6 +90,18 @@ fun TimerDuration(
 
     Spacer(modifier = Modifier.weight(1f))
 
+    val elapsedDurationTextAlpha by
+      rememberInfiniteTransition()
+        .animateFloat(
+          initialValue = 1f,
+          targetValue = 0f,
+          animationSpec =
+            infiniteRepeatable(
+              animation = tween(durationMillis = 750, easing = LinearEasing),
+              repeatMode = RepeatMode.Reverse,
+            ),
+        )
+
     if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
       Row(verticalAlignment = Alignment.CenterVertically) {
         AnimatedVisibility(visible = state != TimerState.ELAPSED) {
@@ -91,7 +111,9 @@ fun TimerDuration(
         DurationText(
           duration = duration,
           layoutType = DurationTextLayoutType.Horizontal,
-          modifier = Modifier.padding(horizontal = 24.dp),
+          modifier =
+            Modifier.padding(horizontal = 24.dp)
+              .alpha(if (state != TimerState.ELAPSED) 1f else elapsedDurationTextAlpha),
         )
 
         AnimatedVisibility(visible = state != TimerState.ELAPSED) { TimerResetButton(onResetClick) }
@@ -104,7 +126,9 @@ fun TimerDuration(
       DurationText(
         duration = duration,
         layoutType = DurationTextLayoutType.Vertical,
-        modifier = Modifier.padding(vertical = 16.dp),
+        modifier =
+          Modifier.padding(vertical = 16.dp)
+            .alpha(if (state != TimerState.ELAPSED) 1f else elapsedDurationTextAlpha),
       )
 
       AnimatedVisibility(state != TimerState.ELAPSED) { TimerResetButton(onResetClick) }
