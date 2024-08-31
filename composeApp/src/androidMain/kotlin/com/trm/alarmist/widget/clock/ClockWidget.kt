@@ -48,7 +48,7 @@ import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
-import com.trm.alarmist.widget.common.ui.WidgetTextClockShadowMode
+import com.trm.alarmist.widget.common.ui.WidgetTextShadowMode
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
@@ -123,15 +123,15 @@ private fun ClockWidgetContent(
   textColorProvider: ColorProvider = GlanceTheme.colors.widgetBackground,
   backgroundColor: Color = Color.Transparent,
 ) {
-  val textColor = textColorProvider.getColor(LocalContext.current)
-  val shadowMode =
-    if (colorDistance(textColor, Color.Black) > colorDistance(textColor, Color.White)) {
-      WidgetTextClockShadowMode.Dark
-    } else {
-      WidgetTextClockShadowMode.Light
-    }
-
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
+    val textColor = textColorProvider.getColor(LocalContext.current)
+    val shadowMode =
+      if (colorDistance(textColor, Color.Black) > colorDistance(textColor, Color.White)) {
+        WidgetTextShadowMode.Dark
+      } else {
+        WidgetTextShadowMode.Light
+      }
+
     Column(
       modifier =
         GlanceModifier.background(backgroundColor)
@@ -188,18 +188,27 @@ private fun ClockWidgetContent(
       if (alarm != null) {
         Row(verticalAlignment = Alignment.CenterVertically) {
           Box(contentAlignment = Alignment.Center) {
-            Image(
-              provider = ImageProvider(R.drawable.alarm),
-              contentDescription = null,
-              modifier = GlanceModifier.size(16f.spToDp()).padding(top = 1.dp, start = 1.dp),
-              colorFilter = ColorFilter.tint(ColorProvider(Color.Black)),
-            )
+            val shadowModifier =
+              GlanceModifier.size(16f.spToDp()).padding(top = 0.5.dp, start = 0.5.dp)
+            when (shadowMode) {
+              WidgetTextShadowMode.Dark -> {
+                AlarmIcon(
+                  modifier = shadowModifier,
+                  colorFilter = ColorFilter.tint(ColorProvider(Color.Black)),
+                )
+              }
+              WidgetTextShadowMode.Light -> {
+                AlarmIcon(
+                  modifier = shadowModifier,
+                  colorFilter = ColorFilter.tint(ColorProvider(Color.White)),
+                )
+              }
+              else -> {}
+            }
 
-            Image(
-              provider = ImageProvider(R.drawable.alarm),
-              contentDescription = null,
-              modifier = GlanceModifier.size(16f.spToDp()),
+            AlarmIcon(
               colorFilter = ColorFilter.tint(textColorProvider),
+              modifier = GlanceModifier.size(16f.spToDp()),
             )
           }
 
@@ -209,7 +218,7 @@ private fun ClockWidgetContent(
             fireAtTime = alarm.nextFireAtTime,
             is24HourFormat = DateFormat.is24HourFormat(LocalContext.current),
             useFullFormat = true,
-            useShadow = true,
+            shadowMode = shadowMode,
             style =
               TextStyle(
                 fontWeight = FontWeight.Medium,
@@ -226,6 +235,16 @@ private fun ClockWidgetContent(
       }
     }
   }
+}
+
+@Composable
+private fun AlarmIcon(colorFilter: ColorFilter, modifier: GlanceModifier = GlanceModifier) {
+  Image(
+    provider = ImageProvider(R.drawable.alarm),
+    contentDescription = null,
+    modifier = modifier,
+    colorFilter = colorFilter,
+  )
 }
 
 private fun colorDistance(c1: Color, c2: Color): Float =

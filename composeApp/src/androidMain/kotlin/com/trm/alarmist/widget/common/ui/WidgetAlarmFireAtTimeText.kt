@@ -22,12 +22,12 @@ import com.trm.alarmist.core.common.util.toFormattedString
 import kotlinx.datetime.LocalTime
 
 @Composable
-fun WidgetAlarmFireAtTimeText(
+internal fun WidgetAlarmFireAtTimeText(
   fireAtTime: LocalTime,
   is24HourFormat: Boolean,
   useFullFormat: Boolean,
-  useShadow: Boolean = false,
   modifier: GlanceModifier = GlanceModifier,
+  shadowMode: WidgetTextShadowMode = WidgetTextShadowMode.None,
   style: TextStyle = TextDefaults.defaultTextStyle,
 ) {
   Box(modifier = modifier) {
@@ -35,8 +35,17 @@ fun WidgetAlarmFireAtTimeText(
       remoteViews =
         RemoteViews(
             LocalContext.current.packageName,
-            if (useShadow) R.layout.widget_dark_shadow_alarm_fire_at_time_text_view
-            else R.layout.widget_text_alarm_fire_at_time_view,
+            when (shadowMode) {
+              WidgetTextShadowMode.Dark -> {
+                R.layout.widget_dark_shadow_alarm_fire_at_time_text_view
+              }
+              WidgetTextShadowMode.Light -> {
+                R.layout.widget_light_shadow_alarm_fire_at_time_text_view
+              }
+              WidgetTextShadowMode.None -> {
+                R.layout.widget_text_alarm_fire_at_time_view
+              }
+            },
           )
           .apply {
             val fireAtTimeText =

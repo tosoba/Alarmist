@@ -10,7 +10,7 @@ import com.trm.alarmist.R
 internal fun WidgetTextClock(
   format12Hour: CharSequence,
   format24Hour: CharSequence,
-  shadowMode: WidgetTextClockShadowMode = WidgetTextClockShadowMode.None,
+  shadowMode: WidgetTextShadowMode = WidgetTextShadowMode.None,
   configure: @Composable RemoteViews.() -> Unit = {},
 ) {
   AndroidRemoteViews(
@@ -18,9 +18,9 @@ internal fun WidgetTextClock(
       RemoteViews(
           LocalContext.current.packageName,
           when (shadowMode) {
-            WidgetTextClockShadowMode.Dark -> R.layout.widget_dark_shadow_text_clock
-            WidgetTextClockShadowMode.Light -> R.layout.widget_light_shadow_text_clock
-            WidgetTextClockShadowMode.None -> R.layout.widget_text_clock
+            WidgetTextShadowMode.Dark -> R.layout.widget_dark_shadow_text_clock
+            WidgetTextShadowMode.Light -> R.layout.widget_light_shadow_text_clock
+            WidgetTextShadowMode.None -> R.layout.widget_text_clock
           },
         )
         .apply {
@@ -29,10 +29,4 @@ internal fun WidgetTextClock(
           configure()
         }
   )
-}
-
-internal enum class WidgetTextClockShadowMode {
-  Dark,
-  Light,
-  None,
 }
