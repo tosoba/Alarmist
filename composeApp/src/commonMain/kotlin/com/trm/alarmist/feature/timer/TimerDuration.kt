@@ -157,7 +157,8 @@ private fun TimerDurationControls(
     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
   ) {
     AnimatedContent(targetState = state != TimerState.ELAPSED && duration > 1.minutes) {
-      if (it) {
+      subtractMinuteVisible ->
+      if (subtractMinuteVisible) {
         FloatingActionButton(
           onClick = onSubtractMinuteClick,
           elevation = FloatingActionButtonDefaults.loweredElevation(),
@@ -198,8 +199,8 @@ private fun TimerDurationControls(
       )
     }
 
-    AnimatedContent(targetState = state != TimerState.ELAPSED) {
-      if (it) {
+    AnimatedContent(targetState = state != TimerState.ELAPSED) { addMinuteVisible ->
+      if (addMinuteVisible) {
         FloatingActionButton(
           onClick = onAddMinuteClick,
           elevation = FloatingActionButtonDefaults.loweredElevation(),

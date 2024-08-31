@@ -27,8 +27,8 @@ fun TimerScaffold(
   onSubtractMinuteClick: () -> Unit,
 ) {
   Scaffold(modifier = modifier) { padding ->
-    Crossfade(targetState = state == TimerState.IDLE, label = "TimerContent") {
-      if (it) {
+    Crossfade(targetState = state == TimerState.IDLE, label = "TimerContent") { isIdle ->
+      if (isIdle) {
         TimerInput(
           modifier =
             Modifier.fillMaxSize()

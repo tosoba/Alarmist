@@ -12,6 +12,9 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.MediaPlayer
+import android.media.RingtoneManager
 import android.os.Binder
 import android.os.Parcelable
 import androidx.compose.runtime.getValue
@@ -25,6 +28,7 @@ import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.common.util.toNotificationFormat
 import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.feature.root.RootStartMode
+import io.github.aakira.napier.Napier
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
@@ -42,12 +46,18 @@ class TimerService : Service() {
     private set
 
   private var timer: Timer? = null
+  private var mediaPlayer: MediaPlayer? = null
 
   private val binder = TimerBinder()
 
   override fun onCreate() {
     super.onCreate()
     createNotificationChannel()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    mediaPlayer?.stopAndRelease()
   }
 
   override fun onBind(intent: Intent?): TimerBinder = binder
@@ -80,12 +90,13 @@ class TimerService : Service() {
         updateDuration(duration - action.duration)
       }
       Action.Reset -> {
+        mediaPlayer?.stopAndRelease()
         pauseTimer()
         duration = initialDuration
       }
       Action.Cancel -> {
         cancelTimer()
-        stopForegroundService()
+        stopService(foregroundOnly = false)
       }
     }
   }
@@ -96,8 +107,9 @@ class TimerService : Service() {
       fixedRateTimer(period = TIMER_PERIOD_MILLIS) {
         duration -= TIMER_PERIOD_MILLIS.milliseconds
         if (duration.inWholeMilliseconds == 0L) {
-          // TODO: play sound/vibrate on elapsed
           elapseTimer()
+          playElapsedSound()
+          stopService(foregroundOnly = true)
         } else if (duration.inWholeMilliseconds % 1_000L == 0L) {
           updateNotification(buildRunningNotification())
         }
@@ -135,7 +147,38 @@ class TimerService : Service() {
     timer?.cancel()
     duration = Duration.ZERO
     state = TimerState.ELAPSED
-    stopForegroundService()
+  }
+
+  private fun playElapsedSound() {
+    mediaPlayer =
+      MediaPlayer().apply {
+        setOnErrorListener { player, what, extra ->
+          Napier.e("Error occurred while playing audio - $what:$extra")
+          player.stopAndRelease()
+          true
+        }
+
+        setDataSource(
+          this@TimerService,
+          RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+        )
+
+        setAudioAttributes(
+          AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+        )
+
+        prepare()
+        start()
+      }
+  }
+
+  private fun MediaPlayer.stopAndRelease() {
+    stop()
+    release()
+    mediaPlayer = null
   }
 
   private fun buildNotification(vararg actions: NotificationCompat.Action): Notification =
@@ -152,10 +195,10 @@ class TimerService : Service() {
     startForeground(NOTIFICATION_ID, buildRunningNotification())
   }
 
-  private fun stopForegroundService() {
+  private fun stopService(foregroundOnly: Boolean) {
     getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
     stopForeground(STOP_FOREGROUND_REMOVE)
-    stopSelf()
+    if (!foregroundOnly) stopSelf()
   }
 
   private fun createNotificationChannel() {
