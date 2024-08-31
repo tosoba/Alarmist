@@ -4,15 +4,19 @@ import android.content.Context
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
+import com.trm.alarmist.widget.common.util.AppWidgetIdProvider
+import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import org.koin.core.component.KoinComponent
@@ -36,10 +40,12 @@ class GroupWidget : GlanceAppWidget(), KoinComponent {
               )
             } ?: GroupWidgetState.NoGroupSet
         }
+      val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 
       CompositionLocalProvider(
         LocalIsPreview provides false,
         LocalWidgetLayoutSize provides WidgetLayoutSize.fromLocalSize(),
+        LocalAppWidgetIdProvider provides AppWidgetIdProvider(widgetManager::getAppWidgetId),
       ) {
         GroupWidgetScaffold(id = id, state = widgetState)
       }

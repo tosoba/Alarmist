@@ -1,18 +1,17 @@
 package com.trm.alarmist.widget.today
 
 import android.content.Context
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
-import androidx.glance.preview.ExperimentalGlancePreviewApi
-import androidx.glance.preview.Preview
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.model.Initialized
 import com.trm.alarmist.core.common.model.Uninitialized
@@ -21,6 +20,8 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
+import com.trm.alarmist.widget.common.util.AppWidgetIdProvider
+import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import org.koin.core.component.KoinComponent
@@ -45,25 +46,15 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
               )
             )
         }
+      val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 
       CompositionLocalProvider(
         LocalIsPreview provides false,
         LocalWidgetLayoutSize provides WidgetLayoutSize.fromLocalSize(),
+        LocalAppWidgetIdProvider provides AppWidgetIdProvider(widgetManager::getAppWidgetId),
       ) {
         TodayWidgetScaffold(id = id, state = widgetState)
       }
     }
-  }
-}
-
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview
-@Composable
-private fun TodayWidgetPreview() {
-  CompositionLocalProvider(LocalIsPreview provides true) {
-    TodayWidgetScaffold(
-      id = object : GlanceId {},
-      state = Initialized(TodayWidgetState(alarms = emptyList(), groups = emptyMap())),
-    )
   }
 }

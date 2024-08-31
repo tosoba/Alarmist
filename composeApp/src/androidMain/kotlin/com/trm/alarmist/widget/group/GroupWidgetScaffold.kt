@@ -1,7 +1,6 @@
 package com.trm.alarmist.widget.group
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -12,7 +11,6 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.layout.Alignment
@@ -40,6 +38,7 @@ import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
+import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.actionStartGroupWidgetConfigActivity
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
@@ -57,7 +56,6 @@ internal fun GroupWidgetScaffold(
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
-    val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 
     Scaffold(
       backgroundColor = GlanceTheme.colors.widgetBackground,
@@ -77,7 +75,7 @@ internal fun GroupWidgetScaffold(
                   emptyActionIfPreviewOrElse {
                     actionSendBroadcast(
                       context.updateWidgetIntent<GroupWidgetReceiver>(
-                        widgetManager.getAppWidgetId(id)
+                        LocalAppWidgetIdProvider.current.getAppWidgetId(id)
                       )
                     )
                   }
@@ -144,14 +142,15 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
       }
     }
     GroupWidgetState.NoGroupSet -> {
-      val widgetManager = remember { GlanceAppWidgetManager(context) }
       WidgetEmptyContent(
         emptyText = stringResource(R.string.no_group_set),
         actionButtonText = stringResource(R.string.choose_group),
         actionButtonIcon = null,
         actionButtonOnClick =
           emptyActionIfPreviewOrElse {
-            actionStartGroupWidgetConfigActivity(widgetManager.getAppWidgetId(id))
+            actionStartGroupWidgetConfigActivity(
+              LocalAppWidgetIdProvider.current.getAppWidgetId(id)
+            )
           },
       )
     }

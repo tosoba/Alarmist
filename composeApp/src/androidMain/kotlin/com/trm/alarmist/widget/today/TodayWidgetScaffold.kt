@@ -1,18 +1,19 @@
 package com.trm.alarmist.widget.today
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.material3.ColorProviders
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.model.Initialized
@@ -29,6 +30,8 @@ import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
+import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
+import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
@@ -46,7 +49,6 @@ internal fun TodayWidgetScaffold(
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
-    val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 
     Scaffold(
       backgroundColor = GlanceTheme.colors.widgetBackground,
@@ -65,7 +67,7 @@ internal fun TodayWidgetScaffold(
                   emptyActionIfPreviewOrElse {
                     actionSendBroadcast(
                       context.updateWidgetIntent<TodayWidgetReceiver>(
-                        widgetManager.getAppWidgetId(id)
+                        LocalAppWidgetIdProvider.current.getAppWidgetId(id)
                       )
                     )
                   }
@@ -108,6 +110,8 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
         )
       } else {
         val today = LocalDate.now()
+        val appWidgetIdProvider = LocalAppWidgetIdProvider.current
+
         WidgetAlarmListContent(
           alarms = state.data.alarms,
           getGroup = state.data.groups::get,
@@ -120,7 +124,7 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
                 // if the user tries to toggle the alarm just after midnight and the latest widget
                 // update was before midnight then update a widget
                 context.updateWidgetIntent<TodayWidgetReceiver>(
-                  GlanceAppWidgetManager(context).getAppWidgetId(id)
+                  appWidgetIdProvider.getAppWidgetId(id)
                 )
               }
             )
@@ -128,5 +132,17 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
         )
       }
     }
+  }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview
+@Composable
+private fun TodayWidgetScaffoldEmptyPreview() {
+  CompositionLocalProvider(LocalIsPreview provides true) {
+    TodayWidgetScaffold(
+      id = object : GlanceId {},
+      state = Initialized(TodayWidgetState(alarms = emptyList(), groups = emptyMap())),
+    )
   }
 }

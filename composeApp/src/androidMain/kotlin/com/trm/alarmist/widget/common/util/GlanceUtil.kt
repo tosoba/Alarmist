@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
+import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
@@ -41,3 +42,9 @@ fun Float.spToDp(): Dp {
       context.resources.displayMetrics.density
   )
 }
+
+internal fun interface AppWidgetIdProvider {
+  fun getAppWidgetId(glanceId: GlanceId): Int
+}
+
+internal val LocalAppWidgetIdProvider = staticCompositionLocalOf { AppWidgetIdProvider { 0 } }
