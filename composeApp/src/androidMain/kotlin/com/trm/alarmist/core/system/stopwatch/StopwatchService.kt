@@ -36,6 +36,7 @@ class StopwatchService : Service() {
   var duration by mutableStateOf(Duration.ZERO)
     private set
 
+  private var showNotification = false
   private var timer: Timer? = null
 
   private val binder = StopwatchBinder()
@@ -60,13 +61,21 @@ class StopwatchService : Service() {
           stopStopwatch()
           updateNotification(buildPausedNotification())
         } else {
-          startForegroundService()
+          if (showNotification) startForegroundService()
           startStopwatch()
         }
       }
       Action.CANCEL -> {
         cancelStopwatch()
-        stopForegroundService()
+        stopService(foregroundOnly = false)
+      }
+      Action.SHOW_NOTIFICATION -> {
+        showNotification = true
+        startForegroundService()
+      }
+      Action.HIDE_NOTIFICATION -> {
+        showNotification = false
+        stopService(foregroundOnly = true)
       }
     }
   }
@@ -75,7 +84,7 @@ class StopwatchService : Service() {
     timer =
       fixedRateTimer(period = TIMER_PERIOD_MILLIS) {
         duration += TIMER_PERIOD_MILLIS.milliseconds
-        if (duration.inWholeMilliseconds % 1_000L == 0L) {
+        if (showNotification && duration.inWholeMilliseconds % 1_000L == 0L) {
           updateNotification(buildRunningNotification())
         }
       }
@@ -107,10 +116,10 @@ class StopwatchService : Service() {
     startForeground(NOTIFICATION_ID, buildRunningNotification())
   }
 
-  private fun stopForegroundService() {
+  private fun stopService(foregroundOnly: Boolean) {
     getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
     stopForeground(STOP_FOREGROUND_REMOVE)
-    stopSelf()
+    if (!foregroundOnly) stopSelf()
   }
 
   private fun createNotificationChannel() {
@@ -183,6 +192,8 @@ class StopwatchService : Service() {
   enum class Action {
     TOGGLE_RUNNING,
     CANCEL,
+    SHOW_NOTIFICATION,
+    HIDE_NOTIFICATION,
   }
 
   companion object {

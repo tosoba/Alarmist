@@ -20,6 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.trm.alarmist.core.domain.model.StopwatchState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.stopwatch.StopwatchService
@@ -53,6 +56,29 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
       )
 
     onDispose { if (bound) context.unbindService(connection) }
+  }
+
+  val owner = LocalLifecycleOwner.current
+  DisposableEffect(Unit) {
+    val observer =
+      object : DefaultLifecycleObserver {
+        override fun onResume(owner: LifecycleOwner) {
+          StopwatchService.startWithAction(
+            context = context,
+            action = StopwatchService.Action.HIDE_NOTIFICATION,
+          )
+        }
+
+        override fun onPause(owner: LifecycleOwner) {
+          StopwatchService.startWithAction(
+            context = context,
+            action = StopwatchService.Action.SHOW_NOTIFICATION,
+          )
+        }
+      }
+    owner.lifecycle.addObserver(observer)
+
+    onDispose { owner.lifecycle.removeObserver(observer) }
   }
 
   val state by remember { derivedStateOf { service?.state ?: StopwatchState.IDLE } }
