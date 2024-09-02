@@ -22,7 +22,7 @@ internal class GroupWidgetPinPreview : GlanceAppWidget() {
     provideContent {
       CompositionLocalProvider(
         LocalIsPreview provides true,
-        LocalWidgetLayoutSize provides WidgetLayoutSize.Medium,
+        LocalWidgetLayoutSize provides WidgetLayoutSize.Medium(showTitleBar = true),
       ) {
         GroupWidgetScaffold(
           id = id,

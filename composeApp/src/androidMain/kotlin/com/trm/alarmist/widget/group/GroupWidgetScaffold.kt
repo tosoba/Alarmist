@@ -52,7 +52,7 @@ import com.trm.alarmist.widget.common.util.updateWidgetIntent
 internal fun GroupWidgetScaffold(
   id: GlanceId,
   state: GroupWidgetState,
-  showTitleBar: Boolean = WidgetLayoutSize.showTitleBar(),
+  showTitleBar: Boolean = LocalWidgetLayoutSize.current.showTitleBar,
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
@@ -85,7 +85,7 @@ internal fun GroupWidgetScaffold(
             Column(
               modifier =
                 GlanceModifier.defaultWeight().run {
-                  if (LocalWidgetLayoutSize.current != WidgetLayoutSize.Large) {
+                  if (LocalWidgetLayoutSize.current !is WidgetLayoutSize.Large) {
                     padding(start = 16.dp)
                   } else {
                     this

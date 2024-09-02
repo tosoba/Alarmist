@@ -4,6 +4,7 @@ import android.util.TypedValue
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.glance.GlanceId
@@ -23,7 +24,10 @@ internal fun integerResource(@IntegerRes id: Int): Int =
 
 internal val LocalIsPreview = staticCompositionLocalOf { false }
 
-internal val LocalWidgetLayoutSize = staticCompositionLocalOf { WidgetLayoutSize.Small }
+internal val LocalWidgetLayoutSize: ProvidableCompositionLocal<WidgetLayoutSize> =
+  staticCompositionLocalOf {
+    WidgetLayoutSize.Small(false)
+  }
 
 internal fun GlanceModifier.clickableIfNotNull(action: Action?): GlanceModifier =
   if (action != null) this.clickable(action) else this

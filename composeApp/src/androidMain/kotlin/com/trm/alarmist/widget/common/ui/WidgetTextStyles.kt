@@ -13,7 +13,7 @@ object WidgetTextStyles {
     TextStyle(
       fontWeight = fontWeight,
       fontSize =
-        if (LocalWidgetLayoutSize.current == WidgetLayoutSize.Small) {
+        if (LocalWidgetLayoutSize.current is WidgetLayoutSize.Small) {
           18.sp
         } else {
           22.sp // M3 Title Large
@@ -27,7 +27,7 @@ object WidgetTextStyles {
       TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize =
-          if (LocalWidgetLayoutSize.current == WidgetLayoutSize.Small) {
+          if (LocalWidgetLayoutSize.current is WidgetLayoutSize.Small) {
             14.sp // M3 Title Small
           } else {
             16.sp // M3 Title Medium

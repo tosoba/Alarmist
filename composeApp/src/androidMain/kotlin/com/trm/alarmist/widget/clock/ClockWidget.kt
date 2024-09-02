@@ -94,7 +94,7 @@ internal class ClockWidgetPinPreview : GlanceAppWidget() {
     provideContent {
       CompositionLocalProvider(
         LocalIsPreview provides true,
-        LocalWidgetLayoutSize provides WidgetLayoutSize.Medium,
+        LocalWidgetLayoutSize provides WidgetLayoutSize.Medium(showTitleBar = true),
       ) {
         ClockWidgetContent(
           alarm = clockWidgetPreviewAlarm(),
@@ -143,9 +143,9 @@ private fun ClockWidgetContent(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
             when (LocalWidgetLayoutSize.current) {
-              WidgetLayoutSize.Small -> 20f
-              WidgetLayoutSize.Medium -> 24f
-              WidgetLayoutSize.Large -> 28f
+              is WidgetLayoutSize.Small -> 20f
+              is WidgetLayoutSize.Medium -> 24f
+              is WidgetLayoutSize.Large -> 28f
             },
           )
         }
@@ -166,9 +166,9 @@ private fun ClockWidgetContent(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
             when (LocalWidgetLayoutSize.current) {
-              WidgetLayoutSize.Small -> 12f
-              WidgetLayoutSize.Medium -> 16f
-              WidgetLayoutSize.Large -> 20f
+              is WidgetLayoutSize.Small -> 12f
+              is WidgetLayoutSize.Medium -> 16f
+              is WidgetLayoutSize.Large -> 20f
             },
           )
         }
@@ -213,9 +213,9 @@ private fun ClockWidgetContent(
                 fontWeight = FontWeight.Medium,
                 fontSize =
                   when (LocalWidgetLayoutSize.current) {
-                    WidgetLayoutSize.Small -> 14
-                    WidgetLayoutSize.Medium -> 18
-                    WidgetLayoutSize.Large -> 22
+                    is WidgetLayoutSize.Small -> 14
+                    is WidgetLayoutSize.Medium -> 18
+                    is WidgetLayoutSize.Large -> 22
                   }.sp,
                 color = textColorProvider,
               ),
@@ -226,6 +226,7 @@ private fun ClockWidgetContent(
   }
 }
 
+@Suppress("unused")
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview
 @Composable

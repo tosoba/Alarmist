@@ -13,7 +13,7 @@ fun WidgetAlarmListContent(
   onCheckedChangeAction: (WidgetAlarmListModel) -> Action,
 ) {
   when (LocalWidgetLayoutSize.current) {
-    WidgetLayoutSize.Small -> {
+    is WidgetLayoutSize.Small -> {
       WidgetAlarmList(
         alarms = alarms,
         getGroup = getGroup,
@@ -21,7 +21,7 @@ fun WidgetAlarmListContent(
         onCheckedChangeAction = onCheckedChangeAction,
       )
     }
-    WidgetLayoutSize.Medium -> {
+    is WidgetLayoutSize.Medium -> {
       WidgetAlarmList(
         alarms = alarms,
         getGroup = getGroup,
@@ -29,7 +29,7 @@ fun WidgetAlarmListContent(
         onCheckedChangeAction = onCheckedChangeAction,
       )
     }
-    WidgetLayoutSize.Large -> {
+    is WidgetLayoutSize.Large -> {
       WidgetAlarmGrid(
         alarms = alarms,
         getGroup = getGroup,

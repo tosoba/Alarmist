@@ -17,12 +17,12 @@ fun WidgetAlarmListTextClock(modifier: GlanceModifier = GlanceModifier) {
       WidgetTextClock(
         format12Hour =
           stringResource(
-            if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_12_h_full
+            if (widgetLayoutSize !is WidgetLayoutSize.Small) R.string.time_format_12_h_full
             else R.string.time_format_12_h_short
           ),
         format24Hour =
           stringResource(
-            if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_24_h_full
+            if (widgetLayoutSize !is WidgetLayoutSize.Small) R.string.time_format_24_h_full
             else R.string.time_format_24_h_short
           ),
       ) {
@@ -30,7 +30,7 @@ fun WidgetAlarmListTextClock(modifier: GlanceModifier = GlanceModifier) {
           R.id.widget_text_clock,
           "setTextSize",
           integerResource(
-              if (widgetLayoutSize == WidgetLayoutSize.Large) {
+              if (widgetLayoutSize is WidgetLayoutSize.Large) {
                 R.integer.widget_text_clock_large_font_size
               } else {
                 R.integer.widget_text_clock_normal_font_size
@@ -44,7 +44,7 @@ fun WidgetAlarmListTextClock(modifier: GlanceModifier = GlanceModifier) {
     Box {
       val amPmFormat =
         stringResource(
-          if (widgetLayoutSize != WidgetLayoutSize.Small) R.string.time_format_am_pm_date_full
+          if (widgetLayoutSize !is WidgetLayoutSize.Small) R.string.time_format_am_pm_date_full
           else R.string.time_format_am_pm_date_short
         )
       WidgetTextClock(format12Hour = amPmFormat, format24Hour = amPmFormat) {

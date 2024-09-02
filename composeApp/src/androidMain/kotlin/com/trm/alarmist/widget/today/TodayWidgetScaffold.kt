@@ -45,7 +45,7 @@ import kotlinx.datetime.LocalDate
 internal fun TodayWidgetScaffold(
   id: GlanceId,
   state: Initializable<TodayWidgetState>,
-  showTitleBar: Boolean = WidgetLayoutSize.showTitleBar(),
+  showTitleBar: Boolean = LocalWidgetLayoutSize.current.showTitleBar,
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
@@ -77,7 +77,7 @@ internal fun TodayWidgetScaffold(
             WidgetAlarmListTextClock(
               modifier =
                 GlanceModifier.defaultWeight().run {
-                  if (LocalWidgetLayoutSize.current != WidgetLayoutSize.Large) {
+                  if (LocalWidgetLayoutSize.current !is WidgetLayoutSize.Large) {
                     padding(start = 16.dp)
                   } else {
                     this
@@ -135,6 +135,7 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
   }
 }
 
+@Suppress("unused")
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview
 @Composable
