@@ -12,8 +12,6 @@ import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.material3.ColorProviders
-import androidx.glance.preview.ExperimentalGlancePreviewApi
-import androidx.glance.preview.Preview
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.model.Initializable
 import com.trm.alarmist.core.common.model.Initialized
@@ -23,13 +21,13 @@ import com.trm.alarmist.core.ui.theme.darkScheme
 import com.trm.alarmist.core.ui.theme.lightScheme
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.WidgetRefreshButton
+import com.trm.alarmist.widget.common.ui.AlarmListWidgetPreview
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
-import com.trm.alarmist.widget.common.ui.WidgetPreviewDimension
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalIsPreview
@@ -128,35 +126,8 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
   }
 }
 
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview(
-  widthDp = WidgetPreviewDimension.LARGE_WIDTH,
-  heightDp = WidgetPreviewDimension.SHOW_TITLE_BAR_HEIGHT,
-)
-@Preview(
-  widthDp = WidgetPreviewDimension.LARGE_WIDTH,
-  heightDp = WidgetPreviewDimension.HIDE_TITLE_BAR_HEIGHT,
-)
-@Preview(
-  widthDp = WidgetPreviewDimension.MEDIUM_WIDTH,
-  heightDp = WidgetPreviewDimension.SHOW_TITLE_BAR_HEIGHT,
-)
-@Preview(
-  widthDp = WidgetPreviewDimension.MEDIUM_WIDTH,
-  heightDp = WidgetPreviewDimension.HIDE_TITLE_BAR_HEIGHT,
-)
-@Preview(
-  widthDp = WidgetPreviewDimension.SMALL_WIDTH,
-  heightDp = WidgetPreviewDimension.SHOW_TITLE_BAR_HEIGHT,
-)
-@Preview(
-  widthDp = WidgetPreviewDimension.SMALL_WIDTH,
-  heightDp = WidgetPreviewDimension.HIDE_TITLE_BAR_HEIGHT,
-)
-annotation class AlarmListWidgetPreviews
-
 @Suppress("unused")
-@AlarmListWidgetPreviews
+@AlarmListWidgetPreview
 @Composable
 private fun TodayWidgetScaffoldEmptyPreview() {
   CompositionLocalProvider(
