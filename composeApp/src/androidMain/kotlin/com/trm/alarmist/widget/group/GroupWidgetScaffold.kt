@@ -34,7 +34,6 @@ import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
-import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
@@ -50,9 +49,9 @@ import com.trm.alarmist.widget.common.util.updateWidgetIntent
 
 @Composable
 internal fun GroupWidgetScaffold(
-    id: GlanceId,
-    state: GroupWidgetState,
-    showTitleBar: Boolean = LocalWidgetLayoutType.current.showTitleBar,
+  id: GlanceId,
+  state: GroupWidgetState,
+  showTitleBar: Boolean = LocalWidgetLayoutType.current.showTitleBar,
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
@@ -82,16 +81,7 @@ internal fun GroupWidgetScaffold(
               )
             },
           ) {
-            Column(
-              modifier =
-                GlanceModifier.defaultWeight().run {
-                  if (LocalWidgetLayoutType.current !is WidgetLayoutType.Large) {
-                    padding(start = 16.dp)
-                  } else {
-                    this
-                  }
-                }
-            ) {
+            Column(modifier = GlanceModifier.defaultWeight().padding(start = 16.dp)) {
               if (state is GroupWidgetState.Initialized) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                   GroupIcon(color = state.group.color, iconSize = 24.dp)

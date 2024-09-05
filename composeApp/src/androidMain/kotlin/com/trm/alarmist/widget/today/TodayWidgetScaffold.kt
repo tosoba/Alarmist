@@ -29,6 +29,7 @@ import com.trm.alarmist.widget.common.ui.WidgetDimensions
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
+import com.trm.alarmist.widget.common.ui.WidgetPreviewDimension
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalIsPreview
@@ -60,7 +61,6 @@ internal fun TodayWidgetScaffold(
       titleBar =
         composableIfOrNull(condition = showTitleBar) {
           WidgetTitleBar(
-            iconColor = GlanceTheme.colors.primary,
             actions = {
               WidgetRefreshButton(
                 onClick =
@@ -72,17 +72,10 @@ internal fun TodayWidgetScaffold(
                     )
                   }
               )
-            },
+            }
           ) {
             WidgetAlarmListTextClock(
-              modifier =
-                GlanceModifier.defaultWeight().run {
-                  if (LocalWidgetLayoutType.current !is WidgetLayoutType.Large) {
-                    padding(start = 16.dp)
-                  } else {
-                    this
-                  }
-                }
+              modifier = GlanceModifier.defaultWeight().padding(start = 16.dp)
             )
           }
         },
@@ -121,8 +114,8 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
               if (today == now) {
                 context.toggleAlarmOnOffOnDateIntent(item.id, today)
               } else {
-                // if the user tries to toggle the alarm just after midnight and the latest widget
-                // update was before midnight then update a widget
+                // if the user tries to toggle the alarm just after midnight and the latest
+                // widget update was before midnight then update a widget
                 context.updateWidgetIntent<TodayWidgetReceiver>(
                   appWidgetIdProvider.getAppWidgetId(id)
                 )
@@ -135,12 +128,41 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
   }
 }
 
-@Suppress("unused")
 @OptIn(ExperimentalGlancePreviewApi::class)
-@Preview
+@Preview(
+  widthDp = WidgetPreviewDimension.LARGE_WIDTH,
+  heightDp = WidgetPreviewDimension.SHOW_TITLE_BAR_HEIGHT,
+)
+@Preview(
+  widthDp = WidgetPreviewDimension.LARGE_WIDTH,
+  heightDp = WidgetPreviewDimension.HIDE_TITLE_BAR_HEIGHT,
+)
+@Preview(
+  widthDp = WidgetPreviewDimension.MEDIUM_WIDTH,
+  heightDp = WidgetPreviewDimension.SHOW_TITLE_BAR_HEIGHT,
+)
+@Preview(
+  widthDp = WidgetPreviewDimension.MEDIUM_WIDTH,
+  heightDp = WidgetPreviewDimension.HIDE_TITLE_BAR_HEIGHT,
+)
+@Preview(
+  widthDp = WidgetPreviewDimension.SMALL_WIDTH,
+  heightDp = WidgetPreviewDimension.SHOW_TITLE_BAR_HEIGHT,
+)
+@Preview(
+  widthDp = WidgetPreviewDimension.SMALL_WIDTH,
+  heightDp = WidgetPreviewDimension.HIDE_TITLE_BAR_HEIGHT,
+)
+annotation class AlarmListWidgetPreviews
+
+@Suppress("unused")
+@AlarmListWidgetPreviews
 @Composable
 private fun TodayWidgetScaffoldEmptyPreview() {
-  CompositionLocalProvider(LocalIsPreview provides true) {
+  CompositionLocalProvider(
+    LocalIsPreview provides true,
+    LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
+  ) {
     TodayWidgetScaffold(
       id = object : GlanceId {},
       state = Initialized(TodayWidgetState(alarms = emptyList(), groups = emptyMap())),
