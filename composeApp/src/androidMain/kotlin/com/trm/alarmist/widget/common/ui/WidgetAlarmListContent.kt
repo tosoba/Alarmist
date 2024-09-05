@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.glance.action.Action
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
 
 @Composable
 fun WidgetAlarmListContent(
@@ -12,8 +12,8 @@ fun WidgetAlarmListContent(
   getGroup: (Long) -> AlarmGroupModel?,
   onCheckedChangeAction: (WidgetAlarmListModel) -> Action,
 ) {
-  when (LocalWidgetLayoutSize.current) {
-    is WidgetLayoutSize.Small -> {
+  when (LocalWidgetLayoutType.current) {
+    is WidgetLayoutType.Small -> {
       WidgetAlarmList(
         alarms = alarms,
         getGroup = getGroup,
@@ -21,7 +21,7 @@ fun WidgetAlarmListContent(
         onCheckedChangeAction = onCheckedChangeAction,
       )
     }
-    is WidgetLayoutSize.Medium -> {
+    is WidgetLayoutType.Medium -> {
       WidgetAlarmList(
         alarms = alarms,
         getGroup = getGroup,
@@ -29,7 +29,7 @@ fun WidgetAlarmListContent(
         onCheckedChangeAction = onCheckedChangeAction,
       )
     }
-    is WidgetLayoutSize.Large -> {
+    is WidgetLayoutType.Large -> {
       WidgetAlarmGrid(
         alarms = alarms,
         getGroup = getGroup,

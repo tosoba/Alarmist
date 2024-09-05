@@ -48,11 +48,11 @@ import com.trm.alarmist.core.ui.theme.darkScheme
 import com.trm.alarmist.core.ui.theme.lightScheme
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
-import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
+import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextShadowMode
 import com.trm.alarmist.widget.common.util.LocalIsPreview
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.clockWidgetPreviewAlarm
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
@@ -79,7 +79,7 @@ class ClockWidget : GlanceAppWidget(), KoinComponent {
 
       CompositionLocalProvider(
         LocalIsPreview provides false,
-        LocalWidgetLayoutSize provides WidgetLayoutSize.fromLocalSize(),
+        LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
       ) {
         ClockWidgetContent(alarm = alarm)
       }
@@ -94,7 +94,7 @@ internal class ClockWidgetPinPreview : GlanceAppWidget() {
     provideContent {
       CompositionLocalProvider(
         LocalIsPreview provides true,
-        LocalWidgetLayoutSize provides WidgetLayoutSize.Medium(showTitleBar = true),
+        LocalWidgetLayoutType provides WidgetLayoutType.Medium(showTitleBar = true),
       ) {
         ClockWidgetContent(
           alarm = clockWidgetPreviewAlarm(),
@@ -142,10 +142,10 @@ private fun ClockWidgetContent(
           setTextViewTextSize(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
-            when (LocalWidgetLayoutSize.current) {
-              is WidgetLayoutSize.Small -> 20f
-              is WidgetLayoutSize.Medium -> 24f
-              is WidgetLayoutSize.Large -> 28f
+            when (LocalWidgetLayoutType.current) {
+              is WidgetLayoutType.Small -> 20f
+              is WidgetLayoutType.Medium -> 24f
+              is WidgetLayoutType.Large -> 28f
             },
           )
         }
@@ -165,10 +165,10 @@ private fun ClockWidgetContent(
           setTextViewTextSize(
             R.id.widget_text_clock,
             TypedValue.COMPLEX_UNIT_SP,
-            when (LocalWidgetLayoutSize.current) {
-              is WidgetLayoutSize.Small -> 12f
-              is WidgetLayoutSize.Medium -> 16f
-              is WidgetLayoutSize.Large -> 20f
+            when (LocalWidgetLayoutType.current) {
+              is WidgetLayoutType.Small -> 12f
+              is WidgetLayoutType.Medium -> 16f
+              is WidgetLayoutType.Large -> 20f
             },
           )
         }
@@ -212,10 +212,10 @@ private fun ClockWidgetContent(
               TextStyle(
                 fontWeight = FontWeight.Medium,
                 fontSize =
-                  when (LocalWidgetLayoutSize.current) {
-                    is WidgetLayoutSize.Small -> 14
-                    is WidgetLayoutSize.Medium -> 18
-                    is WidgetLayoutSize.Large -> 22
+                  when (LocalWidgetLayoutType.current) {
+                    is WidgetLayoutType.Small -> 14
+                    is WidgetLayoutType.Medium -> 18
+                    is WidgetLayoutType.Large -> 22
                   }.sp,
                 color = textColorProvider,
               ),

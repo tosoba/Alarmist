@@ -34,12 +34,12 @@ import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
-import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
+import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
 import com.trm.alarmist.widget.common.util.actionStartGroupWidgetConfigActivity
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
@@ -50,9 +50,9 @@ import com.trm.alarmist.widget.common.util.updateWidgetIntent
 
 @Composable
 internal fun GroupWidgetScaffold(
-  id: GlanceId,
-  state: GroupWidgetState,
-  showTitleBar: Boolean = LocalWidgetLayoutSize.current.showTitleBar,
+    id: GlanceId,
+    state: GroupWidgetState,
+    showTitleBar: Boolean = LocalWidgetLayoutType.current.showTitleBar,
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
@@ -85,7 +85,7 @@ internal fun GroupWidgetScaffold(
             Column(
               modifier =
                 GlanceModifier.defaultWeight().run {
-                  if (LocalWidgetLayoutSize.current !is WidgetLayoutSize.Large) {
+                  if (LocalWidgetLayoutType.current !is WidgetLayoutType.Large) {
                     padding(start = 16.dp)
                   } else {
                     this

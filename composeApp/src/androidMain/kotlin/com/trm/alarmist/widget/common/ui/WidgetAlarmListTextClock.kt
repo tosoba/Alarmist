@@ -5,24 +5,24 @@ import androidx.glance.GlanceModifier
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import com.trm.alarmist.R
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
 import com.trm.alarmist.widget.common.util.integerResource
 import com.trm.alarmist.widget.common.util.stringResource
 
 @Composable
 fun WidgetAlarmListTextClock(modifier: GlanceModifier = GlanceModifier) {
-  val widgetLayoutSize = LocalWidgetLayoutSize.current
+  val widgetLayoutSize = LocalWidgetLayoutType.current
   Column(modifier = modifier) {
     Box {
       WidgetTextClock(
         format12Hour =
           stringResource(
-            if (widgetLayoutSize !is WidgetLayoutSize.Small) R.string.time_format_12_h_full
+            if (widgetLayoutSize !is WidgetLayoutType.Small) R.string.time_format_12_h_full
             else R.string.time_format_12_h_short
           ),
         format24Hour =
           stringResource(
-            if (widgetLayoutSize !is WidgetLayoutSize.Small) R.string.time_format_24_h_full
+            if (widgetLayoutSize !is WidgetLayoutType.Small) R.string.time_format_24_h_full
             else R.string.time_format_24_h_short
           ),
       ) {
@@ -30,7 +30,7 @@ fun WidgetAlarmListTextClock(modifier: GlanceModifier = GlanceModifier) {
           R.id.widget_text_clock,
           "setTextSize",
           integerResource(
-              if (widgetLayoutSize is WidgetLayoutSize.Large) {
+              if (widgetLayoutSize is WidgetLayoutType.Large) {
                 R.integer.widget_text_clock_large_font_size
               } else {
                 R.integer.widget_text_clock_normal_font_size
@@ -44,7 +44,7 @@ fun WidgetAlarmListTextClock(modifier: GlanceModifier = GlanceModifier) {
     Box {
       val amPmFormat =
         stringResource(
-          if (widgetLayoutSize !is WidgetLayoutSize.Small) R.string.time_format_am_pm_date_full
+          if (widgetLayoutSize !is WidgetLayoutType.Small) R.string.time_format_am_pm_date_full
           else R.string.time_format_am_pm_date_short
         )
       WidgetTextClock(format12Hour = amPmFormat, format24Hour = amPmFormat) {

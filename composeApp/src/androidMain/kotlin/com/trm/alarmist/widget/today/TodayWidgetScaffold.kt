@@ -27,12 +27,12 @@ import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
-import com.trm.alarmist.widget.common.ui.WidgetLayoutSize
+import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalIsPreview
-import com.trm.alarmist.widget.common.util.LocalWidgetLayoutSize
+import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
@@ -45,7 +45,7 @@ import kotlinx.datetime.LocalDate
 internal fun TodayWidgetScaffold(
   id: GlanceId,
   state: Initializable<TodayWidgetState>,
-  showTitleBar: Boolean = LocalWidgetLayoutSize.current.showTitleBar,
+  showTitleBar: Boolean = LocalWidgetLayoutType.current.showTitleBar,
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
     val context = LocalContext.current
@@ -77,7 +77,7 @@ internal fun TodayWidgetScaffold(
             WidgetAlarmListTextClock(
               modifier =
                 GlanceModifier.defaultWeight().run {
-                  if (LocalWidgetLayoutSize.current !is WidgetLayoutSize.Large) {
+                  if (LocalWidgetLayoutType.current !is WidgetLayoutType.Large) {
                     padding(start = 16.dp)
                   } else {
                     this
