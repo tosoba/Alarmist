@@ -31,12 +31,11 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.material3.ColorProviders
-import androidx.glance.preview.ExperimentalGlancePreviewApi
-import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
@@ -47,6 +46,7 @@ import com.trm.alarmist.core.domain.usecase.GetNextTodayAlarmUseCase
 import com.trm.alarmist.core.ui.theme.darkScheme
 import com.trm.alarmist.core.ui.theme.lightScheme
 import com.trm.alarmist.feature.root.RootStartMode
+import com.trm.alarmist.widget.common.ui.ClockWidgetPreview
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
@@ -123,10 +123,13 @@ private fun ClockWidgetContent(
 
     Column(
       modifier =
-        GlanceModifier.background(backgroundColor)
+        GlanceModifier.fillMaxSize()
+          .background(backgroundColor)
           .cornerRadius(28.dp)
           .padding(8.dp)
-          .clickable(emptyActionIfPreviewOrElse { actionStartMainActivity(RootStartMode.Normal) })
+          .clickable(emptyActionIfPreviewOrElse { actionStartMainActivity(RootStartMode.Normal) }),
+      verticalAlignment = Alignment.Vertical.CenterVertically,
+      horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
     ) {
       Box {
         WidgetTextClock(
@@ -227,14 +230,24 @@ private fun ClockWidgetContent(
 }
 
 @Suppress("unused")
-@OptIn(ExperimentalGlancePreviewApi::class)
-@Preview
+@ClockWidgetPreview
 @Composable
-private fun ClockWidgetContentPreview() {
+private fun ClockWidgetContentLightPreview() {
   ClockWidgetContent(
     alarm = clockWidgetPreviewAlarm(),
     textColorProvider = ColorProvider(Color.Black),
     backgroundColor = lightScheme.secondaryContainer,
+  )
+}
+
+@Suppress("unused")
+@ClockWidgetPreview
+@Composable
+private fun ClockWidgetContentDarkPreview() {
+  ClockWidgetContent(
+    alarm = clockWidgetPreviewAlarm(),
+    textColorProvider = ColorProvider(Color.White),
+    backgroundColor = darkScheme.secondaryContainer,
   )
 }
 

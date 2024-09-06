@@ -7,4 +7,6 @@ internal object WidgetPreviewDimensions {
 
   const val SHOW_TITLE_BAR_HEIGHT = WidgetLayoutCutOffPoint.MIN_SHOW_TITLE_BAR_HEIGHT + 40
   const val HIDE_TITLE_BAR_HEIGHT = WidgetLayoutCutOffPoint.MIN_SHOW_TITLE_BAR_HEIGHT - 20
+
+  const val CLOCK_HEIGHT = 120
 }
