@@ -58,6 +58,7 @@ import com.trm.alarmist.widget.common.util.clockWidgetPreviewAlarm
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
 import com.trm.alarmist.widget.common.util.stringResource
+import com.trm.alarmist.widget.common.ui.WidgetPreviewCompositionLocalProvider
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlinx.datetime.LocalDateTime
@@ -233,22 +234,26 @@ private fun ClockWidgetContent(
 @ClockWidgetPreview
 @Composable
 private fun ClockWidgetContentLightPreview() {
-  ClockWidgetContent(
-    alarm = clockWidgetPreviewAlarm(),
-    textColorProvider = ColorProvider(Color.Black),
-    backgroundColor = lightScheme.secondaryContainer,
-  )
+  WidgetPreviewCompositionLocalProvider {
+    ClockWidgetContent(
+      alarm = clockWidgetPreviewAlarm(),
+      textColorProvider = ColorProvider(Color.Black),
+      backgroundColor = lightScheme.secondaryContainer,
+    )
+  }
 }
 
 @Suppress("unused")
 @ClockWidgetPreview
 @Composable
 private fun ClockWidgetContentDarkPreview() {
-  ClockWidgetContent(
-    alarm = clockWidgetPreviewAlarm(),
-    textColorProvider = ColorProvider(Color.White),
-    backgroundColor = darkScheme.secondaryContainer,
-  )
+  WidgetPreviewCompositionLocalProvider {
+    ClockWidgetContent(
+      alarm = clockWidgetPreviewAlarm(),
+      textColorProvider = ColorProvider(Color.White),
+      backgroundColor = darkScheme.secondaryContainer,
+    )
+  }
 }
 
 @Composable

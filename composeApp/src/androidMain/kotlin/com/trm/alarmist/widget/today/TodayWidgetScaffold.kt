@@ -1,7 +1,6 @@
 package com.trm.alarmist.widget.today
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -26,11 +25,10 @@ import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
-import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
+import com.trm.alarmist.widget.common.ui.WidgetPreviewCompositionLocalProvider
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
-import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.composableIfOrNull
@@ -131,10 +129,7 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
 @AlarmListWidgetPreview
 @Composable
 private fun TodayWidgetScaffoldLoadingPreview() {
-  CompositionLocalProvider(
-    LocalIsPreview provides true,
-    LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
-  ) {
+  WidgetPreviewCompositionLocalProvider {
     TodayWidgetScaffold(id = object : GlanceId {}, state = Uninitialized)
   }
 }
@@ -143,10 +138,7 @@ private fun TodayWidgetScaffoldLoadingPreview() {
 @AlarmListWidgetPreview
 @Composable
 private fun TodayWidgetScaffoldEmptyPreview() {
-  CompositionLocalProvider(
-    LocalIsPreview provides true,
-    LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
-  ) {
+  WidgetPreviewCompositionLocalProvider {
     TodayWidgetScaffold(
       id = object : GlanceId {},
       state = Initialized(TodayWidgetState(alarms = emptyList(), groups = emptyMap())),
@@ -158,10 +150,7 @@ private fun TodayWidgetScaffoldEmptyPreview() {
 @AlarmListWidgetPreview
 @Composable
 private fun TodayWidgetScaffoldNonEmptyPreview() {
-  CompositionLocalProvider(
-    LocalIsPreview provides true,
-    LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
-  ) {
+  WidgetPreviewCompositionLocalProvider {
     TodayWidgetScaffold(
       id = object : GlanceId {},
       state = Initialized(TodayWidgetState(alarms = widgetPreviewAlarmList(), groups = emptyMap())),
