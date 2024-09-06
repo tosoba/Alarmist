@@ -9,7 +9,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.Scaffold
-import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.material3.ColorProviders
 import com.trm.alarmist.R
@@ -87,7 +87,7 @@ internal fun TodayWidgetScaffold(
 private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayWidgetState>) {
   when (state) {
     is Uninitialized -> {
-      WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))
+      WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxSize().padding(vertical = 20.dp))
     }
     is Initialized -> {
       val context = LocalContext.current
@@ -123,6 +123,18 @@ private fun TodayWidgetScaffoldContent(id: GlanceId, state: Initializable<TodayW
         )
       }
     }
+  }
+}
+
+@Suppress("unused")
+@AlarmListWidgetPreview
+@Composable
+private fun TodayWidgetScaffoldLoadingPreview() {
+  CompositionLocalProvider(
+    LocalIsPreview provides true,
+    LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
+  ) {
+    TodayWidgetScaffold(id = object : GlanceId {}, state = Uninitialized)
   }
 }
 
