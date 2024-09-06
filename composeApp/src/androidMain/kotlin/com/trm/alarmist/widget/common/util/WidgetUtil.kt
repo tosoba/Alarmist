@@ -139,7 +139,7 @@ internal fun widgetPreviewAlarmList(groupId: Long? = null): List<WidgetAlarmList
       groupId = groupId,
       fireAtTime = LocalTime(12, 0),
       name = "Lunch",
-      isOn = true,
+      isOn = false,
       fireOnDateTime = LocalDateTime(2024, 8, 25, 12, 0),
       isCustomScheduled = true,
     ),

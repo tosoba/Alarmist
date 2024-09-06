@@ -38,6 +38,7 @@ import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.toggleAlarmOnOffOnDateIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
+import com.trm.alarmist.widget.common.util.widgetPreviewAlarmList
 import kotlinx.datetime.LocalDate
 
 @Composable
@@ -149,6 +150,21 @@ private fun TodayWidgetScaffoldEmptyPreview() {
     TodayWidgetScaffold(
       id = object : GlanceId {},
       state = Initialized(TodayWidgetState(alarms = emptyList(), groups = emptyMap())),
+    )
+  }
+}
+
+@Suppress("unused")
+@AlarmListWidgetPreview
+@Composable
+private fun TodayWidgetScaffoldNonEmptyPreview() {
+  CompositionLocalProvider(
+    LocalIsPreview provides true,
+    LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
+  ) {
+    TodayWidgetScaffold(
+      id = object : GlanceId {},
+      state = Initialized(TodayWidgetState(alarms = widgetPreviewAlarmList(), groups = emptyMap())),
     )
   }
 }
