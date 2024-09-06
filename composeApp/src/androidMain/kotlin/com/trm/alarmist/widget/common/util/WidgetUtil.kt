@@ -19,6 +19,7 @@ import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.state.updateAppWidgetState
 import com.trm.alarmist.MainActivity
 import com.trm.alarmist.R
+import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
@@ -177,3 +178,6 @@ internal fun clockWidgetPreviewAlarm(): AlarmListModel =
     scheduledOnMultipleDates = false,
     snoozedFireAtTime = null,
   )
+
+internal fun widgetPreviewAlarmGroup(): AlarmGroupModel =
+  AlarmGroupModel(id = 1L, name = "Routine", alarmsCount = 4, isOn = true, color = 0x0)

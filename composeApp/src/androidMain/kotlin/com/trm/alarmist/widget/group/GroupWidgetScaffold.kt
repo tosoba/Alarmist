@@ -18,7 +18,7 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
-import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
@@ -30,11 +30,13 @@ import com.trm.alarmist.core.ui.theme.darkScheme
 import com.trm.alarmist.core.ui.theme.lightScheme
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.WidgetRefreshButton
+import com.trm.alarmist.widget.common.ui.AlarmListWidgetPreview
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock
 import com.trm.alarmist.widget.common.ui.WidgetDimensions.widgetPadding
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
+import com.trm.alarmist.widget.common.ui.WidgetPreviewCompositionLocalProvider
 import com.trm.alarmist.widget.common.ui.WidgetTextStyles
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
@@ -46,6 +48,8 @@ import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.stringResource
 import com.trm.alarmist.widget.common.util.toggleAlarmOnOffIntent
 import com.trm.alarmist.widget.common.util.updateWidgetIntent
+import com.trm.alarmist.widget.common.util.widgetPreviewAlarmGroup
+import com.trm.alarmist.widget.common.util.widgetPreviewAlarmList
 
 @Composable
 internal fun GroupWidgetScaffold(
@@ -112,7 +116,7 @@ private fun GroupWidgetScaffoldContent(id: GlanceId, state: GroupWidgetState) {
 
   when (state) {
     is GroupWidgetState.Uninitialized -> {
-      WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 20.dp))
+      WidgetLoadingIndicator(modifier = GlanceModifier.fillMaxSize().padding(vertical = 20.dp))
     }
     is GroupWidgetState.Initialized -> {
       if (state.alarms.isEmpty()) {
@@ -160,6 +164,52 @@ private fun GroupIcon(color: Long, iconSize: Dp, modifier: GlanceModifier = Glan
       provider = ImageProvider(R.drawable.folder_open),
       contentDescription = null,
       modifier = GlanceModifier.size(iconSize),
+    )
+  }
+}
+
+@Suppress("unused")
+@AlarmListWidgetPreview
+@Composable
+private fun GroupWidgetScaffoldNoGroupSetPreview() {
+  WidgetPreviewCompositionLocalProvider {
+    GroupWidgetScaffold(id = object : GlanceId {}, state = GroupWidgetState.NoGroupSet)
+  }
+}
+
+@Suppress("unused")
+@AlarmListWidgetPreview
+@Composable
+private fun GroupWidgetScaffoldLoadingPreview() {
+  WidgetPreviewCompositionLocalProvider {
+    GroupWidgetScaffold(id = object : GlanceId {}, state = GroupWidgetState.Uninitialized)
+  }
+}
+
+@Suppress("unused")
+@AlarmListWidgetPreview
+@Composable
+private fun GroupWidgetScaffoldEmptyPreview() {
+  WidgetPreviewCompositionLocalProvider {
+    GroupWidgetScaffold(
+      id = object : GlanceId {},
+      state = GroupWidgetState.Initialized(alarms = emptyList(), group = widgetPreviewAlarmGroup()),
+    )
+  }
+}
+
+@Suppress("unused")
+@AlarmListWidgetPreview
+@Composable
+private fun GroupWidgetScaffoldNonEmptyPreview() {
+  WidgetPreviewCompositionLocalProvider {
+    GroupWidgetScaffold(
+      id = object : GlanceId {},
+      state =
+        GroupWidgetState.Initialized(
+          alarms = widgetPreviewAlarmList(1L),
+          group = widgetPreviewAlarmGroup(),
+        ),
     )
   }
 }
