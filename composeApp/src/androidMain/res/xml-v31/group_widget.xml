@@ -9,7 +9,7 @@
     android:minHeight="@dimen/alarm_list_widget_min_height"
     android:minResizeWidth="@dimen/alarm_list_widget_min_resize_width"
     android:minResizeHeight="@dimen/alarm_list_widget_min_resize_height"
-    android:previewImage="@drawable/today_widget_preview"
+    android:previewImage="@drawable/group_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="@integer/alarm_list_widget_target_cell_width"
     android:targetCellHeight="@integer/alarm_list_widget_target_cell_height"

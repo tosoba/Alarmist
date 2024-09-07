@@ -102,7 +102,7 @@
         <receiver
             android:name=".widget.today.TodayWidgetReceiver"
             android:exported="false"
-            android:label="@string/today_alarms">
+            android:label="@string/today_widget_label">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -116,7 +116,7 @@
         <receiver
             android:name=".widget.clock.ClockWidgetReceiver"
             android:exported="false"
-            android:label="@string/clock">
+            android:label="@string/clock_widget_label">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -130,7 +130,7 @@
         <receiver
             android:name=".widget.group.GroupWidgetReceiver"
             android:exported="false"
-            android:label="@string/alarm_group">
+            android:label="@string/group_widget_label">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

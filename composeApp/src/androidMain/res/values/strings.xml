@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">alarmist</string>
-    <string name="today_alarms">Today alarms</string>
-    <string name="clock">Clock</string>
-    <string name="alarm_group">Alarm group</string>
 
     <string name="time_format_am_pm_date_full">aa / EEEE, MMM dd</string>
     <string name="time_format_am_pm_date_short">aa / EEE, MMM dd</string>
@@ -26,9 +23,13 @@
     <string name="no_group_set">No group set</string>
     <string name="choose_group">Choose a group</string>
 
+    <string name="today_widget_label">Today alarms</string>
+    <string name="clock_widget_label">Clock</string>
+    <string name="group_widget_label">Grouped alarms</string>
+
     <string name="today_widget_description">Alarms scheduled for today</string>
-    <string name="clock_widget_description">A clock with next scheduled alarm</string>
-    <string name="group_widget_description">Alarm group</string>
+    <string name="clock_widget_description">A clock with the next scheduled alarm information</string>
+    <string name="group_widget_description">Alarms contained in a specified group</string>
 
     <string name="widget_pinned_success_info">Widget pinned. Check it on your home screen.</string>
 
