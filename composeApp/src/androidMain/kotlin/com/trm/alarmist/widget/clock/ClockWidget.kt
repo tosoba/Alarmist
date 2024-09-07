@@ -49,6 +49,7 @@ import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.ui.ClockWidgetPreview
 import com.trm.alarmist.widget.common.ui.WidgetAlarmFireAtTimeText
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
+import com.trm.alarmist.widget.common.ui.WidgetPreviewCompositionLocalProvider
 import com.trm.alarmist.widget.common.ui.WidgetTextClock
 import com.trm.alarmist.widget.common.ui.WidgetTextShadowMode
 import com.trm.alarmist.widget.common.util.LocalIsPreview
@@ -58,7 +59,6 @@ import com.trm.alarmist.widget.common.util.clockWidgetPreviewAlarm
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
 import com.trm.alarmist.widget.common.util.stringResource
-import com.trm.alarmist.widget.common.ui.WidgetPreviewCompositionLocalProvider
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlinx.datetime.LocalDateTime
@@ -100,7 +100,7 @@ internal class ClockWidgetPinPreview : GlanceAppWidget() {
         ClockWidgetContent(
           alarm = clockWidgetPreviewAlarm(),
           textColorProvider = ColorProvider(Color.Black),
-          backgroundColor = lightScheme.secondaryContainer,
+          backgroundColor = lightScheme.background,
         )
       }
     }
@@ -238,7 +238,7 @@ private fun ClockWidgetContentLightPreview() {
     ClockWidgetContent(
       alarm = clockWidgetPreviewAlarm(),
       textColorProvider = ColorProvider(Color.Black),
-      backgroundColor = lightScheme.secondaryContainer,
+      backgroundColor = lightScheme.background,
     )
   }
 }
@@ -251,7 +251,7 @@ private fun ClockWidgetContentDarkPreview() {
     ClockWidgetContent(
       alarm = clockWidgetPreviewAlarm(),
       textColorProvider = ColorProvider(Color.White),
-      backgroundColor = darkScheme.secondaryContainer,
+      backgroundColor = darkScheme.background,
     )
   }
 }
