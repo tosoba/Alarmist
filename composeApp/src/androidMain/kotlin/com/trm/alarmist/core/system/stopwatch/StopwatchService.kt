@@ -14,6 +14,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
@@ -36,8 +37,10 @@ class StopwatchService : Service() {
   var duration by mutableStateOf(Duration.ZERO)
     private set
 
-  private var showNotification = false
+  val laps = mutableStateListOf<Duration>()
+
   private var timer: Timer? = null
+  private var showNotification = false
 
   private val binder = StopwatchBinder()
 
@@ -62,6 +65,9 @@ class StopwatchService : Service() {
       Action.CANCEL -> {
         cancelStopwatch()
         stopService()
+      }
+      Action.RECORD_LAP -> {
+        laps.add(duration)
       }
       Action.SHOW_NOTIFICATION -> {
         showNotification = true
@@ -207,6 +213,7 @@ class StopwatchService : Service() {
   enum class Action {
     TOGGLE_RUNNING,
     CANCEL,
+    RECORD_LAP,
     SHOW_NOTIFICATION,
     HIDE_NOTIFICATION,
   }

@@ -25,6 +25,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,8 +42,10 @@ import kotlin.time.Duration
 fun StopwatchDuration(
   duration: Duration,
   state: StopwatchState,
+  laps: SnapshotStateList<Duration>,
   onStartStopClick: () -> Unit,
   onCancelClick: () -> Unit,
+  onRecordLapClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   Column(
@@ -69,60 +72,75 @@ fun StopwatchDuration(
 
     Spacer(modifier = Modifier.weight(1f))
 
-    Row(
-      modifier = Modifier.fillMaxWidth(),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
+    StopwatchDurationControls(
+      state = state,
+      onStartStopClick = onStartStopClick,
+      onCancelClick = onCancelClick,
+      onRecordLapClick = onRecordLapClick,
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+  }
+}
+
+@Composable
+private fun StopwatchDurationControls(
+  state: StopwatchState,
+  onStartStopClick: () -> Unit,
+  onCancelClick: () -> Unit,
+  onRecordLapClick: () -> Unit,
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
+  ) {
+    AnimatedContent(
+      targetState = state != StopwatchState.IDLE,
+      transitionSpec =
+        AnimatedContentTransitionScope<Boolean>::sideFloatingActionButtonTransitionSpec,
     ) {
-      AnimatedContent(
-        targetState = state != StopwatchState.IDLE,
-        transitionSpec =
-          AnimatedContentTransitionScope<Boolean>::sideFloatingActionButtonTransitionSpec,
-      ) {
-        if (it) {
-          FloatingActionButton(
-            onClick = onCancelClick,
-            elevation = FloatingActionButtonDefaults.loweredElevation(),
-          ) {
-            Icon(imageVector = Icons.Default.RestartAlt, contentDescription = "Reset stopwatch")
-          }
-        } else {
-          FloatingActionButtonSpacerBox()
+      if (it) {
+        FloatingActionButton(
+          onClick = onCancelClick,
+          elevation = FloatingActionButtonDefaults.loweredElevation(),
+        ) {
+          Icon(imageVector = Icons.Default.RestartAlt, contentDescription = "Reset stopwatch")
         }
-      }
-
-      LargeFloatingActionButton(onClick = onStartStopClick) {
-        Icon(
-          imageVector =
-            if (state == StopwatchState.RUNNING) Icons.Default.Pause else Icons.Default.PlayArrow,
-          contentDescription =
-            when (state) {
-              StopwatchState.RUNNING -> "Pause stopwatch"
-              StopwatchState.PAUSED -> "Resume stopwatch"
-              else -> "Start stopwatch"
-            },
-        )
-      }
-
-      AnimatedContent(
-        targetState = state == StopwatchState.RUNNING,
-        transitionSpec =
-          AnimatedContentTransitionScope<Boolean>::sideFloatingActionButtonTransitionSpec,
-      ) {
-        if (it) {
-          FloatingActionButton(
-            onClick = {}, // TODO: on lap click
-            elevation = FloatingActionButtonDefaults.loweredElevation(),
-          ) {
-            Icon(imageVector = Icons.Default.Timer, contentDescription = "Record lap")
-          }
-        } else {
-          FloatingActionButtonSpacerBox()
-        }
+      } else {
+        FloatingActionButtonSpacerBox()
       }
     }
 
-    Spacer(modifier = Modifier.height(16.dp))
+    LargeFloatingActionButton(onClick = onStartStopClick) {
+      Icon(
+        imageVector =
+          if (state == StopwatchState.RUNNING) Icons.Default.Pause else Icons.Default.PlayArrow,
+        contentDescription =
+          when (state) {
+            StopwatchState.RUNNING -> "Pause stopwatch"
+            StopwatchState.PAUSED -> "Resume stopwatch"
+            else -> "Start stopwatch"
+          },
+      )
+    }
+
+    AnimatedContent(
+      targetState = state == StopwatchState.RUNNING,
+      transitionSpec =
+        AnimatedContentTransitionScope<Boolean>::sideFloatingActionButtonTransitionSpec,
+    ) {
+      if (it) {
+        FloatingActionButton(
+          onClick = onRecordLapClick,
+          elevation = FloatingActionButtonDefaults.loweredElevation(),
+        ) {
+          Icon(imageVector = Icons.Default.Timer, contentDescription = "Record lap")
+        }
+      } else {
+        FloatingActionButtonSpacerBox()
+      }
+    }
   }
 }
 

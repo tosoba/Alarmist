@@ -15,6 +15,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -83,6 +84,7 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
 
   val state by remember { derivedStateOf { service?.state ?: StopwatchState.IDLE } }
   val duration by remember { derivedStateOf { service?.duration ?: Duration.ZERO } }
+  val laps by remember { derivedStateOf { service?.laps ?: mutableStateListOf() } }
 
   Scaffold(modifier = modifier) {
     StopwatchDuration(
@@ -92,6 +94,7 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
           .padding(bottom = it.calculateBottomPadding()),
       duration = duration,
       state = state,
+      laps = laps,
       onStartStopClick = {
         StopwatchService.startWithAction(
           context = context,
@@ -100,6 +103,12 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
       },
       onCancelClick = {
         StopwatchService.startWithAction(context = context, action = StopwatchService.Action.CANCEL)
+      },
+      onRecordLapClick = {
+        StopwatchService.startWithAction(
+          context = context,
+          action = StopwatchService.Action.RECORD_LAP,
+        )
       },
     )
   }
