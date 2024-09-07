@@ -19,6 +19,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.timer.TimerService
@@ -54,6 +57,29 @@ actual fun TimerContent(component: TimerComponent, modifier: Modifier) {
       )
 
     onDispose { if (bound) context.unbindService(connection) }
+  }
+
+  val owner = LocalLifecycleOwner.current
+  DisposableEffect(Unit) {
+    val observer =
+      object : DefaultLifecycleObserver {
+        override fun onResume(owner: LifecycleOwner) {
+          TimerService.startWithAction(
+            context = context,
+            action = TimerService.Action.HideNotification,
+          )
+        }
+
+        override fun onPause(owner: LifecycleOwner) {
+          TimerService.startWithAction(
+            context = context,
+            action = TimerService.Action.ShowNotification,
+          )
+        }
+      }
+    owner.lifecycle.addObserver(observer)
+
+    onDispose { owner.lifecycle.removeObserver(observer) }
   }
 
   val state by

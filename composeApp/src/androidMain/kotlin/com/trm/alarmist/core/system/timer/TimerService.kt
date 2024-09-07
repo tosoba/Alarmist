@@ -47,6 +47,7 @@ class TimerService : Service() {
 
   private var timer: Timer? = null
   private var mediaPlayer: MediaPlayer? = null
+  private var showNotification = false
 
   private val binder = TimerBinder()
 
@@ -71,17 +72,10 @@ class TimerService : Service() {
   private fun handleAction(action: Action) {
     when (action) {
       is Action.Start -> {
-        startForegroundService()
-        initialDuration = action.duration
-        startTimer(action.duration)
+        handleStartAction(action.duration)
       }
       is Action.ToggleRunning -> {
-        if (state == TimerState.RUNNING) {
-          pauseTimer()
-          updateNotification(buildPausedNotification())
-        } else if (state == TimerState.PAUSED) {
-          startTimer(duration)
-        }
+        handleToggleRunningAction()
       }
       is Action.AddDuration -> {
         updateDuration(duration + action.duration)
@@ -96,7 +90,37 @@ class TimerService : Service() {
       }
       Action.Cancel -> {
         cancelTimer()
-        stopService(foregroundOnly = false)
+        stopService()
+      }
+      Action.ShowNotification -> {
+        showNotification = true
+        startForeground()
+      }
+      Action.HideNotification -> {
+        showNotification = false
+        stopForeground()
+      }
+    }
+  }
+
+  private fun handleStartAction(duration: Duration) {
+    initialDuration = duration
+    startTimer(duration)
+    if (showNotification) {
+      startForeground()
+    }
+  }
+
+  private fun handleToggleRunningAction() {
+    if (state == TimerState.RUNNING) {
+      pauseTimer()
+      if (showNotification) {
+        updateNotification(buildPausedNotification())
+      }
+    } else if (state == TimerState.PAUSED) {
+      startTimer(duration)
+      if (showNotification) {
+        startForeground()
       }
     }
   }
@@ -109,8 +133,8 @@ class TimerService : Service() {
         if (duration.inWholeMilliseconds == 0L) {
           elapseTimer()
           playElapsedSound()
-          stopService(foregroundOnly = true)
-        } else if (duration.inWholeMilliseconds % 1_000L == 0L) {
+          stopForeground()
+        } else if (showNotification && duration.inWholeMilliseconds % 1_000L == 0L) {
           updateNotification(buildRunningNotification())
         }
       }
@@ -191,14 +215,21 @@ class TimerService : Service() {
       .setContentIntent(clickPendingIntent(this))
       .build()
 
-  private fun startForegroundService() {
-    startForeground(NOTIFICATION_ID, buildRunningNotification())
+  private fun startForeground() {
+    startForeground(
+      NOTIFICATION_ID,
+      if (state == TimerState.RUNNING) buildRunningNotification() else buildPausedNotification(),
+    )
   }
 
-  private fun stopService(foregroundOnly: Boolean) {
+  private fun stopService() {
+    stopForeground()
+    stopSelf()
+  }
+
+  private fun stopForeground() {
     getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
     stopForeground(STOP_FOREGROUND_REMOVE)
-    if (!foregroundOnly) stopSelf()
   }
 
   private fun createNotificationChannel() {
@@ -280,6 +311,10 @@ class TimerService : Service() {
     @Parcelize data object Reset : Action
 
     @Parcelize data object Cancel : Action
+
+    @Parcelize data object ShowNotification : Action
+
+    @Parcelize data object HideNotification : Action
   }
 
   companion object {
