@@ -26,23 +26,7 @@ fun DurationText(
   layoutType: DurationTextLayoutType,
   modifier: Modifier = Modifier,
 ) {
-  val (time, fractionOfSecond) =
-    remember(duration) {
-      duration.toComponents { hours, minutes, seconds, nanoseconds ->
-        buildString {
-          if (hours > 0L) {
-            append(hours.toInt())
-            append(':')
-          }
-          if (hours > 0L || minutes > 0) {
-            append(minutes)
-            append(':')
-          }
-          append(seconds.zeroPadded())
-        } to (nanoseconds / 10_000_000L).toInt().zeroPadded()
-      }
-    }
-
+  val (time, fractionOfSecond) = rememberDurationText(duration)
   when (layoutType) {
     DurationTextLayoutType.Vertical -> {
       Column(horizontalAlignment = Alignment.End, modifier = modifier) {
@@ -59,6 +43,24 @@ fun DurationText(
     }
   }
 }
+
+@Composable
+fun rememberDurationText(duration: Duration): Pair<String, String> =
+  remember(duration) {
+    duration.toComponents { hours, minutes, seconds, nanoseconds ->
+      buildString {
+        if (hours > 0L) {
+          append(hours.toInt())
+          append(':')
+        }
+        if (hours > 0L || minutes > 0) {
+          append(minutes)
+          append(':')
+        }
+        append(seconds.zeroPadded())
+      } to (nanoseconds / 10_000_000L).toInt().zeroPadded()
+    }
+  }
 
 @Composable
 private fun TimeText(text: String, modifier: Modifier = Modifier) {

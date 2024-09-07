@@ -111,6 +111,7 @@ class StopwatchService : Service() {
   }
 
   private fun cancelStopwatch() {
+    laps.clear()
     timer?.cancel()
     duration = Duration.ZERO
     state = StopwatchState.IDLE
