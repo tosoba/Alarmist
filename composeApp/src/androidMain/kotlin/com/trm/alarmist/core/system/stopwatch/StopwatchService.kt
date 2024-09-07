@@ -49,7 +49,7 @@ class StopwatchService : Service() {
   override fun onBind(intent: Intent?): StopwatchBinder = binder
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    intent?.getSerializable<Action>(EXTRA_ACTION)?.let { handleAction(it) }
+    intent?.getSerializable<Action>(EXTRA_ACTION)?.let(::handleAction)
       ?: throw IllegalArgumentException("Missing StopwatchServiceAction.")
     return super.onStartCommand(intent, flags, startId)
   }
@@ -57,25 +57,33 @@ class StopwatchService : Service() {
   private fun handleAction(action: Action) {
     when (action) {
       Action.TOGGLE_RUNNING -> {
-        if (state == StopwatchState.RUNNING) {
-          stopStopwatch()
-          updateNotification(buildPausedNotification())
-        } else {
-          if (showNotification) startForegroundService()
-          startStopwatch()
-        }
+        handleToggleRunningAction()
       }
       Action.CANCEL -> {
         cancelStopwatch()
-        stopService(foregroundOnly = false)
+        stopService()
       }
       Action.SHOW_NOTIFICATION -> {
         showNotification = true
-        startForegroundService()
+        startForeground()
       }
       Action.HIDE_NOTIFICATION -> {
         showNotification = false
-        stopService(foregroundOnly = true)
+        stopForeground()
+      }
+    }
+  }
+
+  private fun handleToggleRunningAction() {
+    if (state == StopwatchState.RUNNING) {
+      stopStopwatch()
+      if (showNotification) {
+        updateNotification(buildPausedNotification())
+      }
+    } else {
+      startStopwatch()
+      if (showNotification) {
+        startForeground()
       }
     }
   }
@@ -112,14 +120,21 @@ class StopwatchService : Service() {
       .setContentIntent(clickPendingIntent(this))
       .build()
 
-  private fun startForegroundService() {
-    startForeground(NOTIFICATION_ID, buildRunningNotification())
+  private fun startForeground() {
+    startForeground(
+      NOTIFICATION_ID,
+      if (state == StopwatchState.RUNNING) buildRunningNotification() else buildPausedNotification(),
+    )
   }
 
-  private fun stopService(foregroundOnly: Boolean) {
+  private fun stopService() {
+    stopForeground()
+    stopSelf()
+  }
+
+  private fun stopForeground() {
     getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
     stopForeground(STOP_FOREGROUND_REMOVE)
-    if (!foregroundOnly) stopSelf()
   }
 
   private fun createNotificationChannel() {
