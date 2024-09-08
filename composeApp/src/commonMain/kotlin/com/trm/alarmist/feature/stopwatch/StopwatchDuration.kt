@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -73,50 +71,47 @@ fun StopwatchDuration(
 ) {
   BoxWithConstraints(modifier = modifier) {
     if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
-      Row(
+      Column(
         modifier = Modifier.fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
       ) {
-        Column(
-          modifier = Modifier.fillMaxHeight().weight(1f),
-          verticalArrangement = Arrangement.Center,
-          horizontalAlignment = Alignment.CenterHorizontally,
+        Spacer(modifier = Modifier.weight(1f))
+
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.Center,
         ) {
-          Spacer(modifier = Modifier.weight(1f))
+          Spacer(modifier = Modifier.width(16.dp))
 
-          DurationText(
-            duration = duration,
-            layoutType = DurationTextLayoutType.Horizontal,
-            modifier = Modifier.padding(horizontal = 24.dp),
-          )
+          DurationText(duration = duration, layoutType = DurationTextLayoutType.Horizontal)
 
-          Spacer(modifier = Modifier.weight(1f))
+          if (laps.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(16.dp))
 
-          StopwatchDurationControls(
-            state = state,
-            onStartStopClick = onStartStopClick,
-            onCancelClick = onCancelClick,
-            onRecordLapClick = onRecordLapClick,
-          )
+            val lapsState = rememberLazyListState()
+            LaunchedEffect(laps.size) { lapsState.animateScrollToItem(laps.lastIndex) }
 
-          Spacer(modifier = Modifier.height(16.dp))
+            Laps(
+              laps = laps,
+              state = lapsState,
+              modifier = Modifier.heightIn(max = this@BoxWithConstraints.maxHeight / 2),
+            )
+          }
+
+          Spacer(modifier = Modifier.width(16.dp))
         }
 
-        if (laps.isNotEmpty()) {
-          Spacer(modifier = Modifier.width(32.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
-          val lapsState = rememberLazyListState()
-          LaunchedEffect(laps.size) { lapsState.animateScrollToItem(laps.lastIndex) }
+        StopwatchDurationControls(
+          state = state,
+          onStartStopClick = onStartStopClick,
+          onCancelClick = onCancelClick,
+          onRecordLapClick = onRecordLapClick,
+        )
 
-          Laps(
-            laps = laps,
-            state = lapsState,
-            modifier = Modifier.fillMaxHeight().widthIn(max = this@BoxWithConstraints.maxWidth / 2),
-          )
-
-          Spacer(modifier = Modifier.width(32.dp))
-        }
+        Spacer(modifier = Modifier.height(16.dp))
       }
     } else {
       Column(
@@ -177,19 +172,23 @@ private fun Laps(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.Center,
         ) {
-          val (lapTime, lapFractionOfSecond) =
-            rememberDurationText(lapEndDuration - (laps.getOrElse(lapIndex - 1) { Duration.ZERO }))
           Text(
-            text = "$lapTime.$lapFractionOfSecond",
+            text = "#${lapIndex + 1}",
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
           )
+
+          Spacer(modifier = Modifier.width(16.dp))
+
+          val (lapTime, lapFractionOfSecond) =
+            rememberDurationText(lapEndDuration - (laps.getOrElse(lapIndex - 1) { Duration.ZERO }))
+          Text(text = "$lapTime.$lapFractionOfSecond", style = MaterialTheme.typography.bodyLarge)
 
           Spacer(modifier = Modifier.width(16.dp))
 
           val (lapEndTime, lapEndFractionOfSecond) = rememberDurationText(lapEndDuration)
           Text(
             text = "$lapEndTime.$lapEndFractionOfSecond",
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+            style = MaterialTheme.typography.bodyLarge,
           )
         }
       }
