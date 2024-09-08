@@ -39,11 +39,18 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.domain.model.StopwatchState
@@ -157,28 +164,70 @@ private fun Laps(
   state: LazyListState = rememberLazyListState(),
   modifier: Modifier = Modifier,
 ) {
-  LazyColumn(contentPadding = PaddingValues(16.dp), state = state, modifier = modifier) {
-    itemsIndexed(laps) { lapIndex, lapEndDuration ->
-      Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-      ) {
-        val (lapTime, lapFractionOfSecond) =
-          rememberDurationText(lapEndDuration - (laps.getOrElse(lapIndex - 1) { Duration.ZERO }))
-        Text(
-          text = "$lapTime.$lapFractionOfSecond",
-          style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-        )
+  Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    var columnWidthPx by remember { mutableStateOf(0) }
 
-        Spacer(modifier = Modifier.width(16.dp))
+    LazyColumn(
+      contentPadding = PaddingValues(16.dp),
+      state = state,
+      modifier = Modifier.onGloballyPositioned { columnWidthPx = it.size.width },
+    ) {
+      itemsIndexed(laps) { lapIndex, lapEndDuration ->
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.Center,
+        ) {
+          val (lapTime, lapFractionOfSecond) =
+            rememberDurationText(lapEndDuration - (laps.getOrElse(lapIndex - 1) { Duration.ZERO }))
+          Text(
+            text = "$lapTime.$lapFractionOfSecond",
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+          )
 
-        val (lapEndTime, lapEndFractionOfSecond) = rememberDurationText(lapEndDuration)
-        Text(
-          text = "$lapEndTime.$lapEndFractionOfSecond",
-          style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-        )
+          Spacer(modifier = Modifier.width(16.dp))
+
+          val (lapEndTime, lapEndFractionOfSecond) = rememberDurationText(lapEndDuration)
+          Text(
+            text = "$lapEndTime.$lapEndFractionOfSecond",
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+          )
+        }
       }
     }
+
+    Box(
+      modifier =
+        Modifier.width(with(LocalDensity.current) { columnWidthPx.toDp() })
+          .height(8.dp)
+          .background(
+            brush =
+              Brush.verticalGradient(
+                colors =
+                  listOf(
+                    MaterialTheme.colorScheme.background,
+                    MaterialTheme.colorScheme.background.copy(alpha = 0f),
+                  )
+              )
+          )
+          .align(Alignment.TopCenter)
+    )
+
+    Box(
+      modifier =
+        Modifier.width(with(LocalDensity.current) { columnWidthPx.toDp() })
+          .height(8.dp)
+          .background(
+            brush =
+              Brush.verticalGradient(
+                colors =
+                  listOf(
+                    MaterialTheme.colorScheme.background.copy(alpha = 0f),
+                    MaterialTheme.colorScheme.background,
+                  )
+              )
+          )
+          .align(Alignment.BottomCenter)
+    )
   }
 }
 

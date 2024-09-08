@@ -14,17 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BoxScope.BottomGradientBackground(color: Color = MaterialTheme.colorScheme.background) {
-  Box(
-    modifier =
-      Modifier.fillMaxWidth()
-        .height(8.dp)
-        .background(brush = Brush.verticalGradient(colors = listOf(color.copy(alpha = 0f), color)))
-        .align(Alignment.BottomCenter)
-  )
-}
-
-@Composable
 fun BoxScope.TopGradientBackground(color: Color = MaterialTheme.colorScheme.background) {
   Box(
     modifier =
@@ -32,5 +21,16 @@ fun BoxScope.TopGradientBackground(color: Color = MaterialTheme.colorScheme.back
         .height(8.dp)
         .background(brush = Brush.verticalGradient(colors = listOf(color, color.copy(alpha = 0f))))
         .align(Alignment.TopCenter)
+  )
+}
+
+@Composable
+fun BoxScope.BottomGradientBackground(color: Color = MaterialTheme.colorScheme.background) {
+  Box(
+    modifier =
+      Modifier.fillMaxWidth()
+        .height(8.dp)
+        .background(brush = Brush.verticalGradient(colors = listOf(color.copy(alpha = 0f), color)))
+        .align(Alignment.BottomCenter)
   )
 }
