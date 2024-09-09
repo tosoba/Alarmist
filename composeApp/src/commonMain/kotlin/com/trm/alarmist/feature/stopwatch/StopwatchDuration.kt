@@ -168,29 +168,11 @@ private fun Laps(
       modifier = Modifier.onGloballyPositioned { columnWidthPx = it.size.width },
     ) {
       itemsIndexed(laps) { lapIndex, lapEndDuration ->
-        Row(
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.Center,
-        ) {
-          Text(
-            text = "#${lapIndex + 1}",
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-          )
-
-          Spacer(modifier = Modifier.width(16.dp))
-
-          val (lapTime, lapFractionOfSecond) =
-            rememberDurationText(lapEndDuration - (laps.getOrElse(lapIndex - 1) { Duration.ZERO }))
-          Text(text = "$lapTime.$lapFractionOfSecond", style = MaterialTheme.typography.bodyLarge)
-
-          Spacer(modifier = Modifier.width(16.dp))
-
-          val (lapEndTime, lapEndFractionOfSecond) = rememberDurationText(lapEndDuration)
-          Text(
-            text = "$lapEndTime.$lapEndFractionOfSecond",
-            style = MaterialTheme.typography.bodyLarge,
-          )
-        }
+        LapItem(
+          lapLabel = "#${lapIndex + 1}",
+          lapDuration = lapEndDuration,
+          previousLapDuration = laps.getOrElse(lapIndex - 1) { Duration.ZERO },
+        )
       }
     }
 
@@ -227,6 +209,26 @@ private fun Laps(
           )
           .align(Alignment.BottomCenter)
     )
+  }
+}
+
+@Composable
+private fun LapItem(lapLabel: String, lapDuration: Duration, previousLapDuration: Duration) {
+  Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+    Text(
+      text = lapLabel,
+      style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+    )
+
+    Spacer(modifier = Modifier.width(16.dp))
+
+    val (lapTime, lapFractionOfSecond) = rememberDurationText(lapDuration - previousLapDuration)
+    Text(text = "$lapTime.$lapFractionOfSecond", style = MaterialTheme.typography.bodyLarge)
+
+    Spacer(modifier = Modifier.width(16.dp))
+
+    val (lapEndTime, lapEndFractionOfSecond) = rememberDurationText(lapDuration)
+    Text(text = "$lapEndTime.$lapEndFractionOfSecond", style = MaterialTheme.typography.bodyLarge)
   }
 }
 
