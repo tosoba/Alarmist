@@ -70,14 +70,14 @@ fun StopwatchDuration(
   modifier: Modifier = Modifier,
 ) {
   BoxWithConstraints(modifier = modifier) {
-    if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
-      Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-      ) {
-        Spacer(modifier = Modifier.weight(1f))
+    Column(
+      modifier = Modifier.fillMaxSize(),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      Spacer(modifier = Modifier.weight(1f))
 
+      if (calculateWindowSizeClass().heightSizeClass == WindowHeightSizeClass.Compact) {
         Row(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.Center,
@@ -101,26 +101,7 @@ fun StopwatchDuration(
 
           Spacer(modifier = Modifier.width(16.dp))
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        StopwatchDurationControls(
-          state = state,
-          onStartStopClick = onStartStopClick,
-          onCancelClick = onCancelClick,
-          onRecordLapClick = onRecordLapClick,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-      }
-    } else {
-      Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-      ) {
-        Spacer(modifier = Modifier.weight(1f))
-
+      } else {
         DurationText(
           duration = duration,
           layoutType = DurationTextLayoutType.Vertical,
@@ -137,18 +118,18 @@ fun StopwatchDuration(
             modifier = Modifier.heightIn(max = this@BoxWithConstraints.maxHeight / 2),
           )
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        StopwatchDurationControls(
-          state = state,
-          onStartStopClick = onStartStopClick,
-          onCancelClick = onCancelClick,
-          onRecordLapClick = onRecordLapClick,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
       }
+
+      Spacer(modifier = Modifier.weight(1f))
+
+      StopwatchDurationControls(
+        state = state,
+        onStartStopClick = onStartStopClick,
+        onCancelClick = onCancelClick,
+        onRecordLapClick = onRecordLapClick,
+      )
+
+      Spacer(modifier = Modifier.height(16.dp))
     }
   }
 }
