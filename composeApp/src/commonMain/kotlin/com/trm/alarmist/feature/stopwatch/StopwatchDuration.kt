@@ -150,7 +150,7 @@ private fun Laps(
     ) {
       itemsIndexed(laps) { lapIndex, lapEndDuration ->
         LapItem(
-          lapLabel = "#${lapIndex + 1}",
+          lapLabel = "#${"${lapIndex + 1}".padStart(laps.size.toString().length, '0')}",
           lapDuration = lapEndDuration,
           previousLapDuration = laps.getOrElse(lapIndex - 1) { Duration.ZERO },
         )
