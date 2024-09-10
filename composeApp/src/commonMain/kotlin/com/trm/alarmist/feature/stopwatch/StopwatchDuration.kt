@@ -37,6 +37,7 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,10 +52,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.trm.alarmist.core.common.util.zeroPadded
 import com.trm.alarmist.core.domain.model.StopwatchState
 import com.trm.alarmist.core.ui.DurationText
 import com.trm.alarmist.core.ui.DurationTextLayoutType
-import com.trm.alarmist.core.ui.rememberDurationText
 import com.trm.alarmist.core.ui.sideFloatingActionButtonTransitionSpec
 import kotlin.time.Duration
 
@@ -148,11 +149,18 @@ private fun Laps(
       state = state,
       modifier = Modifier.onGloballyPositioned { columnWidthPx = it.size.width },
     ) {
+      val includeHours by derivedStateOf { (laps.lastOrNull()?.inWholeHours ?: 0L) > 0L }
+      val includeMinutes by derivedStateOf {
+        includeHours || (laps.lastOrNull()?.inWholeMinutes ?: 0L) > 0L
+      }
+
       itemsIndexed(laps) { lapIndex, lapEndDuration ->
         LapItem(
           lapLabel = "#${"${lapIndex + 1}".padStart(laps.size.toString().length, '0')}",
           lapDuration = lapEndDuration,
           previousLapDuration = laps.getOrElse(lapIndex - 1) { Duration.ZERO },
+          includeHours = includeHours,
+          includeMinutes = includeMinutes,
         )
       }
     }
@@ -194,7 +202,13 @@ private fun Laps(
 }
 
 @Composable
-private fun LapItem(lapLabel: String, lapDuration: Duration, previousLapDuration: Duration) {
+private fun LapItem(
+  lapLabel: String,
+  lapDuration: Duration,
+  previousLapDuration: Duration,
+  includeHours: Boolean,
+  includeMinutes: Boolean,
+) {
   Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
     Text(
       text = lapLabel,
@@ -203,15 +217,53 @@ private fun LapItem(lapLabel: String, lapDuration: Duration, previousLapDuration
 
     Spacer(modifier = Modifier.width(16.dp))
 
-    val (lapTime, lapFractionOfSecond) = rememberDurationText(lapDuration - previousLapDuration)
-    Text(text = "$lapTime.$lapFractionOfSecond", style = MaterialTheme.typography.bodyLarge)
+    Text(
+      text =
+        rememberLapDurationText(
+          duration = lapDuration - previousLapDuration,
+          includeHours = includeHours,
+          includeMinutes = includeMinutes,
+        ),
+      style = MaterialTheme.typography.bodyLarge,
+    )
 
     Spacer(modifier = Modifier.width(16.dp))
 
-    val (lapEndTime, lapEndFractionOfSecond) = rememberDurationText(lapDuration)
-    Text(text = "$lapEndTime.$lapEndFractionOfSecond", style = MaterialTheme.typography.bodyLarge)
+    Text(
+      text =
+        rememberLapDurationText(
+          duration = lapDuration,
+          includeHours = includeHours,
+          includeMinutes = includeMinutes,
+        ),
+      style = MaterialTheme.typography.bodyLarge,
+    )
   }
 }
+
+@Composable
+private fun rememberLapDurationText(
+  duration: Duration,
+  includeHours: Boolean,
+  includeMinutes: Boolean,
+): String =
+  remember(duration, includeHours, includeMinutes) {
+    duration.toComponents { hours, minutes, seconds, nanoseconds ->
+      buildString {
+        if (includeHours || hours > 0L) {
+          append(hours.toInt().zeroPadded())
+          append(':')
+        }
+        if (includeMinutes || hours > 0L || minutes > 0) {
+          append(minutes.zeroPadded())
+          append(':')
+        }
+        append(seconds.zeroPadded())
+        append('.')
+        append((nanoseconds / 10_000_000L).toInt().zeroPadded())
+      }
+    }
+  }
 
 @Composable
 private fun StopwatchDurationControls(
