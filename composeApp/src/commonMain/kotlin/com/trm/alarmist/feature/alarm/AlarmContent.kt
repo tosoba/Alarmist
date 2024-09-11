@@ -132,15 +132,6 @@ import com.trm.alarmist.core.ui.DayOfWeekEllipsizedContent
 import com.trm.alarmist.core.ui.ExpandableIcon
 import com.trm.alarmist.core.ui.FloatingActionButtonSpacer
 import com.trm.alarmist.core.ui.TopGradientBackground
-import com.trm.alarmist.core.ui.keyboardAsState
-import com.trm.alarmist.core.ui.theme.bottomSheetBackgroundColor
-import com.trm.alarmist.core.ui.theme.onOffCardColors
-import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
-import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
-import com.trm.alarmist.feature.alarm.model.AlarmState
-import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialog
-import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialogComponent
-import com.trm.alarmist.feature.alarm.sound.alarmSoundTitle
 import com.trm.alarmist.core.ui.calendar.basis.EpicMonth
 import com.trm.alarmist.core.ui.calendar.basis.config.rememberMutableBasisEpicCalendarConfig
 import com.trm.alarmist.core.ui.calendar.basis.contains
@@ -150,6 +141,15 @@ import com.trm.alarmist.core.ui.calendar.datepicker.config.rememberEpicDatePicke
 import com.trm.alarmist.core.ui.calendar.datepicker.state.LocalEpicDatePickerState
 import com.trm.alarmist.core.ui.calendar.datepicker.state.rememberEpicDatePickerState
 import com.trm.alarmist.core.ui.calendar.pager.config.rememberEpicCalendarPagerConfig
+import com.trm.alarmist.core.ui.keyboardAsState
+import com.trm.alarmist.core.ui.theme.bottomSheetBackgroundColor
+import com.trm.alarmist.core.ui.theme.onOffCardColors
+import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
+import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
+import com.trm.alarmist.feature.alarm.model.AlarmState
+import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialog
+import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialogComponent
+import com.trm.alarmist.feature.alarm.sound.alarmSoundTitle
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -694,16 +694,25 @@ private fun AlarmSliderThumb(text: String, modifier: Modifier = Modifier) {
   Box(modifier = modifier) {
     SliderDefaults.Thumb(
       interactionSource = remember(::MutableInteractionSource),
-      colors = SliderDefaults.colors(),
       enabled = true,
       modifier = Modifier.align(Alignment.Center),
     )
-    Text(
-      text = text,
-      fontSize = 12.sp,
-      color = MaterialTheme.colorScheme.onPrimary,
-      modifier = Modifier.align(Alignment.Center),
-    )
+
+    Box(
+      modifier =
+        Modifier.size(24.dp)
+          .align(Alignment.Center)
+          .clip(CircleShape)
+          .background(MaterialTheme.colorScheme.background)
+          .border(width = 2.dp, color = MaterialTheme.colorScheme.primary, shape = CircleShape)
+    ) {
+      Text(
+        text = text,
+        fontSize = 12.sp,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = Modifier.align(Alignment.Center),
+      )
+    }
   }
 }
 
