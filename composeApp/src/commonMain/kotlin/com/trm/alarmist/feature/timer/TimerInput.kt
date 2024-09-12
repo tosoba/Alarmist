@@ -1,5 +1,7 @@
 package com.trm.alarmist.feature.timer
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.backspace
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.Spring
@@ -55,6 +57,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -183,7 +186,7 @@ fun TimerInput(modifier: Modifier = Modifier, onStartClick: (Duration) -> Unit) 
           ) {
             Icon(
               imageVector = Icons.AutoMirrored.Filled.Backspace,
-              contentDescription = "Backspace",
+              contentDescription = stringResource(Res.string.backspace),
               modifier = Modifier.padding(2.dp),
             )
           }

@@ -86,4 +86,17 @@
     <string name="widget_pin_unavailable_description">Widget pinning is not supported in the default launcher</string>
     <string name="new_group_widget">New group widget</string>
     <string name="edit_group_widget">Edit group widget</string>
+    <string name="backspace">Backspace</string>
+    <string name="record_lap">Record lap</string>
+    <string name="pause_stopwatch">Pause stopwatch</string>
+    <string name="resume_stopwatch">Resume stopwatch</string>
+    <string name="start_stopwatch">Start stopwatch</string>
+    <string name="reset_stopwatch">Reset stopwatch</string>
+    <string name="cancel_timer">Cancel timer</string>
+    <string name="reset_timer">Reset timer</string>
+    <string name="pause_timer">Pause timer</string>
+    <string name="resume_timer">Resume timer</string>
+    <string name="stop_elapsed_timer_alarm">Stop elapsed timer alarm</string>
+    <string name="add_minute">Add one minute</string>
+    <string name="subtract_minute">Subtract one minute</string>
 </resources>

@@ -1,5 +1,11 @@
 package com.trm.alarmist.feature.stopwatch
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.pause_stopwatch
+import alarmist.composeapp.generated.resources.record_lap
+import alarmist.composeapp.generated.resources.reset_stopwatch
+import alarmist.composeapp.generated.resources.resume_stopwatch
+import alarmist.composeapp.generated.resources.start_stopwatch
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.foundation.background
@@ -58,6 +64,7 @@ import com.trm.alarmist.core.ui.DurationText
 import com.trm.alarmist.core.ui.DurationTextLayoutType
 import com.trm.alarmist.core.ui.sideFloatingActionButtonTransitionSpec
 import kotlin.time.Duration
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -287,7 +294,10 @@ private fun StopwatchDurationControls(
           onClick = onCancelClick,
           elevation = FloatingActionButtonDefaults.loweredElevation(),
         ) {
-          Icon(imageVector = Icons.Default.RestartAlt, contentDescription = "Reset stopwatch")
+          Icon(
+            imageVector = Icons.Default.RestartAlt,
+            contentDescription = stringResource(Res.string.reset_stopwatch),
+          )
         }
       } else {
         FloatingActionButtonSpacerBox()
@@ -299,11 +309,13 @@ private fun StopwatchDurationControls(
         imageVector =
           if (state == StopwatchState.RUNNING) Icons.Default.Pause else Icons.Default.PlayArrow,
         contentDescription =
-          when (state) {
-            StopwatchState.RUNNING -> "Pause stopwatch"
-            StopwatchState.PAUSED -> "Resume stopwatch"
-            else -> "Start stopwatch"
-          },
+          stringResource(
+            when (state) {
+              StopwatchState.RUNNING -> Res.string.pause_stopwatch
+              StopwatchState.PAUSED -> Res.string.resume_stopwatch
+              else -> Res.string.start_stopwatch
+            }
+          ),
       )
     }
 
@@ -317,7 +329,10 @@ private fun StopwatchDurationControls(
           onClick = onRecordLapClick,
           elevation = FloatingActionButtonDefaults.loweredElevation(),
         ) {
-          Icon(imageVector = Icons.Default.Timer, contentDescription = "Record lap")
+          Icon(
+            imageVector = Icons.Default.Timer,
+            contentDescription = stringResource(Res.string.record_lap),
+          )
         }
       } else {
         FloatingActionButtonSpacerBox()

@@ -1,5 +1,13 @@
 package com.trm.alarmist.feature.timer
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.add_minute
+import alarmist.composeapp.generated.resources.cancel_timer
+import alarmist.composeapp.generated.resources.pause_timer
+import alarmist.composeapp.generated.resources.reset_timer
+import alarmist.composeapp.generated.resources.resume_timer
+import alarmist.composeapp.generated.resources.stop_elapsed_timer_alarm
+import alarmist.composeapp.generated.resources.subtract_minute
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -49,6 +57,7 @@ import com.trm.alarmist.core.ui.DurationText
 import com.trm.alarmist.core.ui.DurationTextLayoutType
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -75,12 +84,13 @@ fun TimerDuration(
 
       Spacer(modifier = Modifier.weight(1f))
 
+      val cancelTimerContentDescription = stringResource(Res.string.cancel_timer)
       SmallFloatingActionButton(
         onClick = onCancelClick,
         containerColor = MaterialTheme.colorScheme.errorContainer,
         modifier =
           Modifier.clearAndSetSemantics {
-            contentDescription = "Cancel timer"
+            contentDescription = cancelTimerContentDescription
             role = Role.Button
           },
       ) {
@@ -152,12 +162,13 @@ fun TimerDuration(
 
 @Composable
 private fun TimerResetButton(onClick: () -> Unit) {
+  val resetTimerContentDescription = stringResource(Res.string.reset_timer)
   SmallFloatingActionButton(
     onClick = onClick,
     elevation = FloatingActionButtonDefaults.loweredElevation(),
     modifier =
       Modifier.clearAndSetSemantics {
-        contentDescription = "Reset timer"
+        contentDescription = resetTimerContentDescription
         role = Role.Button
       },
   ) {
@@ -183,12 +194,13 @@ private fun TimerDurationControls(
     AnimatedContent(targetState = state != TimerState.ELAPSED && duration > 1.minutes) {
       subtractMinuteVisible ->
       if (subtractMinuteVisible) {
+        val subtractMinuteContentDescription = stringResource(Res.string.subtract_minute)
         FloatingActionButton(
           onClick = onSubtractMinuteClick,
           elevation = FloatingActionButtonDefaults.loweredElevation(),
           modifier =
             Modifier.clearAndSetSemantics {
-              contentDescription = "Subtract 1 minute from timer duration"
+              contentDescription = subtractMinuteContentDescription
               role = Role.Button
             },
         ) {
@@ -199,16 +211,19 @@ private fun TimerDurationControls(
       }
     }
 
+    val playPauseContentDescription =
+      stringResource(
+        when (state) {
+          TimerState.RUNNING -> Res.string.pause_timer
+          TimerState.PAUSED -> Res.string.resume_timer
+          else -> Res.string.stop_elapsed_timer_alarm
+        }
+      )
     LargeFloatingActionButton(
       onClick = if (state == TimerState.ELAPSED) onStopElapsedAlarmClick else onToggleRunningClick,
       modifier =
         Modifier.clearAndSetSemantics {
-          contentDescription =
-            when (state) {
-              TimerState.RUNNING -> "Pause timer"
-              TimerState.PAUSED -> "Resume timer"
-              else -> "Stop elapsed timer alarm"
-            }
+          contentDescription = playPauseContentDescription
           role = Role.Button
         },
     ) {
@@ -225,12 +240,13 @@ private fun TimerDurationControls(
 
     AnimatedContent(targetState = state != TimerState.ELAPSED) { addMinuteVisible ->
       if (addMinuteVisible) {
+        val addMinuteContentDescription = stringResource(Res.string.add_minute)
         FloatingActionButton(
           onClick = onAddMinuteClick,
           elevation = FloatingActionButtonDefaults.loweredElevation(),
           modifier =
             Modifier.clearAndSetSemantics {
-              contentDescription = "Add 1 minute to timer duration"
+              contentDescription = addMinuteContentDescription
               role = Role.Button
             },
         ) {
