@@ -1,7 +1,7 @@
 package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.common.util.expectedOneTimeNotificationDateTime
-import com.trm.alarmist.core.common.util.isScheduledToFireOn
+import com.trm.alarmist.core.common.util.isCustomScheduledToFireOn
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmModel
 import kotlinx.datetime.DateTimeUnit
@@ -37,7 +37,7 @@ fun calculateAlarmMissedDateTimes(
       time = alarm.fireAtTime,
     )
   while (current > limit) {
-    if (alarm.isScheduledToFireOn(current.date)) {
+    if (alarm.isCustomScheduledToFireOn(current.date)) {
       missedDateTimes.add(current)
     }
     current = current.date.minus(1, DateTimeUnit.DAY).atTime(alarm.fireAtTime)

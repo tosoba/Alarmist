@@ -153,7 +153,7 @@ fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =
     offOnDates = offOnDates.orEmpty().toSet(),
   )
 
-fun AlarmModel.isScheduledToFireOn(date: LocalDate): Boolean {
+fun AlarmModel.isCustomScheduledToFireOn(date: LocalDate): Boolean {
   require(!isOneTime)
 
   return (date.dayOfWeek in scheduledOnDaysOfWeek || date in scheduledOnDates) &&
