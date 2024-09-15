@@ -182,8 +182,7 @@ class AlarmLocalRepository(
           .filter {
             it.scheduledOnDaysOfWeek.isEmpty() &&
               it.scheduledOnDates.isNotEmpty() &&
-              (it.scheduledOnDates.last() < now.date ||
-                (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time))
+              areAllScheduledOnDatesPast(it.scheduledOnDates, it.fireAtTime, now)
           }
           .map { (id) -> id }
           .takeIf(List<Long>::isNotEmpty)
@@ -193,8 +192,7 @@ class AlarmLocalRepository(
         onAlarms
           .filter {
             it.scheduledOnDates.isNotEmpty() &&
-              (it.scheduledOnDates.last() < now.date ||
-                (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time))
+              areAllScheduledOnDatesPast(it.scheduledOnDates, it.fireAtTime, now)
           }
           .map { (id) -> id }
           .takeIf(List<Long>::isNotEmpty)
@@ -214,10 +212,7 @@ class AlarmLocalRepository(
         queries
           .selectOffAlarmsScheduledOnDatesOnly()
           .executeAsList()
-          .filter {
-            it.scheduledOnDates.last() < now.date ||
-              (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time)
-          }
+          .filter { areAllScheduledOnDatesPast(it.scheduledOnDates, it.fireAtTime, now) }
           .map { (id) -> id }
           .takeIf(List<Long>::isNotEmpty)
           ?.let { queries.updateResetAlarmByIds(now, it) }
@@ -225,10 +220,7 @@ class AlarmLocalRepository(
         queries
           .selectOffScheduledAlarms()
           .executeAsList()
-          .filter {
-            it.scheduledOnDates.last() < now.date ||
-              (it.scheduledOnDates.last() == now.date && it.fireAtTime < now.time)
-          }
+          .filter { areAllScheduledOnDatesPast(it.scheduledOnDates, it.fireAtTime, now) }
           .map { (id) -> id }
           .takeIf(List<Long>::isNotEmpty)
           ?.let { ids -> queries.updateResetScheduledOnDatesByIds(now, ids) }
@@ -490,5 +482,14 @@ class AlarmLocalRepository(
         queries.deleteGroupById(id)
       }
     }
+  }
+
+  private fun areAllScheduledOnDatesPast(
+    dates: Collection<LocalDate>,
+    fireAtTime: LocalTime,
+    now: LocalDateTime,
+  ): Boolean {
+    require(dates.isNotEmpty())
+    return dates.last() < now.date || (dates.last() == now.date && fireAtTime < now.time)
   }
 }
