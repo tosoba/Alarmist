@@ -1,6 +1,7 @@
 package com.trm.alarmist.core.domain
 
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTimeUseCase
 import com.trm.alarmist.core.util.alarmModel
 import dev.mokkery.answering.returns
@@ -21,9 +22,10 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
   @Test
   fun `given off alarm - then return false`() = runTest {
     assertFalse(
-      IsAlarmScheduledToFireAtDateTimeUseCase(
-        mock { everySuspend { getAlarmById(any()) } returns alarmModel(isOn = false) }
-      )(1L, LocalDateTime.now())
+      IsAlarmScheduledToFireAtDateTimeUseCase(alarmRepositoryThatReturns(alarmModel(isOn = false)))(
+        1L,
+        LocalDateTime.now(),
+      )
     )
   }
 
@@ -35,14 +37,13 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
 
       assertFalse(
         IsAlarmScheduledToFireAtDateTimeUseCase(
-          mock {
-            everySuspend { getAlarmById(any()) } returns
-              alarmModel(
-                isOn = true,
-                fireAtTime = fireAtTime,
-                lastModificationDateTime = lastModificationDateTime,
-              )
-          }
+          alarmRepositoryThatReturns(
+            alarmModel(
+              isOn = true,
+              fireAtTime = fireAtTime,
+              lastModificationDateTime = lastModificationDateTime,
+            )
+          )
         )(1L, LocalDateTime(lastModificationDateTime.date.plus(1L, DateTimeUnit.DAY), fireAtTime))
       )
     }
@@ -55,14 +56,13 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
 
       assertFalse(
         IsAlarmScheduledToFireAtDateTimeUseCase(
-          mock {
-            everySuspend { getAlarmById(any()) } returns
-              alarmModel(
-                isOn = true,
-                fireAtTime = fireAtTime,
-                lastModificationDateTime = lastModificationDateTime,
-              )
-          }
+          alarmRepositoryThatReturns(
+            alarmModel(
+              isOn = true,
+              fireAtTime = fireAtTime,
+              lastModificationDateTime = lastModificationDateTime,
+            )
+          )
         )(1L, LocalDateTime(lastModificationDateTime.date, LocalTime(8, 20)))
       )
     }
@@ -74,14 +74,13 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
 
     assertTrue(
       IsAlarmScheduledToFireAtDateTimeUseCase(
-        mock {
-          everySuspend { getAlarmById(any()) } returns
-            alarmModel(
-              isOn = true,
-              fireAtTime = fireAtTime,
-              lastModificationDateTime = lastModificationDateTime,
-            )
-        }
+        alarmRepositoryThatReturns(
+          alarmModel(
+            isOn = true,
+            fireAtTime = fireAtTime,
+            lastModificationDateTime = lastModificationDateTime,
+          )
+        )
       )(1L, LocalDateTime(lastModificationDateTime.date, fireAtTime))
     )
   }
@@ -91,10 +90,9 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
     runTest {
       assertFalse(
         IsAlarmScheduledToFireAtDateTimeUseCase(
-          mock {
-            everySuspend { getAlarmById(any()) } returns
-              alarmModel(isOn = true, scheduledOnDates = setOf(LocalDate(2024, 8, 24)))
-          }
+          alarmRepositoryThatReturns(
+            alarmModel(isOn = true, scheduledOnDates = setOf(LocalDate(2024, 8, 24)))
+          )
         )(1L, LocalDateTime(LocalDate(2024, 8, 25), LocalTime(8, 20)))
       )
     }
@@ -106,15 +104,14 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
 
       assertFalse(
         IsAlarmScheduledToFireAtDateTimeUseCase(
-          mock {
-            everySuspend { getAlarmById(any()) } returns
-              alarmModel(
-                isOn = true,
-                fireAtTime = LocalTime(9, 30),
-                lastModificationDateTime = lastModificationDateTime,
-                scheduledOnDates = setOf(lastModificationDateTime.date),
-              )
-          }
+          alarmRepositoryThatReturns(
+            alarmModel(
+              isOn = true,
+              fireAtTime = LocalTime(9, 30),
+              lastModificationDateTime = lastModificationDateTime,
+              scheduledOnDates = setOf(lastModificationDateTime.date),
+            )
+          )
         )(1L, LocalDateTime(lastModificationDateTime.date, LocalTime(8, 20)))
       )
     }
@@ -126,15 +123,14 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
 
     assertTrue(
       IsAlarmScheduledToFireAtDateTimeUseCase(
-        mock {
-          everySuspend { getAlarmById(any()) } returns
-            alarmModel(
-              isOn = true,
-              fireAtTime = fireAtTime,
-              lastModificationDateTime = lastModificationDateTime,
-              scheduledOnDates = setOf(lastModificationDateTime.date),
-            )
-        }
+        alarmRepositoryThatReturns(
+          alarmModel(
+            isOn = true,
+            fireAtTime = fireAtTime,
+            lastModificationDateTime = lastModificationDateTime,
+            scheduledOnDates = setOf(lastModificationDateTime.date),
+          )
+        )
       )(1L, LocalDateTime(lastModificationDateTime.date, fireAtTime))
     )
   }
@@ -147,17 +143,16 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
 
       assertFalse(
         IsAlarmScheduledToFireAtDateTimeUseCase(
-          mock {
-            everySuspend { getAlarmById(any()) } returns
-              alarmModel(
-                isOn = true,
-                fireAtTime = fireAtTime,
-                lastModificationDateTime = lastModificationDateTime,
-                scheduledOnDates = setOf(lastModificationDateTime.date),
-                lastSnoozedAt = LocalDateTime(lastModificationDateTime.date, fireAtTime),
-                snoozeDurationMinutes = 5L,
-              )
-          }
+          alarmRepositoryThatReturns(
+            alarmModel(
+              isOn = true,
+              fireAtTime = fireAtTime,
+              lastModificationDateTime = lastModificationDateTime,
+              scheduledOnDates = setOf(lastModificationDateTime.date),
+              lastSnoozedAt = LocalDateTime(lastModificationDateTime.date, fireAtTime),
+              snoozeDurationMinutes = 5L,
+            )
+          )
         )(1L, LocalDateTime(lastModificationDateTime.date, fireAtTime))
       )
     }
@@ -171,17 +166,16 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
 
       assertTrue(
         IsAlarmScheduledToFireAtDateTimeUseCase(
-          mock {
-            everySuspend { getAlarmById(any()) } returns
-              alarmModel(
-                isOn = true,
-                fireAtTime = fireAtTime,
-                lastModificationDateTime = lastModificationDateTime,
-                scheduledOnDates = setOf(lastModificationDateTime.date),
-                lastSnoozedAt = LocalDateTime(lastModificationDateTime.date, fireAtTime),
-                snoozeDurationMinutes = snoozeDurationMinutes,
-              )
-          }
+          alarmRepositoryThatReturns(
+            alarmModel(
+              isOn = true,
+              fireAtTime = fireAtTime,
+              lastModificationDateTime = lastModificationDateTime,
+              scheduledOnDates = setOf(lastModificationDateTime.date),
+              lastSnoozedAt = LocalDateTime(lastModificationDateTime.date, fireAtTime),
+              snoozeDurationMinutes = snoozeDurationMinutes,
+            )
+          )
         )(
           1L,
           LocalDateTime(
@@ -191,4 +185,8 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
         )
       )
     }
+
+  private fun alarmRepositoryThatReturns(alarm: AlarmModel): AlarmRepository = mock {
+    everySuspend { getAlarmById(any()) } returns alarm
+  }
 }
