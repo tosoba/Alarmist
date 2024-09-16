@@ -10,7 +10,6 @@ import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
@@ -28,11 +27,11 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
   }
 
   @Test
-  fun `given on one time alarm and fireAtDateTime with non matching date - then return false`():
-    TestResult {
-    val lastModificationDateTime = LocalDateTime(2024, 8, 25, 7, 30)
-    val fireAtTime = LocalTime(8, 30)
-    return runTest {
+  fun `given on one time alarm and fireAtDateTime with non matching date - then return false`() =
+    runTest {
+      val fireAtTime = LocalTime(8, 30)
+      val lastModificationDateTime = LocalDateTime(2024, 8, 25, 7, 30)
+
       assertFalse(
         IsAlarmScheduledToFireAtDateTimeUseCase(
           mock {
@@ -46,14 +45,13 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
         )(1L, LocalDateTime(lastModificationDateTime.date.plus(1L, DateTimeUnit.DAY), fireAtTime))
       )
     }
-  }
 
   @Test
-  fun `given on one time alarm and fireAtDateTime with non matching time - then return false`():
-    TestResult {
-    val lastModificationDateTime = LocalDateTime(2024, 8, 25, 7, 30)
-    val fireAtTime = LocalTime(8, 30)
-    return runTest {
+  fun `given on one time alarm and fireAtDateTime with non matching time - then return false`() =
+    runTest {
+      val fireAtTime = LocalTime(8, 30)
+      val lastModificationDateTime = LocalDateTime(2024, 8, 25, 7, 30)
+
       assertFalse(
         IsAlarmScheduledToFireAtDateTimeUseCase(
           mock {
@@ -67,7 +65,6 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
         )(1L, LocalDateTime(lastModificationDateTime.date, LocalTime(8, 20)))
       )
     }
-  }
 
   @Test
   fun `given on one time alarm and matching fireAtDateTime - then return true`() = runTest {
