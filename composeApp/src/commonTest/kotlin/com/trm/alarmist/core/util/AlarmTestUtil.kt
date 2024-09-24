@@ -1,6 +1,7 @@
 package com.trm.alarmist.core.util
 
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -48,4 +49,31 @@ fun alarmModel(
     vibrationEnabled = vibrationEnabled,
     reminderOffsetHours = reminderOffsetHours,
     soundId = soundId,
+  )
+
+fun alarmListModel(
+  id: Long = 1L,
+  groupId: Long? = null,
+  fireAtTime: LocalTime = LocalTime.now(),
+  name: String? = null,
+  isOn: Boolean = true,
+  fireOnDateTime: LocalDateTime? = LocalDateTime.now(),
+  scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
+  closestScheduledOnDate: LocalDate? = null,
+  offOnAllScheduledDates: Boolean = false,
+  scheduledOnMultipleDates: Boolean = false,
+  snoozedFireAtTime: LocalTime? = null,
+): AlarmListModel =
+  AlarmListModel(
+    id = id,
+    groupId = groupId,
+    fireAtTime = fireAtTime,
+    name = name,
+    isOn = isOn,
+    fireOnDateTime = fireOnDateTime,
+    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+    closestScheduledOnDate = closestScheduledOnDate,
+    offOnAllScheduledDates = offOnAllScheduledDates,
+    scheduledOnMultipleDates = scheduledOnMultipleDates,
+    snoozedFireAtTime = snoozedFireAtTime,
   )
