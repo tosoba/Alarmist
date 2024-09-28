@@ -11,7 +11,7 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toAlarmScheduleModel
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
-import com.trm.alarmist.core.common.util.toUpcomingListModelScheduledAtDate
+import com.trm.alarmist.core.common.util.toUpcomingListModel
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -236,7 +236,7 @@ class AlarmLocalRepository(
         date = date.toString(),
         dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
       )
-      .asAlarmsListFlow { alarm, now -> alarm.toUpcomingListModelScheduledAtDate(date, now) }
+      .asAlarmsListFlow { alarm, now -> alarm.toUpcomingListModel(date, now) }
 
   override fun getAlarmsScheduledToFireOnDateAfterTimeFlow(
     date: LocalDate,
@@ -248,23 +248,20 @@ class AlarmLocalRepository(
         dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
         fireAtTime = time,
       )
-      .asAlarmsListFlow { alarm, now -> alarm.toUpcomingListModelScheduledAtDate(date, now) }
+      .asAlarmsListFlow { alarm, now -> alarm.toUpcomingListModel(date, now) }
 
   override suspend fun getAlarmsScheduledToFireOnDateAfterTime(
     date: LocalDate,
     time: LocalTime,
-  ): List<UpcomingAlarmListModel> {
-    val now = LocalDateTime.now()
-    return withContext(dispatcher) {
-      queries
-        .selectAlarmsScheduledToFireOnDateAfterTime(
-          date = date.toString(),
-          dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
-          fireAtTime = time,
-        )
-        .executeAsList()
-        .map { it.toUpcomingListModelScheduledAtDate(date, now) }
-    }
+  ): List<AlarmModel> = withContext(dispatcher) {
+    queries
+      .selectAlarmsScheduledToFireOnDateAfterTime(
+        date = date.toString(),
+        dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
+        fireAtTime = time,
+      )
+      .executeAsList()
+      .map(Alarm::toModel)
   }
 
   override fun getOnAlarmSchedulesForDatesFlow(
@@ -280,22 +277,18 @@ class AlarmLocalRepository(
 
   override fun getOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<UpcomingAlarmListModel>> =
     queries.selectOneTimeAlarmsBeforeTime(time).asAlarmsListFlow { alarm, now ->
-      alarm.toUpcomingListModelScheduledAtDate(null, now)
+      alarm.toUpcomingListModel(null, now)
     }
 
   override fun getOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<List<UpcomingAlarmListModel>> =
     queries.selectOneTimeAlarmsAfterTime(time).asAlarmsListFlow { alarm, now ->
-      alarm.toUpcomingListModelScheduledAtDate(null, now)
+      alarm.toUpcomingListModel(null, now)
     }
 
-  override suspend fun getOneTimeAlarmsAfterTime(time: LocalTime): List<UpcomingAlarmListModel> {
-    val now = LocalDateTime.now()
-    return withContext(dispatcher) {
-      queries.selectOneTimeAlarmsAfterTime(time).executeAsList().map {
-        it.toUpcomingListModelScheduledAtDate(null, now)
-      }
+  override suspend fun getOneTimeAlarmsAfterTime(time: LocalTime): List<AlarmModel> =
+    withContext(dispatcher) {
+      queries.selectOneTimeAlarmsAfterTime(time).executeAsList().map(Alarm::toModel)
     }
-  }
 
   override fun countOnOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<Int> =
     queries.selectCountOneTimeAlarmsBeforeTime(time).asFlow().mapToOne(dispatcher).map(Long::toInt)

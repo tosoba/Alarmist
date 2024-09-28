@@ -113,10 +113,7 @@ fun AlarmModel.toListModel(now: LocalDateTime): AlarmListModel {
   )
 }
 
-fun Alarm.toUpcomingListModelScheduledAtDate(
-  date: LocalDate?,
-  now: LocalDateTime,
-): UpcomingAlarmListModel =
+fun Alarm.toUpcomingListModel(date: LocalDate?, now: LocalDateTime): UpcomingAlarmListModel =
   UpcomingAlarmListModel(
     id = id,
     groupId = groupId,
@@ -143,6 +140,39 @@ fun Alarm.toUpcomingListModelScheduledAtDate(
         )
       },
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
+    scheduledOnMultipleDates = isScheduledOnMultipleDates(now),
+  )
+
+fun AlarmModel.toUpcomingListModel(
+  scheduledAtDate: LocalDate?,
+  now: LocalDateTime,
+): UpcomingAlarmListModel =
+  UpcomingAlarmListModel(
+    id = id,
+    groupId = groupId,
+    fireAtTime = fireAtTime,
+    date = scheduledAtDate,
+    name = name,
+    status =
+      when {
+        !isOn -> UpcomingAlarmListStatus.OFF
+        offOnDates.contains(scheduledAtDate) -> UpcomingAlarmListStatus.OFF_ON_DATE
+        else -> UpcomingAlarmListStatus.ON
+      },
+    fireOnDateTime =
+      if (scheduledAtDate != null) {
+        LocalDateTime(scheduledAtDate, fireAtTime)
+      } else {
+        calculateAlarmNextFireOnDateTime(
+          fireAtTime = fireAtTime,
+          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+          scheduledOnDates = scheduledOnDates,
+          offOnDates = offOnDates,
+          isOn = isOn,
+          afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
+        )
+      },
+    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
     scheduledOnMultipleDates = isScheduledOnMultipleDates(now),
   )
 
