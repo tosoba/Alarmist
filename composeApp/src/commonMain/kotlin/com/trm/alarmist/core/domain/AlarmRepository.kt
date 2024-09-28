@@ -51,7 +51,7 @@ interface AlarmRepository {
 
   fun getAllAlarmsListFlow(): Flow<List<AlarmModel>>
 
-  suspend fun getAllOnAlarmsList(): List<AlarmListModel>
+  suspend fun getAllOnAlarmsList(): List<AlarmModel>
 
   fun getAllAlarmGroupsFlow(): Flow<List<AlarmGroupModel>>
 
