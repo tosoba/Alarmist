@@ -5,6 +5,7 @@ import com.trm.alarmist.core.common.model.DefaultInitializable
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
+import com.trm.alarmist.core.domain.usecase.GetAllAlarmsListFlowUseCase
 import com.trm.alarmist.core.domain.usecase.ToggleAlarmOnOffUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,12 +16,12 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class AlarmListFeature : CoroutineFeature(), KoinComponent {
-  private val repository: AlarmRepository by inject()
+  private val getAllAlarmsListFlowUseCase: GetAllAlarmsListFlowUseCase by inject()
   private val toggleAlarmOnOffUseCase: ToggleAlarmOnOffUseCase by inject()
+  private val repository: AlarmRepository by inject()
 
   val alarms: StateFlow<DefaultInitializable<List<AlarmListModel>>> =
-    repository
-      .getAllAlarmsListFlow()
+    getAllAlarmsListFlowUseCase()
       .map { DefaultInitializable(data = it, initialized = true) }
       .stateIn(
         scope = coroutineScope,

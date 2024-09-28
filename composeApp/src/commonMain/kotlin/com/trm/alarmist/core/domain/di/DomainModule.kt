@@ -8,6 +8,7 @@ import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditGroupUseCase
 import com.trm.alarmist.core.domain.usecase.GetAlarmsInGroupFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetAlarmsScheduledOnDateFlowUseCase
+import com.trm.alarmist.core.domain.usecase.GetAllAlarmsListFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetAndResetMissedAlarmsOnBootUseCase
 import com.trm.alarmist.core.domain.usecase.GetGroupedAlarmsFlowUseCase
 import com.trm.alarmist.core.domain.usecase.GetNextTodayAlarmUseCase
@@ -50,4 +51,5 @@ val domainModule = module {
   factoryOf(::AddGroupUseCase)
   factoryOf(::EditGroupUseCase)
   factoryOf(::DeleteGroupUseCase)
+  factoryOf(::GetAllAlarmsListFlowUseCase)
 }

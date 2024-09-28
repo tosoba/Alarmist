@@ -126,8 +126,8 @@ class AlarmLocalRepository(
     withContext(dispatcher) { queries.deleteAlarmById(id) }
   }
 
-  override fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>> =
-    queries.selectAllAlarms().asAlarmsListFlow()
+  override fun getAllAlarmsListFlow(): Flow<List<AlarmModel>> =
+    queries.selectAllAlarms().asAlarmsFlow()
 
   override suspend fun getAllOnAlarmsList(): List<AlarmListModel> {
     val now = LocalDateTime.now()
@@ -302,6 +302,9 @@ class AlarmLocalRepository(
 
   override fun countOnOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<Int> =
     queries.selectCountOneTimeAlarmsAfterTime(time).asFlow().mapToOne(dispatcher).map(Long::toInt)
+
+  private fun Query<Alarm>.asAlarmsFlow(): Flow<List<AlarmModel>> =
+    asFlow().mapToList(dispatcher).map { it.map(Alarm::toModel) }
 
   private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
     asAlarmsListFlow(Alarm::toListModel)

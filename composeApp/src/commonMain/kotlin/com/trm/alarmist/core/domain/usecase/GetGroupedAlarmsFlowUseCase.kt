@@ -9,10 +9,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import org.jetbrains.compose.resources.getString
 
-class GetGroupedAlarmsFlowUseCase(private val repository: AlarmRepository) {
-    operator fun invoke(): Flow<GroupedAlarmsModel> =
-    repository.getAllAlarmGroupsFlow().combine(repository.getAllAlarmsListFlow()) { groups, alarms
-      ->
+class GetGroupedAlarmsFlowUseCase(
+  private val getAllAlarmsListFlowUseCase: GetAllAlarmsListFlowUseCase,
+  private val repository: AlarmRepository,
+) {
+  operator fun invoke(): Flow<GroupedAlarmsModel> =
+    repository.getAllAlarmGroupsFlow().combine(getAllAlarmsListFlowUseCase()) { groups, alarms ->
       GroupedAlarmsModel(
         alarms = alarms.groupBy { it.groupId ?: AlarmGroupModel.UNGROUPED_ID },
         groups =

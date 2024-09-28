@@ -49,7 +49,7 @@ interface AlarmRepository {
 
   suspend fun getAlarmById(id: Long): AlarmModel
 
-  fun getAllAlarmsListFlow(): Flow<List<AlarmListModel>>
+  fun getAllAlarmsListFlow(): Flow<List<AlarmModel>>
 
   suspend fun getAllOnAlarmsList(): List<AlarmListModel>
 
