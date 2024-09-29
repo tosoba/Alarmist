@@ -10,13 +10,11 @@ class GetTodayAlarmsUseCase(private val repository: AlarmRepository) {
   suspend operator fun invoke(): List<UpcomingAlarmListModel> {
     val now = LocalDateTime.now()
     return repository
-      .getOneTimeAlarmsAfterTime(now.time)
-      .map { it.toUpcomingListModel(scheduledAtDate = null, now = now) }
-      .plus(
-        repository.getAlarmsScheduledToFireOnDateAfterTime(now.date, now.time).map {
-          it.toUpcomingListModel(scheduledAtDate = now.date, now = now)
-        }
-      )
+      .getPartitionedAlarmsAfterDateTime(now)
+      .run {
+        oneTime.map { it.toUpcomingListModel(scheduledAtDate = null, now = now) } +
+          scheduled.map { it.toUpcomingListModel(scheduledAtDate = now.date, now = now) }
+      }
       .sortedBy(UpcomingAlarmListModel::fireAtTime)
   }
 }

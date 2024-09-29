@@ -17,6 +17,7 @@ import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.core.domain.model.AlarmScheduleModel
+import com.trm.alarmist.core.domain.model.PartitionedAlarms
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.db.Alarm
 import com.trm.alarmist.db.AlarmistQueries
@@ -129,9 +130,8 @@ class AlarmLocalRepository(
   override fun getAllAlarmsListFlow(): Flow<List<AlarmModel>> =
     queries.selectAllAlarms().asAlarmsFlow()
 
-  override suspend fun getAllOnAlarmsList(): List<AlarmModel> = withContext(dispatcher) {
-    queries.selectOnAlarms().executeAsList().map(Alarm::toModel)
-  }
+  override suspend fun getAllOnAlarmsList(): List<AlarmModel> =
+    withContext(dispatcher) { queries.selectOnAlarms().executeAsList().map(Alarm::toModel) }
 
   override fun getAllAlarmGroupsFlow(): Flow<List<AlarmGroupModel>> =
     queries.selectAllGroups().asFlow().mapToList(dispatcher).map {
@@ -247,20 +247,6 @@ class AlarmLocalRepository(
       )
       .asAlarmsListFlow { alarm, now -> alarm.toUpcomingListModel(date, now) }
 
-  override suspend fun getAlarmsScheduledToFireOnDateAfterTime(
-    date: LocalDate,
-    time: LocalTime,
-  ): List<AlarmModel> = withContext(dispatcher) {
-    queries
-      .selectAlarmsScheduledToFireOnDateAfterTime(
-        date = date.toString(),
-        dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
-        fireAtTime = time,
-      )
-      .executeAsList()
-      .map(Alarm::toModel)
-  }
-
   override fun getOnAlarmSchedulesForDatesFlow(
     dates: ClosedRange<LocalDate>
   ): Flow<List<AlarmScheduleModel>> =
@@ -282,9 +268,25 @@ class AlarmLocalRepository(
       alarm.toUpcomingListModel(null, now)
     }
 
-  override suspend fun getOneTimeAlarmsAfterTime(time: LocalTime): List<AlarmModel> =
+  override suspend fun getPartitionedAlarmsAfterDateTime(
+    dateTime: LocalDateTime
+  ): PartitionedAlarms =
     withContext(dispatcher) {
-      queries.selectOneTimeAlarmsAfterTime(time).executeAsList().map(Alarm::toModel)
+      queries.transactionWithResult {
+        PartitionedAlarms(
+          oneTime =
+            queries.selectOneTimeAlarmsAfterTime(dateTime.time).executeAsList().map(Alarm::toModel),
+          scheduled =
+            queries
+              .selectAlarmsScheduledToFireOnDateAfterTime(
+                date = dateTime.date.toString(),
+                dayOfWeek = dateTime.date.dayOfWeek.isoDayNumber.toString(),
+                fireAtTime = dateTime.time,
+              )
+              .executeAsList()
+              .map(Alarm::toModel),
+        )
+      }
     }
 
   override fun countOnOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<Int> =
