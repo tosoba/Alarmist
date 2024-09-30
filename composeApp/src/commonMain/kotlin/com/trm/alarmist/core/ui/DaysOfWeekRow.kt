@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.ui.calendar.basis.BasisDayOfMonthContent
-import com.trm.alarmist.core.ui.calendar.basis.EpicMonth
 import com.trm.alarmist.core.ui.calendar.basis.config.DefaultBasisEpicCalendarConfig
 import com.trm.alarmist.core.ui.calendar.basis.contains
 import com.trm.alarmist.core.ui.calendar.datepicker.config.LocalEpicDatePickerConfig
@@ -40,15 +39,7 @@ fun DaysOfWeekRow(
       @Composable
       fun DayText() {
         Text(
-          modifier =
-            Modifier.alpha(
-              alpha =
-                when {
-                  date < LocalDate.now() -> 0.5f
-                  date in EpicMonth.now() -> 1.0f
-                  else -> 0.5f
-                }
-            ),
+          modifier = Modifier.alpha(alpha = if (date < LocalDate.now()) 0.5f else 1f),
           text = date.dayOfMonth.toString(),
           textAlign = TextAlign.Center,
           color =
