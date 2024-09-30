@@ -113,36 +113,6 @@ fun AlarmModel.toListModel(now: LocalDateTime): AlarmListModel {
   )
 }
 
-fun Alarm.toUpcomingListModel(date: LocalDate?, now: LocalDateTime): UpcomingAlarmListModel =
-  UpcomingAlarmListModel(
-    id = id,
-    groupId = groupId,
-    fireAtTime = fireAtTime,
-    date = date,
-    name = name,
-    status =
-      when {
-        isOn != DB_ON -> UpcomingAlarmListStatus.OFF
-        offOnDates?.contains(date) == true -> UpcomingAlarmListStatus.OFF_ON_DATE
-        else -> UpcomingAlarmListStatus.ON
-      },
-    fireOnDateTime =
-      if (date != null) {
-        LocalDateTime(date, fireAtTime)
-      } else {
-        calculateAlarmNextFireOnDateTime(
-          fireAtTime = fireAtTime,
-          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
-          scheduledOnDates = scheduledOnDates.orEmpty(),
-          offOnDates = offOnDates.orEmpty(),
-          isOn = isOn == DB_ON,
-          afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
-        )
-      },
-    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty(),
-    scheduledOnMultipleDates = isScheduledOnMultipleDates(now),
-  )
-
 fun AlarmModel.toUpcomingListModel(
   scheduledAtDate: LocalDate?,
   now: LocalDateTime,

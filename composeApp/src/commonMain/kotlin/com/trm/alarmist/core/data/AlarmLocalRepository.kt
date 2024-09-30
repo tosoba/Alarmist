@@ -11,14 +11,12 @@ import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toAlarmScheduleModel
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
-import com.trm.alarmist.core.common.util.toUpcomingListModel
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.core.domain.model.PartitionedAlarms
-import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.db.Alarm
 import com.trm.alarmist.db.AlarmistQueries
 import com.trm.alarmist.db.SelectAllGroups
@@ -225,27 +223,25 @@ class AlarmLocalRepository(
     }
   }
 
-  override fun getAlarmsScheduledToFireOnDateFlow(
-    date: LocalDate
-  ): Flow<List<UpcomingAlarmListModel>> =
+  override fun getAlarmsScheduledToFireOnDateFlow(date: LocalDate): Flow<List<AlarmModel>> =
     queries
       .selectAlarmsScheduledToFireOnDate(
         date = date.toString(),
         dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
       )
-      .asAlarmsListFlow { alarm, now -> alarm.toUpcomingListModel(date, now) }
+      .asAlarmsFlow()
 
   override fun getAlarmsScheduledToFireOnDateAfterTimeFlow(
     date: LocalDate,
     time: LocalTime,
-  ): Flow<List<UpcomingAlarmListModel>> =
+  ): Flow<List<AlarmModel>> =
     queries
       .selectAlarmsScheduledToFireOnDateAfterTime(
         date = date.toString(),
         dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
         fireAtTime = time,
       )
-      .asAlarmsListFlow { alarm, now -> alarm.toUpcomingListModel(date, now) }
+      .asAlarmsFlow()
 
   override fun getOnAlarmSchedulesForDatesFlow(
     dates: ClosedRange<LocalDate>
@@ -258,15 +254,11 @@ class AlarmLocalRepository(
     List(endInclusive.toEpochDays() - start.toEpochDays() + 1) { start.plus(it, DateTimeUnit.DAY) }
       .joinToString(separator = ",") { it.toString().replace(".", "\\.") }
 
-  override fun getOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<UpcomingAlarmListModel>> =
-    queries.selectOneTimeAlarmsBeforeTime(time).asAlarmsListFlow { alarm, now ->
-      alarm.toUpcomingListModel(null, now)
-    }
+  override fun getOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<AlarmModel>> =
+    queries.selectOneTimeAlarmsBeforeTime(time).asAlarmsFlow()
 
-  override fun getOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<List<UpcomingAlarmListModel>> =
-    queries.selectOneTimeAlarmsAfterTime(time).asAlarmsListFlow { alarm, now ->
-      alarm.toUpcomingListModel(null, now)
-    }
+  override fun getOneTimeAlarmsAfterTimeFlow(time: LocalTime): Flow<List<AlarmModel>> =
+    queries.selectOneTimeAlarmsAfterTime(time).asAlarmsFlow()
 
   override suspend fun getPartitionedAlarmsAfterDateTime(
     dateTime: LocalDateTime
