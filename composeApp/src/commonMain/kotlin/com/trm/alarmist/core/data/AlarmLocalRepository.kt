@@ -9,11 +9,9 @@ import com.trm.alarmist.core.common.util.DB_ON
 import com.trm.alarmist.core.common.util.expectedOneTimeNotificationDateTime
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toAlarmScheduleModel
-import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.common.util.toModel
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
-import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.core.domain.model.PartitionedAlarms
@@ -141,18 +139,16 @@ class AlarmLocalRepository(
       queries.selectAllGroups().executeAsList().map(SelectAllGroups::toModel)
     }
 
-  override fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmListModel>> =
-    queries.selectAlarmsByGroupId(groupId).asAlarmsListFlow()
+  override fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmModel>> =
+    queries.selectAlarmsByGroupId(groupId).asAlarmsFlow()
 
-  override suspend fun getAlarmsInGroup(groupId: Long): List<AlarmListModel> {
-    val now = LocalDateTime.now()
-    return withContext(dispatcher) {
-      queries.selectAlarmsByGroupId(groupId).executeAsList().map { it.toListModel(now) }
+  override suspend fun getAlarmsInGroup(groupId: Long): List<AlarmModel> =
+    withContext(dispatcher) {
+      queries.selectAlarmsByGroupId(groupId).executeAsList().map(Alarm::toModel)
     }
-  }
 
-  override fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>> =
-    queries.selectUngroupedAlarms().asAlarmsListFlow()
+  override fun getUngroupedAlarmsFlow(): Flow<List<AlarmModel>> =
+    queries.selectUngroupedAlarms().asAlarmsFlow()
 
   override suspend fun getOnAlarmsAndResetMissedAlarms(): List<AlarmModel> {
     val now = LocalDateTime.now()
@@ -289,17 +285,6 @@ class AlarmLocalRepository(
 
   private fun Query<Alarm>.asAlarmsFlow(): Flow<List<AlarmModel>> =
     asFlow().mapToList(dispatcher).map { it.map(Alarm::toModel) }
-
-  private fun Query<Alarm>.asAlarmsListFlow(): Flow<List<AlarmListModel>> =
-    asAlarmsListFlow(Alarm::toListModel)
-
-  private fun <T> Query<Alarm>.asAlarmsListFlow(
-    mapper: (Alarm, LocalDateTime) -> T
-  ): Flow<List<T>> =
-    asFlow().mapToList(dispatcher).map {
-      val now = LocalDateTime.now()
-      it.map { alarm -> mapper(alarm, now) }
-    }
 
   override suspend fun toggleAlarmOnOff(id: Long): AlarmModel =
     withContext(dispatcher) {

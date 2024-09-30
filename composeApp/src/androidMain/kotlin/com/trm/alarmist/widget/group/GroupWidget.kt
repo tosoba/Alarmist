@@ -12,6 +12,8 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
+import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
@@ -19,6 +21,7 @@ import com.trm.alarmist.widget.common.util.AppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
+import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -34,10 +37,11 @@ class GroupWidget : GlanceAppWidget(), KoinComponent {
         produceState<GroupWidgetState>(GroupWidgetState.Uninitialized, state) {
           value =
             state[GroupWidgetReceiver.groupIdKey]?.let {
-              GroupWidgetState.Initialized(
-                alarms = repository.getAlarmsInGroup(it).map(::WidgetAlarmListModel),
-                group = repository.getGroupById(it),
-              )
+              val alarms =
+                repository.getAlarmsInGroup(it).map { alarm ->
+                  WidgetAlarmListModel(alarm.toListModel(LocalDateTime.now()))
+                }
+              GroupWidgetState.Initialized(alarms = alarms, group = repository.getGroupById(it))
             } ?: GroupWidgetState.NoGroupSet
         }
       val widgetManager = remember(context) { GlanceAppWidgetManager(context) }

@@ -16,27 +16,27 @@ data class WidgetAlarmListModel(
   val isCustomScheduled: Boolean,
 ) {
   constructor(
-    model: UpcomingAlarmListModel
+    alarm: UpcomingAlarmListModel
   ) : this(
-    id = model.id,
-    groupId = model.groupId,
-    fireAtTime = model.fireAtTime,
-    name = model.name,
-    isOn = model.status == UpcomingAlarmListStatus.ON,
-    fireOnDateTime = model.fireOnDateTime,
-    isCustomScheduled = model.scheduledOnDaysOfWeek.isNotEmpty() || model.date != null,
+    id = alarm.id,
+    groupId = alarm.groupId,
+    fireAtTime = alarm.fireAtTime,
+    name = alarm.name,
+    isOn = alarm.status == UpcomingAlarmListStatus.ON,
+    fireOnDateTime = alarm.fireOnDateTime,
+    isCustomScheduled = alarm.scheduledOnDaysOfWeek.isNotEmpty() || alarm.date != null,
   )
 
   constructor(
-    model: AlarmListModel
+    alarm: AlarmListModel
   ) : this(
-    id = model.id,
-    groupId = model.groupId,
-    fireAtTime = model.fireAtTime,
-    name = model.name,
-    isOn = model.isOn,
-    fireOnDateTime = model.fireOnDateTime,
+    id = alarm.id,
+    groupId = alarm.groupId,
+    fireAtTime = alarm.fireAtTime,
+    name = alarm.name,
+    isOn = alarm.isOn,
+    fireOnDateTime = alarm.fireOnDateTime,
     isCustomScheduled =
-      model.scheduledOnDaysOfWeek.isNotEmpty() || model.closestScheduledOnDate != null,
+      alarm.scheduledOnDaysOfWeek.isNotEmpty() || alarm.closestScheduledOnDate != null,
   )
 }

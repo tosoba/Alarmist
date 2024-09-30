@@ -1,7 +1,6 @@
 package com.trm.alarmist.core.domain
 
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
-import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.core.domain.model.PartitionedAlarms
@@ -57,11 +56,11 @@ interface AlarmRepository {
 
   suspend fun getAllAlarmGroups(): List<AlarmGroupModel>
 
-  fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmListModel>>
+  fun getAlarmsInGroupFlow(groupId: Long): Flow<List<AlarmModel>>
 
-  suspend fun getAlarmsInGroup(groupId: Long): List<AlarmListModel>
+  suspend fun getAlarmsInGroup(groupId: Long): List<AlarmModel>
 
-  fun getUngroupedAlarmsFlow(): Flow<List<AlarmListModel>>
+  fun getUngroupedAlarmsFlow(): Flow<List<AlarmModel>>
 
   fun getAlarmsScheduledToFireOnDateFlow(date: LocalDate): Flow<List<AlarmModel>>
 
