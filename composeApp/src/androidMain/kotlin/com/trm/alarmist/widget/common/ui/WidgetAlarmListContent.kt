@@ -3,7 +3,7 @@ package com.trm.alarmist.widget.common.ui
 import androidx.compose.runtime.Composable
 import androidx.glance.action.Action
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
-import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
+import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
 
 @Composable

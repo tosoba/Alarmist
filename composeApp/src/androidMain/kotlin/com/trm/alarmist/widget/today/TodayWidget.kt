@@ -17,8 +17,7 @@ import com.trm.alarmist.core.common.model.Initialized
 import com.trm.alarmist.core.common.model.Uninitialized
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
-import com.trm.alarmist.core.domain.usecase.GetTodayAlarmsUseCase
-import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
+import com.trm.alarmist.core.domain.usecase.GetTodayWidgetAlarmsUseCase
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.util.AppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
@@ -28,7 +27,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class TodayWidget : GlanceAppWidget(), KoinComponent {
-  private val getTodayAlarmsUseCase: GetTodayAlarmsUseCase by inject()
+  private val getTodayWidgetAlarmsUseCase: GetTodayWidgetAlarmsUseCase by inject()
   private val repository: AlarmRepository by inject()
 
   override val sizeMode: SizeMode = SizeMode.Exact
@@ -41,7 +40,7 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
           value =
             Initialized(
               TodayWidgetState(
-                alarms = getTodayAlarmsUseCase().map(::WidgetAlarmListModel),
+                alarms = getTodayWidgetAlarmsUseCase(),
                 groups = repository.getAllAlarmGroups().associateBy(AlarmGroupModel::id),
               )
             )

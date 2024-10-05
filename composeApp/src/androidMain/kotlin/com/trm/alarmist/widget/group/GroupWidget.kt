@@ -15,7 +15,7 @@ import androidx.glance.currentState
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.toListModel
 import com.trm.alarmist.core.domain.AlarmRepository
-import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
+import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.util.AppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider

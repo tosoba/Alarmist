@@ -22,7 +22,7 @@ import com.trm.alarmist.R
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.feature.root.RootStartMode
-import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
+import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffActionReceiver
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffOnDateActionReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity

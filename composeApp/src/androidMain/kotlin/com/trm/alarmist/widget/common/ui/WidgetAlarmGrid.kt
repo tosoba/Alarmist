@@ -5,8 +5,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.action.Action
 import androidx.glance.layout.fillMaxSize
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
+import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
 import com.trm.alarmist.feature.root.RootStartMode
-import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.util.actionStartMainActivity
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 

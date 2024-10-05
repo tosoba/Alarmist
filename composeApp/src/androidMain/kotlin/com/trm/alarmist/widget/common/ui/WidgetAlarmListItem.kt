@@ -15,8 +15,8 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import com.trm.alarmist.R
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
+import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
 import com.trm.alarmist.core.ui.buildAlarmLabelText
-import com.trm.alarmist.widget.common.model.WidgetAlarmListModel
 import com.trm.alarmist.widget.common.util.stringResource
 
 @Composable

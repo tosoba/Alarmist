@@ -1,8 +1,5 @@
-package com.trm.alarmist.widget.common.model
+package com.trm.alarmist.core.domain.model
 
-import com.trm.alarmist.core.domain.model.AlarmListModel
-import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
-import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
