@@ -83,6 +83,16 @@ class GetTodayWidgetAlarmsUseCaseTests {
       )
     }
 
+  @Test
+  fun `given alarms scheduled for multiple days - then scheduled alarms paused today are off`() =
+    runTest(dispatcher) {
+      val now = LocalDateTime(LocalDate.now(), LocalTime(12, 30))
+      val (_, _, scheduledOffTodayIds) = addTestAlarms(now)
+
+      val alarms = GetTodayWidgetAlarmsUseCase(repo)(now)
+      assertTrue(alarms.filter { it.id in scheduledOffTodayIds }.none(WidgetAlarmListModel::isOn))
+    }
+
   private suspend fun addTestAlarms(now: LocalDateTime): PartitionedAlarmsIds =
     with(repo) {
       PartitionedAlarmsIds(
@@ -95,6 +105,20 @@ class GetTodayWidgetAlarmsUseCaseTests {
           },
         scheduled =
           buildSet {
+            add(
+              addTestAlarm(
+                fireAtTime = LocalTime(10, 30),
+                isOn = true,
+                scheduledOnDates = listOf(now.date, now.date.plus(1L, DateTimeUnit.DAY)),
+              )
+            )
+            add(
+              addTestAlarm(
+                fireAtTime = LocalTime(11, 30),
+                isOn = false,
+                scheduledOnDates = listOf(now.date, now.date.plus(1L, DateTimeUnit.DAY)),
+              )
+            )
             add(
               addTestAlarm(
                 fireAtTime = LocalTime(13, 30),
@@ -179,8 +203,33 @@ class GetTodayWidgetAlarmsUseCaseTests {
               )
             )
           },
+        scheduledOffToday =
+          buildSet {
+            add(
+              addTestAlarm(
+                fireAtTime = LocalTime(13, 30),
+                isOn = true,
+                scheduledOnDates = listOf(now.date, now.date.plus(1L, DateTimeUnit.DAY)),
+                offOnDates = listOf(now.date),
+              )
+            )
+
+            add(
+              addTestAlarm(
+                fireAtTime = LocalTime(15, 30),
+                isOn = true,
+                scheduledOnDaysOfWeek =
+                  listOf(now.date.dayOfWeek, now.date.plus(1L, DateTimeUnit.DAY).dayOfWeek),
+                offOnDates = listOf(now.date),
+              )
+            )
+          },
       )
     }
 
-  private data class PartitionedAlarmsIds(val oneTime: Set<Long>, val scheduled: Set<Long>)
+  private data class PartitionedAlarmsIds(
+    val oneTime: Set<Long>,
+    val scheduled: Set<Long>,
+    val scheduledOffToday: Set<Long>,
+  )
 }
