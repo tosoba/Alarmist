@@ -8,9 +8,9 @@ import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.essenty.instancekeeper.getOrCreate
@@ -87,11 +87,13 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
     childStack(
       source = navigation,
       serializer = ChildConfig.serializer(),
-      initialConfiguration =
+      initialStack = {
         when (startMode) {
-          RootStartMode.Stopwatch -> ChildConfig.Stopwatch
-          else -> ChildConfig.Alarms
-        },
+          RootStartMode.Timer -> listOf(ChildConfig.Alarms, ChildConfig.Timer)
+          RootStartMode.Stopwatch -> listOf(ChildConfig.Alarms, ChildConfig.Stopwatch)
+          else -> listOf(ChildConfig.Alarms)
+        }
+      },
       childFactory = ::createChild,
     )
 
@@ -176,11 +178,11 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
   }
 
   private fun goToAlarms() {
-    navigation.replaceAll(ChildConfig.Alarms)
+    navigation.bringToFront(ChildConfig.Alarms)
   }
 
   override fun onWidgetsDrawerItemClick() {
-    navigation.replaceAll(ChildConfig.Widgets)
+    navigation.bringToFront(ChildConfig.Widgets)
   }
 
   override fun onTimerDrawerItemClick() {
@@ -188,7 +190,7 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
   }
 
   private fun goToTimer() {
-    navigation.replaceAll(ChildConfig.Timer)
+    navigation.bringToFront(ChildConfig.Timer)
   }
 
   override fun onStopwatchDrawerItemClick() {
@@ -196,7 +198,7 @@ class DefaultRootComponent(componentContext: ComponentContext, startMode: RootSt
   }
 
   private fun goToStopwatch() {
-    navigation.replaceAll(ChildConfig.Stopwatch)
+    navigation.bringToFront(ChildConfig.Stopwatch)
   }
 
   override fun onAddAlarmClick() {

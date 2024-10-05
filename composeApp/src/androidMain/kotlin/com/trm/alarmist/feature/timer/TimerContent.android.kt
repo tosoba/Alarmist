@@ -19,9 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.arkivanov.essenty.lifecycle.subscribe
 import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
 import com.trm.alarmist.core.system.timer.TimerService
@@ -59,29 +57,6 @@ actual fun TimerContent(component: TimerComponent, modifier: Modifier) {
     onDispose { if (bound) context.unbindService(connection) }
   }
 
-  val owner = LocalLifecycleOwner.current
-  DisposableEffect(Unit) {
-    val observer =
-      object : DefaultLifecycleObserver {
-        override fun onResume(owner: LifecycleOwner) {
-          TimerService.startWithAction(
-            context = context,
-            action = TimerService.Action.HideNotification,
-          )
-        }
-
-        override fun onPause(owner: LifecycleOwner) {
-          TimerService.startWithAction(
-            context = context,
-            action = TimerService.Action.ShowNotification,
-          )
-        }
-      }
-    owner.lifecycle.addObserver(observer)
-
-    onDispose { owner.lifecycle.removeObserver(observer) }
-  }
-
   val state by
     rememberSaveable(service, saver = TimerStateSaver) {
       derivedStateOf { service?.state ?: TimerState.IDLE }
@@ -94,6 +69,25 @@ actual fun TimerContent(component: TimerComponent, modifier: Modifier) {
     rememberSaveable(service, saver = DurationSaver) {
       derivedStateOf { service?.initialDuration ?: Duration.ZERO }
     }
+
+  LaunchedEffect(component.lifecycle) {
+    component.lifecycle.subscribe(
+      onResume = {
+        TimerService.startWithAction(
+          context = context,
+          action = TimerService.Action.HideNotification,
+        )
+      },
+      onPause = {
+        if (state != TimerState.IDLE) {
+          TimerService.startWithAction(
+            context = context,
+            action = TimerService.Action.ShowNotification,
+          )
+        }
+      },
+    )
+  }
 
   TimerScaffold(
     duration = service?.duration ?: duration,
