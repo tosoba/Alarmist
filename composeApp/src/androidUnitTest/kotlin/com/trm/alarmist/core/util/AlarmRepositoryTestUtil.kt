@@ -10,7 +10,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
-suspend fun AlarmLocalRepository.addTestAlarm(
+internal suspend fun AlarmLocalRepository.addTestAlarm(
   groupId: Long? = null,
   fireAtTime: LocalTime = LocalTime.now(),
   name: String? = null,
@@ -43,7 +43,7 @@ suspend fun AlarmLocalRepository.addTestAlarm(
     soundId = soundId,
   )
 
-fun createTestAlarmLocalRepository(dispatcher: CoroutineDispatcher): AlarmLocalRepository {
+internal fun createTestAlarmLocalRepository(dispatcher: CoroutineDispatcher): AlarmLocalRepository {
   val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
   val repo =
     AlarmLocalRepository(
