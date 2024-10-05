@@ -388,7 +388,7 @@ private fun GroupedAlarmCard(
 
       Spacer(modifier = Modifier.weight(1f))
 
-      AlarmFireOnDateTimeCountdown(fireOnDateTime = alarm.fireOnDateTime, isOn = alarm.isOn)
+      AlarmFireOnDateTimeCountdown(fireOnDateTime = alarm.fireOnDateTime)
     }
 
     Spacer(modifier = Modifier.height(16.dp))

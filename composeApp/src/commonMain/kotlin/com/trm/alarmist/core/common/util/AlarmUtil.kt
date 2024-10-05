@@ -84,7 +84,11 @@ fun AlarmModel.toUpcomingListModel(
       },
     fireOnDateTime =
       if (scheduledAtDate != null) {
-        LocalDateTime(scheduledAtDate, fireAtTime)
+        if (!isOn || offOnDates.contains(scheduledAtDate)) {
+          null
+        } else {
+          LocalDateTime(scheduledAtDate, fireAtTime)
+        }
       } else {
         calculateAlarmNextFireOnDateTime(
           fireAtTime = fireAtTime,

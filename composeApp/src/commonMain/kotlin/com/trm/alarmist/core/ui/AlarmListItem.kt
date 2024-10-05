@@ -71,7 +71,7 @@ fun AlarmListItem(
 
       Spacer(modifier = Modifier.weight(1f))
 
-      AlarmFireOnDateTimeCountdown(fireOnDateTime = item.fireOnDateTime, isOn = item.isOn)
+      AlarmFireOnDateTimeCountdown(fireOnDateTime = item.fireOnDateTime)
     }
 
     Spacer(modifier = Modifier.height(16.dp))

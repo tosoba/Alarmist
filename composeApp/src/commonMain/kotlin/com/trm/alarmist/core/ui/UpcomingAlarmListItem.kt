@@ -151,10 +151,7 @@ fun UpcomingAlarmListItem(
 
       Spacer(modifier = Modifier.weight(1f))
 
-      AlarmFireOnDateTimeCountdown(
-        fireOnDateTime = item.fireOnDateTime,
-        isOn = item.status == UpcomingAlarmListStatus.ON,
-      )
+      AlarmFireOnDateTimeCountdown(fireOnDateTime = item.fireOnDateTime)
     }
 
     Spacer(modifier = Modifier.height(16.dp))
