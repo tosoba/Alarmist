@@ -70,23 +70,25 @@ actual fun TimerContent(component: TimerComponent, modifier: Modifier) {
       derivedStateOf { service?.initialDuration ?: Duration.ZERO }
     }
 
-  LaunchedEffect(component.lifecycle) {
-    component.lifecycle.subscribe(
-      onResume = {
-        TimerService.startWithAction(
-          context = context,
-          action = TimerService.Action.HideNotification,
-        )
-      },
-      onPause = {
-        if (state != TimerState.IDLE) {
+  DisposableEffect(component.lifecycle) {
+    val callbacks =
+      component.lifecycle.subscribe(
+        onResume = {
           TimerService.startWithAction(
             context = context,
-            action = TimerService.Action.ShowNotification,
+            action = TimerService.Action.HideNotification,
           )
-        }
-      },
-    )
+        },
+        onPause = {
+          if (state != TimerState.IDLE) {
+            TimerService.startWithAction(
+              context = context,
+              action = TimerService.Action.ShowNotification,
+            )
+          }
+        },
+      )
+    onDispose { component.lifecycle.unsubscribe(callbacks) }
   }
 
   TimerScaffold(

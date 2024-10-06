@@ -61,23 +61,25 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
   val duration by remember { derivedStateOf { service?.duration ?: Duration.ZERO } }
   val laps by remember { derivedStateOf { service?.laps ?: mutableStateListOf() } }
 
-  LaunchedEffect(component.lifecycle) {
-    component.lifecycle.subscribe(
-      onResume = {
-        StopwatchService.startWithAction(
-          context = context,
-          action = StopwatchService.Action.HIDE_NOTIFICATION,
-        )
-      },
-      onPause = {
-        if (state != StopwatchState.IDLE) {
+  DisposableEffect(component.lifecycle) {
+    val callbacks =
+      component.lifecycle.subscribe(
+        onResume = {
           StopwatchService.startWithAction(
             context = context,
-            action = StopwatchService.Action.SHOW_NOTIFICATION,
+            action = StopwatchService.Action.HIDE_NOTIFICATION,
           )
-        }
-      },
-    )
+        },
+        onPause = {
+          if (state != StopwatchState.IDLE) {
+            StopwatchService.startWithAction(
+              context = context,
+              action = StopwatchService.Action.SHOW_NOTIFICATION,
+            )
+          }
+        },
+      )
+    onDispose { component.lifecycle.unsubscribe(callbacks) }
   }
 
   Scaffold(modifier = modifier) {
