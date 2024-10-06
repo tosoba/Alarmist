@@ -41,6 +41,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -64,7 +68,7 @@ import org.jetbrains.compose.resources.stringResource
 fun TimerInput(modifier: Modifier = Modifier, onStartClick: (Duration) -> Unit) {
   val windowSizeClass = calculateWindowSizeClass()
 
-  val input = remember { mutableStateListOf<Char>() }
+  val input = rememberSaveable(saver = InputSaver) { mutableStateListOf() }
   fun getInputAt(index: Int): Char = input.getOrNull(index) ?: '0'
 
   @Composable
@@ -280,4 +284,16 @@ private fun Modifier.inputTextButton(
     .clip(RoundedCornerShape(cornerRadius))
     .clickable(interactionSource = interactionSource, indication = ripple(), onClick = onClick)
     .background(color)
+}
+
+private object InputSaver : Saver<SnapshotStateList<Char>, String> {
+  override fun restore(value: String): SnapshotStateList<Char> {
+    val input = mutableStateListOf<Char>()
+    value.forEach(input::add)
+    return input
+  }
+
+  override fun SaverScope.save(value: SnapshotStateList<Char>): String = buildString {
+    value.forEach(::append)
+  }
 }
