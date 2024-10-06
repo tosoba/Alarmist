@@ -34,7 +34,8 @@ class GetScheduledAlarmCountsForDateRangeUseCase(private val repository: AlarmRe
           .associateWith { date ->
             schedules.count {
               (date in it.scheduledOnDates || date.dayOfWeek in it.scheduledOnDaysOfWeek) &&
-                (date != now.date || it.fireAtTime > now.time) &&
+                (date != now.date ||
+                  (it.fireAtTime > now.time && it.lastNotificationDate != now.date)) &&
                 date !in it.offOnDates
             }
           }

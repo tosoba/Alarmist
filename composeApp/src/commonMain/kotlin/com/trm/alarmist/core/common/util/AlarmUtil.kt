@@ -148,6 +148,7 @@ fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty().toSet(),
     scheduledOnDates = scheduledOnDates.orEmpty().toSet(),
     offOnDates = offOnDates.orEmpty().toSet(),
+    lastNotificationDate = lastNotificationDate
   )
 
 fun AlarmModel.isCustomScheduledToFireOn(date: LocalDate): Boolean {

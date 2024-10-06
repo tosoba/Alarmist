@@ -13,4 +13,5 @@ data class AlarmScheduleModel(
   val scheduledOnDaysOfWeek: Set<DayOfWeek>,
   val scheduledOnDates: Set<LocalDate>,
   val offOnDates: Set<LocalDate>,
+  val lastNotificationDate: LocalDate?,
 )

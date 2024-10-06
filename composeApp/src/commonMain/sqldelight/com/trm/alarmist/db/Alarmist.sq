@@ -58,8 +58,8 @@ SET
     soundId = ?
 WHERE id = ?;
 
-updateAlarmLastNotificationDateAndResetSnoozeCountById:
-UPDATE alarm SET lastNotificationDate = ?, snoozeCount = 0 WHERE id = ?;
+updateAlarmLastNotificationDateAndResetSnoozeById:
+UPDATE alarm SET lastNotificationDate = ?, snoozeCount = 0, lastSnoozedAt = NULL WHERE id = ?;
 
 updateToggleAlarmOnOffById:
 UPDATE alarm
@@ -137,14 +137,15 @@ WHERE (
 selectAlarmsScheduledToFireOnDateAfterTime:
 SELECT * FROM alarm
 WHERE fireAtTime > :fireAtTime
+AND (lastNotificationDate IS NULL OR lastNotificationDate <> :date)
 AND (
-    scheduledOnDates LIKE ('%' || :date || '%')
+    scheduledOnDates LIKE ('%' || :dateString || '%')
     OR
-    scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeek || '%')
+    scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeekString || '%')
 );
 
 selectOnAlarmSchedules:
-SELECT id, fireAtTime, scheduledOnDaysOfWeek, scheduledOnDates, offOnDates
+SELECT id, fireAtTime, scheduledOnDaysOfWeek, scheduledOnDates, offOnDates, lastNotificationDate
 FROM alarm
 WHERE isOn = 1
 AND (

@@ -233,8 +233,9 @@ class AlarmLocalRepository(
   ): Flow<List<AlarmModel>> =
     queries
       .selectAlarmsScheduledToFireOnDateAfterTime(
-        date = date.toString(),
-        dayOfWeek = date.dayOfWeek.isoDayNumber.toString(),
+        date = date,
+        dateString = date.toString(),
+        dayOfWeekString = date.dayOfWeek.isoDayNumber.toString(),
         fireAtTime = time,
       )
       .asAlarmsFlow()
@@ -267,8 +268,9 @@ class AlarmLocalRepository(
           scheduled =
             queries
               .selectAlarmsScheduledToFireOnDateAfterTime(
-                date = dateTime.date.toString(),
-                dayOfWeek = dateTime.date.dayOfWeek.isoDayNumber.toString(),
+                date = dateTime.date,
+                dateString = dateTime.date.toString(),
+                dayOfWeekString = dateTime.date.dayOfWeek.isoDayNumber.toString(),
                 fireAtTime = dateTime.time,
               )
               .executeAsList()
@@ -384,10 +386,7 @@ class AlarmLocalRepository(
   ): AlarmModel =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateAlarmLastNotificationDateAndResetSnoozeCountById(
-          notificationDateTime.date,
-          id,
-        )
+        queries.updateAlarmLastNotificationDateAndResetSnoozeById(notificationDateTime.date, id)
 
         val alarm = queries.selectAlarmById(id).executeAsOne().toModel()
         if (
