@@ -2,12 +2,10 @@ package com.trm.alarmist.core.common.util
 
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.AlarmModel
-import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
 import com.trm.alarmist.core.domain.usecase.calculateAlarmNextFireOnDateTime
 import com.trm.alarmist.db.Alarm
-import com.trm.alarmist.db.SelectOnAlarmSchedules
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -139,16 +137,6 @@ fun Alarm.toModel(): AlarmModel =
     vibrationEnabled = vibrationEnabled == DB_ON,
     reminderOffsetHours = reminderOffsetHours,
     soundId = soundId,
-  )
-
-fun SelectOnAlarmSchedules.toAlarmScheduleModel(): AlarmScheduleModel =
-  AlarmScheduleModel(
-    id = id,
-    fireAtTime = fireAtTime,
-    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek.orEmpty().toSet(),
-    scheduledOnDates = scheduledOnDates.orEmpty().toSet(),
-    offOnDates = offOnDates.orEmpty().toSet(),
-    lastNotificationDate = lastNotificationDate
   )
 
 fun AlarmModel.isCustomScheduledToFireOn(date: LocalDate): Boolean {

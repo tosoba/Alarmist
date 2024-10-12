@@ -2,7 +2,6 @@ package com.trm.alarmist.core.domain
 
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmModel
-import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.core.domain.model.PartitionedAlarms
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DayOfWeek
@@ -69,7 +68,7 @@ interface AlarmRepository {
     time: LocalTime,
   ): Flow<List<AlarmModel>>
 
-  fun getOnAlarmSchedulesForDatesFlow(dates: ClosedRange<LocalDate>): Flow<List<AlarmScheduleModel>>
+  fun getOnAlarmSchedulesForDatesFlow(dates: ClosedRange<LocalDate>): Flow<List<AlarmModel>>
 
   fun getOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<AlarmModel>>
 

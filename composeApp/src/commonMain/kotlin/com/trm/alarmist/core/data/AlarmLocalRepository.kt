@@ -8,17 +8,14 @@ import com.trm.alarmist.core.common.util.DB_OFF
 import com.trm.alarmist.core.common.util.DB_ON
 import com.trm.alarmist.core.common.util.expectedOneTimeNotificationDateTime
 import com.trm.alarmist.core.common.util.now
-import com.trm.alarmist.core.common.util.toAlarmScheduleModel
 import com.trm.alarmist.core.common.util.toModel
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmModel
-import com.trm.alarmist.core.domain.model.AlarmScheduleModel
 import com.trm.alarmist.core.domain.model.PartitionedAlarms
 import com.trm.alarmist.db.Alarm
 import com.trm.alarmist.db.AlarmistQueries
 import com.trm.alarmist.db.SelectAllGroups
-import com.trm.alarmist.db.SelectOnAlarmSchedules
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -242,10 +239,8 @@ class AlarmLocalRepository(
 
   override fun getOnAlarmSchedulesForDatesFlow(
     dates: ClosedRange<LocalDate>
-  ): Flow<List<AlarmScheduleModel>> =
-    queries.selectOnAlarmSchedules(dates.toQueryString()).asFlow().mapToList(dispatcher).map {
-      it.map(SelectOnAlarmSchedules::toAlarmScheduleModel)
-    }
+  ): Flow<List<AlarmModel>> =
+    queries.selectOnAlarmScheduledForDateRange(dates.toQueryString()).asAlarmsFlow()
 
   private fun ClosedRange<LocalDate>.toQueryString(): String =
     List(endInclusive.toEpochDays() - start.toEpochDays() + 1) { start.plus(it, DateTimeUnit.DAY) }

@@ -137,16 +137,15 @@ WHERE (
 selectAlarmsScheduledToFireOnDateAfterTime:
 SELECT * FROM alarm
 WHERE fireAtTime > :fireAtTime
-AND (lastNotificationDate IS NULL OR lastNotificationDate <> :date)
+AND (lastNotificationDate IS NULL OR lastNotificationDate <> :date OR lastSnoozedAt IS NOT NULL)
 AND (
     scheduledOnDates LIKE ('%' || :dateString || '%')
     OR
     scheduledOnDaysOfWeek LIKE ('%' || :dayOfWeekString || '%')
 );
 
-selectOnAlarmSchedules:
-SELECT id, fireAtTime, scheduledOnDaysOfWeek, scheduledOnDates, offOnDates, lastNotificationDate
-FROM alarm
+selectOnAlarmScheduledForDateRange:
+SELECT * FROM alarm
 WHERE isOn = 1
 AND (
     scheduledOnDaysOfWeek IS NOT NULL
