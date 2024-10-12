@@ -1,7 +1,6 @@
-package com.trm.alarmist.core.domain
+package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.common.util.now
-import com.trm.alarmist.core.domain.usecase.calculateOneTimeAlarmNextFireOnDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.datetime.DateTimeUnit

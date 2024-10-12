@@ -1,6 +1,5 @@
-package com.trm.alarmist.core.domain
+package com.trm.alarmist.core.domain.usecase
 
-import com.trm.alarmist.core.domain.usecase.calculateScheduledAlarmNextFireOnDateForDaysOfWeek
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

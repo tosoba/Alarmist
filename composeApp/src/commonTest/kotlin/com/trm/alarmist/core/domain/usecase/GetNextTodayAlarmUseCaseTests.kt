@@ -1,8 +1,8 @@
-package com.trm.alarmist.core.domain
+package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmModel
-import com.trm.alarmist.core.domain.usecase.GetNextTodayAlarmUseCase
 import com.trm.alarmist.core.util.alarmModel
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend

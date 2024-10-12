@@ -1,9 +1,8 @@
-package com.trm.alarmist.core.domain
+package com.trm.alarmist.core.domain.usecase
 
 import com.trm.alarmist.core.common.util.toLocalDate
 import com.trm.alarmist.core.common.util.toLocalDateTime
 import com.trm.alarmist.core.common.util.toLocalTime
-import com.trm.alarmist.core.domain.usecase.calculateAlarmMissedDateTimes
 import com.trm.alarmist.core.util.alarmModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
