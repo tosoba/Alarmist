@@ -1,6 +1,6 @@
 package com.trm.alarmist.core.domain.model
 
-import com.trm.alarmist.core.common.util.toLocalTime
+import com.trm.alarmist.core.common.util.toLocalDateTime
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -36,16 +36,19 @@ data class AlarmModel(
   val isOneTime: Boolean
     get() = scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty()
 
-  val snoozedFireAtTime: LocalTime?
+  val snoozedFireAtDateTime: LocalDateTime?
     get() =
       if (lastSnoozedAt != null && snoozeDurationMinutes > 0L) {
         lastSnoozedAt
           .toInstant(TimeZone.currentSystemDefault())
           .plus(snoozeDurationMinutes, DateTimeUnit.MINUTE)
-          .toLocalTime()
+          .toLocalDateTime()
       } else {
         null
       }
+
+  val snoozedFireAtTime: LocalTime?
+    get() = snoozedFireAtDateTime?.time
 
   val nextFireAtTime: LocalTime
     get() = snoozedFireAtTime ?: fireAtTime

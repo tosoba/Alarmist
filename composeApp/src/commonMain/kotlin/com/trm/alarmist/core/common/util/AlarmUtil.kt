@@ -10,10 +10,8 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
-import kotlinx.datetime.toInstant
 
 const val DB_ON = 1L
 const val DB_OFF = 0L
@@ -110,16 +108,6 @@ private fun AlarmModel.isScheduledOnMultipleDates(now: LocalDateTime): Boolean =
     LocalDateTime(scheduledOnDate, fireAtTime) > now && scheduledOnDate !in offOnDates
   } > 1
 
-fun snoozedFireAtTime(lastSnoozedAt: LocalDateTime?, snoozeDurationMinutes: Long): LocalTime? =
-  if (lastSnoozedAt != null && snoozeDurationMinutes > 0L) {
-    lastSnoozedAt
-      .toInstant(TimeZone.currentSystemDefault())
-      .plus(snoozeDurationMinutes, DateTimeUnit.MINUTE)
-      .toLocalTime()
-  } else {
-    null
-  }
-
 fun Alarm.toModel(): AlarmModel =
   AlarmModel(
     id = id,
@@ -153,13 +141,14 @@ fun AlarmModel.isCustomScheduledToFireOn(date: LocalDate): Boolean {
 fun AlarmModel.expectedOneTimeNotificationDateTime(): LocalDateTime {
   require(isOneTime)
 
-  return LocalDateTime(
-    date =
-      if (lastModificationDateTime.time > fireAtTime) {
-        lastModificationDateTime.date.plus(1, DateTimeUnit.DAY)
-      } else {
-        lastModificationDateTime.date
-      },
-    time = nextFireAtTime,
-  )
+  return snoozedFireAtDateTime
+    ?: LocalDateTime(
+      date =
+        if (lastModificationDateTime.time > fireAtTime) {
+          lastModificationDateTime.date.plus(1, DateTimeUnit.DAY)
+        } else {
+          lastModificationDateTime.date
+        },
+      time = fireAtTime,
+    )
 }
