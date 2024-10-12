@@ -18,10 +18,8 @@ import kotlinx.datetime.toInstant
 const val DB_ON = 1L
 const val DB_OFF = 0L
 
-fun AlarmModel.toListModel(now: LocalDateTime): AlarmListModel {
-  val snoozedFireAtTime =
-    snoozedFireAtTime(lastSnoozedAt = lastSnoozedAt, snoozeDurationMinutes = snoozeDurationMinutes)
-  return AlarmListModel(
+fun AlarmModel.toListModel(now: LocalDateTime): AlarmListModel =
+  AlarmListModel(
     id = id,
     groupId = groupId,
     fireAtTime = fireAtTime,
@@ -32,26 +30,7 @@ fun AlarmModel.toListModel(now: LocalDateTime): AlarmListModel {
           scheduledOnDates.isEmpty() ||
           offOnDates.isEmpty() ||
           !offOnDates.containsAll(scheduledOnDates)),
-    fireOnDateTime =
-      if (snoozedFireAtTime != null) {
-        calculateAlarmNextFireOnDateTime(
-          fireAtTime = snoozedFireAtTime,
-          scheduledOnDaysOfWeek = emptyList(),
-          scheduledOnDates = emptyList(),
-          offOnDates = emptyList(),
-          isOn = isOn,
-          afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
-        )
-      } else {
-        calculateAlarmNextFireOnDateTime(
-          fireAtTime = fireAtTime,
-          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
-          scheduledOnDates = scheduledOnDates,
-          offOnDates = offOnDates,
-          isOn = isOn,
-          afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
-        )
-      },
+    fireOnDateTime = calculateNextFireOnDateTime(now),
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
     closestScheduledOnDate =
       scheduledOnDates
@@ -62,7 +41,6 @@ fun AlarmModel.toListModel(now: LocalDateTime): AlarmListModel {
     scheduledOnMultipleDates = isScheduledOnMultipleDates(now),
     snoozedFireAtTime = snoozedFireAtTime,
   )
-}
 
 fun AlarmModel.toUpcomingListModel(
   scheduledAtDate: LocalDate?,
@@ -82,23 +60,49 @@ fun AlarmModel.toUpcomingListModel(
       },
     fireOnDateTime =
       if (scheduledAtDate != null) {
-        if (!isOn || offOnDates.contains(scheduledAtDate)) {
-          null
-        } else {
-          LocalDateTime(scheduledAtDate, fireAtTime)
+        when {
+          !isOn || offOnDates.contains(scheduledAtDate) -> {
+            null
+          }
+          now.date == scheduledAtDate -> {
+            LocalDateTime(date = scheduledAtDate, time = nextFireAtTime)
+          }
+          else -> {
+            LocalDateTime(date = scheduledAtDate, time = fireAtTime)
+          }
         }
       } else {
-        calculateAlarmNextFireOnDateTime(
-          fireAtTime = fireAtTime,
-          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
-          scheduledOnDates = scheduledOnDates,
-          offOnDates = offOnDates,
-          isOn = isOn,
-          afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
-        )
+        calculateNextFireOnDateTime(now)
       },
     scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
     scheduledOnMultipleDates = isScheduledOnMultipleDates(now),
+  )
+
+private fun AlarmModel.calculateNextFireOnDateTime(now: LocalDateTime) =
+  snoozedFireAtTime?.let { calculateSnoozedNextFireOnDateTime(it, now) }
+    ?: run { calculateNonSnoozedNextFireOnDateTime(now) }
+
+private fun AlarmModel.calculateNonSnoozedNextFireOnDateTime(now: LocalDateTime) =
+  calculateAlarmNextFireOnDateTime(
+    fireAtTime = fireAtTime,
+    scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+    scheduledOnDates = scheduledOnDates,
+    offOnDates = offOnDates,
+    isOn = isOn,
+    afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
+  )
+
+private fun AlarmModel.calculateSnoozedNextFireOnDateTime(
+  snoozedFireAtTime: LocalTime,
+  now: LocalDateTime,
+): LocalDateTime? =
+  calculateAlarmNextFireOnDateTime(
+    fireAtTime = snoozedFireAtTime,
+    scheduledOnDaysOfWeek = emptyList(),
+    scheduledOnDates = emptyList(),
+    offOnDates = emptyList(),
+    isOn = isOn,
+    afterDateTime = lastNotificationDate?.atTime(fireAtTime) ?: now,
   )
 
 private fun AlarmModel.isScheduledOnMultipleDates(now: LocalDateTime): Boolean =
@@ -156,10 +160,6 @@ fun AlarmModel.expectedOneTimeNotificationDateTime(): LocalDateTime {
       } else {
         lastModificationDateTime.date
       },
-    time =
-      snoozedFireAtTime(
-        lastSnoozedAt = lastSnoozedAt,
-        snoozeDurationMinutes = snoozeDurationMinutes,
-      ) ?: fireAtTime,
+    time = nextFireAtTime,
   )
 }
