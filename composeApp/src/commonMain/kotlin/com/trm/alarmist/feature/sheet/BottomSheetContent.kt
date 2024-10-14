@@ -17,6 +17,7 @@ fun BottomSheetContent(
   onDismissRequest: () -> Unit,
   onDeleteActionClick: () -> Unit,
   onBackClick: () -> Unit,
+  onCallScrollBackwardChange: (Boolean) -> Unit,
   onConfirmCompletion: () -> Unit,
 ) {
   slot.child?.instance?.let { child ->
@@ -31,6 +32,7 @@ fun BottomSheetContent(
             component = child.component,
             onDeleteActionClick = onDeleteActionClick,
             onBackClick = onBackClick,
+            onCallScrollBackwardChange = onCallScrollBackwardChange,
             onConfirmClick = {
               child.component.feature.onConfirmClick().invokeOnCompletion { onConfirmCompletion() }
             },
@@ -41,6 +43,7 @@ fun BottomSheetContent(
             component = child.component,
             onDeleteActionClick = onDeleteActionClick,
             onBackClick = onBackClick,
+            onCallScrollBackwardChange = onCallScrollBackwardChange,
             onConfirmClick = {
               child.component.feature.onConfirmClick()?.invokeOnCompletion { onConfirmCompletion() }
             },

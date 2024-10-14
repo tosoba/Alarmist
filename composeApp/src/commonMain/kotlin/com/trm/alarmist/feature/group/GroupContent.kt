@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,6 +58,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
@@ -97,6 +99,7 @@ fun GroupContent(
   component: GroupComponent,
   onDeleteActionClick: () -> Unit,
   onBackClick: () -> Unit,
+  onCallScrollBackwardChange: (Boolean) -> Unit,
   onConfirmClick: () -> Unit,
 ) {
   val groupState by component.feature.state.collectAsState()
@@ -106,6 +109,7 @@ fun GroupContent(
     mode = component.mode,
     state = groupState,
     onBackClick = onBackClick,
+    onCallScrollBackwardChange = onCallScrollBackwardChange,
     onNameChange = component.feature::onNameChange,
     onDeleteClick = if (component.mode is GroupComponent.Mode.Edit) onDeleteActionClick else null,
     onColorChange = component.feature::onColorChange,
@@ -120,6 +124,7 @@ fun GroupContent(
   mode: GroupComponent.Mode = GroupComponent.Mode.Add,
   state: GroupState = GroupState(),
   onBackClick: () -> Unit = {},
+  onCallScrollBackwardChange: (Boolean) -> Unit,
   onNameChange: (String) -> Unit = {},
   onDeleteClick: (() -> Unit)? = null,
   onColorChange: (Color) -> Unit = {},
@@ -215,9 +220,14 @@ fun GroupContent(
         }
       }
 
+      val gridState = rememberLazyGridState()
+      val canScrollBackward by remember { derivedStateOf(gridState::canScrollBackward) }
+      LaunchedEffect(canScrollBackward) { onCallScrollBackwardChange(canScrollBackward) }
+
       LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         columns = GridCells.Adaptive(minSize = cellMinSize),
+        state = gridState,
         contentPadding =
           PaddingValues(
             start = contentPaddingHorizontal,

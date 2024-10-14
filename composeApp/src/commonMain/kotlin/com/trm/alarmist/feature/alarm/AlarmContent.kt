@@ -95,6 +95,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -162,6 +163,7 @@ fun AlarmContent(
   component: AlarmComponent,
   onDeleteActionClick: () -> Unit,
   onBackClick: () -> Unit,
+  onCallScrollBackwardChange: (Boolean) -> Unit,
   onConfirmClick: () -> Unit,
 ) {
   val alarmState by component.feature.state.collectAsState()
@@ -174,6 +176,7 @@ fun AlarmContent(
     state = alarmState,
     groups = groups,
     onBackClick = onBackClick,
+    onCallScrollBackwardChange = onCallScrollBackwardChange,
     onDeleteClick = if (component.mode is AlarmComponent.Mode.Edit) onDeleteActionClick else null,
     onNameChange = component.feature::onNameChange,
     onFireAtChange = component.feature::onFireAtChange,
@@ -205,6 +208,7 @@ private fun AlarmContent(
   state: AlarmState = AlarmState(),
   groups: List<AlarmGroupModel> = emptyList(),
   onBackClick: () -> Unit = {},
+  onCallScrollBackwardChange: (Boolean) -> Unit = {},
   onDeleteClick: (() -> Unit)? = null,
   onNameChange: (String) -> Unit = {},
   onFireAtChange: (LocalTime) -> Unit = {},
@@ -227,9 +231,11 @@ private fun AlarmContent(
   onConfirmClick: () -> Unit = {},
 ) {
   Box(modifier = modifier) {
-    Column(
-      modifier = Modifier.fillMaxSize().animateContentSize().verticalScroll(rememberScrollState())
-    ) {
+    val scrollState = rememberScrollState()
+    val canScrollBackward by remember { derivedStateOf(scrollState::canScrollBackward) }
+    LaunchedEffect(canScrollBackward) { onCallScrollBackwardChange(canScrollBackward) }
+
+    Column(modifier = Modifier.fillMaxSize().animateContentSize().verticalScroll(scrollState)) {
       val isKeyboardOpen by keyboardAsState()
       val focusManager = LocalFocusManager.current
       LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
