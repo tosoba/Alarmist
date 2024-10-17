@@ -1,14 +1,11 @@
 package com.trm.alarmist.feature.alarm.sound
 
 import com.arkivanov.decompose.ComponentContext
-import kotlinx.serialization.Serializable
 
 interface AlarmSoundDialogComponent {
   val selectedSoundId: String?
   val onSoundSelected: (String) -> Unit
   val onDismiss: () -> Unit
-
-  @Serializable data object Config
 }
 
 class DefaultAlarmSoundDialogComponent(

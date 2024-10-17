@@ -22,11 +22,8 @@ import alarmist.composeapp.generated.resources.scheduled
 import alarmist.composeapp.generated.resources.snooze_description
 import alarmist.composeapp.generated.resources.snooze_label
 import alarmist.composeapp.generated.resources.sound_label
-import alarmist.composeapp.generated.resources.time_dial
-import alarmist.composeapp.generated.resources.time_input
 import alarmist.composeapp.generated.resources.vibration_label
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -64,14 +61,13 @@ import androidx.compose.material.icons.filled.AlarmOn
 import androidx.compose.material.icons.filled.AvTimer
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material.icons.filled.Vibration
-import androidx.compose.material.icons.outlined.Keyboard
-import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -88,10 +84,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -99,7 +92,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -126,6 +118,7 @@ import com.trm.alarmist.core.common.util.nextFullHour
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
+import com.trm.alarmist.core.ui.AlarmFireAtTime
 import com.trm.alarmist.core.ui.AlarmGroupHeaderCard
 import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.DatePickerYearMonthControls
@@ -149,8 +142,8 @@ import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
 import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
 import com.trm.alarmist.feature.alarm.model.AlarmState
 import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialog
-import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialogComponent
 import com.trm.alarmist.feature.alarm.sound.alarmSoundTitle
+import com.trm.alarmist.feature.alarm.time.AlarmTimeDialog
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -168,18 +161,18 @@ fun AlarmContent(
 ) {
   val alarmState by component.feature.state.collectAsState()
   val groups by component.feature.groups.collectAsState()
-  val soundDialog by component.soundDialog.subscribeAsState()
+  val dialog by component.dialog.subscribeAsState()
 
   AlarmContent(
     modifier = modifier,
-    soundDialog = soundDialog,
+    dialog = dialog,
     state = alarmState,
     groups = groups,
     onBackClick = onBackClick,
     onCallScrollBackwardChange = onCallScrollBackwardChange,
     onDeleteClick = if (component.mode is AlarmComponent.Mode.Edit) onDeleteActionClick else null,
     onNameChange = component.feature::onNameChange,
-    onFireAtChange = component.feature::onFireAtChange,
+    onFireAtClick = component::onFireAtTimeClick,
     onToggleIsOnChange = component.feature::onToggleIsOnChange,
     onDayOfWeekClick = component.feature::onDayOfWeekClick,
     onDateOnOffSwitchCheckedChange = component.feature::onDateOnOffSwitchCheckedChange,
@@ -204,14 +197,14 @@ fun AlarmContent(
 @Composable
 private fun AlarmContent(
   modifier: Modifier = Modifier,
-  soundDialog: ChildSlot<*, AlarmSoundDialogComponent>,
+  dialog: ChildSlot<*, AlarmDialogChild>,
   state: AlarmState = AlarmState(),
   groups: List<AlarmGroupModel> = emptyList(),
   onBackClick: () -> Unit = {},
   onCallScrollBackwardChange: (Boolean) -> Unit = {},
   onDeleteClick: (() -> Unit)? = null,
   onNameChange: (String) -> Unit = {},
-  onFireAtChange: (LocalTime) -> Unit = {},
+  onFireAtClick: () -> Unit = {},
   onToggleIsOnChange: () -> Unit = {},
   onDayOfWeekClick: (DayOfWeek) -> Unit = {},
   onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
@@ -270,67 +263,39 @@ private fun AlarmContent(
         } ?: run { Spacer(modifier = Modifier.width(16.dp)) }
       }
 
-      var timePickerMode by rememberSaveable { mutableStateOf(TimePickerMode.DIAL) }
-
       Row(
-        modifier = Modifier.padding(start = 24.dp, top = 16.dp, bottom = 16.dp, end = 16.dp),
+        modifier =
+          Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .clickable(onClick = onFireAtClick)
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
       ) {
+        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1f)) {
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+              imageVector = Icons.Default.Alarm,
+              contentDescription = stringResource(Res.string.fire_at_label),
+            )
+
+            Text(
+              text = stringResource(Res.string.fire_at_label),
+              style = MaterialTheme.typography.titleLarge,
+              color = MaterialTheme.colorScheme.onPrimaryContainer,
+              modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
+            )
+          }
+
+          Spacer(modifier = Modifier.height(24.dp))
+
+          state.fireAtTime?.let { AlarmFireAtTime(fireAtTime = it, isOn = true) }
+        }
+
         Icon(
-          imageVector = Icons.Default.Alarm,
-          contentDescription = stringResource(Res.string.fire_at_label),
+          imageVector = Icons.Default.Edit,
+          contentDescription = "Edit fire at time", // TODO:
         )
-
-        Text(
-          text = stringResource(Res.string.fire_at_label),
-          style = MaterialTheme.typography.titleLarge,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
-          modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
-        )
-
-        IconButton(
-          onClick = {
-            timePickerMode =
-              when (timePickerMode) {
-                TimePickerMode.DIAL -> TimePickerMode.INPUT
-                TimePickerMode.INPUT -> TimePickerMode.DIAL
-              }
-          }
-        ) {
-          Crossfade(timePickerMode) {
-            when (it) {
-              TimePickerMode.DIAL -> {
-                Icon(
-                  imageVector = Icons.Outlined.Keyboard,
-                  contentDescription = stringResource(Res.string.time_input),
-                )
-              }
-              TimePickerMode.INPUT -> {
-                Icon(
-                  imageVector = Icons.Outlined.Timer,
-                  contentDescription = stringResource(Res.string.time_dial),
-                )
-              }
-            }
-          }
-        }
-      }
-
-      state.fireAtTime?.let {
-        Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-          val timePickerState = rememberTimePickerState(it.hour, it.minute)
-
-          LaunchedEffect(timePickerState.hour, timePickerState.minute) {
-            onFireAtChange(LocalTime(timePickerState.hour, timePickerState.minute))
-          }
-
-          Crossfade(timePickerMode, modifier = Modifier.align(Alignment.Center)) { mode ->
-            when (mode) {
-              TimePickerMode.DIAL -> TimePicker(state = timePickerState)
-              TimePickerMode.INPUT -> TimeInput(state = timePickerState)
-            }
-          }
-        }
       }
 
       ToggleableSwitchRow(
@@ -640,8 +605,15 @@ private fun AlarmContent(
       FloatingActionButtonSpacer()
     }
 
-    soundDialog.child?.instance?.let {
-      AlarmSoundDialog(component = it, modifier = Modifier.heightIn(max = 500.dp))
+    dialog.child?.instance?.let {
+      when (it) {
+        is AlarmDialogChild.Sound -> {
+          AlarmSoundDialog(component = it.component, modifier = Modifier.heightIn(max = 500.dp))
+        }
+        is AlarmDialogChild.Time -> {
+          AlarmTimeDialog(component = it.component)
+        }
+      }
     }
 
     FloatingActionButton(
@@ -936,9 +908,4 @@ private fun DaysOfWeekRow(
       }
     }
   }
-}
-
-private enum class TimePickerMode {
-  DIAL,
-  INPUT,
 }

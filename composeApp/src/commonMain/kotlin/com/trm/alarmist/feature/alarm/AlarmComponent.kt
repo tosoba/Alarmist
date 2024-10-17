@@ -9,8 +9,8 @@ import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
-import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialogComponent
 import com.trm.alarmist.feature.alarm.sound.DefaultAlarmSoundDialogComponent
+import com.trm.alarmist.feature.alarm.time.DefaultAlarmTimeDialogComponent
 import kotlinx.serialization.Serializable
 
 interface AlarmComponent {
@@ -18,9 +18,11 @@ interface AlarmComponent {
 
   val feature: AlarmFeature
 
-  val soundDialog: Value<ChildSlot<*, AlarmSoundDialogComponent>>
+  val dialog: Value<ChildSlot<*, AlarmDialogChild>>
 
   fun onSoundClick()
+
+  fun onFireAtTimeClick()
 
   @Serializable
   sealed interface Mode {
@@ -43,24 +45,43 @@ class DefaultAlarmComponent(
       )
     }
 
-  private val dialogNavigation = SlotNavigation<AlarmSoundDialogComponent.Config>()
+  private val dialogNavigation = SlotNavigation<AlarmDialogChildConfig>()
 
-  override val soundDialog: Value<ChildSlot<*, AlarmSoundDialogComponent>> =
+  override val dialog: Value<ChildSlot<*, AlarmDialogChild>> =
     childSlot(
       key = "AlarmDialogSlot",
       source = dialogNavigation,
-      serializer = AlarmSoundDialogComponent.Config.serializer(),
+      serializer = AlarmDialogChildConfig.serializer(),
       handleBackButton = true,
-    ) { _, childComponentContext ->
-      DefaultAlarmSoundDialogComponent(
-        componentContext = childComponentContext,
-        selectedSoundId = feature.state.value.soundId,
-        onSoundSelected = { soundId ->
-          feature.onSoundChange(soundId)
-          dialogNavigation.dismiss()
-        },
-        onDismiss = dialogNavigation::dismiss,
-      )
+    ) { config, childComponentContext ->
+      when (config) {
+        AlarmDialogChildConfig.Sound -> {
+          AlarmDialogChild.Sound(
+            DefaultAlarmSoundDialogComponent(
+              componentContext = childComponentContext,
+              selectedSoundId = feature.state.value.soundId,
+              onSoundSelected = { soundId ->
+                feature.onSoundChange(soundId)
+                dialogNavigation.dismiss()
+              },
+              onDismiss = dialogNavigation::dismiss,
+            )
+          )
+        }
+        AlarmDialogChildConfig.Time -> {
+          AlarmDialogChild.Time(
+            DefaultAlarmTimeDialogComponent(
+              componentContext = childComponentContext,
+              time = requireNotNull(feature.state.value.fireAtTime),
+              onConfirm = { time ->
+                feature.onFireAtChange(time)
+                dialogNavigation.dismiss()
+              },
+              onDismiss = dialogNavigation::dismiss,
+            )
+          )
+        }
+      }
     }
 
   init {
@@ -72,7 +93,11 @@ class DefaultAlarmComponent(
   }
 
   override fun onSoundClick() {
-    dialogNavigation.activate(AlarmSoundDialogComponent.Config)
+    dialogNavigation.activate(AlarmDialogChildConfig.Sound)
+  }
+
+  override fun onFireAtTimeClick() {
+    dialogNavigation.activate(AlarmDialogChildConfig.Time)
   }
 
   companion object {
