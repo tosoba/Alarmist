@@ -52,6 +52,12 @@ class DefaultAlarmComponent(
       key = "AlarmDialogSlot",
       source = dialogNavigation,
       serializer = AlarmDialogChildConfig.serializer(),
+      initialConfiguration = {
+        when (mode) {
+          AlarmComponent.Mode.Add -> AlarmDialogChildConfig.Time
+          is AlarmComponent.Mode.Edit -> null
+        }
+      },
       handleBackButton = true,
     ) { config, childComponentContext ->
       when (config) {
