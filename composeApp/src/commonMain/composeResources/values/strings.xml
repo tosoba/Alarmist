@@ -48,6 +48,7 @@
     <string name="no_alarms_created">No alarms created</string>
     <string name="add_alarms_after_creating_group">You can add alarms after creating a group.</string>
     <string name="fire_at_label">Fire at</string>
+    <string name="edit_fire_at_time">Edit fire at time</string>
     <string name="repeat_weekly_label">Repeat weekly</string>
     <string name="snooze_label">Snooze</string>
     <string name="duration_label">Duration</string>
@@ -99,4 +100,5 @@
     <string name="stop_elapsed_timer_alarm">Stop elapsed timer alarm</string>
     <string name="add_minute">Add one minute</string>
     <string name="subtract_minute">Subtract one minute</string>
+    <string name="time_picker_type_toggle">Time picker type toggle</string>
 </resources>

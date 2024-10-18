@@ -1,5 +1,10 @@
 package com.trm.alarmist.feature.alarm.time
 
+import alarmist.composeapp.generated.resources.Res
+import alarmist.composeapp.generated.resources.cancel
+import alarmist.composeapp.generated.resources.fire_at_label
+import alarmist.composeapp.generated.resources.ok
+import alarmist.composeapp.generated.resources.time_picker_type_toggle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -33,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.datetime.LocalTime
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,13 +52,14 @@ fun AlarmTimeDialog(component: AlarmTimeDialogComponent) {
   var showDial by rememberSaveable { mutableStateOf(true) }
 
   TimePickerDialog(
+    title = stringResource(Res.string.fire_at_label),
     onDismiss = component.onDismiss,
     onConfirm = { component.onConfirm(LocalTime(timePickerState.hour, timePickerState.minute)) },
     toggle = {
       IconButton(onClick = { showDial = !showDial }) {
         Icon(
           imageVector = if (showDial) Icons.Filled.EditCalendar else Icons.Filled.AccessTime,
-          contentDescription = "Time picker type toggle",
+          contentDescription = stringResource(Res.string.time_picker_type_toggle),
         )
       }
     },
@@ -67,7 +74,7 @@ fun AlarmTimeDialog(component: AlarmTimeDialogComponent) {
 
 @Composable
 private fun TimePickerDialog(
-  title: String = "Select Time",
+  title: String,
   onDismiss: () -> Unit,
   onConfirm: () -> Unit,
   toggle: @Composable () -> Unit = {},
@@ -95,14 +102,16 @@ private fun TimePickerDialog(
         Text(
           modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
           text = title,
-          style = MaterialTheme.typography.labelMedium,
+          style = MaterialTheme.typography.labelLarge,
         )
+
         content()
+
         Row(modifier = Modifier.height(40.dp).fillMaxWidth()) {
           toggle()
           Spacer(modifier = Modifier.weight(1f))
-          TextButton(onClick = onDismiss) { Text("Cancel") }
-          TextButton(onClick = onConfirm) { Text("OK") }
+          TextButton(onClick = onDismiss) { Text(stringResource(Res.string.cancel)) }
+          TextButton(onClick = onConfirm) { Text(stringResource(Res.string.ok)) }
         }
       }
     }

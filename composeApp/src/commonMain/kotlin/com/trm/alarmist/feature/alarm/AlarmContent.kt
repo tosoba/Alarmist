@@ -10,6 +10,7 @@ import alarmist.composeapp.generated.resources.delete
 import alarmist.composeapp.generated.resources.delete_alarm
 import alarmist.composeapp.generated.resources.delete_all_weekdays
 import alarmist.composeapp.generated.resources.duration_label
+import alarmist.composeapp.generated.resources.edit_fire_at_time
 import alarmist.composeapp.generated.resources.fire_at_label
 import alarmist.composeapp.generated.resources.group_label
 import alarmist.composeapp.generated.resources.hours_before_alarm_label
@@ -294,7 +295,7 @@ private fun AlarmContent(
 
         Icon(
           imageVector = Icons.Default.Edit,
-          contentDescription = "Edit fire at time", // TODO:
+          contentDescription = stringResource(Res.string.edit_fire_at_time),
         )
       }
 
