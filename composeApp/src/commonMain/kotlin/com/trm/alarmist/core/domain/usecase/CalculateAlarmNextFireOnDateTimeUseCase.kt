@@ -26,33 +26,24 @@ fun calculateAlarmNextFireOnDateTime(
   offOnDates: Collection<LocalDate>,
   isOn: Boolean = true,
   afterDateTime: LocalDateTime = LocalDateTime.now(),
-  calculateOneTime: CalculateOneTimeAlarmNextFireOnDateTime =
-    ::calculateOneTimeAlarmNextFireOnDateTime,
-  calculateScheduled: CalculateScheduledAlarmNextFireOnDateTime =
-    ::calculateScheduledAlarmNextFireOnDateTime,
 ): LocalDateTime? =
   when {
     !isOn -> {
       null
     }
     scheduledOnDaysOfWeek.isEmpty() && scheduledOnDates.isEmpty() -> {
-      calculateOneTime(fireAtTime, afterDateTime)
+      calculateOneTimeAlarmNextFireOnDateTime(fireAtTime, afterDateTime)
     }
     else -> {
-      calculateScheduled(
+      calculateScheduledAlarmNextFireOnDateTime(
         fireAtTime,
         scheduledOnDaysOfWeek,
         scheduledOnDates,
         offOnDates,
         afterDateTime,
-        ::calculateScheduledAlarmNextFireOnDateForDaysOfWeek,
-        ::calculateScheduledAlarmNextFireOnDateForDateList,
       )
     }
   }
-
-private typealias CalculateOneTimeAlarmNextFireOnDateTime =
-  (LocalTime, LocalDateTime) -> LocalDateTime
 
 internal fun calculateOneTimeAlarmNextFireOnDateTime(
   fireAtTime: LocalTime,
@@ -63,37 +54,29 @@ internal fun calculateOneTimeAlarmNextFireOnDateTime(
     else -> afterDateTime.date
   }.atTime(fireAtTime)
 
-private typealias CalculateScheduledAlarmNextFireOnDateTime =
-  (
-    fireAtTime: LocalTime,
-    scheduledOnDaysOfWeek: Collection<DayOfWeek>,
-    scheduledOnDates: Collection<LocalDate>,
-    offOnDates: Collection<LocalDate>,
-    afterDateTime: LocalDateTime,
-    calculateForDaysOfWeek: CalculateScheduledAlarmNextFireOnDateForDaysOfWeek,
-    calculateForDateList: CalculateScheduledAlarmNextFireOnDateForDateList,
-  ) -> LocalDateTime?
-
 internal fun calculateScheduledAlarmNextFireOnDateTime(
   fireAtTime: LocalTime,
   scheduledOnDaysOfWeek: Collection<DayOfWeek>,
   scheduledOnDates: Collection<LocalDate>,
   offOnDates: Collection<LocalDate>,
   afterDateTime: LocalDateTime,
-  calculateForDaysOfWeek: CalculateScheduledAlarmNextFireOnDateForDaysOfWeek =
-    ::calculateScheduledAlarmNextFireOnDateForDaysOfWeek,
-  calculateForDateList: CalculateScheduledAlarmNextFireOnDateForDateList =
-    ::calculateScheduledAlarmNextFireOnDateForDateList,
 ): LocalDateTime? =
   listOfNotNull(
-      calculateForDaysOfWeek(scheduledOnDaysOfWeek, fireAtTime, offOnDates, afterDateTime),
-      calculateForDateList(scheduledOnDates, fireAtTime, offOnDates, afterDateTime),
+      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
+        scheduledOnDaysOfWeek,
+        fireAtTime,
+        offOnDates,
+        afterDateTime,
+      ),
+      calculateScheduledAlarmNextFireOnDateForDateList(
+        scheduledOnDates,
+        fireAtTime,
+        offOnDates,
+        afterDateTime,
+      ),
     )
     .minOrNull()
     ?.atTime(fireAtTime)
-
-private typealias CalculateScheduledAlarmNextFireOnDateForDaysOfWeek =
-  (Collection<DayOfWeek>, LocalTime, Collection<LocalDate>, LocalDateTime) -> LocalDate?
 
 internal fun calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
   scheduledOnDaysOfWeek: Collection<DayOfWeek>,
@@ -114,9 +97,6 @@ internal fun calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
 
   return scheduledOnDaysOfWeek.minOfOrNull(DayOfWeek::nextScheduledOnDate)
 }
-
-private typealias CalculateScheduledAlarmNextFireOnDateForDateList =
-  (Collection<LocalDate>, LocalTime, Collection<LocalDate>, LocalDateTime) -> LocalDate?
 
 internal fun calculateScheduledAlarmNextFireOnDateForDateList(
   scheduledOnDates: Collection<LocalDate>,
