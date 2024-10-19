@@ -9,7 +9,6 @@ interface AlarmScheduler {
     id: Long,
     name: String?,
     fireOnDateTime: LocalDateTime,
-    snoozeAvailable: Boolean,
     alarmDurationMinutes: Long,
     soundEnabled: Boolean,
     soundId: String?,

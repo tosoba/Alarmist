@@ -208,7 +208,7 @@ private fun ClockWidgetContent(
           Spacer(modifier = GlanceModifier.width(4.dp))
 
           WidgetAlarmFireAtTimeText(
-            fireAtTime = alarm.nextFireAtTime,
+            fireAtTime = alarm.fireAtTime,
             is24HourFormat = DateFormat.is24HourFormat(LocalContext.current),
             useFullFormat = true,
             shadowMode = shadowMode,

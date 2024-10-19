@@ -377,7 +377,7 @@ private fun GroupedAlarmCard(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-      AlarmFireAtTime(fireAtTime = alarm.nextFireAtTime, isOn = alarm.isOn)
+      AlarmFireAtTime(fireAtTime = alarm.fireAtTime, isOn = alarm.isOn)
       Spacer(modifier = Modifier.width(8.dp))
       Checkbox(checked = isSelected, onCheckedChange = { onToggleAlarmSelection() })
     }

@@ -21,7 +21,6 @@ class TurnAlarmOffOnDateUseCase(
           id = id,
           name = modifiedAlarm.name,
           fireOnDateTime = it,
-          snoozeAvailable = modifiedAlarm.snoozeDurationMinutes > 0L,
           alarmDurationMinutes = modifiedAlarm.alarmDurationMinutes,
           soundEnabled = modifiedAlarm.soundEnabled,
           soundId = modifiedAlarm.soundId,

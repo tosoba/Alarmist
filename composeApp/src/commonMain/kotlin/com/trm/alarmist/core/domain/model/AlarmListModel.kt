@@ -18,8 +18,4 @@ data class AlarmListModel(
   val closestScheduledOnDate: LocalDate?,
   val offOnAllScheduledDates: Boolean,
   val scheduledOnMultipleDates: Boolean,
-  val snoozedFireAtTime: LocalTime?,
-) {
-  val nextFireAtTime: LocalTime
-    get() = snoozedFireAtTime ?: fireAtTime
-}
+)

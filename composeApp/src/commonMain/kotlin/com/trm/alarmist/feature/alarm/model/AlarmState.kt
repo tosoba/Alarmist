@@ -1,8 +1,6 @@
 package com.trm.alarmist.feature.alarm.model
 
 import androidx.compose.runtime.Immutable
-import com.trm.alarmist.core.common.util.nextFullHour
-import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmModel
 import kotlinx.datetime.DayOfWeek
@@ -20,9 +18,6 @@ data class AlarmState(
   val scheduledOnDaysOfWeek: Set<DayOfWeek> = emptySet(),
   val scheduledOnDates: Set<LocalDate> = emptySet(),
   val offOnDates: Set<LocalDate> = emptySet(),
-  val snoozeEnabled: Boolean = true,
-  val snoozeDuration: AlarmSnoozeDuration = AlarmSnoozeDuration.MIN_10,
-  val snoozeLimit: Long = DEFAULT_SNOOZE_LIMIT,
   val alarmDuration: Long = DEFAULT_ALARM_DURATION_MINUTES,
   val soundEnabled: Boolean = true,
   val vibrationEnabled: Boolean = true,
@@ -40,9 +35,6 @@ data class AlarmState(
     scheduledOnDaysOfWeek = alarm.scheduledOnDaysOfWeek.toSet(),
     scheduledOnDates = alarm.scheduledOnDates.toSet(),
     offOnDates = alarm.offOnDates.toSet(),
-    snoozeEnabled = alarm.snoozeDurationMinutes > 0L,
-    snoozeDuration = AlarmSnoozeDuration.fromMinutes(alarm.snoozeDurationMinutes),
-    snoozeLimit = alarm.snoozeLimit.takeIf { it > 0L } ?: DEFAULT_SNOOZE_LIMIT,
     alarmDuration = alarm.alarmDurationMinutes,
     soundEnabled = alarm.soundEnabled,
     vibrationEnabled = alarm.vibrationEnabled,
@@ -51,20 +43,10 @@ data class AlarmState(
     soundId = alarm.soundId,
   )
 
-  val snoozeDurationOrZero: Long
-    get() = if (snoozeEnabled) snoozeDuration.minutes else 0L
-
-  val snoozeLimitOrZero: Long
-    get() = if (snoozeEnabled) snoozeLimit else 0L
-
   val reminderOffsetOrZero: Long
     get() = if (reminderEnabled) reminderOffset.hours else 0L
 
   companion object {
-    const val MIN_SNOOZE_LIMIT = 1L
-    const val DEFAULT_SNOOZE_LIMIT = 2L
-    const val MAX_SNOOZE_LIMIT = 10L
-
     const val MIN_ALARM_DURATION_MINUTES = 1L
     const val DEFAULT_ALARM_DURATION_MINUTES = 1L
     const val MAX_ALARM_DURATION_MINUTES = 10L

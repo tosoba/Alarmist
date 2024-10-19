@@ -50,7 +50,7 @@ fun AlarmListItem(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-      AlarmFireAtTime(fireAtTime = item.nextFireAtTime, isOn = item.isOn)
+      AlarmFireAtTime(fireAtTime = item.fireAtTime, isOn = item.isOn)
       Spacer(modifier = Modifier.width(8.dp))
       Switch(checked = item.isOn, onCheckedChange = { _ -> onToggleOnOff(item) })
     }

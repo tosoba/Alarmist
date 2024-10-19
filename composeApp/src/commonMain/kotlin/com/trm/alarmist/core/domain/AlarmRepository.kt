@@ -18,8 +18,6 @@ interface AlarmRepository {
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
-    snoozeDurationMinutes: Long,
-    snoozeLimit: Long,
     alarmDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
@@ -36,8 +34,6 @@ interface AlarmRepository {
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
-    snoozeDurationMinutes: Long,
-    snoozeLimit: Long,
     alarmDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
@@ -99,8 +95,6 @@ interface AlarmRepository {
   suspend fun updateUngroupedAlarmsOnOff(isOn: Boolean): List<AlarmModel>
 
   suspend fun updateAlarmOnDismiss(id: Long, notificationDateTime: LocalDateTime): AlarmModel
-
-  suspend fun updateAlarmOnSnooze(id: Long): AlarmModel
 
   suspend fun deleteAlarm(id: Long)
 

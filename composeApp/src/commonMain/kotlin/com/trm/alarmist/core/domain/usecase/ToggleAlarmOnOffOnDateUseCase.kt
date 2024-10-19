@@ -24,7 +24,6 @@ class ToggleAlarmOnOffOnDateUseCase(
               id = id,
               name = toggledAlarm.name,
               fireOnDateTime = it,
-              snoozeAvailable = toggledAlarm.snoozeDurationMinutes > 0L,
               alarmDurationMinutes = toggledAlarm.alarmDurationMinutes,
               soundEnabled = toggledAlarm.soundEnabled,
               soundId = toggledAlarm.soundId,

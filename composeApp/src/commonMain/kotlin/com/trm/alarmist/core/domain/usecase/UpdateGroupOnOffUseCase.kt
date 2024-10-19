@@ -22,7 +22,6 @@ class UpdateGroupOnOffUseCase(
             id = alarm.id,
             name = alarm.name,
             fireOnDateTime = it,
-            snoozeAvailable = alarm.snoozeDurationMinutes > 0L,
             alarmDurationMinutes = alarm.alarmDurationMinutes,
             soundEnabled = alarm.soundEnabled,
             soundId = alarm.soundId,

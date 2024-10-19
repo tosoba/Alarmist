@@ -40,8 +40,6 @@ class AlarmLocalRepository(
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
-    snoozeDurationMinutes: Long,
-    snoozeLimit: Long,
     alarmDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
@@ -62,10 +60,6 @@ class AlarmLocalRepository(
           offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toSet(),
           lastModificationDateTime = LocalDateTime.now(),
           lastNotificationDate = null,
-          snoozeDurationMinutes = snoozeDurationMinutes,
-          snoozeCount = DB_OFF,
-          snoozeLimit = snoozeLimit,
-          lastSnoozedAt = null,
           alarmDurationMinutes = alarmDurationMinutes,
           soundEnabled = if (soundEnabled) DB_ON else DB_OFF,
           vibrationEnabled = if (vibrationEnabled) DB_ON else DB_OFF,
@@ -85,8 +79,6 @@ class AlarmLocalRepository(
     scheduledOnDaysOfWeek: Collection<DayOfWeek>,
     scheduledOnDates: Collection<LocalDate>,
     offOnDates: Collection<LocalDate>,
-    snoozeDurationMinutes: Long,
-    snoozeLimit: Long,
     alarmDurationMinutes: Long,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
@@ -105,8 +97,6 @@ class AlarmLocalRepository(
         scheduledOnDates = scheduledOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toSet(),
         offOnDates = offOnDates.takeIf(Collection<LocalDate>::isNotEmpty)?.toSet(),
         lastModificationDateTime = LocalDateTime.now(),
-        snoozeDurationMinutes = snoozeDurationMinutes,
-        snoozeLimit = snoozeLimit,
         alarmDurationMinutes = alarmDurationMinutes,
         soundEnabled = if (soundEnabled) DB_ON else DB_OFF,
         vibrationEnabled = if (vibrationEnabled) DB_ON else DB_OFF,
@@ -381,7 +371,7 @@ class AlarmLocalRepository(
   ): AlarmModel =
     withContext(dispatcher) {
       queries.transactionWithResult {
-        queries.updateAlarmLastNotificationDateAndResetSnoozeById(notificationDateTime.date, id)
+        queries.updateAlarmLastNotificationDateById(notificationDateTime.date, id)
 
         val alarm = queries.selectAlarmById(id).executeAsOne().toModel()
         if (
@@ -404,14 +394,6 @@ class AlarmLocalRepository(
         } else {
           alarm
         }
-      }
-    }
-
-  override suspend fun updateAlarmOnSnooze(id: Long): AlarmModel =
-    withContext(dispatcher) {
-      queries.transactionWithResult {
-        queries.updateAlarmSnoozeById(LocalDateTime.now(), id)
-        queries.selectAlarmById(id).executeAsOne().toModel()
       }
     }
 

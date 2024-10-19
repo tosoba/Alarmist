@@ -20,8 +20,6 @@ import alarmist.composeapp.generated.resources.reminder_label
 import alarmist.composeapp.generated.resources.repeat_weekly_label
 import alarmist.composeapp.generated.resources.schedule_alarm
 import alarmist.composeapp.generated.resources.scheduled
-import alarmist.composeapp.generated.resources.snooze_description
-import alarmist.composeapp.generated.resources.snooze_label
 import alarmist.composeapp.generated.resources.sound_label
 import alarmist.composeapp.generated.resources.vibration_label
 import androidx.compose.animation.AnimatedVisibility
@@ -67,7 +65,6 @@ import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -140,7 +137,6 @@ import com.trm.alarmist.core.ui.keyboardAsState
 import com.trm.alarmist.core.ui.theme.bottomSheetBackgroundColor
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
-import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
 import com.trm.alarmist.feature.alarm.model.AlarmState
 import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialog
 import com.trm.alarmist.feature.alarm.sound.alarmSoundTitle
@@ -180,9 +176,6 @@ fun AlarmContent(
     onDeleteOnAllDaysWeekClick = component.feature::onDeleteOnAllDaysWeekClick,
     onDeleteOnDateClick = component.feature::onDeleteOnDateClick,
     onScheduleOnDateClick = component.feature::onScheduleOnDateClick,
-    onToggleSnoozeEnabled = component.feature::onToggleSnoozeEnabled,
-    onSnoozeDurationChange = component.feature::onSnoozeDurationChange,
-    onSnoozeLimitChange = component.feature::onSnoozeLimitChange,
     onAlarmDurationChange = component.feature::onAlarmDurationChange,
     onSoundClick = component::onSoundClick,
     onToggleSoundEnabled = component.feature::onToggleSoundEnabled,
@@ -212,9 +205,6 @@ private fun AlarmContent(
   onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
   onDeleteOnDateClick: (LocalDate) -> Unit = {},
   onScheduleOnDateClick: (LocalDate) -> Unit = {},
-  onToggleSnoozeEnabled: () -> Unit = {},
-  onSnoozeDurationChange: (AlarmSnoozeDuration) -> Unit = {},
-  onSnoozeLimitChange: (Long) -> Unit = {},
   onAlarmDurationChange: (Long) -> Unit = {},
   onSoundClick: () -> Unit = {},
   onToggleSoundEnabled: () -> Unit = {},
@@ -457,56 +447,6 @@ private fun AlarmContent(
         thumb = { AlarmSliderThumb(text = state.alarmDuration.toString()) },
         modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
       )
-
-      ToggleableSwitchRow(
-        value = state.snoozeEnabled,
-        label = stringResource(Res.string.snooze_label),
-        imageVector = Icons.Default.Snooze,
-        onValueChange = remember { { onToggleSnoozeEnabled() } },
-      ) {
-        Column {
-          Text(
-            text = stringResource(Res.string.snooze_label),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-          )
-          AnimatedVisibility(visible = state.snoozeEnabled) {
-            Text(
-              text =
-                stringResource(
-                  Res.string.snooze_description,
-                  state.snoozeDuration.minutes,
-                  state.snoozeLimit,
-                ),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-          }
-        }
-      }
-
-      AnimatedVisibility(visible = state.snoozeEnabled, enter = fadeIn(), exit = fadeOut()) {
-        Column {
-          val snoozeDurationValues = remember { AlarmSnoozeDuration.entries.toTypedArray() }
-          Slider(
-            value = state.snoozeDuration.ordinal.toFloat(),
-            valueRange = 0f..snoozeDurationValues.lastIndex.toFloat(),
-            onValueChange = { onSnoozeDurationChange(snoozeDurationValues[it.toInt()]) },
-            thumb = { AlarmSliderThumb(text = state.snoozeDuration.minutes.toString()) },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-          )
-
-          Slider(
-            value = state.snoozeLimit.toFloat(),
-            valueRange =
-              AlarmState.MIN_SNOOZE_LIMIT.toFloat()..AlarmState.MAX_SNOOZE_LIMIT.toFloat(),
-            steps = AlarmState.MAX_SNOOZE_LIMIT.toInt() - AlarmState.MIN_SNOOZE_LIMIT.toInt() - 1,
-            onValueChange = { onSnoozeLimitChange(it.toLong()) },
-            thumb = { AlarmSliderThumb(text = state.snoozeLimit.toString()) },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-          )
-        }
-      }
 
       ToggleableSwitchRow(
         value = state.reminderEnabled,

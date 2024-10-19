@@ -39,8 +39,8 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
         IsAlarmScheduledToFireAtDateTimeUseCase(
           alarmRepositoryThatReturns(
             alarmModel(
-              isOn = true,
               fireAtTime = fireAtTime,
+              isOn = true,
               lastModificationDateTime = lastModificationDateTime,
             )
           )
@@ -58,8 +58,8 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
         IsAlarmScheduledToFireAtDateTimeUseCase(
           alarmRepositoryThatReturns(
             alarmModel(
-              isOn = true,
               fireAtTime = fireAtTime,
+              isOn = true,
               lastModificationDateTime = lastModificationDateTime,
             )
           )
@@ -76,8 +76,8 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
       IsAlarmScheduledToFireAtDateTimeUseCase(
         alarmRepositoryThatReturns(
           alarmModel(
-            isOn = true,
             fireAtTime = fireAtTime,
+            isOn = true,
             lastModificationDateTime = lastModificationDateTime,
           )
         )
@@ -106,10 +106,10 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
         IsAlarmScheduledToFireAtDateTimeUseCase(
           alarmRepositoryThatReturns(
             alarmModel(
-              isOn = true,
               fireAtTime = LocalTime(9, 30),
-              lastModificationDateTime = lastModificationDateTime,
+              isOn = true,
               scheduledOnDates = setOf(lastModificationDateTime.date),
+              lastModificationDateTime = lastModificationDateTime,
             )
           )
         )(1L, LocalDateTime(lastModificationDateTime.date, LocalTime(8, 20)))
@@ -125,66 +125,15 @@ class IsAlarmScheduledToFireAtDateTimeUseCaseTests {
       IsAlarmScheduledToFireAtDateTimeUseCase(
         alarmRepositoryThatReturns(
           alarmModel(
-            isOn = true,
             fireAtTime = fireAtTime,
-            lastModificationDateTime = lastModificationDateTime,
+            isOn = true,
             scheduledOnDates = setOf(lastModificationDateTime.date),
+            lastModificationDateTime = lastModificationDateTime,
           )
         )
       )(1L, LocalDateTime(lastModificationDateTime.date, fireAtTime))
     )
   }
-
-  @Test
-  fun `given on custom scheduled alarm that was snoozed and fireAtDateTime with non matching time - then return false`() =
-    runTest {
-      val fireAtTime = LocalTime(9, 30)
-      val lastModificationDateTime = LocalDateTime(2024, 8, 25, 7, 30)
-
-      assertFalse(
-        IsAlarmScheduledToFireAtDateTimeUseCase(
-          alarmRepositoryThatReturns(
-            alarmModel(
-              isOn = true,
-              fireAtTime = fireAtTime,
-              lastModificationDateTime = lastModificationDateTime,
-              scheduledOnDates = setOf(lastModificationDateTime.date),
-              lastSnoozedAt = LocalDateTime(lastModificationDateTime.date, fireAtTime),
-              snoozeDurationMinutes = 5L,
-            )
-          )
-        )(1L, LocalDateTime(lastModificationDateTime.date, fireAtTime))
-      )
-    }
-
-  @Test
-  fun `given on custom scheduled alarm that was snoozed and fireAtDateTime with matching time - then return true`() =
-    runTest {
-      val fireAtTime = LocalTime(9, 30)
-      val lastModificationDateTime = LocalDateTime(2024, 8, 25, 7, 30)
-      val snoozeDurationMinutes = 5L
-
-      assertTrue(
-        IsAlarmScheduledToFireAtDateTimeUseCase(
-          alarmRepositoryThatReturns(
-            alarmModel(
-              isOn = true,
-              fireAtTime = fireAtTime,
-              lastModificationDateTime = lastModificationDateTime,
-              scheduledOnDates = setOf(lastModificationDateTime.date),
-              lastSnoozedAt = LocalDateTime(lastModificationDateTime.date, fireAtTime),
-              snoozeDurationMinutes = snoozeDurationMinutes,
-            )
-          )
-        )(
-          1L,
-          LocalDateTime(
-            lastModificationDateTime.date,
-            LocalTime(fireAtTime.hour, fireAtTime.minute + snoozeDurationMinutes.toInt()),
-          ),
-        )
-      )
-    }
 
   private fun alarmRepositoryThatReturns(alarm: AlarmModel): AlarmRepository = mock {
     everySuspend { getAlarmById(any()) } returns alarm

@@ -16,9 +16,8 @@ class IsAlarmScheduledToFireAtDateTimeUseCase(private val repository: AlarmRepos
         fireAtDateTime == alarm.expectedOneTimeNotificationDateTime()
       }
       else -> {
-        alarm.snoozedFireAtDateTime == fireAtDateTime ||
-          (alarm.isCustomScheduledToFireOn(fireAtDateTime.date) &&
-            alarm.fireAtTime == fireAtDateTime.time)
+        alarm.isCustomScheduledToFireOn(fireAtDateTime.date) &&
+          alarm.fireAtTime == fireAtDateTime.time
       }
     }
   }

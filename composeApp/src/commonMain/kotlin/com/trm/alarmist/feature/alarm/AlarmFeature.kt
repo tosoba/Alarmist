@@ -10,7 +10,6 @@ import com.trm.alarmist.core.domain.usecase.AddAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.DeleteAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
-import com.trm.alarmist.feature.alarm.model.AlarmSnoozeDuration
 import com.trm.alarmist.feature.alarm.model.AlarmState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,8 +84,6 @@ class AlarmFeature(
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
-              snoozeDurationMinutes = snoozeDurationOrZero,
-              snoozeLimit = snoozeLimitOrZero,
               alarmDurationMinutes = alarmDuration,
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
@@ -104,8 +101,6 @@ class AlarmFeature(
               scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
               scheduledOnDates = scheduledOnDates,
               offOnDates = offOnDates,
-              snoozeDurationMinutes = snoozeDurationOrZero,
-              snoozeLimit = snoozeLimitOrZero,
               alarmDurationMinutes = alarmDuration,
               soundEnabled = soundEnabled,
               vibrationEnabled = vibrationEnabled,
@@ -170,18 +165,6 @@ class AlarmFeature(
 
   fun onScheduleOnDateClick(date: LocalDate) {
     _state.update { it.copy(scheduledOnDates = it.scheduledOnDates + date) }
-  }
-
-  fun onToggleSnoozeEnabled() {
-    _state.update { it.copy(snoozeEnabled = !it.snoozeEnabled) }
-  }
-
-  fun onSnoozeDurationChange(duration: AlarmSnoozeDuration) {
-    _state.update { it.copy(snoozeDuration = duration) }
-  }
-
-  fun onSnoozeLimitChange(limit: Long) {
-    _state.update { it.copy(snoozeLimit = limit) }
   }
 
   fun onAlarmDurationChange(duration: Long) {

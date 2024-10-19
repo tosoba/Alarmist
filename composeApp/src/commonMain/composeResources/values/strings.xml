@@ -4,7 +4,6 @@
     <string name="cancel">Cancel</string>
     <string name="settings">Settings</string>
     <string name="dismiss">Dismiss</string>
-    <string name="snooze">Snooze</string>
     <string name="ungrouped">Ungrouped</string>
     <string name="scheduled">Scheduled</string>
     <string name="paused">Paused</string>
@@ -50,7 +49,6 @@
     <string name="fire_at_label">Fire at</string>
     <string name="edit_fire_at_time">Edit fire at time</string>
     <string name="repeat_weekly_label">Repeat weekly</string>
-    <string name="snooze_label">Snooze</string>
     <string name="duration_label">Duration</string>
     <string name="auto_schedule_label">Auto schedule</string>
     <string name="reminder_label">Reminder</string>
@@ -68,7 +66,6 @@
     <string name="group_name_blank_validation_error">Group name cannot be blank.</string>
     <string name="minutes_label">%1$s minute(s)</string>
     <string name="hours_before_alarm_label">%1$s hour(s) before alarm</string>
-    <string name="snooze_description">%1$s minute(s), at most %2$s time(s)</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>

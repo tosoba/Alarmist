@@ -10,5 +10,4 @@ fun alarmAdapter(): Alarm.Adapter =
     offOnDatesAdapter = DateSetAdapter,
     lastModificationDateTimeAdapter = LocalDateTimeAdapter,
     lastNotificationDateAdapter = LocalDateAdapter,
-    lastSnoozedAtAdapter = LocalDateTimeAdapter,
   )

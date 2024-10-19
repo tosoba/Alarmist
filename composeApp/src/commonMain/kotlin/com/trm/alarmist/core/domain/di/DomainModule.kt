@@ -22,7 +22,6 @@ import com.trm.alarmist.core.domain.usecase.TurnAlarmOffOnDateUseCase
 import com.trm.alarmist.core.domain.usecase.TurnAlarmOffUseCase
 import com.trm.alarmist.core.domain.usecase.TurnAlarmOnOnDateUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
-import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmScheduleUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateGroupOnOffUseCase
 import org.koin.core.module.dsl.factoryOf
@@ -36,7 +35,6 @@ val domainModule = module {
   factoryOf(::UpdateGroupOnOffUseCase)
   factoryOf(::UpdateAlarmScheduleUseCase)
   factoryOf(::UpdateAlarmOnDismissUseCase)
-  factoryOf(::UpdateAlarmOnSnoozeUseCase)
   factoryOf(::GetGroupedAlarmsFlowUseCase)
   factoryOf(::GetAlarmsInGroupFlowUseCase)
   factoryOf(::GetAndResetMissedAlarmsOnBootUseCase)

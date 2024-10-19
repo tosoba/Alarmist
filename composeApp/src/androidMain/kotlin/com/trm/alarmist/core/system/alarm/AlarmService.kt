@@ -2,7 +2,6 @@ package com.trm.alarmist.core.system.alarm
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.dismiss
-import alarmist.composeapp.generated.resources.snooze
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -30,17 +29,15 @@ import com.trm.alarmist.core.common.util.getSerializable
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.common.util.requireAlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
-import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnSnoozeUseCase
 import io.github.aakira.napier.Napier
+import java.util.Timer
+import java.util.TimerTask
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.Timer
-import java.util.TimerTask
 
 class AlarmService : LifecycleService(), KoinComponent {
   private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
-  private val updateAlarmOnSnoozeUseCase: UpdateAlarmOnSnoozeUseCase by inject()
 
   private var mediaPlayer: MediaPlayer? = null
   private var vibrator: Vibrator? = null
@@ -148,17 +145,6 @@ class AlarmService : LifecycleService(), KoinComponent {
         getStringBlocking(Res.string.dismiss),
         getAlarmFiredBroadcastPendingIntent(settings, AlarmActionType.DISMISS),
       )
-      .run {
-        if (settings.snoozeAvailable) {
-          addAction(
-            R.drawable.ic_launcher_foreground,
-            getStringBlocking(Res.string.snooze),
-            getAlarmFiredBroadcastPendingIntent(settings, AlarmActionType.SNOOZE),
-          )
-        } else {
-          this
-        }
-      }
       .build()
 
   private fun getAlarmFiredBroadcastPendingIntent(
@@ -188,9 +174,7 @@ class AlarmService : LifecycleService(), KoinComponent {
             this@AlarmService,
             settings.soundId?.let {
               val ringtoneManager =
-                RingtoneManager(this@AlarmService).apply {
-                  setType(RingtoneManager.TYPE_ALARM)
-                }
+                RingtoneManager(this@AlarmService).apply { setType(RingtoneManager.TYPE_ALARM) }
               val cursor = ringtoneManager.cursor
               while (cursor.moveToNext()) {
                 if (cursor.getString(RingtoneManager.ID_COLUMN_INDEX) == it) {
@@ -240,11 +224,7 @@ class AlarmService : LifecycleService(), KoinComponent {
     alarmDurationTimer.schedule(
       object : TimerTask() {
         override fun run() {
-          performAlarmActionAndStopSelf(
-            actionType =
-              if (settings.snoozeAvailable) AlarmActionType.SNOOZE else AlarmActionType.DISMISS,
-            settings = settings,
-          )
+          performAlarmActionAndStopSelf(actionType = AlarmActionType.DISMISS, settings = settings)
         }
       },
       60_000 * settings.alarmDurationMinutes,
@@ -259,21 +239,16 @@ class AlarmService : LifecycleService(), KoinComponent {
       AlarmActionType.DISMISS -> {
         lifecycleScope.launch { updateAlarmOnDismissUseCase(settings.id, settings.fireOnDateTime) }
       }
-      AlarmActionType.SNOOZE -> {
-        lifecycleScope.launch { updateAlarmOnSnoozeUseCase(settings.id) }
-      }
     }.invokeOnCompletion { stopSelf() }
   }
 
   private enum class AlarmActionType {
-    DISMISS,
-    SNOOZE;
+    DISMISS;
 
     val requestCode: Int
       get() =
         when (this) {
           DISMISS -> 100
-          SNOOZE -> 200
         }
   }
 

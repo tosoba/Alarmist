@@ -15,10 +15,6 @@ CREATE TABLE alarm(
 	offOnDates TEXT AS Set<LocalDate>,
     lastModificationDateTime TEXT AS LocalDateTime NOT NULL,
 	lastNotificationDate TEXT AS LocalDate,
-	snoozeDurationMinutes INTEGER NOT NULL DEFAULT 0,
-	snoozeCount INTEGER NOT NULL DEFAULT 0,
-	snoozeLimit INTEGER NOT NULL DEFAULT 2,
-	lastSnoozedAt TEXT AS LocalDateTime,
 	alarmDurationMinutes INTEGER NOT NULL DEFAULT 1,
 	soundEnabled INTEGER NOT NULL DEFAULT 1,
 	vibrationEnabled INTEGER NOT NULL DEFAULT 1,
@@ -33,7 +29,7 @@ CREATE TABLE alarmGroup(
 );
 
 insertAlarm:
-INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+INSERT OR REPLACE INTO alarm VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateAlarmById:
 UPDATE alarm
@@ -47,10 +43,6 @@ SET
     offOnDates = ?,
     lastModificationDateTime = ?,
     lastNotificationDate = NULL,
-    snoozeDurationMinutes = ?,
-    snoozeCount = 0,
-    snoozeLimit = ?,
-    lastSnoozedAt = NULL,
     alarmDurationMinutes = ?,
     soundEnabled = ?,
     vibrationEnabled = ?,
@@ -58,21 +50,13 @@ SET
     soundId = ?
 WHERE id = ?;
 
-updateAlarmLastNotificationDateAndResetSnoozeById:
-UPDATE alarm SET lastNotificationDate = ?, snoozeCount = 0, lastSnoozedAt = NULL WHERE id = ?;
+updateAlarmLastNotificationDateById:
+UPDATE alarm SET lastNotificationDate = ? WHERE id = ?;
 
 updateToggleAlarmOnOffById:
 UPDATE alarm
 SET
     lastModificationDateTime = ?,
-    lastSnoozedAt = CASE
-        WHEN isOn = 1 THEN NULL
-        ELSE lastSnoozedAt
-    END,
-    snoozeCount = CASE
-        WHEN isOn = 1 THEN 0
-        ELSE snoozeCount
-    END,
     isOn = CASE
         WHEN scheduledOnDaysOfWeek IS NULL AND scheduledOnDates = offOnDates AND isOn = 1 THEN isOn
         WHEN isOn = 1 THEN 0
@@ -137,7 +121,7 @@ WHERE (
 selectAlarmsScheduledToFireOnDateAfterTime:
 SELECT * FROM alarm
 WHERE fireAtTime > :fireAtTime
-AND (lastNotificationDate IS NULL OR lastNotificationDate <> :date OR lastSnoozedAt IS NOT NULL)
+AND (lastNotificationDate IS NULL OR lastNotificationDate <> :date)
 AND (
     scheduledOnDates LIKE ('%' || :dateString || '%')
     OR
@@ -228,9 +212,7 @@ SET
     scheduledOnDates = NULL,
     offOnDates = NULL,
     lastModificationDateTime = ?,
-    lastNotificationDate = NULL,
-    snoozeCount = 0,
-    lastSnoozedAt = NULL
+    lastNotificationDate = NULL
 WHERE id = ?;
 
 updateResetAlarmByIds:
@@ -241,20 +223,13 @@ SET
     scheduledOnDates = NULL,
     offOnDates = NULL,
     lastModificationDateTime = ?,
-    lastNotificationDate = NULL,
-    snoozeCount = 0,
-    lastSnoozedAt = NULL
+    lastNotificationDate = NULL
 WHERE id IN :ids;
 
 updateResetScheduledOnDatesByIds:
 UPDATE alarm
 SET scheduledOnDates = NULL, lastModificationDateTime = ?
 WHERE id IN :ids;
-
-updateAlarmSnoozeById:
-UPDATE alarm
-SET snoozeCount = snoozeCount + 1, lastSnoozedAt = ?
-WHERE id = ?;
 
 selectLastInsertedRowId:
 SELECT last_insert_rowid();
