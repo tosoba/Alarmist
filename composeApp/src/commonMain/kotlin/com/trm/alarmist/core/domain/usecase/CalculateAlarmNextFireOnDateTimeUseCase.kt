@@ -36,11 +36,11 @@ fun calculateAlarmNextFireOnDateTime(
     }
     else -> {
       calculateScheduledAlarmNextFireOnDateTime(
-        fireAtTime,
-        scheduledOnDaysOfWeek,
-        scheduledOnDates,
-        offOnDates,
-        afterDateTime,
+        fireAtTime = fireAtTime,
+        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+        scheduledOnDates = scheduledOnDates,
+        offOnDates = offOnDates,
+        afterDateTime = afterDateTime,
       )
     }
   }
@@ -63,16 +63,16 @@ private fun calculateScheduledAlarmNextFireOnDateTime(
 ): LocalDateTime? =
   listOfNotNull(
       calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
-        scheduledOnDaysOfWeek,
-        fireAtTime,
-        offOnDates,
-        afterDateTime,
+        scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+        fireAtTime = fireAtTime,
+        offOnDates = offOnDates,
+        afterDateTime = afterDateTime,
       ),
       calculateScheduledAlarmNextFireOnDateForDateList(
-        scheduledOnDates,
-        fireAtTime,
-        offOnDates,
-        afterDateTime,
+        scheduledOnDates = scheduledOnDates,
+        fireAtTime = fireAtTime,
+        offOnDates = offOnDates,
+        afterDateTime = afterDateTime,
       ),
     )
     .minOrNull()
