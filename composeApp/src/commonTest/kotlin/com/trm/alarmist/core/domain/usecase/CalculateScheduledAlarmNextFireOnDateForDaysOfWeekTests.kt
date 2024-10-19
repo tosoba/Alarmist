@@ -23,12 +23,14 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
 
     assertEquals(
       afterDateTime.date,
-      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
-        scheduledOnDaysOfWeek = listOf(afterDateTime.dayOfWeek),
-        fireAtTime = LocalTime(hour = 11, minute = 56),
-        offOnDates = emptyList(),
-        afterDateTime = afterDateTime,
-      ),
+      calculateAlarmNextFireOnDateTime(
+          fireAtTime = LocalTime(hour = 11, minute = 56),
+          scheduledOnDaysOfWeek = listOf(afterDateTime.dayOfWeek),
+          scheduledOnDates = emptyList(),
+          offOnDates = emptyList(),
+          afterDateTime = afterDateTime,
+        )
+        ?.date,
     )
   }
 
@@ -42,12 +44,14 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
 
     assertEquals(
       afterDateTime.date.plus(7L, DateTimeUnit.DAY),
-      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
-        scheduledOnDaysOfWeek = listOf(afterDateTime.dayOfWeek),
-        fireAtTime = LocalTime(hour = 11, minute = 55),
-        offOnDates = emptyList(),
-        afterDateTime = afterDateTime,
-      ),
+      calculateAlarmNextFireOnDateTime(
+          fireAtTime = LocalTime(hour = 11, minute = 55),
+          scheduledOnDaysOfWeek = listOf(afterDateTime.dayOfWeek),
+          scheduledOnDates = emptyList(),
+          offOnDates = emptyList(),
+          afterDateTime = afterDateTime,
+        )
+        ?.date,
     )
   }
 
@@ -63,16 +67,17 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
       .filter { it != afterDateTime.dayOfWeek }
       .forEach {
         val result =
-          calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
-            scheduledOnDaysOfWeek = listOf(it),
+          calculateAlarmNextFireOnDateTime(
             fireAtTime = LocalTime(hour = 16, minute = 55),
+            scheduledOnDaysOfWeek = listOf(it),
+            scheduledOnDates = emptyList(),
             offOnDates = emptyList(),
             afterDateTime = afterDateTime,
           )
 
         assertNotNull(result)
         assertEquals(it, result.dayOfWeek)
-        assertTrue(result > afterDateTime.date)
+        assertTrue(result.date > afterDateTime.date)
       }
   }
 
@@ -86,12 +91,14 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
 
     assertEquals(
       afterDateTime.date.plus(7L, DateTimeUnit.DAY),
-      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
-        scheduledOnDaysOfWeek = listOf(afterDateTime.dayOfWeek),
-        fireAtTime = LocalTime(hour = 20, minute = 20),
-        offOnDates = listOf(afterDateTime.date),
-        afterDateTime = afterDateTime,
-      ),
+      calculateAlarmNextFireOnDateTime(
+          fireAtTime = LocalTime(hour = 20, minute = 20),
+          scheduledOnDaysOfWeek = listOf(afterDateTime.dayOfWeek),
+          scheduledOnDates = emptyList(),
+          offOnDates = listOf(afterDateTime.date),
+          afterDateTime = afterDateTime,
+        )
+        ?.date,
     )
   }
 
@@ -106,12 +113,14 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
 
     assertEquals(
       days.min(),
-      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
-        scheduledOnDaysOfWeek = days.map(LocalDate::dayOfWeek),
-        fireAtTime = LocalTime(hour = 11, minute = 25),
-        offOnDates = emptyList(),
-        afterDateTime = afterDateTime,
-      ),
+      calculateAlarmNextFireOnDateTime(
+          fireAtTime = LocalTime(hour = 11, minute = 25),
+          scheduledOnDaysOfWeek = days.map(LocalDate::dayOfWeek),
+          scheduledOnDates = emptyList(),
+          offOnDates = emptyList(),
+          afterDateTime = afterDateTime,
+        )
+        ?.date,
     )
   }
 
@@ -127,12 +136,14 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
 
     assertEquals(
       days.filter { it !in offOnDates }.min(),
-      calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
-        scheduledOnDaysOfWeek = days.map(LocalDate::dayOfWeek),
-        fireAtTime = LocalTime(hour = 11, minute = 25),
-        offOnDates = offOnDates,
-        afterDateTime = afterDateTime,
-      ),
+      calculateAlarmNextFireOnDateTime(
+          fireAtTime = LocalTime(hour = 11, minute = 25),
+          scheduledOnDaysOfWeek = days.map(LocalDate::dayOfWeek),
+          scheduledOnDates = emptyList(),
+          offOnDates = offOnDates,
+          afterDateTime = afterDateTime,
+        )
+        ?.date,
     )
   }
 

@@ -45,7 +45,7 @@ fun calculateAlarmNextFireOnDateTime(
     }
   }
 
-internal fun calculateOneTimeAlarmNextFireOnDateTime(
+private fun calculateOneTimeAlarmNextFireOnDateTime(
   fireAtTime: LocalTime,
   afterDateTime: LocalDateTime,
 ): LocalDateTime =
@@ -54,7 +54,7 @@ internal fun calculateOneTimeAlarmNextFireOnDateTime(
     else -> afterDateTime.date
   }.atTime(fireAtTime)
 
-internal fun calculateScheduledAlarmNextFireOnDateTime(
+private fun calculateScheduledAlarmNextFireOnDateTime(
   fireAtTime: LocalTime,
   scheduledOnDaysOfWeek: Collection<DayOfWeek>,
   scheduledOnDates: Collection<LocalDate>,
@@ -78,7 +78,7 @@ internal fun calculateScheduledAlarmNextFireOnDateTime(
     .minOrNull()
     ?.atTime(fireAtTime)
 
-internal fun calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
+private fun calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
   scheduledOnDaysOfWeek: Collection<DayOfWeek>,
   fireAtTime: LocalTime,
   offOnDates: Collection<LocalDate>,
@@ -98,7 +98,7 @@ internal fun calculateScheduledAlarmNextFireOnDateForDaysOfWeek(
   return scheduledOnDaysOfWeek.minOfOrNull(DayOfWeek::nextScheduledOnDate)
 }
 
-internal fun calculateScheduledAlarmNextFireOnDateForDateList(
+private fun calculateScheduledAlarmNextFireOnDateForDateList(
   scheduledOnDates: Collection<LocalDate>,
   fireAtTime: LocalTime,
   offOnDates: Collection<LocalDate>,

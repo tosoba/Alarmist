@@ -63,9 +63,12 @@ class CalculateOneTimeAlarmNextFireOnDateTimeTests {
     )
   }
 
-  private fun calculate(
-    fireAtTime: LocalTime = LocalTime.now(),
-    afterDateTime: LocalDateTime = LocalDateTime.now(),
-  ): LocalDateTime =
-    calculateOneTimeAlarmNextFireOnDateTime(fireAtTime = fireAtTime, afterDateTime = afterDateTime)
+  private fun calculate(fireAtTime: LocalTime, afterDateTime: LocalDateTime): LocalDateTime? =
+    calculateAlarmNextFireOnDateTime(
+      fireAtTime = fireAtTime,
+      scheduledOnDaysOfWeek = emptyList(),
+      scheduledOnDates = emptyList(),
+      offOnDates = emptyList(),
+      afterDateTime = afterDateTime,
+    )
 }
