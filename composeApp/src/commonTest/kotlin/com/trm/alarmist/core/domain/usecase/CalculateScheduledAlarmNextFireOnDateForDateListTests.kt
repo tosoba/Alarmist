@@ -21,7 +21,7 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
 
     assertNull(
       calculateAlarmNextFireOnDateTime(
-        fireAtTime = LocalTime(hour = 13, minute = 10, second = 18),
+        fireAtTime = LocalTime(hour = 13, minute = 10),
         scheduledOnDates = listOf(afterDateTime.date),
         scheduledOnDaysOfWeek = emptyList(),
         offOnDates = emptyList(),
@@ -41,7 +41,7 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
     assertEquals(
       afterDateTime.date,
       calculateAlarmNextFireOnDateTime(
-          fireAtTime = LocalTime(hour = 16, minute = 18, second = 15),
+          fireAtTime = LocalTime(hour = 16, minute = 18),
           scheduledOnDaysOfWeek = emptyList(),
           scheduledOnDates = listOf(afterDateTime.date),
           offOnDates = emptyList(),
@@ -63,7 +63,7 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
     assertEquals(
       scheduledOnDates.filter { it > afterDateTime.date }.min(),
       calculateAlarmNextFireOnDateTime(
-          fireAtTime = LocalTime(hour = 13, minute = 10, second = 18),
+          fireAtTime = LocalTime(hour = 13, minute = 10),
           scheduledOnDaysOfWeek = emptyList(),
           scheduledOnDates = scheduledOnDates,
           offOnDates = emptyList(),
@@ -86,7 +86,7 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
     assertEquals(
       scheduledOnDates.filter { it !in offOnDates }.min(),
       calculateAlarmNextFireOnDateTime(
-          fireAtTime = LocalTime(hour = 13, minute = 10, second = 18),
+          fireAtTime = LocalTime(hour = 13, minute = 10),
           scheduledOnDaysOfWeek = emptyList(),
           scheduledOnDates = scheduledOnDates,
           offOnDates = offOnDates,

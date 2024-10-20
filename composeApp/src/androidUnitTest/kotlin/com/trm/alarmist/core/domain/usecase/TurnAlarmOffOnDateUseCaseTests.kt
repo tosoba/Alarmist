@@ -71,7 +71,7 @@ class TurnAlarmOffOnDateUseCaseTests {
       )
 
       verify(VerifyMode.exactly(1)) {
-        scheduler.scheduleAlarm(eq(id), any(), any(), any(), any(), any(), any(), any(), any())
+        scheduler.scheduleAlarm(eq(id), any(), any(), any(), any(), any(), any(), any())
       }
       verifyNoMoreCalls(scheduler)
     }

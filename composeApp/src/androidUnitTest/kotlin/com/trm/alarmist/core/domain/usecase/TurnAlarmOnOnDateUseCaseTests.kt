@@ -71,7 +71,7 @@ class TurnAlarmOnOnDateUseCaseTests {
       )
 
       verify(VerifyMode.exactly(1)) {
-        scheduler.scheduleAlarm(eq(id), any(), any(), any(), any(), any(), any(), any(), any())
+        scheduler.scheduleAlarm(eq(id), any(), any(), any(), any(), any(), any(), any())
       }
     }
 
@@ -94,7 +94,7 @@ class TurnAlarmOnOnDateUseCaseTests {
       )
 
       verify(VerifyMode.exactly(1)) {
-        scheduler.scheduleAlarm(any(), any(), any(), any(), any(), any(), any(), any(), any())
+        scheduler.scheduleAlarm(any(), any(), any(), any(), any(), any(), any(), any())
       }
     }
 }
