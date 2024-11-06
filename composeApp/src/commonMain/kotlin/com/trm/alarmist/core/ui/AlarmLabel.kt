@@ -29,7 +29,7 @@ fun AlarmLabel(
       Text(
         text = buildAlarmLabelText(alarmName, group),
         style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onOffContainer(isOn),
+        color = onOffContainer(isOn),
       )
     }
   }

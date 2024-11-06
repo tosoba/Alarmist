@@ -57,7 +57,7 @@ fun AlarmGroupHeaderCard(
             MaterialTheme.typography.titleLarge.run {
               if (group.isOn) copy(fontWeight = FontWeight.Medium) else this
             },
-          color = MaterialTheme.colorScheme.onOffContainer(group.isOn),
+          color = onOffContainer(group.isOn),
         )
 
         Spacer(modifier = Modifier.height(2.dp))
@@ -67,7 +67,7 @@ fun AlarmGroupHeaderCard(
             if (group.alarmsCount > 0L) stringResource(Res.string.alarms_count, group.alarmsCount)
             else stringResource(Res.string.empty),
           style = MaterialTheme.typography.bodyLarge,
-          color = MaterialTheme.colorScheme.onOffContainer(group.isOn),
+          color = onOffContainer(group.isOn),
         )
       }
 

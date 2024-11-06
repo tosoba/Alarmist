@@ -66,6 +66,7 @@ import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Vibration
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -134,7 +135,6 @@ import com.trm.alarmist.core.ui.calendar.datepicker.state.LocalEpicDatePickerSta
 import com.trm.alarmist.core.ui.calendar.datepicker.state.rememberEpicDatePickerState
 import com.trm.alarmist.core.ui.calendar.pager.config.rememberEpicCalendarPagerConfig
 import com.trm.alarmist.core.ui.keyboardAsState
-import com.trm.alarmist.core.ui.theme.bottomSheetBackgroundColor
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
 import com.trm.alarmist.feature.alarm.model.AlarmState
@@ -273,7 +273,6 @@ private fun AlarmContent(
             Text(
               text = stringResource(Res.string.fire_at_label),
               style = MaterialTheme.typography.titleLarge,
-              color = MaterialTheme.colorScheme.onPrimaryContainer,
               modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
             )
           }
@@ -306,7 +305,6 @@ private fun AlarmContent(
         Text(
           text = stringResource(Res.string.repeat_weekly_label),
           style = MaterialTheme.typography.titleLarge,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
       }
 
@@ -335,7 +333,6 @@ private fun AlarmContent(
         Text(
           text = stringResource(Res.string.custom_schedule_label),
           style = MaterialTheme.typography.titleLarge,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -385,13 +382,8 @@ private fun AlarmContent(
             Text(
               text = stringResource(Res.string.sound_label),
               style = MaterialTheme.typography.titleLarge,
-              color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
-            Text(
-              text = alarmSoundTitle(state.soundId),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
+            Text(text = alarmSoundTitle(state.soundId), style = MaterialTheme.typography.bodyMedium)
           }
         }
 
@@ -424,12 +416,10 @@ private fun AlarmContent(
           Text(
             text = stringResource(Res.string.duration_label),
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
           Text(
             text = stringResource(Res.string.minutes_label, state.alarmDuration),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
         }
       }
@@ -458,7 +448,6 @@ private fun AlarmContent(
           Text(
             text = stringResource(Res.string.reminder_label),
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
           )
 
           AnimatedVisibility(visible = state.reminderEnabled) {
@@ -466,7 +455,6 @@ private fun AlarmContent(
               text =
                 stringResource(Res.string.hours_before_alarm_label, state.reminderOffset.hours),
               style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
           }
         }
@@ -487,7 +475,6 @@ private fun AlarmContent(
         Text(
           text = stringResource(Res.string.group_label),
           style = MaterialTheme.typography.titleLarge,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
           modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
         )
 
@@ -567,8 +554,8 @@ private fun AlarmContent(
       )
     }
 
-    TopGradientBackground(color = bottomSheetBackgroundColor())
-    BottomGradientBackground(color = bottomSheetBackgroundColor())
+    TopGradientBackground(color = BottomSheetDefaults.ContainerColor)
+    BottomGradientBackground(color = BottomSheetDefaults.ContainerColor)
   }
 }
 
@@ -579,11 +566,7 @@ private fun ToggleableSwitchRow(
   imageVector: ImageVector,
   onValueChange: (Boolean) -> Unit,
   content: @Composable () -> Unit = {
-    Text(
-      text = label,
-      style = MaterialTheme.typography.titleLarge,
-      color = MaterialTheme.colorScheme.onPrimaryContainer,
-    )
+    Text(text = label, style = MaterialTheme.typography.titleLarge)
   },
 ) {
   Row(

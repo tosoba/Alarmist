@@ -43,9 +43,11 @@ import androidx.compose.material.icons.filled.AlarmOff
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -88,7 +90,6 @@ import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.core.ui.groupedAlarmItemShape
 import com.trm.alarmist.core.ui.keyboardAsState
-import com.trm.alarmist.core.ui.theme.bottomSheetBackgroundColor
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
 import org.jetbrains.compose.resources.stringResource
@@ -118,6 +119,7 @@ fun GroupContent(
   )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupContent(
   modifier: Modifier = Modifier,
@@ -340,8 +342,8 @@ fun GroupContent(
         },
       )
 
-      TopGradientBackground(color = bottomSheetBackgroundColor())
-      BottomGradientBackground(color = bottomSheetBackgroundColor())
+      TopGradientBackground(color = BottomSheetDefaults.ContainerColor)
+      BottomGradientBackground(color = BottomSheetDefaults.ContainerColor)
     }
   }
 }
@@ -368,7 +370,7 @@ private fun GroupedAlarmCard(
         text = it,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onOffContainer(alarm.isOn),
+        color = onOffContainer(alarm.isOn),
       )
     }
 

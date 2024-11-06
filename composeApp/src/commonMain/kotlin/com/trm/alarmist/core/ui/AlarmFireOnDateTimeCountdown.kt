@@ -29,7 +29,6 @@ fun AlarmFireOnDateTimeCountdown(fireOnDateTime: LocalDateTime?, modifier: Modif
         Text(
           text = remainingMillis.toDuration(DurationUnit.MILLISECONDS).formatCountdown(),
           style = MaterialTheme.typography.bodyLarge,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
       }
     }

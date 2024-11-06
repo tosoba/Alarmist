@@ -5,7 +5,6 @@ import alarmist.composeapp.generated.resources.and_others
 import alarmist.composeapp.generated.resources.one_time
 import alarmist.composeapp.generated.resources.paused_on
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -51,7 +50,7 @@ fun AlarmScheduleDescription(
             }
           },
           overflow = TextOverflow.Ellipsis,
-          color = MaterialTheme.colorScheme.onOffContainer(isOn),
+          color = onOffContainer(isOn),
         )
       }
 
@@ -75,7 +74,7 @@ fun AlarmScheduleDescription(
             }
           },
           overflow = TextOverflow.Ellipsis,
-          color = MaterialTheme.colorScheme.onOffContainer(isOn),
+          color = onOffContainer(isOn),
         )
       }
     }
@@ -83,7 +82,7 @@ fun AlarmScheduleDescription(
     Text(
       stringResource(Res.string.one_time),
       overflow = TextOverflow.Ellipsis,
-      color = MaterialTheme.colorScheme.onOffContainer(isOn),
+      color = onOffContainer(isOn),
     )
   }
 }

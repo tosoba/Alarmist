@@ -8,6 +8,7 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import com.trm.alarmist.core.common.model.Initialized
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
+import com.trm.alarmist.widget.common.ui.WidgetTheme
 import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
 import com.trm.alarmist.widget.common.util.widgetPreviewAlarmList
@@ -21,12 +22,14 @@ internal class TodayWidgetPinPreview : GlanceAppWidget() {
         LocalIsPreview provides true,
         LocalWidgetLayoutType provides WidgetLayoutType.Medium(showTitleBar = true),
       ) {
-        TodayWidgetScaffold(
-          id = object : GlanceId {},
-          state =
-            Initialized(TodayWidgetState(alarms = widgetPreviewAlarmList(), groups = emptyMap())),
-          showTitleBar = true,
-        )
+        WidgetTheme {
+          TodayWidgetScaffold(
+            id = object : GlanceId {},
+            state =
+              Initialized(TodayWidgetState(alarms = widgetPreviewAlarmList(), groups = emptyMap())),
+            showTitleBar = true,
+          )
+        }
       }
     }
   }

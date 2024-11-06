@@ -25,7 +25,7 @@ fun AlarmFireAtTime(fireAtTime: LocalTime, isOn: Boolean, modifier: Modifier = M
           fontWeight =
             if (isOn) FontWeight.Medium else MaterialTheme.typography.displayMedium.fontWeight
         ),
-      color = MaterialTheme.colorScheme.onOffContainer(isOn),
+      color = onOffContainer(isOn),
       maxLines = 1,
       maxTextSize = MaterialTheme.typography.displayMedium.fontSize,
       modifier = Modifier.alignByBaseline()
@@ -41,7 +41,7 @@ fun AlarmFireAtTime(fireAtTime: LocalTime, isOn: Boolean, modifier: Modifier = M
             fontWeight =
               if (isOn) FontWeight.Medium else MaterialTheme.typography.bodyLarge.fontWeight
           ),
-        color = MaterialTheme.colorScheme.onOffContainer(isOn),
+        color = onOffContainer(isOn),
         maxLines = 1,
         modifier = Modifier.alignByBaseline()
       )
