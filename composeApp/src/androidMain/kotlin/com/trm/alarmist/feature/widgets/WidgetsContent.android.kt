@@ -3,12 +3,15 @@ package com.trm.alarmist.feature.widgets
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.widget_pin_unavailable_description
 import alarmist.composeapp.generated.resources.widget_pin_unavailable_title
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.Context
 import android.os.Build
-import androidx.compose.foundation.Image
+import android.os.Bundle
+import android.widget.FrameLayout
+import android.widget.RemoteViews
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,7 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ElevatedCard
@@ -30,13 +33,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.glance.appwidget.AppWidgetId
+import androidx.glance.appwidget.compose
+import com.trm.alarmist.core.common.util.glanceAppWidgetFor
 import com.trm.alarmist.core.common.util.pinWidget
 import com.trm.alarmist.core.common.util.widgetReceiverComponentName
 import com.trm.alarmist.core.ui.BottomGradientBackground
@@ -44,6 +57,7 @@ import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
+import kotlin.math.min
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -85,8 +99,12 @@ private fun WidgetsGrid(
         if (!isRequestPinAppWidgetSupported) {
           item { WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(8.dp)) }
         } else {
-          items(providers) { provider ->
-            WidgetInfoCard(provider = provider, modifier = Modifier.fillMaxWidth().padding(8.dp))
+          itemsIndexed(providers) { index, provider ->
+            WidgetInfoCard(
+              provider = provider,
+              modifier = Modifier.fillMaxWidth().padding(8.dp),
+              usePreview = index == 0,
+            )
           }
         }
       }
@@ -123,7 +141,11 @@ private fun WidgetPinUnavailableCard(modifier: Modifier) {
 }
 
 @Composable
-private fun WidgetInfoCard(provider: AppWidgetProviderInfo, modifier: Modifier = Modifier) {
+private fun WidgetInfoCard(
+  provider: AppWidgetProviderInfo,
+  modifier: Modifier = Modifier,
+  usePreview: Boolean = false,
+) {
   val context = LocalContext.current
   val description =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -153,13 +175,34 @@ private fun WidgetInfoCard(provider: AppWidgetProviderInfo, modifier: Modifier =
         }
       }
 
+      if (!usePreview) return@Row
+
       Spacer(modifier = Modifier.width(8.dp))
 
-      Image(
-        painter = painterResource(provider.previewImage),
-        contentDescription = description,
-        modifier = Modifier.weight(.5f),
-      )
+      val minSize = provider.getMinSize()
+      val widget = remember { context.glanceAppWidgetFor(provider) }
+      var remoteViews: RemoteViews? by remember { mutableStateOf(null) }
+
+      LaunchedEffect(widget, context) {
+        @SuppressLint("RestrictedApi")
+        remoteViews =
+          context
+            .glanceAppWidgetFor(provider)
+            ?.compose(
+              context = context,
+              id = AppWidgetId(AppWidgetManager.INVALID_APPWIDGET_ID),
+              state = null,
+              options = Bundle.EMPTY,
+              size = minSize,
+            )
+      }
+
+      remoteViews?.let { widgetRemoteViews ->
+        AndroidView(
+          factory = { FrameLayout(it).apply { addView(widgetRemoteViews.apply(it, this)) } },
+          modifier = Modifier.weight(.5f),
+        )
+      }
     }
   }
 }
@@ -170,3 +213,27 @@ private fun AppWidgetProviderInfo.pinCallback(context: Context): PendingIntent =
   } else {
     WidgetPinnedReceiver.pendingIntent(context)
   }
+
+@Composable
+private fun AppWidgetProviderInfo.getMinSize(): DpSize {
+  val minWidth =
+    min(
+      minWidth,
+      if (resizeMode and AppWidgetProviderInfo.RESIZE_HORIZONTAL != 0) {
+        minResizeWidth
+      } else {
+        Int.MAX_VALUE
+      },
+    )
+  val minHeight =
+    min(
+      minHeight,
+      if (resizeMode and AppWidgetProviderInfo.RESIZE_VERTICAL != 0) {
+        minResizeHeight
+      } else {
+        Int.MAX_VALUE
+      },
+    )
+  val density = LocalDensity.current
+  return DpSize(with(density) { minWidth.toDp() }, with(density) { minHeight.toDp() })
+}

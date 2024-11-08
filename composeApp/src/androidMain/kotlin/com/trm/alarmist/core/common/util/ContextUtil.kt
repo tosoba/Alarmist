@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
 import android.content.ContextWrapper
+import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import com.trm.alarmist.widget.clock.ClockWidgetPinPreview
@@ -29,16 +30,19 @@ suspend fun Context.pinWidget(
   GlanceAppWidgetManager(this)
     .requestPinGlanceAppWidget(
       getWidgetReceiverClassFor(providerInfo.provider),
-      when (providerInfo.provider) {
-        widgetReceiverComponentName<TodayWidgetReceiver>() -> TodayWidgetPinPreview()
-        widgetReceiverComponentName<ClockWidgetReceiver>() -> ClockWidgetPinPreview()
-        widgetReceiverComponentName<GroupWidgetReceiver>() -> GroupWidgetPinPreview()
-        else -> null
-      },
+      glanceAppWidgetFor(providerInfo),
       null,
       callback,
     )
 }
+
+fun Context.glanceAppWidgetFor(providerInfo: AppWidgetProviderInfo): GlanceAppWidget? =
+  when (providerInfo.provider) {
+    widgetReceiverComponentName<TodayWidgetReceiver>() -> TodayWidgetPinPreview()
+    widgetReceiverComponentName<ClockWidgetReceiver>() -> ClockWidgetPinPreview()
+    widgetReceiverComponentName<GroupWidgetReceiver>() -> GroupWidgetPinPreview()
+    else -> null
+  }
 
 internal inline fun <reified T : GlanceAppWidgetReceiver> Context.widgetReceiverComponentName():
   ComponentName = ComponentName(applicationContext.packageName, T::class.java.name)
