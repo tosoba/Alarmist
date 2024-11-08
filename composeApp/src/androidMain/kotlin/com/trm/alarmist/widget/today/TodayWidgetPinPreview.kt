@@ -24,7 +24,7 @@ internal class TodayWidgetPinPreview : GlanceAppWidget() {
       ) {
         WidgetTheme {
           TodayWidgetScaffold(
-            id = object : GlanceId {},
+            id = id,
             state =
               Initialized(TodayWidgetState(alarms = widgetPreviewAlarmList(), groups = emptyMap())),
             showTitleBar = true,

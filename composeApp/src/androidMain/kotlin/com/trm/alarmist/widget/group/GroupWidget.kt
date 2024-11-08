@@ -15,6 +15,7 @@ import androidx.glance.currentState
 import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.usecase.GetGroupWidgetAlarmsUseCase
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
+import com.trm.alarmist.widget.common.ui.WidgetTheme
 import com.trm.alarmist.widget.common.util.AppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalIsPreview
@@ -48,7 +49,7 @@ class GroupWidget : GlanceAppWidget(), KoinComponent {
         LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
         LocalAppWidgetIdProvider provides AppWidgetIdProvider(widgetManager::getAppWidgetId),
       ) {
-        GroupWidgetScaffold(id = id, state = widgetState)
+        WidgetTheme { GroupWidgetScaffold(id = id, state = widgetState) }
       }
     }
   }

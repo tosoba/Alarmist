@@ -24,7 +24,6 @@ import com.trm.alarmist.widget.common.ui.WidgetDimensions
 import com.trm.alarmist.widget.common.ui.WidgetEmptyContent
 import com.trm.alarmist.widget.common.ui.WidgetLoadingIndicator
 import com.trm.alarmist.widget.common.ui.WidgetPreviewCompositionLocalProvider
-import com.trm.alarmist.widget.common.ui.WidgetTheme
 import com.trm.alarmist.widget.common.ui.WidgetTitleBar
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
@@ -43,40 +42,36 @@ internal fun TodayWidgetScaffold(
   state: Initializable<TodayWidgetState>,
   showTitleBar: Boolean = LocalWidgetLayoutType.current.showTitleBar,
 ) {
-  WidgetTheme {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    Scaffold(
-      backgroundColor = GlanceTheme.colors.widgetBackground,
-      modifier =
-        GlanceModifier.padding(
-          top = if (showTitleBar) 0.dp else WidgetDimensions.widgetPadding,
-          bottom = WidgetDimensions.widgetPadding,
-        ),
-      titleBar =
-        composableIfOrNull(condition = showTitleBar) {
-          WidgetTitleBar(
-            actions = {
-              WidgetRefreshButton(
-                onClick =
-                  emptyActionIfPreviewOrElse {
-                    actionSendBroadcast(
-                      context.updateWidgetIntent<TodayWidgetReceiver>(
-                        LocalAppWidgetIdProvider.current.getAppWidgetId(id)
-                      )
+  Scaffold(
+    backgroundColor = GlanceTheme.colors.widgetBackground,
+    modifier =
+      GlanceModifier.padding(
+        top = if (showTitleBar) 0.dp else WidgetDimensions.widgetPadding,
+        bottom = WidgetDimensions.widgetPadding,
+      ),
+    titleBar =
+      composableIfOrNull(condition = showTitleBar) {
+        WidgetTitleBar(
+          actions = {
+            WidgetRefreshButton(
+              onClick =
+                emptyActionIfPreviewOrElse {
+                  actionSendBroadcast(
+                    context.updateWidgetIntent<TodayWidgetReceiver>(
+                      LocalAppWidgetIdProvider.current.getAppWidgetId(id)
                     )
-                  }
-              )
-            }
-          ) {
-            WidgetAlarmListTextClock(
-              modifier = GlanceModifier.defaultWeight().padding(start = 16.dp)
+                  )
+                }
             )
           }
-        },
-    ) {
-      TodayWidgetScaffoldContent(id = id, state = state)
-    }
+        ) {
+          WidgetAlarmListTextClock(modifier = GlanceModifier.defaultWeight().padding(start = 16.dp))
+        }
+      },
+  ) {
+    TodayWidgetScaffoldContent(id = id, state = state)
   }
 }
 

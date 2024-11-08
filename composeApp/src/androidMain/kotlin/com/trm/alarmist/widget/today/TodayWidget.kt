@@ -19,6 +19,7 @@ import com.trm.alarmist.core.domain.AlarmRepository
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.usecase.GetTodayWidgetAlarmsUseCase
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
+import com.trm.alarmist.widget.common.ui.WidgetTheme
 import com.trm.alarmist.widget.common.util.AppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalIsPreview
@@ -52,7 +53,7 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
         LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
         LocalAppWidgetIdProvider provides AppWidgetIdProvider(widgetManager::getAppWidgetId),
       ) {
-        TodayWidgetScaffold(id = id, state = widgetState)
+        WidgetTheme { TodayWidgetScaffold(id = id, state = widgetState) }
       }
     }
   }
