@@ -38,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -79,7 +80,6 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
   )
 }
 
-@SuppressLint("RestrictedApi")
 @Composable
 private fun WidgetsGrid(
   isRequestPinAppWidgetSupported: Boolean,
@@ -88,32 +88,7 @@ private fun WidgetsGrid(
 ) {
   Scaffold(modifier = modifier) {
     Box(modifier = Modifier.fillMaxSize()) {
-      val context = LocalContext.current
-      val density = LocalDensity.current
-
-      val widgetRemoteViews = remember {
-        mutableStateListOf<RemoteViews?>(*providers.map { null }.toTypedArray())
-      }
-      val providerPxSizes = remember(providers) { providers.map(AppWidgetProviderInfo::getMinSize) }
-
-      LaunchedEffect(providers, context) {
-        providers.forEachIndexed { index, provider ->
-          widgetRemoteViews[index] =
-            context
-              .glanceAppWidgetFor(provider)
-              ?.compose(
-                context = context,
-                id = AppWidgetId(AppWidgetManager.INVALID_APPWIDGET_ID),
-                state = null,
-                options = Bundle.EMPTY,
-                size =
-                  with(density) {
-                    val pxSize = providerPxSizes[index]
-                    DpSize(pxSize.width.toDp(), pxSize.height.toDp())
-                  },
-              )
-        }
-      }
+      val widgetRemoteViews = rememberWidgetRemoteViews(providers)
 
       LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 250.dp),
@@ -132,7 +107,7 @@ private fun WidgetsGrid(
             WidgetInfoCard(
               provider = provider,
               modifier = Modifier.fillMaxWidth().animateContentSize().padding(8.dp),
-              widgetRemoteViews[index],
+              widgetRemoteViews = widgetRemoteViews[index],
             )
           }
         }
@@ -142,6 +117,40 @@ private fun WidgetsGrid(
       BottomGradientBackground()
     }
   }
+}
+
+@Composable
+private fun rememberWidgetRemoteViews(
+  providers: List<AppWidgetProviderInfo>
+): SnapshotStateList<RemoteViews?> {
+  val context = LocalContext.current
+  val density = LocalDensity.current
+
+  val widgetRemoteViews = remember {
+    mutableStateListOf<RemoteViews?>(*providers.map { null }.toTypedArray())
+  }
+  val providerPxSizes = remember(providers) { providers.map(AppWidgetProviderInfo::getMinSize) }
+
+  LaunchedEffect(providers, context) {
+    providers.forEachIndexed { index, provider ->
+      @SuppressLint("RestrictedApi")
+      widgetRemoteViews[index] =
+        context
+          .glanceAppWidgetFor(provider)
+          ?.compose(
+            context = context,
+            id = AppWidgetId(AppWidgetManager.INVALID_APPWIDGET_ID),
+            state = null,
+            options = Bundle.EMPTY,
+            size =
+              with(density) {
+                val pxSize = providerPxSizes[index]
+                DpSize(pxSize.width.toDp(), pxSize.height.toDp())
+              },
+          )
+    }
+  }
+  return widgetRemoteViews
 }
 
 @Composable
@@ -177,6 +186,7 @@ private fun WidgetInfoCard(
 ) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
+
   val description =
     remember(provider, context) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
