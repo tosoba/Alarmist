@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.RemoteViews
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,17 +35,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.glance.appwidget.AppWidgetId
@@ -52,6 +52,7 @@ import androidx.glance.appwidget.compose
 import com.trm.alarmist.core.common.util.glanceAppWidgetFor
 import com.trm.alarmist.core.common.util.pinWidget
 import com.trm.alarmist.core.common.util.widgetReceiverComponentName
+import com.trm.alarmist.core.ui.AnimatedNullableVisibility
 import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
@@ -78,6 +79,7 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
   )
 }
 
+@SuppressLint("RestrictedApi")
 @Composable
 private fun WidgetsGrid(
   isRequestPinAppWidgetSupported: Boolean,
@@ -86,6 +88,33 @@ private fun WidgetsGrid(
 ) {
   Scaffold(modifier = modifier) {
     Box(modifier = Modifier.fillMaxSize()) {
+      val context = LocalContext.current
+      val density = LocalDensity.current
+
+      val widgetRemoteViews = remember {
+        mutableStateListOf<RemoteViews?>(*providers.map { null }.toTypedArray())
+      }
+      val providerPxSizes = remember(providers) { providers.map(AppWidgetProviderInfo::getMinSize) }
+
+      LaunchedEffect(providers, context) {
+        providers.forEachIndexed { index, provider ->
+          widgetRemoteViews[index] =
+            context
+              .glanceAppWidgetFor(provider)
+              ?.compose(
+                context = context,
+                id = AppWidgetId(AppWidgetManager.INVALID_APPWIDGET_ID),
+                state = null,
+                options = Bundle.EMPTY,
+                size =
+                  with(density) {
+                    val pxSize = providerPxSizes[index]
+                    DpSize(pxSize.width.toDp(), pxSize.height.toDp())
+                  },
+              )
+        }
+      }
+
       LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 250.dp),
         contentPadding =
@@ -102,8 +131,8 @@ private fun WidgetsGrid(
           itemsIndexed(providers) { index, provider ->
             WidgetInfoCard(
               provider = provider,
-              modifier = Modifier.fillMaxWidth().padding(8.dp),
-              usePreview = index == 0,
+              modifier = Modifier.fillMaxWidth().animateContentSize().padding(8.dp),
+              widgetRemoteViews[index],
             )
           }
         }
@@ -144,17 +173,19 @@ private fun WidgetPinUnavailableCard(modifier: Modifier) {
 private fun WidgetInfoCard(
   provider: AppWidgetProviderInfo,
   modifier: Modifier = Modifier,
-  usePreview: Boolean = false,
+  widgetRemoteViews: RemoteViews?,
 ) {
   val context = LocalContext.current
+  val scope = rememberCoroutineScope()
   val description =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      provider.loadDescription(context)?.toString()
-    } else {
-      null
+    remember(provider, context) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        provider.loadDescription(context)?.toString()
+      } else {
+        null
+      }
     }
 
-  val scope = rememberCoroutineScope()
   Card(
     modifier = modifier,
     onClick = {
@@ -175,33 +206,11 @@ private fun WidgetInfoCard(
         }
       }
 
-      if (!usePreview) return@Row
-
       Spacer(modifier = Modifier.width(8.dp))
 
-      val minSize = provider.getMinSize()
-      val widget = remember { context.glanceAppWidgetFor(provider) }
-      var remoteViews: RemoteViews? by remember { mutableStateOf(null) }
-
-      LaunchedEffect(widget, context) {
-        @SuppressLint("RestrictedApi")
-        remoteViews =
-          context
-            .glanceAppWidgetFor(provider)
-            ?.compose(
-              context = context,
-              id = AppWidgetId(AppWidgetManager.INVALID_APPWIDGET_ID),
-              state = null,
-              options = Bundle.EMPTY,
-              size = minSize,
-            )
-      }
-
-      remoteViews?.let { widgetRemoteViews ->
-        AndroidView(
-          factory = { FrameLayout(it).apply { addView(widgetRemoteViews.apply(it, this)) } },
-          modifier = Modifier.weight(.5f),
-        )
+      AnimatedNullableVisibility(value = widgetRemoteViews, modifier = Modifier.weight(.5f)) {
+        remoteViews ->
+        AndroidView(factory = { FrameLayout(it).apply { addView(remoteViews.apply(it, this)) } })
       }
     }
   }
@@ -214,26 +223,24 @@ private fun AppWidgetProviderInfo.pinCallback(context: Context): PendingIntent =
     WidgetPinnedReceiver.pendingIntent(context)
   }
 
-@Composable
-private fun AppWidgetProviderInfo.getMinSize(): DpSize {
-  val minWidth =
-    min(
-      minWidth,
-      if (resizeMode and AppWidgetProviderInfo.RESIZE_HORIZONTAL != 0) {
-        minResizeWidth
-      } else {
-        Int.MAX_VALUE
-      },
-    )
-  val minHeight =
-    min(
-      minHeight,
-      if (resizeMode and AppWidgetProviderInfo.RESIZE_VERTICAL != 0) {
-        minResizeHeight
-      } else {
-        Int.MAX_VALUE
-      },
-    )
-  val density = LocalDensity.current
-  return DpSize(with(density) { minWidth.toDp() }, with(density) { minHeight.toDp() })
-}
+private fun AppWidgetProviderInfo.getMinSize(): IntSize =
+  IntSize(
+    width =
+      min(
+        minWidth,
+        if (resizeMode and AppWidgetProviderInfo.RESIZE_HORIZONTAL != 0) {
+          minResizeWidth
+        } else {
+          Int.MAX_VALUE
+        },
+      ),
+    height =
+      min(
+        minHeight,
+        if (resizeMode and AppWidgetProviderInfo.RESIZE_VERTICAL != 0) {
+          minResizeHeight
+        } else {
+          Int.MAX_VALUE
+        },
+      ),
+  )

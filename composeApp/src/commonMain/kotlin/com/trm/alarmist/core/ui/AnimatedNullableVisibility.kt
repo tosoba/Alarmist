@@ -9,11 +9,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.node.Ref
 
 @Composable
 inline fun <T> AnimatedNullableVisibility(
   value: T?,
+  modifier: Modifier = Modifier,
   enter: EnterTransition = fadeIn() + expandIn(),
   exit: ExitTransition = shrinkOut() + fadeOut(),
   crossinline content: @Composable (T) -> Unit,
@@ -25,6 +27,7 @@ inline fun <T> AnimatedNullableVisibility(
     visible = value != null,
     enter = enter,
     exit = exit,
+    modifier = modifier,
     content = { ref.value?.let { value -> content(value) } },
   )
 }
