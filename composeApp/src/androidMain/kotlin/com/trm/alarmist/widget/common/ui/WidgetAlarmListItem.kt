@@ -10,6 +10,7 @@ import androidx.glance.appwidget.Switch
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Column
+import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -69,7 +70,8 @@ fun WidgetAlarmListItem(
 
   WidgetListItem(
     modifier =
-      GlanceModifier.padding(WidgetDimensions.fillItemItemPadding)
+      GlanceModifier.fillMaxWidth()
+        .padding(WidgetDimensions.fillItemItemPadding)
         .cornerRadius(WidgetDimensions.filledItemCornerRadius)
         .background(
           if (item.isOn) GlanceTheme.colors.primaryContainer
