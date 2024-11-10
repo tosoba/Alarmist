@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -97,7 +98,7 @@ private fun WidgetsGrid(
             top = 0.dp,
             bottom = it.calculateBottomPadding(),
             start = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
-            end = it.calculateStartPadding(LocalLayoutDirection.current) + 8.dp,
+            end = it.calculateEndPadding(LocalLayoutDirection.current) + 8.dp,
           ),
       ) {
         if (!isRequestPinAppWidgetSupported) {
@@ -126,9 +127,8 @@ private fun rememberWidgetRemoteViews(
   val context = LocalContext.current
   val density = LocalDensity.current
 
-  val widgetRemoteViews = remember {
-    mutableStateListOf<RemoteViews?>(*providers.map { null }.toTypedArray())
-  }
+  val widgetRemoteViews =
+    remember(providers) { mutableStateListOf<RemoteViews?>(*providers.map { null }.toTypedArray()) }
   val providerPxSizes = remember(providers) { providers.map(AppWidgetProviderInfo::getMinSize) }
 
   LaunchedEffect(providers, context) {
