@@ -1,8 +1,10 @@
 package com.trm.alarmist.widget.common.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
 import androidx.glance.action.Action
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.layout.fillMaxSize
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
@@ -19,7 +21,7 @@ fun WidgetAlarmList(
 ) {
   WidgetLazyColumn(
     items = alarms,
-    modifier = GlanceModifier.fillMaxSize(),
+    modifier = GlanceModifier.fillMaxSize().cornerRadius(16.dp),
     verticalItemsSpacing = WidgetDimensions.verticalItemSpacing,
   ) { item ->
     WidgetAlarmListItem(
@@ -29,7 +31,6 @@ fun WidgetAlarmList(
       onClick =
         emptyActionIfPreviewOrElse { actionStartMainActivity(RootStartMode.EditAlarm(item.id)) },
       onCheckedChange = emptyActionIfPreviewOrElse { onCheckedChangeAction(item) },
-      modifier = GlanceModifier.fillMaxSize(),
     )
   }
 }

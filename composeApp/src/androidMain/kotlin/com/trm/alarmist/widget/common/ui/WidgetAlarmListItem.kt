@@ -26,7 +26,6 @@ fun WidgetAlarmListItem(
   displayHeaderSupporting: Boolean,
   onClick: Action?,
   onCheckedChange: Action,
-  modifier: GlanceModifier = GlanceModifier,
 ) {
   @Composable
   fun TitleText() {
@@ -70,8 +69,7 @@ fun WidgetAlarmListItem(
 
   WidgetListItem(
     modifier =
-      modifier
-        .padding(WidgetDimensions.fillItemItemPadding)
+      GlanceModifier.padding(WidgetDimensions.fillItemItemPadding)
         .cornerRadius(WidgetDimensions.filledItemCornerRadius)
         .background(
           if (item.isOn) GlanceTheme.colors.primaryContainer
