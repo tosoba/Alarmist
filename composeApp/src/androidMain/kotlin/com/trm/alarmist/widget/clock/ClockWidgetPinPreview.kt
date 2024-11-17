@@ -12,8 +12,9 @@ import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.core.ui.theme.colorScheme
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetTheme
-import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
+import com.trm.alarmist.widget.common.util.LocalWidgetMode
+import com.trm.alarmist.widget.common.util.WidgetMode
 import com.trm.alarmist.widget.common.util.clockWidgetPreviewAlarm
 
 internal class ClockWidgetPinPreview : GlanceAppWidget() {
@@ -23,7 +24,7 @@ internal class ClockWidgetPinPreview : GlanceAppWidget() {
     provideContent {
       WidgetTheme {
         CompositionLocalProvider(
-          LocalIsPreview provides true,
+          LocalWidgetMode provides WidgetMode.NORMAL_PREVIEW,
           LocalWidgetLayoutType provides WidgetLayoutType.Medium(showTitleBar = true),
         ) {
           ClockWidgetContent(

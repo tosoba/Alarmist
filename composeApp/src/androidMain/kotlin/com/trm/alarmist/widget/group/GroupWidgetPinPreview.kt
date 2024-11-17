@@ -12,17 +12,19 @@ import androidx.glance.appwidget.provideContent
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetTheme
-import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
+import com.trm.alarmist.widget.common.util.LocalWidgetMode
+import com.trm.alarmist.widget.common.util.WidgetMode
 import com.trm.alarmist.widget.common.util.widgetPreviewAlarmList
 
-internal class GroupWidgetPinPreview : GlanceAppWidget() {
+internal class GroupWidgetPinPreview(private val noLazyLayouts: Boolean) : GlanceAppWidget() {
   override val sizeMode: SizeMode = SizeMode.Exact
 
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     provideContent {
       CompositionLocalProvider(
-        LocalIsPreview provides true,
+        LocalWidgetMode provides
+          if (noLazyLayouts) WidgetMode.NO_LAZY_LAYOUTS_PREVIEW else WidgetMode.NORMAL_PREVIEW,
         LocalWidgetLayoutType provides WidgetLayoutType.Medium(showTitleBar = true),
       ) {
         WidgetTheme {

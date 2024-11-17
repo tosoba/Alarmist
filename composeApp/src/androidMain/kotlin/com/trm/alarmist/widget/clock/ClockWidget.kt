@@ -15,8 +15,9 @@ import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.usecase.GetNextTodayAlarmUseCase
 import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetTheme
-import com.trm.alarmist.widget.common.util.LocalIsPreview
+import com.trm.alarmist.widget.common.util.LocalWidgetMode
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
+import com.trm.alarmist.widget.common.util.WidgetMode
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -36,7 +37,7 @@ class ClockWidget : GlanceAppWidget(), KoinComponent {
 
       WidgetTheme {
         CompositionLocalProvider(
-          LocalIsPreview provides false,
+          LocalWidgetMode provides WidgetMode.NON_PREVIEW,
           LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
         ) {
           ClockWidgetContent(alarm = alarm)

@@ -22,7 +22,16 @@ internal fun stringResource(@StringRes id: Int, args: List<Any> = emptyList()): 
 internal fun integerResource(@IntegerRes id: Int): Int =
   LocalContext.current.resources.getInteger(id)
 
-internal val LocalIsPreview = staticCompositionLocalOf { false }
+internal val LocalWidgetMode = staticCompositionLocalOf { WidgetMode.NON_PREVIEW }
+
+enum class WidgetMode {
+  NON_PREVIEW,
+  NORMAL_PREVIEW,
+  NO_LAZY_LAYOUTS_PREVIEW;
+
+  val isPreview: Boolean
+    get() = this != NON_PREVIEW
+}
 
 internal val LocalWidgetLayoutType: ProvidableCompositionLocal<WidgetLayoutType> =
   staticCompositionLocalOf {
@@ -30,7 +39,7 @@ internal val LocalWidgetLayoutType: ProvidableCompositionLocal<WidgetLayoutType>
   }
 
 internal fun GlanceModifier.clickableIfNotNull(action: Action?): GlanceModifier =
-  if (action != null) this.clickable(action) else this
+  if (action != null) clickable(action) else this
 
 @Composable
 internal fun composableIfOrNull(

@@ -16,7 +16,7 @@ import com.trm.alarmist.core.common.model.Initialized
 import com.trm.alarmist.core.common.model.Uninitialized
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.feature.root.RootStartMode
-import com.trm.alarmist.widget.common.WidgetRefreshButton
+import com.trm.alarmist.widget.common.ui.WidgetRefreshButton
 import com.trm.alarmist.widget.common.ui.AlarmListWidgetPreview
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock

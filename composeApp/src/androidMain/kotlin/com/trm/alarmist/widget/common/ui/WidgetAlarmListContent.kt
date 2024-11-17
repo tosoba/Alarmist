@@ -4,8 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.glance.action.Action
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
-import com.trm.alarmist.widget.common.util.LocalIsPreview
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
+import com.trm.alarmist.widget.common.util.LocalWidgetMode
+import com.trm.alarmist.widget.common.util.WidgetMode
 
 @Composable
 fun WidgetAlarmListContent(
@@ -13,7 +14,7 @@ fun WidgetAlarmListContent(
   getGroup: (Long) -> AlarmGroupModel?,
   onCheckedChangeAction: (WidgetAlarmListModel) -> Action,
 ) {
-  if (LocalIsPreview.current) {
+  if (LocalWidgetMode.current == WidgetMode.NO_LAZY_LAYOUTS_PREVIEW) {
     WidgetAlarmListPreview(
       alarms = alarms,
       getGroup = getGroup,

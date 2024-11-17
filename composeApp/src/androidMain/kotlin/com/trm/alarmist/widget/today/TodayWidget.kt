@@ -22,8 +22,9 @@ import com.trm.alarmist.widget.common.ui.WidgetLayoutType
 import com.trm.alarmist.widget.common.ui.WidgetTheme
 import com.trm.alarmist.widget.common.util.AppWidgetIdProvider
 import com.trm.alarmist.widget.common.util.LocalAppWidgetIdProvider
-import com.trm.alarmist.widget.common.util.LocalIsPreview
+import com.trm.alarmist.widget.common.util.LocalWidgetMode
 import com.trm.alarmist.widget.common.util.LocalWidgetLayoutType
+import com.trm.alarmist.widget.common.util.WidgetMode
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -49,7 +50,7 @@ class TodayWidget : GlanceAppWidget(), KoinComponent {
       val widgetManager = remember(context) { GlanceAppWidgetManager(context) }
 
       CompositionLocalProvider(
-        LocalIsPreview provides false,
+        LocalWidgetMode provides WidgetMode.NON_PREVIEW,
         LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
         LocalAppWidgetIdProvider provides AppWidgetIdProvider(widgetManager::getAppWidgetId),
       ) {

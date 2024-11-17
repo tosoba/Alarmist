@@ -26,7 +26,7 @@ import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
 import com.trm.alarmist.R
 import com.trm.alarmist.feature.root.RootStartMode
-import com.trm.alarmist.widget.common.WidgetRefreshButton
+import com.trm.alarmist.widget.common.ui.WidgetRefreshButton
 import com.trm.alarmist.widget.common.ui.AlarmListWidgetPreview
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListContent
 import com.trm.alarmist.widget.common.ui.WidgetAlarmListTextClock

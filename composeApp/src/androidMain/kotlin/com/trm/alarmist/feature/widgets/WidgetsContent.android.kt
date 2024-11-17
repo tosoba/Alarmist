@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.glance.appwidget.AppWidgetId
 import androidx.glance.appwidget.compose
-import com.trm.alarmist.core.common.util.glanceAppWidgetFor
+import com.trm.alarmist.core.common.util.glanceAppWidgetPreview
 import com.trm.alarmist.core.common.util.pinWidget
 import com.trm.alarmist.core.common.util.widgetReceiverComponentName
 import com.trm.alarmist.core.ui.AnimatedNullableVisibility
@@ -92,7 +92,7 @@ private fun WidgetsGrid(
       val widgetRemoteViews = rememberWidgetRemoteViews(providers)
 
       LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 250.dp),
+        columns = GridCells.Adaptive(minSize = 300.dp),
         contentPadding =
           PaddingValues(
             top = 0.dp,
@@ -136,7 +136,7 @@ private fun rememberWidgetRemoteViews(
       @SuppressLint("RestrictedApi")
       widgetRemoteViews[index] =
         context
-          .glanceAppWidgetFor(provider)
+          .glanceAppWidgetPreview(providerInfo = provider, noLazyLayouts = true)
           ?.compose(
             context = context,
             id = AppWidgetId(AppWidgetManager.INVALID_APPWIDGET_ID),
@@ -150,6 +150,7 @@ private fun rememberWidgetRemoteViews(
           )
     }
   }
+
   return widgetRemoteViews
 }
 

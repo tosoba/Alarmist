@@ -30,17 +30,20 @@ suspend fun Context.pinWidget(
   GlanceAppWidgetManager(this)
     .requestPinGlanceAppWidget(
       getWidgetReceiverClassFor(providerInfo.provider),
-      glanceAppWidgetFor(providerInfo),
+      glanceAppWidgetPreview(providerInfo = providerInfo, noLazyLayouts = false),
       null,
       callback,
     )
 }
 
-fun Context.glanceAppWidgetFor(providerInfo: AppWidgetProviderInfo): GlanceAppWidget? =
+fun Context.glanceAppWidgetPreview(
+  providerInfo: AppWidgetProviderInfo,
+  noLazyLayouts: Boolean,
+): GlanceAppWidget? =
   when (providerInfo.provider) {
-    widgetReceiverComponentName<TodayWidgetReceiver>() -> TodayWidgetPinPreview()
+    widgetReceiverComponentName<TodayWidgetReceiver>() -> TodayWidgetPinPreview(noLazyLayouts)
     widgetReceiverComponentName<ClockWidgetReceiver>() -> ClockWidgetPinPreview()
-    widgetReceiverComponentName<GroupWidgetReceiver>() -> GroupWidgetPinPreview()
+    widgetReceiverComponentName<GroupWidgetReceiver>() -> GroupWidgetPinPreview(noLazyLayouts)
     else -> null
   }
 
