@@ -76,7 +76,7 @@ fun TimerInput(modifier: Modifier = Modifier, onStartClick: (Duration) -> Unit) 
     Text(
       text =
         "${getInputAt(5)}${getInputAt(4)}h ${getInputAt(3)}${getInputAt(2)}m ${getInputAt(1)}${getInputAt(0)}s",
-      style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Medium),
+      style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.SemiBold),
     )
   }
 
