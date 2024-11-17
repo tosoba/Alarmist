@@ -810,15 +810,15 @@ private fun DaysOfWeekRow(
         elevation =
           if (isSelected) {
             CardDefaults.cardElevation(
-              defaultElevation = 0.dp,
-              pressedElevation = 0.dp,
-              focusedElevation = 0.dp,
-            )
-          } else {
-            CardDefaults.cardElevation(
               defaultElevation = 1.dp,
               pressedElevation = 1.dp,
               focusedElevation = 1.dp,
+            )
+          } else {
+            CardDefaults.cardElevation(
+              defaultElevation = 0.dp,
+              pressedElevation = 0.dp,
+              focusedElevation = 0.dp,
             )
           },
         colors = CardDefaults.onOffCardColors(isSelected),
