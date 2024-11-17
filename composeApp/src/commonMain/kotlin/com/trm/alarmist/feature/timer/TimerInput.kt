@@ -191,6 +191,7 @@ fun TimerInput(modifier: Modifier = Modifier, onStartClick: (Duration) -> Unit) 
             Icon(
               imageVector = Icons.AutoMirrored.Filled.Backspace,
               contentDescription = stringResource(Res.string.backspace),
+              tint = MaterialTheme.colorScheme.onErrorContainer,
               modifier = Modifier.padding(2.dp),
             )
           }
@@ -260,7 +261,7 @@ private fun TimerInputButtonText(text: String) {
       TextStyle(
         fontSize = MaterialTheme.typography.headlineLarge.fontSize,
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
       ),
   )
 }
