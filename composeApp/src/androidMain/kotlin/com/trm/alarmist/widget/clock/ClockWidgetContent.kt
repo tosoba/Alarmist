@@ -52,7 +52,7 @@ import kotlin.math.sqrt
 @Composable
 internal fun ClockWidgetContent(
   alarm: AlarmListModel?,
-  textColorProvider: ColorProvider = GlanceTheme.colors.onBackground,
+  textColorProvider: ColorProvider = GlanceTheme.colors.widgetBackground,
   backgroundColor: Color = Color.Transparent,
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
