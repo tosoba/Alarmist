@@ -220,6 +220,14 @@ class AlarmService : LifecycleService(), KoinComponent {
     mediaPlayer = null
   }
 
+  private fun notifyAlarmMissed(settings: AlarmFireSettings) {
+    notifyAlarmMissed(
+      id = settings.id.toInt(),
+      fireOnDateTime = settings.fireOnDateTime,
+      name = settings.name,
+    )
+  }
+
   private fun startAlarmDurationTimer(settings: AlarmFireSettings) {
     alarmDurationTimer.schedule(
       object : TimerTask() {

@@ -5,8 +5,9 @@ import android.content.Context
 import android.content.Intent
 import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.domain.usecase.GetAndResetMissedAlarmsOnBootUseCase
+import com.trm.alarmist.core.system.alarm.notifyAlarmMissed
+import com.trm.alarmist.core.system.alarm.notifyMultipleAlarmsMissed
 import io.github.aakira.napier.Napier
-import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -21,15 +22,17 @@ class BootCompletedBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     launch {
       val missedAlarms = getAndResetMissedAlarmsOnBootUseCase()
       if (missedAlarms.isEmpty()) {
-        Napier.e("No missed alarms.")
+        Napier.d("No missed alarms.", tag = this::class.simpleName)
         return@launch
       }
 
-      missedAlarms.forEach {
-        Napier.e("${it.key.id} - ${it.value.joinToString(transform = LocalDateTime::toString)}")
+      missedAlarms.forEach { (alarm, fireOnDateTimes) ->
+        if (fireOnDateTimes.size > 1) {
+          context?.notifyMultipleAlarmsMissed(alarm.id.toInt(), fireOnDateTimes, alarm.name)
+        } else {
+          context?.notifyAlarmMissed(alarm.id.toInt(), fireOnDateTimes.first(), alarm.name)
+        }
       }
-
-      // TODO: create notifications with grouped missed alarms
     }
   }
 }

@@ -2,23 +2,27 @@ package com.trm.alarmist.core.common.util
 
 import android.content.Context
 import android.text.format.DateFormat
-import java.time.format.TextStyle
-import java.util.Locale
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 
-fun LocalDateTime.formattedTime(
-  context: Context,
-  showDayOfWeek: Boolean = true,
-  showAmPmIf12HourFormat: Boolean = true,
-): String = buildString {
-  if (showDayOfWeek) {
-    append(dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()))
-    append(' ')
-  }
+fun LocalDateTime.formatted(context: Context): String = buildString {
+  append(
+    date.format(
+      LocalDate.Format {
+        year(padding = Padding.ZERO)
+        char('-')
+        monthNumber(padding = Padding.ZERO)
+        char('-')
+        dayOfMonth(padding = Padding.ZERO)
+      }
+    )
+  )
+
+  append(", ")
 
   append(
     time.format(
@@ -31,7 +35,7 @@ fun LocalDateTime.formattedTime(
         char(':')
         minute(padding = Padding.ZERO)
 
-        if (showAmPmIf12HourFormat && !DateFormat.is24HourFormat(context)) {
+        if (!DateFormat.is24HourFormat(context)) {
           char(' ')
           amPmMarker("AM", "PM")
         }

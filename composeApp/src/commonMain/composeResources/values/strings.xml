@@ -71,6 +71,8 @@
     <string name="resume">Resume</string>
     <string name="upcoming_alarm">Upcoming alarm</string>
     <string name="missed_alarm">Missed alarm</string>
+    <string name="missed_multiple_alarms">Missed %1$s alarms</string>
+    <string name="missed_multiple_alarms_most_recent">Most recent:</string>
     <string name="paused_on">Paused on %1$s</string>
     <string name="and_others">and others</string>
     <string name="turn_alarm_off">Turn alarm off</string>

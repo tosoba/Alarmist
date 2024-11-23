@@ -3,6 +3,8 @@ package com.trm.alarmist.core.system.alarm
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.dismiss
 import alarmist.composeapp.generated.resources.missed_alarm
+import alarmist.composeapp.generated.resources.missed_multiple_alarms
+import alarmist.composeapp.generated.resources.missed_multiple_alarms_most_recent
 import alarmist.composeapp.generated.resources.upcoming_alarm
 import android.Manifest
 import android.app.Application
@@ -15,9 +17,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
-import com.trm.alarmist.core.common.util.formattedTime
+import com.trm.alarmist.core.common.util.formatted
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.system.alarm.receiver.AlarmDismissedBroadcastReceiver
+import kotlinx.datetime.LocalDateTime
 
 fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
   if (
@@ -33,7 +36,7 @@ fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
       NotificationCompat.Builder(this, ALARM_UPCOMING_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle(getStringBlocking(Res.string.upcoming_alarm))
-        .setContentText(settings.notificationContentText(this))
+        .setContentText(alarmNotificationContentText(settings.fireOnDateTime, settings.name))
         .setSilent(true)
         .addAction(
           R.drawable.ic_launcher_foreground,
@@ -49,7 +52,7 @@ fun Context.notifyAlarmUpcoming(settings: AlarmFireSettings) {
     )
 }
 
-fun Context.notifyAlarmMissed(settings: AlarmFireSettings) {
+fun Context.notifyAlarmMissed(id: Int, fireOnDateTime: LocalDateTime, name: String?) {
   if (
     ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
       PackageManager.PERMISSION_GRANTED
@@ -59,18 +62,52 @@ fun Context.notifyAlarmMissed(settings: AlarmFireSettings) {
 
   getSystemService(NotificationManager::class.java)
     .notify(
-      settings.id.toInt(),
+      id,
       NotificationCompat.Builder(this, ALARM_MISSED_NOTIFICATION_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle(getStringBlocking(Res.string.missed_alarm))
-        .setContentText(settings.notificationContentText(this))
+        .setContentText(alarmNotificationContentText(fireOnDateTime, name))
         .setSilent(true)
         .build(),
     )
 }
 
-private fun AlarmFireSettings.notificationContentText(context: Context): String = buildString {
-  append(fireOnDateTime.formattedTime(context))
+fun Context.notifyMultipleAlarmsMissed(
+  id: Int,
+  fireOnDateTimes: List<LocalDateTime>,
+  name: String?,
+) {
+  if (
+    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+      PackageManager.PERMISSION_GRANTED
+  ) {
+    return
+  }
+
+  getSystemService(NotificationManager::class.java)
+    .notify(
+      id,
+      NotificationCompat.Builder(this, ALARM_MISSED_NOTIFICATION_CHANNEL_ID)
+        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setContentTitle(getStringBlocking(Res.string.missed_multiple_alarms, fireOnDateTimes.size))
+        .setContentText(
+          "${getStringBlocking(Res.string.missed_multiple_alarms_most_recent)} ${
+            alarmNotificationContentText(
+              fireOnDateTimes.first(),
+              name,
+            )
+          }"
+        )
+        .setSilent(true)
+        .build(),
+    )
+}
+
+private fun Context.alarmNotificationContentText(
+  fireOnDateTime: LocalDateTime,
+  name: String?,
+): String = buildString {
+  append(fireOnDateTime.formatted(this@alarmNotificationContentText))
   name?.let {
     append(" · ")
     append(it)
