@@ -1,6 +1,5 @@
 package com.trm.alarmist.core.ui.calendar.pager.state
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -17,7 +16,6 @@ import com.trm.alarmist.core.ui.calendar.basis.size
 import com.trm.alarmist.core.ui.calendar.pager.config.EpicCalendarPagerConfig
 import com.trm.alarmist.core.ui.calendar.pager.config.LocalEpicCalendarPagerConfig
 
-@OptIn(ExperimentalFoundationApi::class)
 class DefaultEpicCalendarPagerState(
   config: EpicCalendarPagerConfig,
   monthRange: ClosedRange<EpicMonth>,
@@ -37,7 +35,6 @@ class DefaultEpicCalendarPagerState(
   override suspend fun scrollMonths(amount: Int) = scrollToMonth(currentMonth.addMonths(amount))
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun rememberEpicCalendarPagerState(
   config: EpicCalendarPagerConfig = LocalEpicCalendarPagerConfig.current,
