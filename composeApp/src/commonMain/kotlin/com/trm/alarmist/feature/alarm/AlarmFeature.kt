@@ -11,6 +11,7 @@ import com.trm.alarmist.core.domain.usecase.DeleteAlarmUseCase
 import com.trm.alarmist.core.domain.usecase.EditAlarmUseCase
 import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
 import com.trm.alarmist.feature.alarm.model.AlarmState
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,6 +36,7 @@ class AlarmFeature(
   private val editAlarmUseCase: EditAlarmUseCase by inject()
   private val deleteAlarmUseCase: DeleteAlarmUseCase by inject()
 
+  @OptIn(ExperimentalTime::class)
   private val _state: MutableStateFlow<AlarmState> =
     MutableStateFlow(
       AlarmState(

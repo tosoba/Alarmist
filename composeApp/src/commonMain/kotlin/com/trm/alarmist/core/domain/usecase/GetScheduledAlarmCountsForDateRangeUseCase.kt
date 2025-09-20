@@ -28,7 +28,10 @@ class GetScheduledAlarmCountsForDateRangeUseCase(private val repository: AlarmRe
         flowOf(0)
       },
       repository.getOnAlarmSchedulesForDatesFlow(coalescedRange).map { schedules ->
-        List(coalescedRange.endInclusive.toEpochDays() - coalescedRange.start.toEpochDays() + 1) {
+        List(
+            (coalescedRange.endInclusive.toEpochDays() - coalescedRange.start.toEpochDays() + 1)
+              .toInt()
+          ) {
             coalescedRange.start.plus(it, DateTimeUnit.DAY)
           }
           .associateWith { date ->

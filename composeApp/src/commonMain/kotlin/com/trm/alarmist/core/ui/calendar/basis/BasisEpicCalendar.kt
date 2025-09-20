@@ -39,7 +39,7 @@ val DefaultDayOfMonthContent: BasisDayOfMonthContent = { date ->
         alpha =
           remember(date, state.currentMonth) { if (date in state.currentMonth) 1.0f else 0.5f }
       ),
-    text = date.dayOfMonth.toString(),
+    text = date.day.toString(),
     textAlign = TextAlign.Center,
     color = config.contentColor,
   )

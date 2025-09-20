@@ -9,6 +9,7 @@ import com.trm.alarmist.core.system.AlarmScheduler
 import com.trm.alarmist.core.system.alarm.receiver.AlarmFiredBroadcastReceiver
 import com.trm.alarmist.core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver
 import com.trm.alarmist.widget.common.system.WidgetUpdateAlarmReceiver
+import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -24,6 +25,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
   override fun scheduleNextWidgetUpdate() {
     alarmManager.setExact(
       AlarmManager.RTC,
+      @OptIn(ExperimentalTime::class)
       LocalDate.now()
         .plus(1, DateTimeUnit.DAY)
         .atTime(0, 0, 1)
@@ -33,6 +35,7 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     )
   }
 
+  @OptIn(ExperimentalTime::class)
   override fun scheduleAlarm(
     id: Long,
     name: String?,

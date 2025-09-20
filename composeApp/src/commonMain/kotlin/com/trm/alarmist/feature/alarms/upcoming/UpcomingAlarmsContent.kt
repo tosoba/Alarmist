@@ -243,6 +243,7 @@ private fun WeeklyMonthlyCalendar(
         (LocalDate(initialState.currentYear, initialState.currentMonth, 1)
             .previousDayOfWeek(firstDayOfWeek())
             .toEpochDays() - today.previousDayOfWeek(firstDayOfWeek()).toEpochDays())
+          .toInt()
           .coerceAtLeast(0) / 7
     ) {
       weeklyCalendarPagesCount(startDate = today, endDate = LocalDate(2100, Month.DECEMBER, 31))
@@ -252,6 +253,7 @@ private fun WeeklyMonthlyCalendar(
     scrollToPage(
       (destinationDate.previousDayOfWeek(firstDayOfWeek()).toEpochDays() -
           today.previousDayOfWeek(firstDayOfWeek()).toEpochDays())
+        .toInt()
         .coerceAtLeast(0) / 7
     )
   }
@@ -313,7 +315,7 @@ private fun WeeklyMonthlyCalendar(
         monthlyCalendarState.selectedDates.firstOrNull()?.let {
           Text(
             text =
-              "${it.dayOfWeek.localized()}, ${it.month.name.take(3).lowercase().capitalize(Locale.current)} ${it.dayOfMonth}",
+              "${it.dayOfWeek.localized()}, ${it.month.name.take(3).lowercase().capitalize(Locale.current)} ${it.day}",
             style = MaterialTheme.typography.headlineMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -427,7 +429,7 @@ private fun WeeklyMonthlyCalendar(
                             else -> 0.5f
                           }
                         ),
-                      text = date.dayOfMonth.toString(),
+                      text = date.day.toString(),
                       textAlign = TextAlign.Center,
                       color =
                         if (date in pickerState.selectedDates) {
@@ -471,7 +473,8 @@ private fun weeklyCalendarPagesCount(startDate: LocalDate, endDate: LocalDate): 
   val startDateFirstDayOfWeek = startDate.previousDayOfWeek(firstDayOfWeek())
   val lastDayOfWeek = startDateFirstDayOfWeek.plus(6, DateTimeUnit.DAY).dayOfWeek
   return (endDate.nextDayOfWeek(lastDayOfWeek).toEpochDays() -
-    startDateFirstDayOfWeek.toEpochDays() + 1) / DayOfWeek.entries.size
+      startDateFirstDayOfWeek.toEpochDays() + 1)
+    .toInt() / DayOfWeek.entries.size
 }
 
 private fun weeklyCalendarRowDates(today: LocalDate, weekIndex: Int): List<LocalDate> {

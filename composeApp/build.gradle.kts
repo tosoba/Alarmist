@@ -13,8 +13,6 @@ plugins {
 
 kotlin {
   androidTarget {
-    compilations.all { kotlinOptions { jvmTarget = "1.8" } }
-
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
       freeCompilerArgs.addAll(
@@ -141,8 +139,6 @@ android {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
-
-  composeOptions { kotlinCompilerExtensionVersion = "1.5.13" }
 }
 
 sqldelight {

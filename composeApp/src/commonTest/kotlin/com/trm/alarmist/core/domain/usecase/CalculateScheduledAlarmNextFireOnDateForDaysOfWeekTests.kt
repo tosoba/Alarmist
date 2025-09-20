@@ -17,7 +17,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
   fun `given day of week equal to afterDateTime day of week and fireAtTime after afterDateTime and empty offOnDates - then return afterDateTime date`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.JUNE, dayOfMonth = 10),
+        LocalDate(year = 2024, month = Month.JUNE, day = 10),
         LocalTime(hour = 11, minute = 55, second = 44),
       )
 
@@ -38,7 +38,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
   fun `given day of week equal to afterDateTime day of week and fireAtTime before afterDateTime and empty offOnDates - then return date 1 week after afterDateTime`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.JULY, dayOfMonth = 20),
+        LocalDate(year = 2024, month = Month.JULY, day = 20),
         LocalTime(hour = 11, minute = 55, second = 1),
       )
 
@@ -59,7 +59,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
   fun `given day of week not equal to afterDateTime day of week and empty offOnDates - then return next appropriate day of week after afterDateTime`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.JULY, dayOfMonth = 20),
+        LocalDate(year = 2024, month = Month.JULY, day = 20),
         LocalTime(hour = 11, minute = 55, second = 1),
       )
 
@@ -85,7 +85,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
   fun `given day of week equal to afterDateTime day of week and fireAtTime after afterDateTime and offOnDates containing afterDateTime date - then return date 1 week after afterDateTime`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.JULY, dayOfMonth = 10),
+        LocalDate(year = 2024, month = Month.JULY, day = 10),
         LocalTime(hour = 9, minute = 45, second = 12),
       )
 
@@ -106,7 +106,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
   fun `given multiple days of week and empty offOnDates - then return the closest day after afterDateTime`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.SEPTEMBER, dayOfMonth = 21),
+        LocalDate(year = 2024, month = Month.SEPTEMBER, day = 21),
         LocalTime(hour = 11, minute = 24, second = 53),
       )
     val days = daysOfWeekOtherThanOf(afterDateTime)
@@ -128,7 +128,7 @@ class CalculateScheduledAlarmNextFireOnDateForDaysOfWeekTests {
   fun `given multiple days of week and non empty offOnDates - then return the closest day after afterDateTime not contained in offOnDates`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.SEPTEMBER, dayOfMonth = 21),
+        LocalDate(year = 2024, month = Month.SEPTEMBER, day = 21),
         LocalTime(hour = 11, minute = 24, second = 53),
       )
     val days = daysOfWeekOtherThanOf(afterDateTime)

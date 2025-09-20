@@ -6,12 +6,14 @@ import com.trm.alarmist.core.common.util.toLocalTime
 import com.trm.alarmist.core.util.alarmModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 
+@OptIn(ExperimentalTime::class)
 class CalculateMissedAlarmDateTimesUseCaseTests {
   @Test
   fun `given alarm with null lastNotificationDate that was not missed and will fire in 1 hour - then return emptyList`() {

@@ -233,7 +233,9 @@ class AlarmLocalRepository(
     queries.selectOnAlarmScheduledForDateRange(dates.toQueryString()).asAlarmsFlow()
 
   private fun ClosedRange<LocalDate>.toQueryString(): String =
-    List(endInclusive.toEpochDays() - start.toEpochDays() + 1) { start.plus(it, DateTimeUnit.DAY) }
+    List((endInclusive.toEpochDays() - start.toEpochDays() + 1).toInt()) {
+        start.plus(it, DateTimeUnit.DAY)
+      }
       .joinToString(separator = ",") { it.toString().replace(".", "\\.") }
 
   override fun getOneTimeAlarmsBeforeTimeFlow(time: LocalTime): Flow<List<AlarmModel>> =

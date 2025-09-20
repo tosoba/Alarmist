@@ -15,7 +15,7 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
   fun `given scheduledOnDate equal to afterDateTime date and fireAtTime before afterDateTime and empty offOnDates - then return null`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.MAY, dayOfMonth = 8),
+        LocalDate(year = 2024, month = Month.MAY, day = 8),
         LocalTime(hour = 14, minute = 11, second = 8),
       )
 
@@ -34,7 +34,7 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
   fun `given scheduledOnDate equal to afterDateTime date and fireAtTime after afterDateTime and empty offOnDates - then return afterDateTime date`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.MAY, dayOfMonth = 8),
+        LocalDate(year = 2024, month = Month.MAY, day = 8),
         LocalTime(hour = 14, minute = 11, second = 8),
       )
 
@@ -55,7 +55,7 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
   fun `given multiple scheduledOnDates and fireAtTime before afterDateTime and empty offOnDates - then return earliest date after afterDateTime`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.MAY, dayOfMonth = 8),
+        LocalDate(year = 2024, month = Month.MAY, day = 8),
         LocalTime(hour = 14, minute = 11, second = 8),
       )
     val scheduledOnDates = List(20) { afterDateTime.date.plus(it - 10, DateTimeUnit.DAY) }
@@ -77,7 +77,7 @@ class CalculateScheduledAlarmNextFireOnDateForDateListTests {
   fun `given multiple scheduledOnDates and multiple offOnDates - then return earliest date not in offOnDates`() {
     val afterDateTime =
       LocalDateTime(
-        LocalDate(year = 2024, month = Month.MAY, dayOfMonth = 8),
+        LocalDate(year = 2024, month = Month.MAY, day = 8),
         LocalTime(hour = 14, minute = 11, second = 8),
       )
     val scheduledOnDates = List(10) { afterDateTime.date.plus(it + 1, DateTimeUnit.DAY) }

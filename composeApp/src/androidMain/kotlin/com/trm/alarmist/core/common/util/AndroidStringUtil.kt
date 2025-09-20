@@ -17,7 +17,7 @@ fun LocalDateTime.formatted(context: Context): String = buildString {
         char('-')
         monthNumber(padding = Padding.ZERO)
         char('-')
-        dayOfMonth(padding = Padding.ZERO)
+        day(padding = Padding.ZERO)
       }
     )
   )

@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.ui.calendar.basis.BasisDayOfMonthContent
 import com.trm.alarmist.core.ui.calendar.basis.config.DefaultBasisEpicCalendarConfig
-import com.trm.alarmist.core.ui.calendar.basis.contains
 import com.trm.alarmist.core.ui.calendar.datepicker.config.LocalEpicDatePickerConfig
 import com.trm.alarmist.core.ui.calendar.datepicker.state.LocalEpicDatePickerState
 import kotlinx.datetime.LocalDate
@@ -40,7 +39,7 @@ fun DaysOfWeekRow(
       fun DayText() {
         Text(
           modifier = Modifier.alpha(alpha = if (date < LocalDate.now()) 0.5f else 1f),
-          text = date.dayOfMonth.toString(),
+          text = date.day.toString(),
           textAlign = TextAlign.Center,
           color =
             LocalEpicDatePickerState.current!!.config.run {
