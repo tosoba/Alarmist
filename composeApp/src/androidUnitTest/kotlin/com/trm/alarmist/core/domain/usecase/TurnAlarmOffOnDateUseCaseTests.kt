@@ -9,18 +9,19 @@ import com.trm.alarmist.core.util.addTestAlarm
 import com.trm.alarmist.core.util.createTestAlarmLocalRepository
 import dev.mokkery.MockMode
 import dev.mokkery.matcher.any
-import dev.mokkery.matcher.eq
 import dev.mokkery.mock
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifyNoMoreCalls
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
 
+@OptIn(ExperimentalTime::class)
 class TurnAlarmOffOnDateUseCaseTests {
   private val dispatcher = StandardTestDispatcher()
 
@@ -71,7 +72,7 @@ class TurnAlarmOffOnDateUseCaseTests {
       )
 
       verify(VerifyMode.exactly(1)) {
-        scheduler.scheduleAlarm(eq(id), any(), any(), any(), any(), any(), any(), any())
+        scheduler.scheduleAlarm(id, any(), any(), any(), any(), any(), any(), any())
       }
       verifyNoMoreCalls(scheduler)
     }
@@ -94,7 +95,7 @@ class TurnAlarmOffOnDateUseCaseTests {
         date = turnOffAtDate,
       )
 
-      verify(VerifyMode.exactly(1)) { scheduler.cancelAlarm(eq(id)) }
+      verify(VerifyMode.exactly(1)) { scheduler.cancelAlarm(id) }
       verifyNoMoreCalls(scheduler)
     }
 }
