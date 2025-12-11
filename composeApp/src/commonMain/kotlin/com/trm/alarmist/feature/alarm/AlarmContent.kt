@@ -26,7 +26,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -620,7 +619,6 @@ private fun AlarmSliderThumb(text: String, modifier: Modifier = Modifier) {
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ColumnScope.ExpandableCalendar(
   calendarModifier: Modifier = Modifier,
