@@ -1,16 +1,15 @@
 package com.trm.alarmist.core.ui.calendar.basis
 
 import androidx.compose.runtime.Immutable
-import kotlin.math.abs
-import kotlin.math.floor
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import kotlin.math.abs
+import kotlin.math.floor
+import kotlin.time.Clock
 
 @Immutable
 data class EpicMonth(val year: Int, val month: Month) : Comparable<EpicMonth> {
@@ -37,7 +36,6 @@ data class EpicMonth(val year: Int, val month: Month) : Comparable<EpicMonth> {
   }
 
   companion object {
-    @OptIn(ExperimentalTime::class)
     fun now(timeZone: TimeZone = TimeZone.currentSystemDefault()) =
       Clock.System.now().toLocalDateTime(timeZone).date.epicMonth
   }

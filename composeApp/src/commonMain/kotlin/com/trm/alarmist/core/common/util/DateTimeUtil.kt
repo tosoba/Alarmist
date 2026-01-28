@@ -4,10 +4,6 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.days_count
 import alarmist.composeapp.generated.resources.one_day
 import androidx.compose.runtime.Composable
-import kotlin.time.Clock
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -21,16 +17,16 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.ExperimentalTime
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
-@OptIn(ExperimentalTime::class)
 fun now(): Instant = Clock.System.now()
 
-@OptIn(ExperimentalTime::class)
 fun Instant.nextFullHour(timeZone: TimeZone = TimeZone.currentSystemDefault()): Int =
   plus(1, DateTimeUnit.HOUR).toLocalDateTime(timeZone).hour
 
-@OptIn(ExperimentalTime::class)
 fun LocalDateTime.Companion.now(
   timeZone: TimeZone = TimeZone.currentSystemDefault()
 ): LocalDateTime = Clock.System.now().toLocalDateTime(timeZone)
@@ -41,15 +37,12 @@ fun LocalDate.Companion.now(timeZone: TimeZone = TimeZone.currentSystemDefault()
 fun LocalTime.Companion.now(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalTime =
   LocalDateTime.now(timeZone).time
 
-@OptIn(ExperimentalTime::class)
 fun Instant.toLocalDateTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDateTime =
   this@toLocalDateTime.toLocalDateTime(timeZone)
 
-@OptIn(ExperimentalTime::class)
 fun Instant.toLocalTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalTime =
   toLocalDateTime(timeZone).time
 
-@OptIn(ExperimentalTime::class)
 fun Instant.toLocalDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate =
   toLocalDateTime(timeZone).date
 

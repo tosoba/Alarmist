@@ -140,7 +140,6 @@ import com.trm.alarmist.feature.alarm.model.AlarmState
 import com.trm.alarmist.feature.alarm.sound.AlarmSoundDialog
 import com.trm.alarmist.feature.alarm.sound.alarmSoundTitle
 import com.trm.alarmist.feature.alarm.time.AlarmTimeDialog
-import kotlin.time.ExperimentalTime
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -346,7 +345,6 @@ private fun AlarmContent(
         }
       }
 
-      @OptIn(ExperimentalTime::class)
       ExpandableCalendar(
         calendarModifier =
           Modifier.fillMaxWidth().padding(start = 24.dp, end = 16.dp, bottom = 16.dp),

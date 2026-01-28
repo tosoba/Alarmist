@@ -5,14 +5,12 @@ import androidx.glance.text.Text
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.widget.common.util.stringResource
-import kotlin.time.ExperimentalTime
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 @Composable
 fun WidgetFireOnDateTimeRemainingText(fireOnDateTime: LocalDateTime) {
-  @OptIn(ExperimentalTime::class)
   val remaining = fireOnDateTime.toInstant(TimeZone.currentSystemDefault()) - now()
 
   Text(

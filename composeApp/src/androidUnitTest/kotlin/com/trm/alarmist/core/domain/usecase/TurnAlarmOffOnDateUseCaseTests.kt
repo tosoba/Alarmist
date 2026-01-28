@@ -13,15 +13,13 @@ import dev.mokkery.mock
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifyNoMoreCalls
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@OptIn(ExperimentalTime::class)
 class TurnAlarmOffOnDateUseCaseTests {
   private val dispatcher = StandardTestDispatcher()
 
