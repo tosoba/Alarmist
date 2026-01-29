@@ -5,5 +5,9 @@ import androidx.compose.runtime.Composable
 
 @Composable
 actual fun AppTheme(darkTheme: Boolean, dynamicColor: Boolean, content: @Composable () -> Unit) {
-  MaterialTheme(colorScheme = if (darkTheme) darkScheme else lightScheme, content = content)
+  MaterialTheme(
+    colorScheme = if (darkTheme) darkScheme else lightScheme,
+    typography = appTypography(),
+    content = content,
+  )
 }
