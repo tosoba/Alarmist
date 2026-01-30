@@ -9,6 +9,7 @@ import androidx.glance.action.Action
 import androidx.glance.appwidget.Switch
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
+import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
@@ -62,7 +63,7 @@ fun WidgetAlarmListItem(
 
   @Composable
   fun Trailing() {
-    Column {
+    Column(horizontalAlignment = Alignment.End) {
       Switch(checked = item.isOn, onCheckedChange = onCheckedChange)
       item.fireOnDateTime?.let { WidgetFireOnDateTimeRemainingText(it) }
     }
