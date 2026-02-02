@@ -13,16 +13,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -112,13 +110,10 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
               )
             },
             bottomBar = {
-              Row(
-                modifier =
-                  Modifier.fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .padding(16.dp)
-              ) {
+              BottomAppBar {
                 if (!isPinned) {
+                  Spacer(modifier = Modifier.width(16.dp))
+
                   OutlinedButton(onClick = { finish() }, modifier = Modifier.weight(1f)) {
                     Text(text = stringResource(Res.string.cancel))
                   }
@@ -129,9 +124,7 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                 Button(
                   onClick = {
                     component.feature.onConfirmClick(widgetId)
-
                     showWidgetPinnedToast()
-
                     setResult(
                       RESULT_OK,
                       Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId),
@@ -142,6 +135,8 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                 ) {
                   Text(text = stringResource(Res.string.ok))
                 }
+
+                Spacer(modifier = Modifier.width(16.dp))
               }
             },
             floatingActionButton = {
