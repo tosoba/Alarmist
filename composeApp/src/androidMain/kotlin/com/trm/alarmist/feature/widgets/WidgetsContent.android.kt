@@ -201,7 +201,11 @@ private fun WidgetInfoCard(
     modifier = modifier,
     onClick = {
       scope.launch {
-        context.pinWidget(providerInfo = provider, callback = provider.pinCallback(context))
+        try {
+          context.pinWidget(providerInfo = provider, callback = provider.pinCallback(context))
+        } catch (ex: Exception) {
+          ensureActive()
+        }
       }
     },
   ) {
