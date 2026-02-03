@@ -3,7 +3,6 @@ package com.trm.alarmist.feature.widgets
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.widget_pin_unavailable_description
 import alarmist.composeapp.generated.resources.widget_pin_unavailable_title
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
@@ -12,7 +11,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.RemoteViews
 import androidx.compose.animation.animateContentSize
@@ -54,7 +52,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.glance.appwidget.AppWidgetId
 import androidx.glance.appwidget.compose
 import com.trm.alarmist.core.common.util.glanceAppWidgetPreview
 import com.trm.alarmist.core.common.util.pinWidget
@@ -65,12 +62,9 @@ import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.min
-
-private const val ACTION_PIN_GROUP_WIDGET = "com.trm.alarmist.ACTION_PIN_GROUP_WIDGET"
 
 @Composable
 actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
@@ -90,6 +84,8 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
     modifier = modifier,
   )
 }
+
+private const val ACTION_PIN_GROUP_WIDGET = "com.trm.alarmist.ACTION_PIN_GROUP_WIDGET"
 
 @Composable
 private fun PinGroupWidgetReceiverEffect() {
@@ -174,15 +170,11 @@ private fun rememberWidgetRemoteViews(
 
   LaunchedEffect(providers, context) {
     providers.forEachIndexed { index, provider ->
-      @SuppressLint("RestrictedApi")
       widgetRemoteViews[index] =
         context
           .glanceAppWidgetPreview(providerInfo = provider, noLazyLayouts = true)
           ?.compose(
             context = context,
-            id = AppWidgetId(AppWidgetManager.INVALID_APPWIDGET_ID),
-            state = null,
-            options = Bundle.EMPTY,
             size =
               with(density) {
                 val pxSize = providerPxSizes[index]
@@ -242,11 +234,7 @@ private fun WidgetInfoCard(
     modifier = modifier,
     onClick = {
       scope.launch {
-        try {
-          context.pinWidget(providerInfo = provider, callback = provider.pinCallback(context))
-        } catch (ex: Exception) {
-          ensureActive()
-        }
+        context.pinWidget(providerInfo = provider, callback = provider.pinCallback(context))
       }
     },
   ) {
