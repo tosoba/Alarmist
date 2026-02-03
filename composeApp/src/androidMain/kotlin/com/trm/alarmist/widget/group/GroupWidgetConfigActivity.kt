@@ -6,7 +6,6 @@ import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.edit_group_widget
 import alarmist.composeapp.generated.resources.new_group_widget
 import alarmist.composeapp.generated.resources.ok
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
@@ -202,14 +201,10 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
     private const val EXTRA_IS_PINNED = "IS_PINNED"
     private const val EXTRA_WIDGET_ACTION = "WIDGET_ACTION"
 
-    fun pendingIntent(context: Context): PendingIntent =
-      PendingIntent.getActivity(
-        context,
-        0,
-        Intent(context, GroupWidgetConfigActivity::class.java).putExtra(EXTRA_IS_PINNED, true),
-        // must have FLAG_MUTABLE - otherwise EXTRA_APPWIDGET_ID will not be set
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
-      )
+    fun pinWidgetIntent(context: Context, widgetId: Int): Intent =
+      Intent(context, GroupWidgetConfigActivity::class.java)
+        .putExtra(EXTRA_IS_PINNED, true)
+        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
 
     fun widgetActionIntent(context: Context, widgetId: Int): Intent =
       Intent(context, GroupWidgetConfigActivity::class.java)

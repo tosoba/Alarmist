@@ -7,7 +7,10 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.widget.FrameLayout
@@ -35,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -49,6 +53,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.glance.appwidget.AppWidgetId
 import androidx.glance.appwidget.compose
 import com.trm.alarmist.core.common.util.glanceAppWidgetPreview
@@ -60,14 +65,19 @@ import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
-import kotlin.math.min
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.min
+
+private const val ACTION_PIN_GROUP_WIDGET = "com.trm.alarmist.ACTION_PIN_GROUP_WIDGET"
 
 @Composable
 actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
   val context = LocalContext.current
   val widgetManager = AppWidgetManager.getInstance(context)
+
+  PinGroupWidgetReceiverEffect()
 
   WidgetsGrid(
     isRequestPinAppWidgetSupported = widgetManager.isRequestPinAppWidgetSupported,
@@ -79,6 +89,37 @@ actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
       },
     modifier = modifier,
   )
+}
+
+@Composable
+private fun PinGroupWidgetReceiverEffect() {
+  val context = LocalContext.current
+
+  DisposableEffect(context) {
+    val receiver =
+      object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+          context.startActivity(
+            GroupWidgetConfigActivity.pinWidgetIntent(
+              context,
+              intent.getIntExtra(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID,
+              ),
+            )
+          )
+        }
+      }
+
+    ContextCompat.registerReceiver(
+      context,
+      receiver,
+      IntentFilter(ACTION_PIN_GROUP_WIDGET),
+      ContextCompat.RECEIVER_NOT_EXPORTED,
+    )
+
+    onDispose { context.unregisterReceiver(receiver) }
+  }
 }
 
 @Composable
@@ -233,7 +274,13 @@ private fun WidgetInfoCard(
 
 private fun AppWidgetProviderInfo.pinCallback(context: Context): PendingIntent =
   if (provider == context.widgetReceiverComponentName<GroupWidgetReceiver>()) {
-    GroupWidgetConfigActivity.pendingIntent(context)
+    PendingIntent.getBroadcast(
+      context,
+      0,
+      Intent(ACTION_PIN_GROUP_WIDGET).setPackage(context.packageName),
+      // must have FLAG_MUTABLE - otherwise EXTRA_APPWIDGET_ID will not be set
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+    )
   } else {
     WidgetPinnedReceiver.pendingIntent(context)
   }
