@@ -15,7 +15,7 @@ struct iOSApp: App {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    private let stateKeeper = StateKeeperDispatcherKt.StateKeeperDispatcher(savedState: nil)
+    private var stateKeeper = StateKeeperDispatcherKt.StateKeeperDispatcher(savedState: nil)
     let backDispatcher: BackDispatcher = BackDispatcherKt.BackDispatcher()
 
     lazy var component: RootComponent = {
@@ -37,8 +37,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 
-    func application(_: UIApplication, shouldRestoreSecureApplicationState _: NSCoder) -> Bool {
-//        stateKeeper = StateKeeperDispatcherKt.StateKeeperDispatcher(savedState: StateKeeperUtilsKt.restore(coder: coder))
+    func application(_: UIApplication, shouldRestoreSecureApplicationState coder: NSCoder) -> Bool {
+        stateKeeper = StateKeeperDispatcherKt.StateKeeperDispatcher(savedState: StateKeeperUtilKt.restore(coder: coder))
         return true
     }
 }
