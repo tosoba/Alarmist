@@ -1,5 +1,5 @@
-import SwiftUI
 import ComposeApp
+import SwiftUI
 
 @main
 struct iOSApp: App {
@@ -20,8 +20,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
     lazy var component: RootComponent = {
         LogConfigKt.doInitNapierDebug()
-        PlatformKoinInitializer.init().invoke()
-        
+        PlatformKoinInitializer().invoke()
+
         return DefaultRootComponent(
             componentContext: DefaultComponentContext(
                 lifecycle: ApplicationLifecycle(),
@@ -32,14 +32,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         )
     }()
 
-    func application(_ application: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
+    func application(_: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
         StateKeeperUtilKt.save(coder: coder, state: stateKeeper.save())
         return true
     }
-    
-    func application(_ application: UIApplication, shouldRestoreSecureApplicationState coder: NSCoder) -> Bool {
+
+    func application(_: UIApplication, shouldRestoreSecureApplicationState _: NSCoder) -> Bool {
 //        stateKeeper = StateKeeperDispatcherKt.StateKeeperDispatcher(savedState: StateKeeperUtilsKt.restore(coder: coder))
         return true
     }
 }
-

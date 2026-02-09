@@ -1,15 +1,14 @@
-import UIKit
-import SwiftUI
 import ComposeApp
+import SwiftUI
+import UIKit
 
 struct RootView: UIViewControllerRepresentable {
     let component: RootComponent
     let backDispatcher: BackDispatcher
 
-    func makeUIViewController(context: Context) -> UIViewController {
+    func makeUIViewController(context _: Context) -> UIViewController {
         return RootViewControllerKt.rootViewController(component: component, backDispatcher: backDispatcher)
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-    }
+    func updateUIViewController(_: UIViewController, context _: Context) {}
 }
