@@ -1,5 +1,6 @@
 import ComposeApp
 import SwiftUI
+import UserNotifications
 
 @main
 struct iOSApp: App {
@@ -14,7 +15,7 @@ struct iOSApp: App {
     }
 }
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     private var stateKeeper = StateKeeperDispatcherKt.StateKeeperDispatcher(savedState: nil)
     let backDispatcher: BackDispatcher = BackDispatcherKt.BackDispatcher()
 
@@ -31,6 +32,39 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             )
         )
     }()
+
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+
+        let cancelAction = UNNotificationAction(
+            identifier: "TIMER_CANCEL",
+            title: "Cancel",
+            options: [.destructive]
+        )
+
+        let timerCategory = UNNotificationCategory(
+            identifier: "TIMER_CATEGORY",
+            actions: [cancelAction],
+            intentIdentifiers: [],
+            options: []
+        )
+
+        center.setNotificationCategories([timerCategory])
+        return true
+    }
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        IosTimerNotificationActionBridge.shared.handle(actionId: response.actionIdentifier)
+        completionHandler()
+    }
 
     func application(_: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
         StateKeeperUtilKt.save(coder: coder, state: stateKeeper.save())
