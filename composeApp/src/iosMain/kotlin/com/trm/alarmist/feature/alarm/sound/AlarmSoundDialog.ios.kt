@@ -8,6 +8,4 @@ actual fun AlarmSoundLazyColumn(
   selectedId: String?,
   onSoundSelected: (String) -> Unit,
   modifier: Modifier,
-) {
-  // TODO:
-}
+) {}

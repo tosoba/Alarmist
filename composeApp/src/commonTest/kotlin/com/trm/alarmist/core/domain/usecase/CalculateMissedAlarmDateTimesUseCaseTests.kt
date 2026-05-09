@@ -102,6 +102,4 @@ class CalculateMissedAlarmDateTimesUseCaseTests {
       actual = calculateAlarmMissedDateTimes(alarm),
     )
   }
-
-  // TODO: test case for maxOf (when previously missed alarm was modified
 }

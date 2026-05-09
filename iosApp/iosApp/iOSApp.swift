@@ -9,7 +9,7 @@ struct iOSApp: App {
     var body: some Scene {
         WindowGroup {
             RootView(component: appDelegate.component, backDispatcher: appDelegate.backDispatcher)
-                .ignoresSafeArea(.all)
+                .ignoresSafeArea()
         }
     }
 }
@@ -20,7 +20,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
     lazy var component: RootComponent = {
         LogConfigKt.doInitNapierDebug()
-        PlatformKoinInitializer().invoke()
+        PlatformKoinInitializer().invoke(additionalModules: [])
 
         return DefaultRootComponent(
             componentContext: DefaultComponentContext(

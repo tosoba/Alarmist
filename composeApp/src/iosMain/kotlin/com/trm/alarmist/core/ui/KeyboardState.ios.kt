@@ -10,7 +10,6 @@ import androidx.compose.runtime.setValue
 
 @Composable
 actual fun keyboardAsState(): State<Boolean> {
-  // TODO:
   var isKeyboardVisible by remember { mutableStateOf(false) }
   return rememberUpdatedState(isKeyboardVisible)
 }
