@@ -22,7 +22,7 @@ dependencies {
   implementation(libs.material3.windowSizeClass)
   
   // Android-specific Compose libraries
-  implementation("androidx.compose.material:material-icons-extended:1.7.5")
+  implementation(libs.androidx.compose.material.iconsExtended)
   
   implementation(libs.kotlinx.datetime)
   
