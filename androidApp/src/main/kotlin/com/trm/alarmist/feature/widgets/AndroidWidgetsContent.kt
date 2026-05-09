@@ -62,9 +62,9 @@ import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
-import kotlin.math.min
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.min
 
 @Composable
 fun AndroidWidgetsContent(modifier: Modifier) {
@@ -129,7 +129,7 @@ private fun WidgetsGrid(
       val widgetRemoteViews = rememberWidgetRemoteViews(providers)
 
       LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 300.dp),
+        columns = GridCells.Adaptive(minSize = 400.dp),
         contentPadding =
           PaddingValues(
             top = 0.dp,
