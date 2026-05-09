@@ -59,8 +59,8 @@ import com.trm.alarmist.core.common.util.widgetReceiverComponentName
 import com.trm.alarmist.core.ui.AnimatedNullableVisibility
 import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.TopGradientBackground
+import com.trm.alarmist.core.common.util.createGroupWidgetPinIntent
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
-import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -96,7 +96,7 @@ private fun PinGroupWidgetReceiverEffect() {
       object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
           context.startActivity(
-            GroupWidgetConfigActivity.pinWidgetIntent(
+            createGroupWidgetPinIntent(
               context,
               intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,

@@ -17,7 +17,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.state.updateAppWidgetState
-import com.trm.alarmist.MainActivity
+import com.trm.alarmist.core.common.util.createMainActivityIntent
 import com.trm.alarmist.R
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
@@ -25,7 +25,8 @@ import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
 import com.trm.alarmist.feature.root.RootStartMode
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffActionReceiver
 import com.trm.alarmist.widget.common.system.ToggleAlarmOnOffOnDateActionReceiver
-import com.trm.alarmist.widget.group.GroupWidgetConfigActivity
+import com.trm.alarmist.core.common.util.createGroupWidgetPinIntent
+import com.trm.alarmist.core.common.util.createGroupWidgetActionIntent
 import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -105,18 +106,18 @@ internal fun updateUuid(prefs: MutablePreferences) {
   prefs[uuidKey] = UUID.randomUUID().toString()
 }
 
-internal fun Context.showWidgetPinnedToast() {
+fun Context.showWidgetPinnedToast() {
   Toast.makeText(this, getString(R.string.widget_pinned_success_info), Toast.LENGTH_SHORT).show()
 }
 
 @Composable
 internal fun actionStartGroupWidgetConfigActivity(widgetId: Int): Action =
-  actionStartActivity(GroupWidgetConfigActivity.widgetActionIntent(LocalContext.current, widgetId))
+  actionStartActivity(createGroupWidgetActionIntent(LocalContext.current, widgetId))
 
 @Composable
 internal fun actionStartMainActivity(startMode: RootStartMode): Action =
   actionStartActivity(
-    Intent(LocalContext.current, MainActivity::class.java)
+    createMainActivityIntent(LocalContext.current)
       .putExtra(RootStartMode.EXTRA_KEY, startMode)
   )
 

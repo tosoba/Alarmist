@@ -20,7 +20,7 @@ internal inline fun <reified T : Parcelable> Intent.getParcelable(name: String?)
     getParcelableExtra(name)
   }
 
-internal fun Intent.requireAlarmFireSettings(): AlarmFireSettings =
+fun Intent.requireAlarmFireSettings(): AlarmFireSettings =
   requireNotNull(getParcelable(EXTRA_ALARM_FIRE_SETTINGS))
 
 internal const val EXTRA_ALARM_FIRE_SETTINGS = "ALARM_FIRE_SETTINGS"

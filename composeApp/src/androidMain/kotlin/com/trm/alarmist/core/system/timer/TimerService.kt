@@ -21,7 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
-import com.trm.alarmist.MainActivity
+import com.trm.alarmist.core.common.util.createMainActivityIntent
 import com.trm.alarmist.R
 import com.trm.alarmist.core.common.util.getParcelable
 import com.trm.alarmist.core.common.util.getStringBlocking
@@ -274,7 +274,7 @@ class TimerService : Service() {
     PendingIntent.getActivity(
       context,
       CLICK_REQUEST_CODE,
-      Intent(context, MainActivity::class.java)
+      createMainActivityIntent(context)
         .putExtra(RootStartMode.EXTRA_KEY, RootStartMode.Timer),
       PendingIntent.FLAG_MUTABLE,
     )

@@ -1,4 +1,4 @@
-package com.trm.alarmist
+package com.trm.alarmist.app
 
 import android.content.Intent
 import android.os.Build

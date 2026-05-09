@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.androidApplication)
+  alias(libs.plugins.androidKotlinMultiplatform)
   alias(libs.plugins.jetbrainsCompose)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlinx.serialization)
@@ -12,14 +12,24 @@ plugins {
 }
 
 kotlin {
-  androidTarget {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    compilerOptions {
-      freeCompilerArgs.addAll(
-        "-P",
-        "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=com.trm.alarmist.core.common.model.CommonParcelize",
-      )
+  android {
+    namespace = "com.trm.alarmist"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    minSdk = libs.versions.android.minSdk.get().toInt()
+
+    withJava()
+    androidResources {
+      enable = true
     }
+    withHostTestBuilder { }
+  }
+
+  @OptIn(ExperimentalKotlinGradlePluginApi::class)
+  compilerOptions {
+    freeCompilerArgs.addAll(
+      "-P",
+      "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=com.trm.alarmist.core.common.model.CommonParcelize",
+    )
   }
 
   listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
@@ -62,7 +72,7 @@ kotlin {
       implementation(libs.sqldelight.android.driver)
     }
 
-    getByName("androidUnitTest").dependencies {
+    getByName("androidHostTest").dependencies {
       implementation(libs.kotlin.test)
       implementation(libs.kotlinx.coroutines.test)
       implementation(libs.sqldelight.sqlite.driver)
@@ -70,12 +80,12 @@ kotlin {
     }
 
     commonMain.dependencies {
-      implementation(compose.runtime)
-      implementation(compose.foundation)
-      implementation(compose.material3)
-      implementation(compose.materialIconsExtended)
-      implementation(compose.ui)
-      implementation(compose.components.resources)
+      implementation(libs.compose.runtime)
+      implementation(libs.compose.foundation)
+      implementation(libs.compose.material3)
+      implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+      implementation(libs.compose.ui)
+      implementation(libs.compose.components.resources)
 
       implementation(libs.decompose)
       implementation(libs.decompose.extensions.compose)
@@ -113,35 +123,11 @@ kotlin {
   }
 }
 
-android {
-  namespace = "com.trm.alarmist"
-  compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-  sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-  sourceSets["main"].res.srcDirs("src/androidMain/res")
-  sourceSets["main"].resources.srcDirs("src/commonMain/resources")
-
-  defaultConfig {
-    applicationId = "com.trm.alarmist"
-    minSdk = libs.versions.android.minSdk.get().toInt()
-    targetSdk = libs.versions.android.targetSdk.get().toInt()
-    versionCode = 1
-    versionName = "1.0"
-  }
-
-  packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-
-  buildTypes { getByName("release") { isMinifyEnabled = false } }
-
-  buildFeatures { compose = true }
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
-}
-
 sqldelight {
   databases { create("AlarmistDb") { packageName.set("com.trm.alarmist.db") } }
   linkSqlite = true
+}
+
+compose.resources {
+  publicResClass = true
 }

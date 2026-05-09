@@ -1,4 +1,4 @@
-package com.trm.alarmist.widget.group
+package com.trm.alarmist.app
 
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.add
