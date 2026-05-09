@@ -62,12 +62,12 @@ import com.trm.alarmist.core.ui.BottomGradientBackground
 import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.widget.common.system.WidgetPinnedReceiver
 import com.trm.alarmist.widget.group.GroupWidgetReceiver
+import kotlin.math.min
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import kotlin.math.min
 
 @Composable
-fun AndroidWidgetsContent(modifier: Modifier, onDismissRequest: () -> Unit = {}) {
+fun AndroidWidgetsContent(modifier: Modifier) {
   val context = LocalContext.current
   val widgetManager = AppWidgetManager.getInstance(context)
 
