@@ -10,12 +10,13 @@ import kotlinx.datetime.LocalDateTime
 class GetTodayWidgetAlarmsUseCase(private val repository: AlarmRepository) {
   suspend operator fun invoke(
     now: LocalDateTime = LocalDateTime.now()
-  ): List<WidgetAlarmListModel> = repository
-    .getPartitionedAlarmsAfterDateTime(now)
-    .run {
-      oneTime.map { it.toUpcomingListModel(scheduledAtDate = null, now = now) } +
-        scheduled.map { it.toUpcomingListModel(scheduledAtDate = now.date, now = now) }
-    }
-    .sortedBy(UpcomingAlarmListModel::fireAtTime)
-    .map(::WidgetAlarmListModel)
+  ): List<WidgetAlarmListModel> =
+    repository
+      .getPartitionedAlarmsAfterDateTime(now)
+      .run {
+        oneTime.map { it.toUpcomingListModel(scheduledAtDate = null, now = now) } +
+          scheduled.map { it.toUpcomingListModel(scheduledAtDate = now.date, now = now) }
+      }
+      .sortedBy(UpcomingAlarmListModel::fireAtTime)
+      .map(::WidgetAlarmListModel)
 }

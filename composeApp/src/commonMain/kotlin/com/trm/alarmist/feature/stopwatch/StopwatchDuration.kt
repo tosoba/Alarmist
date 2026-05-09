@@ -63,8 +63,8 @@ import com.trm.alarmist.core.domain.model.StopwatchState
 import com.trm.alarmist.core.ui.DurationText
 import com.trm.alarmist.core.ui.DurationTextLayoutType
 import com.trm.alarmist.core.ui.sideFloatingActionButtonTransitionSpec
-import kotlin.time.Duration
 import org.jetbrains.compose.resources.stringResource
+import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable

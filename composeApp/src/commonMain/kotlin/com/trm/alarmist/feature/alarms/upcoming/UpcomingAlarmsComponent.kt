@@ -15,13 +15,12 @@ class DefaultUpcomingAlarmsComponent(
   componentContext: ComponentContext,
   private val onEditAlarmClick: (UpcomingAlarmListModel) -> Unit,
 ) : UpcomingAlarmsComponent, ComponentContext by componentContext {
-  override val feature: UpcomingAlarmsFeature =
-    instanceKeeper.getOrCreate {
-      UpcomingAlarmsFeature(
-        savedStateContainer =
-          stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
-      )
-    }
+  override val feature: UpcomingAlarmsFeature = instanceKeeper.getOrCreate {
+    UpcomingAlarmsFeature(
+      savedStateContainer =
+        stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
+    )
+  }
 
   override fun onAlarmClick(alarm: UpcomingAlarmListModel) {
     onEditAlarmClick(alarm)

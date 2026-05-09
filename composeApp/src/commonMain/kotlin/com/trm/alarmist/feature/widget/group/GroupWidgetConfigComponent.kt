@@ -34,12 +34,11 @@ interface GroupWidgetConfigComponent {
 
 class DefaultGroupWidgetConfigComponent(componentContext: ComponentContext) :
   GroupWidgetConfigComponent, ComponentContext by componentContext {
-  override val feature: GroupWidgetConfigFeature =
-    instanceKeeper.getOrCreate {
-      GroupWidgetConfigFeature(
-        stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
-      )
-    }
+  override val feature: GroupWidgetConfigFeature = instanceKeeper.getOrCreate {
+    GroupWidgetConfigFeature(
+      stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
+    )
+  }
 
   private val bottomSheetNavigation = SlotNavigation<BottomSheetChildConfig>()
 

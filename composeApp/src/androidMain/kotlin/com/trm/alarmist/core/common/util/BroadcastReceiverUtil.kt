@@ -1,12 +1,12 @@
 package com.trm.alarmist.core.common.util
 
 import android.content.BroadcastReceiver
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 fun BroadcastReceiver.launch(
   context: CoroutineContext = EmptyCoroutineContext,

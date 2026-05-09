@@ -6,6 +6,6 @@ import org.koin.compose.koinInject
 
 @Composable
 actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
-    val provider = koinInject<StopwatchScreenProvider>()
-    provider.Content(modifier, component)
+  val provider = koinInject<StopwatchScreenProvider>()
+  provider.Content(modifier, component)
 }

@@ -45,11 +45,10 @@ class GroupFeature(
       .launchIn(coroutineScope)
   }
 
-  fun onDeleteClick(): Job =
-    coroutineScope.launch {
-      check(mode is GroupComponent.Mode.Edit)
-      deleteGroupUseCase(mode.group.id)
-    }
+  fun onDeleteClick(): Job = coroutineScope.launch {
+    check(mode is GroupComponent.Mode.Edit)
+    deleteGroupUseCase(mode.group.id)
+  }
 
   fun onConfirmClick(): Job? =
     with(_state.value) {

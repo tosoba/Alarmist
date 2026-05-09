@@ -55,9 +55,9 @@ import com.trm.alarmist.core.common.util.formatHMS
 import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.ui.DurationText
 import com.trm.alarmist.core.ui.DurationTextLayoutType
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable

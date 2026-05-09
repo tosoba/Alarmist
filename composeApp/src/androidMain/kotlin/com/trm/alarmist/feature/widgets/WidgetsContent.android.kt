@@ -6,6 +6,6 @@ import org.koin.compose.koinInject
 
 @Composable
 actual fun WidgetsContent(modifier: Modifier, component: WidgetsComponent) {
-    val provider = koinInject<WidgetScreenProvider>()
-    provider.Content(modifier)
+  val provider = koinInject<WidgetScreenProvider>()
+  provider.Content(modifier)
 }

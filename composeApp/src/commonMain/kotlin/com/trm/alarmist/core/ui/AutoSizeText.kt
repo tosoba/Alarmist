@@ -259,11 +259,12 @@ fun AutoSizeText(
         Napier.w(
           tag = "AutoSizeText",
           message =
-            """The text cannot be displayed. Please consider the following options:
-                      |  1. Providing 'suggestedFontSizes' with smaller values that can be utilized.
-                      |  2. Decreasing the 'stepGranularityTextSize' value.
-                      |  3. Adjusting the 'minTextSize' parameter to a suitable value and ensuring the overflow parameter is set to "TextOverflow.Ellipsis".
-                    """
+            """
+            |The text cannot be displayed. Please consider the following options:
+            |  1. Providing 'suggestedFontSizes' with smaller values that can be utilized.
+            |  2. Decreasing the 'stepGranularityTextSize' value.
+            |  3. Adjusting the 'minTextSize' parameter to a suitable value and ensuring the overflow parameter is set to "TextOverflow.Ellipsis".
+            """
               .trimMargin(),
         )
 

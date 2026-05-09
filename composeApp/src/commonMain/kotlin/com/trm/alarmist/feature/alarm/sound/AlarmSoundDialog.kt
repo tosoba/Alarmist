@@ -1,7 +1,6 @@
 package com.trm.alarmist.feature.alarm.sound
 
 import alarmist.composeapp.generated.resources.Res
-import alarmist.composeapp.generated.resources.cancel
 import alarmist.composeapp.generated.resources.confirm
 import alarmist.composeapp.generated.resources.pause
 import alarmist.composeapp.generated.resources.play

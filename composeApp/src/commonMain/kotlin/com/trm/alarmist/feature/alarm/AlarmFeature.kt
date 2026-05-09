@@ -65,52 +65,50 @@ class AlarmFeature(
     }
   }
 
-  fun onDeleteClick(): Job =
-    coroutineScope.launch {
-      check(mode is AlarmComponent.Mode.Edit)
-      deleteAlarmUseCase(mode.alarmId)
-    }
+  fun onDeleteClick(): Job = coroutineScope.launch {
+    check(mode is AlarmComponent.Mode.Edit)
+    deleteAlarmUseCase(mode.alarmId)
+  }
 
-  fun onConfirmClick(): Job =
-    coroutineScope.launch {
-      with(_state.value) {
-        when (mode) {
-          AlarmComponent.Mode.Add -> {
-            addAlarmUseCase(
-              groupId = groupId,
-              name = name,
-              fireAtTime = requireNotNull(fireAtTime),
-              isOn = isOn,
-              scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
-              scheduledOnDates = scheduledOnDates,
-              offOnDates = offOnDates,
-              alarmDurationMinutes = alarmDuration,
-              soundEnabled = soundEnabled,
-              vibrationEnabled = vibrationEnabled,
-              reminderOffsetHours = reminderOffsetOrZero,
-              soundId = soundId,
-            )
-          }
-          is AlarmComponent.Mode.Edit -> {
-            editAlarmUseCase(
-              id = mode.alarmId,
-              groupId = groupId,
-              fireAtTime = requireNotNull(fireAtTime),
-              name = name,
-              isOn = isOn,
-              scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
-              scheduledOnDates = scheduledOnDates,
-              offOnDates = offOnDates,
-              alarmDurationMinutes = alarmDuration,
-              soundEnabled = soundEnabled,
-              vibrationEnabled = vibrationEnabled,
-              reminderOffsetHours = reminderOffsetOrZero,
-              soundId = soundId,
-            )
-          }
+  fun onConfirmClick(): Job = coroutineScope.launch {
+    with(_state.value) {
+      when (mode) {
+        AlarmComponent.Mode.Add -> {
+          addAlarmUseCase(
+            groupId = groupId,
+            name = name,
+            fireAtTime = requireNotNull(fireAtTime),
+            isOn = isOn,
+            scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+            scheduledOnDates = scheduledOnDates,
+            offOnDates = offOnDates,
+            alarmDurationMinutes = alarmDuration,
+            soundEnabled = soundEnabled,
+            vibrationEnabled = vibrationEnabled,
+            reminderOffsetHours = reminderOffsetOrZero,
+            soundId = soundId,
+          )
+        }
+        is AlarmComponent.Mode.Edit -> {
+          editAlarmUseCase(
+            id = mode.alarmId,
+            groupId = groupId,
+            fireAtTime = requireNotNull(fireAtTime),
+            name = name,
+            isOn = isOn,
+            scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+            scheduledOnDates = scheduledOnDates,
+            offOnDates = offOnDates,
+            alarmDurationMinutes = alarmDuration,
+            soundEnabled = soundEnabled,
+            vibrationEnabled = vibrationEnabled,
+            reminderOffsetHours = reminderOffsetOrZero,
+            soundId = soundId,
+          )
         }
       }
     }
+  }
 
   fun onNameChange(name: String) {
     _state.update { it.copy(name = name.ifBlank { null }) }

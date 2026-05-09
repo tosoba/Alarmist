@@ -20,12 +20,11 @@ actual fun keyboardAsState(): State<Boolean> {
   var isImeVisible by remember { mutableStateOf(false) }
 
   DisposableEffect(LocalWindowInfo.current) {
-    val listener =
-      ViewTreeObserver.OnPreDrawListener {
-        isImeVisible =
-          ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) == true
-        true
-      }
+    val listener = ViewTreeObserver.OnPreDrawListener {
+      isImeVisible =
+        ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) == true
+      true
+    }
     view.viewTreeObserver.addOnPreDrawListener(listener)
     onDispose { view.viewTreeObserver.removeOnPreDrawListener(listener) }
   }

@@ -4,6 +4,5 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 interface WidgetScreenProvider {
-    @Composable
-    fun Content(modifier: Modifier)
+  @Composable fun Content(modifier: Modifier)
 }

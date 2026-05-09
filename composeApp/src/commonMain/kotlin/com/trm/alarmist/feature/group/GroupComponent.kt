@@ -23,14 +23,13 @@ class DefaultGroupComponent(
   componentContext: ComponentContext,
   override val mode: GroupComponent.Mode,
 ) : GroupComponent, ComponentContext by componentContext {
-  override val feature =
-    instanceKeeper.getOrCreate {
-      GroupFeature(
-        savedStateContainer =
-          stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer()),
-        mode = mode,
-      )
-    }
+  override val feature = instanceKeeper.getOrCreate {
+    GroupFeature(
+      savedStateContainer =
+        stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer()),
+      mode = mode,
+    )
+  }
 
   init {
     stateKeeper.register(

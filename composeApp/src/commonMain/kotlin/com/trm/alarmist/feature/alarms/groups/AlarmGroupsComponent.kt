@@ -5,7 +5,6 @@ import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.arkivanov.essenty.statekeeper.SerializableContainer
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
-import kotlinx.coroutines.flow.StateFlow
 
 interface AlarmGroupsComponent {
   val feature: AlarmGroupsFeature
@@ -20,12 +19,11 @@ class DefaultAlarmGroupsComponent(
   override val onEditAlarmClick: (AlarmListModel) -> Unit,
   override val onEditGroupClick: (AlarmGroupModel) -> Unit,
 ) : AlarmGroupsComponent, ComponentContext by componentContext {
-  override val feature: AlarmGroupsFeature =
-    instanceKeeper.getOrCreate {
-      AlarmGroupsFeature(
-        stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
-      )
-    }
+  override val feature: AlarmGroupsFeature = instanceKeeper.getOrCreate {
+    AlarmGroupsFeature(
+      stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer())
+    )
+  }
 
   init {
     stateKeeper.register(

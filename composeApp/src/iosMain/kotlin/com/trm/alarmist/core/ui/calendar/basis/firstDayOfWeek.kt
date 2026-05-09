@@ -3,20 +3,22 @@ package com.trm.alarmist.core.ui.calendar.basis
 import kotlinx.datetime.DayOfWeek
 import platform.Foundation.NSCalendar
 
-private val iosOrder = listOf(
+private val iosOrder =
+  listOf(
     DayOfWeek.SUNDAY,
     DayOfWeek.MONDAY,
     DayOfWeek.TUESDAY,
     DayOfWeek.WEDNESDAY,
     DayOfWeek.THURSDAY,
     DayOfWeek.FRIDAY,
-    DayOfWeek.SATURDAY
-)
+    DayOfWeek.SATURDAY,
+  )
 
 actual fun DayOfWeek.localized(): String =
-    NSCalendar.currentCalendar.veryShortWeekdaySymbols[iosOrder.indexOf(this)].toString()
+  NSCalendar.currentCalendar.veryShortWeekdaySymbols[iosOrder.indexOf(this)].toString()
 
-actual fun firstDayOfWeek(): DayOfWeek = when (NSCalendar.currentCalendar.firstWeekday) {
+actual fun firstDayOfWeek(): DayOfWeek =
+  when (NSCalendar.currentCalendar.firstWeekday) {
     1uL -> DayOfWeek.SUNDAY
     2uL -> DayOfWeek.MONDAY
     3uL -> DayOfWeek.TUESDAY
@@ -25,4 +27,4 @@ actual fun firstDayOfWeek(): DayOfWeek = when (NSCalendar.currentCalendar.firstW
     6uL -> DayOfWeek.FRIDAY
     7uL -> DayOfWeek.SATURDAY
     else -> DayOfWeek.SUNDAY
-}
+  }

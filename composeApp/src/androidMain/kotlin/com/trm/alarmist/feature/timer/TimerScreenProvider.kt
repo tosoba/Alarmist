@@ -4,6 +4,5 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 interface TimerScreenProvider {
-    @Composable
-    fun Content(modifier: Modifier, component: TimerComponent)
+  @Composable fun Content(modifier: Modifier, component: TimerComponent)
 }

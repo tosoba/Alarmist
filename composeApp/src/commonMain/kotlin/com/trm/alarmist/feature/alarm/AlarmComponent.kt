@@ -36,14 +36,13 @@ class DefaultAlarmComponent(
   componentContext: ComponentContext,
   override val mode: AlarmComponent.Mode,
 ) : AlarmComponent, ComponentContext by componentContext {
-  override val feature =
-    instanceKeeper.getOrCreate {
-      AlarmFeature(
-        savedStateContainer =
-          stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer()),
-        mode = mode,
-      )
-    }
+  override val feature = instanceKeeper.getOrCreate {
+    AlarmFeature(
+      savedStateContainer =
+        stateKeeper.consume(key = SAVED_STATE_KEY, strategy = SerializableContainer.serializer()),
+      mode = mode,
+    )
+  }
 
   private val dialogNavigation = SlotNavigation<AlarmDialogChildConfig>()
 
