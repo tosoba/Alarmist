@@ -28,6 +28,7 @@ kotlin {
     freeCompilerArgs.addAll(
       "-P",
       "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=com.trm.alarmist.core.common.model.CommonParcelize",
+      "-Xexpect-actual-classes",
     )
   }
 
