@@ -61,7 +61,6 @@ kotlin {
       implementation(libs.essenty.statekeeper.android)
 
       implementation(libs.koin.android)
-      implementation(libs.koin.compose)
 
       implementation(libs.permission.flow.compose)
 
@@ -89,6 +88,7 @@ kotlin {
       implementation(libs.essenty.statekeeper)
 
       api(libs.koin.core)
+      api(libs.koin.compose)
 
       implementation(libs.kotlinx.coroutines.core)
       implementation(libs.kotlinx.datetime)

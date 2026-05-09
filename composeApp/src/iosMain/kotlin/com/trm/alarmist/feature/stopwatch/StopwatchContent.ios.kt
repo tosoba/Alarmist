@@ -15,7 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
-import com.trm.alarmist.core.system.stopwatch.IosStopwatchEnvironment
+import com.trm.alarmist.core.system.stopwatch.IosStopwatchController
+import org.koin.compose.koinInject
 import kotlin.time.Duration
 
 @Composable
@@ -23,7 +24,7 @@ actual fun StopwatchContent(modifier: Modifier, component: StopwatchComponent) {
   val permissionHandler = postNotificationsPermissionHandler {}
   LaunchedEffect(Unit) { permissionHandler() }
 
-  val controller = IosStopwatchEnvironment.controller
+  val controller = koinInject<IosStopwatchController>()
 
   val state by controller.state.collectAsState()
   val duration by controller.duration.collectAsState()

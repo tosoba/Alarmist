@@ -19,12 +19,7 @@ import platform.UserNotifications.UNUserNotificationCenter.Companion.currentNoti
 class IosAlarmNotifications(
   private val center: UNUserNotificationCenter = currentNotificationCenter()
 ) {
-  fun scheduleFiredNotification(
-    id: Long,
-    name: String?,
-    fireOnDateTime: LocalDateTime,
-    soundId: String?,
-  ) {
+  fun scheduleFiredNotification(id: Long, name: String?, fireOnDateTime: LocalDateTime) {
     val content =
       UNMutableNotificationContent().apply {
         setTitle(name ?: "Alarm")

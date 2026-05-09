@@ -1,9 +1,12 @@
 package com.trm.alarmist.core.system.timer
 
-object IosTimerNotificationActionBridge {
-  fun handle(actionId: String) {
-    val controller = IosTimerEnvironment.controller
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
+object IosTimerNotificationActionBridge : KoinComponent {
+  private val controller: IosTimerController by inject()
+
+  fun handle(actionId: String) {
     when (actionId) {
       ACTION_CANCEL -> controller.cancel()
       else -> Unit

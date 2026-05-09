@@ -3,7 +3,7 @@ package com.trm.alarmist.core.system.di
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.domain.usecase.calculateAlarmNextFireOnDateTime
 import com.trm.alarmist.core.system.AlarmScheduler
-import com.trm.alarmist.core.system.alarm.IosAlarmEnvironment
+import com.trm.alarmist.core.system.alarm.IosAlarmNotifications
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -13,8 +13,9 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
-class IosAlarmScheduler : AlarmScheduler {
-  private val notifications = IosAlarmEnvironment.notifications
+class IosAlarmScheduler(
+  private val notifications: IosAlarmNotifications
+) : AlarmScheduler {
 
   override fun scheduleNextWidgetUpdate() {}
 
@@ -39,7 +40,6 @@ class IosAlarmScheduler : AlarmScheduler {
       id = id,
       name = name,
       fireOnDateTime = fireOnDateTime,
-      soundId = soundId,
     )
 
     // 3. Schedule upcoming reminder if needed
@@ -79,7 +79,6 @@ class IosAlarmScheduler : AlarmScheduler {
         id = id,
         name = name,
         fireOnDateTime = nextFireOn,
-        soundId = soundId,
       )
     }
   }

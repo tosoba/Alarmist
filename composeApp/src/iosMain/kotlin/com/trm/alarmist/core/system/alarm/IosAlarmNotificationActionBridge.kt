@@ -14,6 +14,7 @@ import platform.UserNotifications.UNNotificationDefaultActionIdentifier
 object IosAlarmNotificationActionBridge : KoinComponent {
   private val updateAlarmOnDismissUseCase: UpdateAlarmOnDismissUseCase by inject()
   private val getAndResetMissedAlarmsOnBootUseCase: GetAndResetMissedAlarmsOnBootUseCase by inject()
+  private val notifications: IosAlarmNotifications by inject()
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
   fun handle(actionId: String, userInfo: Map<Any?, *>) {
@@ -30,7 +31,7 @@ object IosAlarmNotificationActionBridge : KoinComponent {
       when (actionId) {
         ACTION_DISMISS -> {
           updateAlarmOnDismissUseCase(alarmId, fireOnDateTime)
-          IosAlarmEnvironment.notifications.cancelAlarmNotifications(alarmId)
+          notifications.cancelAlarmNotifications(alarmId)
         }
         UNNotificationDefaultActionIdentifier -> {}
         else -> Unit
@@ -43,13 +44,13 @@ object IosAlarmNotificationActionBridge : KoinComponent {
       val missedAlarms = getAndResetMissedAlarmsOnBootUseCase()
       missedAlarms.forEach { (alarm, missedDateTimes) ->
         if (missedDateTimes.size == 1) {
-          IosAlarmEnvironment.notifications.notifyAlarmMissed(
+          notifications.notifyAlarmMissed(
             id = alarm.id,
             fireOnDateTime = missedDateTimes.first(),
             name = alarm.name,
           )
         } else if (missedDateTimes.size > 1) {
-          IosAlarmEnvironment.notifications.notifyMultipleAlarmsMissed(
+          notifications.notifyMultipleAlarmsMissed(
             id = alarm.id,
             fireOnDateTimes = missedDateTimes,
             name = alarm.name,

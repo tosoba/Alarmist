@@ -12,7 +12,8 @@ import androidx.compose.ui.Modifier
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.trm.alarmist.core.domain.model.TimerState
 import com.trm.alarmist.core.system.permission.postNotificationsPermissionHandler
-import com.trm.alarmist.core.system.timer.IosTimerEnvironment
+import com.trm.alarmist.core.system.timer.IosTimerController
+import org.koin.compose.koinInject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -21,7 +22,7 @@ actual fun TimerContent(modifier: Modifier, component: TimerComponent) {
   val permissionHandler = postNotificationsPermissionHandler {}
   LaunchedEffect(Unit) { permissionHandler() }
 
-  val controller = IosTimerEnvironment.controller
+  val controller = koinInject<IosTimerController>()
 
   val state by controller.state.collectAsState()
   val duration by controller.duration.collectAsState()
