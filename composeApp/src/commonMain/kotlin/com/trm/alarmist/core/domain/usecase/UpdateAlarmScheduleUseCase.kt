@@ -60,6 +60,9 @@ class UpdateAlarmScheduleUseCase(private val scheduler: AlarmScheduler) {
           soundId = soundId,
           vibrationEnabled = vibrationEnabled,
           reminderOffsetHours = reminderOffsetHours,
+          scheduledOnDaysOfWeek = scheduledOnDaysOfWeek,
+          scheduledOnDates = scheduledOnDates,
+          offOnDates = offOnDates,
         )
       } ?: run { scheduler.cancelAlarm(id) }
   }

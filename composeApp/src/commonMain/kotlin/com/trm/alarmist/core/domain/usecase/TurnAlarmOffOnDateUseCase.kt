@@ -26,6 +26,9 @@ class TurnAlarmOffOnDateUseCase(
           soundId = modifiedAlarm.soundId,
           vibrationEnabled = modifiedAlarm.vibrationEnabled,
           reminderOffsetHours = modifiedAlarm.reminderOffsetHours,
+          scheduledOnDaysOfWeek = modifiedAlarm.scheduledOnDaysOfWeek,
+          scheduledOnDates = modifiedAlarm.scheduledOnDates,
+          offOnDates = modifiedAlarm.offOnDates,
         )
       }
       ?: run {

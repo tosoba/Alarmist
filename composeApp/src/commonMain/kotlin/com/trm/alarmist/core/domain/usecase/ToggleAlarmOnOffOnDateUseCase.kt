@@ -29,6 +29,9 @@ class ToggleAlarmOnOffOnDateUseCase(
               soundId = toggledAlarm.soundId,
               vibrationEnabled = toggledAlarm.vibrationEnabled,
               reminderOffsetHours = toggledAlarm.reminderOffsetHours,
+              scheduledOnDaysOfWeek = toggledAlarm.scheduledOnDaysOfWeek,
+              scheduledOnDates = toggledAlarm.scheduledOnDates,
+              offOnDates = toggledAlarm.offOnDates,
             )
           } else {
             // scheduler.cancelAlarm(id) is only called for a scheduled alarm if date matches

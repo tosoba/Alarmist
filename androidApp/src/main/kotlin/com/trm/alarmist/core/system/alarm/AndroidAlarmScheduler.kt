@@ -10,6 +10,7 @@ import com.trm.alarmist.core.system.alarm.receiver.AlarmFiredBroadcastReceiver
 import com.trm.alarmist.core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver
 import com.trm.alarmist.widget.common.system.WidgetUpdateAlarmReceiver
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -42,6 +43,9 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
     soundId: String?,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long,
+    scheduledOnDaysOfWeek: Collection<DayOfWeek>,
+    scheduledOnDates: Collection<LocalDate>,
+    offOnDates: Collection<LocalDate>,
   ) {
     context.cancelNotification(id.toInt())
 

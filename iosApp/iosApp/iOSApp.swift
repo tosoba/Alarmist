@@ -53,7 +53,34 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             options: []
         )
 
-        center.setNotificationCategories([timerCategory])
+        let dismissAction = UNNotificationAction(
+            identifier: "ALARM_DISMISS",
+            title: "Dismiss",
+            options: [.destructive]
+        )
+
+        let alarmFiredCategory = UNNotificationCategory(
+            identifier: "ALARM_FIRED_CATEGORY",
+            actions: [dismissAction],
+            intentIdentifiers: [],
+            options: []
+        )
+
+        let alarmUpcomingCategory = UNNotificationCategory(
+            identifier: "ALARM_UPCOMING_CATEGORY",
+            actions: [dismissAction],
+            intentIdentifiers: [],
+            options: []
+        )
+
+        center.setNotificationCategories([timerCategory, alarmFiredCategory, alarmUpcomingCategory])
+
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("Notification authorization error: \(error)")
+            }
+        }
+
         return true
     }
 
@@ -62,8 +89,28 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        IosTimerNotificationActionBridge.shared.handle(actionId: response.actionIdentifier)
+        let categoryIdentifier = response.notification.request.content.categoryIdentifier
+        if categoryIdentifier == "TIMER_CATEGORY" {
+            IosTimerNotificationActionBridge.shared.handle(actionId: response.actionIdentifier)
+        } else if categoryIdentifier == "ALARM_FIRED_CATEGORY" || categoryIdentifier == "ALARM_UPCOMING_CATEGORY" {
+            IosAlarmNotificationActionBridge.shared.handle(
+                actionId: response.actionIdentifier,
+                userInfo: response.notification.request.content.userInfo
+            )
+        }
         completionHandler()
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        IosAlarmNotificationActionBridge.shared.checkMissedAlarms()
+    }
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .list, .sound])
     }
 
     func application(_: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {

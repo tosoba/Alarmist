@@ -1,5 +1,7 @@
 package com.trm.alarmist.core.system
 
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
 interface AlarmScheduler {
@@ -14,6 +16,9 @@ interface AlarmScheduler {
     soundId: String?,
     vibrationEnabled: Boolean,
     reminderOffsetHours: Long,
+    scheduledOnDaysOfWeek: Collection<DayOfWeek> = emptyList(),
+    scheduledOnDates: Collection<LocalDate> = emptyList(),
+    offOnDates: Collection<LocalDate> = emptyList(),
   )
 
   fun cancelAlarm(id: Long)
