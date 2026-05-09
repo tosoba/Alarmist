@@ -18,10 +18,11 @@ kotlin {
     minSdk = libs.versions.android.minSdk.get().toInt()
 
     withJava()
-    androidResources {
-      enable = true
-    }
-    withHostTestBuilder { }
+    androidResources { enable = true }
+    withHostTestBuilder {}
+
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11) }
   }
 
   @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -60,12 +61,8 @@ kotlin {
       implementation(libs.decompose.extensions.android)
       implementation(libs.essenty.statekeeper.android)
 
-      implementation(libs.glance.appwidget)
-      implementation(libs.glance.material3)
-      implementation(libs.glance.appwidget.preview)
-      implementation(libs.glance.preview)
-
       implementation(libs.koin.android)
+      implementation(libs.koin.compose)
 
       implementation(libs.permission.flow.compose)
 
@@ -128,6 +125,4 @@ sqldelight {
   linkSqlite = true
 }
 
-compose.resources {
-  publicResClass = true
-}
+compose.resources { publicResClass = true }

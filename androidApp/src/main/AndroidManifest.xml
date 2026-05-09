@@ -55,12 +55,12 @@
 
         </activity>
 
-        <receiver android:name="com.trm.alarmist.core.system.alarm.receiver.AlarmDismissedBroadcastReceiver" />
-        <receiver android:name="com.trm.alarmist.core.system.alarm.receiver.AlarmFiredBroadcastReceiver" />
-        <receiver android:name="com.trm.alarmist.core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver" />
+        <receiver android:name=".core.system.alarm.receiver.AlarmDismissedBroadcastReceiver" />
+        <receiver android:name=".core.system.alarm.receiver.AlarmFiredBroadcastReceiver" />
+        <receiver android:name=".core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver" />
 
         <receiver
-            android:name="com.trm.alarmist.core.system.boot.BootCompletedBroadcastReceiver"
+            android:name=".core.system.boot.BootCompletedBroadcastReceiver"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="false"
@@ -73,12 +73,12 @@
         </receiver>
 
         <service
-            android:name="com.trm.alarmist.core.system.alarm.AlarmService"
+            android:name=".core.system.alarm.AlarmService"
             android:exported="false"
             android:foregroundServiceType="systemExempted" />
 
         <service
-            android:name="com.trm.alarmist.core.system.stopwatch.StopwatchService"
+            android:name=".core.system.stopwatch.StopwatchService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
 
@@ -89,7 +89,7 @@
         </service>
 
         <service
-            android:name="com.trm.alarmist.core.system.timer.TimerService"
+            android:name=".core.system.timer.TimerService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
 
@@ -100,7 +100,7 @@
         </service>
 
         <receiver
-            android:name="com.trm.alarmist.widget.today.TodayWidgetReceiver"
+            android:name=".widget.today.TodayWidgetReceiver"
             android:exported="false"
             android:label="@string/today_widget_label">
 
@@ -114,7 +114,7 @@
         </receiver>
 
         <receiver
-            android:name="com.trm.alarmist.widget.clock.ClockWidgetReceiver"
+            android:name=".widget.clock.ClockWidgetReceiver"
             android:exported="false"
             android:label="@string/clock_widget_label">
 
@@ -128,7 +128,7 @@
         </receiver>
 
         <receiver
-            android:name="com.trm.alarmist.widget.group.GroupWidgetReceiver"
+            android:name=".widget.group.GroupWidgetReceiver"
             android:exported="false"
             android:label="@string/group_widget_label">
 
@@ -142,19 +142,19 @@
         </receiver>
 
         <receiver
-            android:name="com.trm.alarmist.widget.common.system.ToggleAlarmOnOffOnDateActionReceiver"
+            android:name=".widget.common.system.ToggleAlarmOnOffOnDateActionReceiver"
             android:exported="false" />
 
         <receiver
-            android:name="com.trm.alarmist.widget.common.system.ToggleAlarmOnOffActionReceiver"
+            android:name=".widget.common.system.ToggleAlarmOnOffActionReceiver"
             android:exported="false" />
 
         <receiver
-            android:name="com.trm.alarmist.widget.common.system.WidgetUpdateAlarmReceiver"
+            android:name=".widget.common.system.WidgetUpdateAlarmReceiver"
             android:exported="false" />
 
         <receiver
-            android:name="com.trm.alarmist.widget.common.system.WidgetPinnedReceiver"
+            android:name=".widget.common.system.WidgetPinnedReceiver"
             android:exported="false" />
 
     </application>

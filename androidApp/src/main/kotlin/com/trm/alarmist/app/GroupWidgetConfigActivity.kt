@@ -50,7 +50,7 @@ import com.trm.alarmist.feature.dialog.DialogContent
 import com.trm.alarmist.feature.sheet.BottomSheetContent
 import com.trm.alarmist.feature.widget.group.DefaultGroupWidgetConfigComponent
 import com.trm.alarmist.feature.widget.group.GroupWidgetConfigContent
-import com.trm.alarmist.widget.common.util.showWidgetPinnedToast
+import com.trm.alarmist.app.widget.common.util.showWidgetPinnedToast
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent

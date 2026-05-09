@@ -35,8 +35,13 @@ dependencies {
   implementation(libs.androidx.work.ktx)
   implementation(libs.glance.appwidget)
   implementation(libs.glance.material3)
+  implementation(libs.glance.appwidget.preview)
+  implementation(libs.glance.preview)
   
   implementation(libs.napier)
+
+  implementation(libs.androidx.lifecycle.lifecycleService)
+  implementation(libs.androidx.savedstate.savedstate)
 }
 
 android {
@@ -56,6 +61,12 @@ android {
   buildTypes { getByName("release") { isMinifyEnabled = false } }
 
   buildFeatures { compose = true }
+
+  kotlin {
+    compilerOptions {
+      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+    }
+  }
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_11

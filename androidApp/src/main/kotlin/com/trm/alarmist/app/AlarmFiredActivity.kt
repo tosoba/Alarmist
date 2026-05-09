@@ -44,7 +44,7 @@ import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.common.util.turnScreenOffAndKeyguardOn
 import com.trm.alarmist.core.common.util.turnScreenOnAndKeyguardOff
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
-import com.trm.alarmist.core.system.alarm.AlarmService
+import com.trm.alarmist.app.core.system.alarm.AlarmService
 import com.trm.alarmist.core.ui.AutoSizeText
 import com.trm.alarmist.core.ui.theme.AppTheme
 import kotlinx.coroutines.launch
