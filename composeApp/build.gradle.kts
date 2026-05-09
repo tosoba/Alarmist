@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
@@ -21,11 +21,9 @@ kotlin {
     androidResources { enable = true }
     withHostTestBuilder {}
 
-    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
-    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11) }
+    compilerOptions { jvmTarget.set(JvmTarget.JVM_11) }
   }
 
-  @OptIn(ExperimentalKotlinGradlePluginApi::class)
   compilerOptions {
     freeCompilerArgs.addAll(
       "-P",

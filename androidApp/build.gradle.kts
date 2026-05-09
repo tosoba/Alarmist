@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsCompose)
@@ -8,11 +10,14 @@ plugins {
 
 dependencies {
   implementation(project(":composeApp"))
-  
+
   implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.compose.material.iconsExtended)
   implementation(libs.androidx.lifecycle.lifecycleRuntimeCompose)
-  
-  // Compose Multiplatform libraries
+  implementation(libs.androidx.lifecycle.lifecycleService)
+  implementation(libs.androidx.savedstate.savedstate)
+  implementation(libs.androidx.work.ktx)
+
   implementation(libs.compose.ui)
   implementation(libs.compose.foundation)
   implementation(libs.compose.material3)
@@ -20,28 +25,21 @@ dependencies {
   implementation(libs.compose.ui.tooling.preview)
   implementation(libs.compose.components.resources)
   implementation(libs.material3.windowSizeClass)
-  
-  // Android-specific Compose libraries
-  implementation(libs.androidx.compose.material.iconsExtended)
-  
-  implementation(libs.kotlinx.datetime)
-  
+
   implementation(libs.decompose)
   implementation(libs.decompose.extensions.android)
   implementation(libs.decompose.extensions.compose)
-  
-  implementation(libs.koin.android)
-  
-  implementation(libs.androidx.work.ktx)
+
   implementation(libs.glance.appwidget)
   implementation(libs.glance.material3)
   implementation(libs.glance.appwidget.preview)
   implementation(libs.glance.preview)
-  
-  implementation(libs.napier)
 
-  implementation(libs.androidx.lifecycle.lifecycleService)
-  implementation(libs.androidx.savedstate.savedstate)
+  implementation(libs.koin.android)
+
+  implementation(libs.kotlinx.datetime)
+
+  implementation(libs.napier)
 }
 
 android {
@@ -62,14 +60,10 @@ android {
 
   buildFeatures { compose = true }
 
-  kotlin {
-    compilerOptions {
-      jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-    }
-  }
-
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
 }
+
+kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
