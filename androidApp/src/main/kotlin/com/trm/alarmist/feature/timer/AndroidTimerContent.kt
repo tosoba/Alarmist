@@ -80,7 +80,12 @@ fun AndroidTimerContent(component: TimerComponent, modifier: Modifier) {
     onDispose { component.lifecycle.unsubscribe(callbacks) }
   }
 
-  AnimatedVisibility(visible = service != null, enter = fadeIn(), exit = fadeOut()) {
+  AnimatedVisibility(
+    visible = service != null,
+    enter = fadeIn(),
+    exit = fadeOut(),
+    modifier = modifier,
+  ) {
     TimerScaffold(
       duration = duration,
       initialDuration = initialDuration,
