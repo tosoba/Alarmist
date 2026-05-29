@@ -1,24 +1,16 @@
 package com.trm.alarmist.core.common.util
 
 import android.content.Intent
-import android.os.Build
 import android.os.Parcelable
+import androidx.core.content.IntentCompat
 import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import java.io.Serializable
 
-inline fun <reified T : Serializable> Intent.getSerializable(name: String): T? =
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-    getSerializableExtra(name, T::class.java)
-  } else {
-    getSerializableExtra(name) as? T
-  }
+inline fun <reified T : Serializable> Intent.getSerializable(key: String): T? =
+  IntentCompat.getSerializableExtra(this, key, T::class.java)
 
-inline fun <reified T : Parcelable> Intent.getParcelable(name: String?): T? =
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-    getParcelableExtra(name, T::class.java)
-  } else {
-    getParcelableExtra(name)
-  }
+inline fun <reified T : Parcelable> Intent.getParcelable(key: String?): T? =
+  IntentCompat.getParcelableExtra(this, key, T::class.java)
 
 fun Intent.requireAlarmFireSettings(): AlarmFireSettings =
   requireNotNull(getParcelable(EXTRA_ALARM_FIRE_SETTINGS))
