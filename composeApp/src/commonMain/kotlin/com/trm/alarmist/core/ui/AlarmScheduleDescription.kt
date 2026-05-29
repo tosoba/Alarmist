@@ -38,7 +38,7 @@ fun AlarmScheduleDescription(
               withStyle(
                 SpanStyle(
                   fontWeight =
-                    if (dayOfWeek in scheduledOnDaysOfWeek) FontWeight.Medium else FontWeight.Light
+                    if (dayOfWeek in scheduledOnDaysOfWeek) FontWeight.Bold else FontWeight.Light
                 )
               ) {
                 append(dayOfWeek.name.take(2))
