@@ -5,12 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -138,21 +142,29 @@ private fun TimerScaffold(
   onAddMinuteClick: () -> Unit,
   onSubtractMinuteClick: () -> Unit,
 ) {
-  Scaffold {
-    if (state == TimerState.IDLE) {
-      TimerInput(onStartClick = onStartClick, modifier = Modifier.fillMaxSize().padding(it))
-    } else {
-      TimerDuration(
-        modifier = Modifier.fillMaxSize().padding(it),
-        duration = duration,
-        initialDuration = initialDuration,
-        state = state,
-        onToggleRunningClick = onToggleRunningClick,
-        onCancelClick = onCancelClick,
-        onResetClick = onResetClick,
-        onAddMinuteClick = onAddMinuteClick,
-        onSubtractMinuteClick = onSubtractMinuteClick,
+  Scaffold(
+    contentWindowInsets =
+      ScaffoldDefaults.contentWindowInsets.only(
+        WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
       )
+  ) {
+    AnimatedContent(state == TimerState.IDLE, modifier = Modifier.fillMaxSize().padding(it)) {
+      isIdle ->
+      if (isIdle) {
+        TimerInput(onStartClick = onStartClick, modifier = Modifier.fillMaxSize())
+      } else {
+        TimerDuration(
+          modifier = Modifier.fillMaxSize(),
+          duration = duration,
+          initialDuration = initialDuration,
+          state = state,
+          onToggleRunningClick = onToggleRunningClick,
+          onCancelClick = onCancelClick,
+          onResetClick = onResetClick,
+          onAddMinuteClick = onAddMinuteClick,
+          onSubtractMinuteClick = onSubtractMinuteClick,
+        )
+      }
     }
   }
 }
