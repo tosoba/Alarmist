@@ -6,13 +6,26 @@ import alarmist.composeapp.generated.resources.tektur
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.Font
 
 @Composable
 fun appTypography() =
   with(Typography()) {
-    val tektur = FontFamily(Font(Res.font.tektur))
-    val spaceGrotesk = FontFamily(Font(Res.font.space_grotesk))
+    val tektur =
+      FontFamily(
+        Font(Res.font.tektur, weight = FontWeight.Light),
+        Font(Res.font.tektur, weight = FontWeight.Normal),
+        Font(Res.font.tektur, weight = FontWeight.Medium),
+        Font(Res.font.tektur, weight = FontWeight.Bold),
+      )
+    val spaceGrotesk =
+      FontFamily(
+        Font(Res.font.space_grotesk, weight = FontWeight.Light),
+        Font(Res.font.space_grotesk, weight = FontWeight.Normal),
+        Font(Res.font.space_grotesk, weight = FontWeight.Medium),
+        Font(Res.font.space_grotesk, weight = FontWeight.Bold),
+      )
     copy(
       displayLarge = displayLarge.copy(fontFamily = tektur),
       displayMedium = displayMedium.copy(fontFamily = tektur),
