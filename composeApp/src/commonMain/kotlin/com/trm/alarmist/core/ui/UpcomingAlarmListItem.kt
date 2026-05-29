@@ -28,10 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListModel
 import com.trm.alarmist.core.domain.model.UpcomingAlarmListStatus
+import com.trm.alarmist.core.ui.theme.onOffCardBorder
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import org.jetbrains.compose.resources.stringResource
 
@@ -46,18 +46,20 @@ fun UpcomingAlarmListItem(
   onOffOnDateButtonClick: (UpcomingAlarmListModel) -> Unit = {},
   onOnButtonClick: (UpcomingAlarmListModel) -> Unit = {},
 ) {
+  val isOn = item.status == UpcomingAlarmListStatus.ON
+
   Card(
     modifier = modifier,
-    colors = CardDefaults.onOffCardColors(item.status == UpcomingAlarmListStatus.ON),
+    colors = CardDefaults.onOffCardColors(isOn),
+    border = CardDefaults.onOffCardBorder(isOn),
     shape = shape,
-    elevation = CardDefaults.elevatedIf(item.status == UpcomingAlarmListStatus.ON),
     onClick = { onItemClick(item) },
   ) {
     Spacer(modifier = Modifier.height(16.dp))
 
     AlarmLabel(
       alarmName = item.name,
-      isOn = item.status == UpcomingAlarmListStatus.ON,
+      isOn = isOn,
       group = group,
       modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
     )
@@ -69,17 +71,16 @@ fun UpcomingAlarmListItem(
     ) {
       AlarmFireAtTime(
         fireAtTime = item.fireAtTime,
-        isOn = item.status == UpcomingAlarmListStatus.ON,
+        isOn = isOn,
       )
 
       Spacer(modifier = Modifier.width(8.dp))
 
       if (item.scheduledOnDaysOfWeek.isEmpty() && item.date == null) {
         Switch(
-          checked = item.status == UpcomingAlarmListStatus.ON,
+          checked = isOn,
           onCheckedChange = { _ ->
-            if (item.status == UpcomingAlarmListStatus.ON) onOffButtonClick(item)
-            else onOnButtonClick(item)
+            if (isOn) onOffButtonClick(item) else onOnButtonClick(item)
           },
         )
       } else {
@@ -117,7 +118,7 @@ fun UpcomingAlarmListItem(
           )
 
           SegmentedButton(
-            selected = item.status == UpcomingAlarmListStatus.ON,
+            selected = isOn,
             onClick = {
               if (item.status != UpcomingAlarmListStatus.ON) {
                 onOnButtonClick(item)
@@ -142,7 +143,7 @@ fun UpcomingAlarmListItem(
       verticalAlignment = Alignment.CenterVertically,
     ) {
       AlarmScheduleDescription(
-        isOn = item.status == UpcomingAlarmListStatus.ON,
+        isOn = isOn,
         scheduledOnDaysOfWeek = item.scheduledOnDaysOfWeek,
         scheduledOnDate = item.date,
         offOnScheduledDate = item.status == UpcomingAlarmListStatus.OFF_ON_DATE,

@@ -219,7 +219,8 @@ private fun LapItem(
   Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
     Text(
       text = lapLabel,
-      style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+      style = MaterialTheme.typography.bodyLarge,
+      fontWeight = FontWeight.Medium,
     )
 
     Spacer(modifier = Modifier.width(16.dp))

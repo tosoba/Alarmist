@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import org.jetbrains.compose.resources.stringResource
@@ -173,7 +172,6 @@ fun AlarmGroupsList(
                         bottomStart = CornerSize(0.dp),
                       )
                     },
-                  elevation = CardDefaults.elevatedIf(group.isOn),
                 ) {
                   Box(modifier = Modifier.fillMaxWidth()) {
                     HorizontalDivider(

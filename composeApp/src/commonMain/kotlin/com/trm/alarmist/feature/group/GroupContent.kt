@@ -76,7 +76,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.trm.alarmist.core.common.util.elevatedIf
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.ui.AlarmFireAtTime
@@ -90,6 +89,7 @@ import com.trm.alarmist.core.ui.TopGradientBackground
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.core.ui.groupedAlarmItemShape
 import com.trm.alarmist.core.ui.keyboardAsState
+import com.trm.alarmist.core.ui.theme.onOffCardBorder
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.core.ui.theme.onOffContainer
 import org.jetbrains.compose.resources.stringResource
@@ -359,8 +359,8 @@ private fun GroupedAlarmCard(
   Card(
     modifier = modifier,
     colors = CardDefaults.onOffCardColors(alarm.isOn),
+    border = CardDefaults.onOffCardBorder(isSelected),
     shape = shape,
-    elevation = CardDefaults.elevatedIf(alarm.isOn),
     onClick = onToggleAlarmSelection,
   ) {
     Spacer(modifier = Modifier.height(16.dp))

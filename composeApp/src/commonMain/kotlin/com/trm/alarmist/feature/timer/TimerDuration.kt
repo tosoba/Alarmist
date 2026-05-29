@@ -79,7 +79,8 @@ fun TimerDuration(
     ) {
       Text(
         text = initialDuration.formatHMS(),
-        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Medium),
+        style = MaterialTheme.typography.headlineMedium,
+        fontWeight = FontWeight.Medium,
       )
 
       Spacer(modifier = Modifier.weight(1f))

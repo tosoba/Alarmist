@@ -20,11 +20,9 @@ fun AlarmFireAtTime(fireAtTime: LocalTime, isOn: Boolean, modifier: Modifier = M
   Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
     AutoSizeText(
       text = fireAtTime.toFormattedString(),
-      style =
-        MaterialTheme.typography.displayMedium.copy(
-          fontWeight =
-            if (isOn) FontWeight.Medium else MaterialTheme.typography.displayMedium.fontWeight
-        ),
+      style = MaterialTheme.typography.displayMedium,
+      fontWeight =
+        if (isOn) FontWeight.Medium else MaterialTheme.typography.displayMedium.fontWeight,
       color = onOffContainer(isOn),
       maxLines = 1,
       maxTextSize = MaterialTheme.typography.displayMedium.fontSize,
@@ -36,11 +34,8 @@ fun AlarmFireAtTime(fireAtTime: LocalTime, isOn: Boolean, modifier: Modifier = M
 
       Text(
         text = it,
-        style =
-          MaterialTheme.typography.bodyLarge.copy(
-            fontWeight =
-              if (isOn) FontWeight.Medium else MaterialTheme.typography.bodyLarge.fontWeight
-          ),
+        style = MaterialTheme.typography.bodyLarge,
+        fontWeight = if (isOn) FontWeight.Medium else MaterialTheme.typography.bodyLarge.fontWeight,
         color = onOffContainer(isOn),
         maxLines = 1,
         modifier = Modifier.alignByBaseline(),

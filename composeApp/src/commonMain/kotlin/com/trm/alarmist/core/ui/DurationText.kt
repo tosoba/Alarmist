@@ -66,7 +66,8 @@ fun rememberDurationText(duration: Duration): Pair<String, String> =
 private fun TimeText(text: String, modifier: Modifier = Modifier) {
   AutoSizeText(
     text = text,
-    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+    style = MaterialTheme.typography.headlineMedium,
+    fontWeight = FontWeight.Medium,
     modifier = modifier,
     maxTextSize = 72.sp,
   )
@@ -76,7 +77,8 @@ private fun TimeText(text: String, modifier: Modifier = Modifier) {
 private fun FractionOfSecondText(text: String, modifier: Modifier = Modifier) {
   AutoSizeText(
     text = text,
-    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+    style = MaterialTheme.typography.headlineMedium,
+    fontWeight = FontWeight.Medium,
     modifier = modifier,
     maxTextSize = 36.sp,
   )

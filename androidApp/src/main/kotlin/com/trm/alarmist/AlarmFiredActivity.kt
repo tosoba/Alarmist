@@ -194,7 +194,8 @@ private fun AlarmFireAtTimeText(settings: AlarmFireSettings, modifier: Modifier 
   ) {
     AutoSizeText(
       text = settings.fireOnDateTime.time.toFormattedString(),
-      style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
+      style = MaterialTheme.typography.displayMedium,
+      fontWeight = FontWeight.Bold,
       maxLines = 1,
       maxTextSize = 80.sp,
       modifier = Modifier.alignByBaseline(),
@@ -205,7 +206,8 @@ private fun AlarmFireAtTimeText(settings: AlarmFireSettings, modifier: Modifier 
 
       AutoSizeText(
         text = it,
-        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+        style = MaterialTheme.typography.displaySmall,
+        fontWeight = FontWeight.Bold,
         maxLines = 1,
         modifier = Modifier.alignByBaseline(),
         maxTextSize = MaterialTheme.typography.displaySmall.fontSize,

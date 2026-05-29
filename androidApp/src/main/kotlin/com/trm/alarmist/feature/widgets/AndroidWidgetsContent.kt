@@ -202,7 +202,8 @@ private fun WidgetPinUnavailableCard(modifier: Modifier) {
     Column(modifier = Modifier.padding(16.dp)) {
       Text(
         text = stringResource(Res.string.widget_pin_unavailable_title),
-        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Medium
       )
 
       Spacer(modifier = Modifier.height(8.dp))
@@ -242,7 +243,8 @@ private fun WidgetInfoCard(
       Column(modifier = Modifier.padding(end = 8.dp).weight(.5f)) {
         Text(
           text = provider.loadLabel(context.packageManager),
-          style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
+          style = MaterialTheme.typography.titleLarge,
+          fontWeight = FontWeight.Medium,
         )
         description?.let {
           Spacer(modifier = Modifier.height(4.dp))

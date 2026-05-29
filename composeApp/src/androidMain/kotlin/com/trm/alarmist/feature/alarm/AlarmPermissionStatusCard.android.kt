@@ -46,7 +46,8 @@ actual fun AlarmPermissionStatusCard(modifier: Modifier) {
       Column(modifier = Modifier.weight(1f)) {
         Text(
           text = stringResource(Res.string.alarm_notifications_disabled_title),
-          style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
+          style = MaterialTheme.typography.titleLarge,
+          fontWeight = FontWeight.Medium,
         )
 
         Spacer(modifier = Modifier.height(8.dp))

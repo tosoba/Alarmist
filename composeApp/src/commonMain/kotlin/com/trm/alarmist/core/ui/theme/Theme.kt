@@ -1,10 +1,11 @@
 package com.trm.alarmist.core.ui.theme
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardDefaults.cardColors
-import androidx.compose.material3.CardDefaults.elevatedCardColors
+import androidx.compose.material3.CardDefaults.outlinedCardColors
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -97,8 +98,12 @@ expect fun AppTheme(
 
 @Composable
 fun onOffContainer(isOn: Boolean): Color =
-  if (isOn) elevatedCardColors().contentColor else cardColors().contentColor
+  if (isOn) outlinedCardColors().contentColor else cardColors().contentColor
 
 @Composable
 fun CardDefaults.onOffCardColors(isOn: Boolean): CardColors =
-  if (isOn) elevatedCardColors() else cardColors()
+  if (isOn) outlinedCardColors() else cardColors()
+
+@Composable
+fun CardDefaults.onOffCardBorder(isOn: Boolean): BorderStroke? =
+  if (isOn) outlinedCardBorder() else null

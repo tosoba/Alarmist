@@ -134,6 +134,7 @@ import com.trm.alarmist.core.ui.calendar.datepicker.state.LocalEpicDatePickerSta
 import com.trm.alarmist.core.ui.calendar.datepicker.state.rememberEpicDatePickerState
 import com.trm.alarmist.core.ui.calendar.pager.config.rememberEpicCalendarPagerConfig
 import com.trm.alarmist.core.ui.keyboardAsState
+import com.trm.alarmist.core.ui.theme.onOffCardBorder
 import com.trm.alarmist.core.ui.theme.onOffCardColors
 import com.trm.alarmist.feature.alarm.model.AlarmReminderOffset
 import com.trm.alarmist.feature.alarm.model.AlarmState
@@ -802,29 +803,17 @@ private fun DaysOfWeekRow(
   Row(modifier = modifier) {
     DayOfWeek.entries.forEach { dayOfWeek ->
       val isSelected = dayOfWeek in selectedDaysOfWeek
+
       Card(
         modifier = Modifier.padding(horizontal = 8.dp),
-        onClick = { onDayOfWeekClick(dayOfWeek) },
-        elevation =
-          if (isSelected) {
-            CardDefaults.cardElevation(
-              defaultElevation = 1.dp,
-              pressedElevation = 1.dp,
-              focusedElevation = 1.dp,
-            )
-          } else {
-            CardDefaults.cardElevation(
-              defaultElevation = 0.dp,
-              pressedElevation = 0.dp,
-              focusedElevation = 0.dp,
-            )
-          },
         colors = CardDefaults.onOffCardColors(isSelected),
+        border = CardDefaults.onOffCardBorder(isSelected),
+        onClick = { onDayOfWeekClick(dayOfWeek) },
       ) {
         Text(
           modifier = Modifier.padding(12.dp),
           text = dayOfWeek.name.take(2),
-          fontWeight = if (isSelected) FontWeight.SemiBold else null,
+          fontWeight = if (isSelected) FontWeight.Medium else null,
           style = MaterialTheme.typography.headlineSmall,
         )
       }
