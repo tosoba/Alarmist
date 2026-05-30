@@ -26,8 +26,8 @@ fun AlarmListItem(
   modifier: Modifier = Modifier,
   group: AlarmGroupModel? = null,
   shape: Shape = CardDefaults.shape,
-  onItemClick: (AlarmListModel) -> Unit = {},
-  onToggleOnOff: (AlarmListModel) -> Unit = {},
+  onItemClick: (AlarmListModel) -> Unit,
+  onToggleOnOff: (AlarmListModel) -> Unit,
 ) {
   Card(
     modifier = modifier,

@@ -109,12 +109,12 @@ fun UpcomingAlarmsContent(
   alarmCounts: Map<LocalDate, Int> = emptyMap(),
   selectedDateAlarms: List<UpcomingAlarmListModel> = emptyList(),
   groups: Map<Long, AlarmGroupModel> = emptyMap(),
-  onAlarmItemClick: (UpcomingAlarmListModel) -> Unit = {},
-  onOffButtonClick: (UpcomingAlarmListModel) -> Unit = {},
-  onOffOnDateButtonClick: (UpcomingAlarmListModel) -> Unit = {},
-  onOnButtonClick: (UpcomingAlarmListModel) -> Unit = {},
-  onSelectedDateChange: (LocalDate?) -> Unit = {},
-  onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit = {},
+  onAlarmItemClick: (UpcomingAlarmListModel) -> Unit,
+  onOffButtonClick: (UpcomingAlarmListModel) -> Unit,
+  onOffOnDateButtonClick: (UpcomingAlarmListModel) -> Unit,
+  onOnButtonClick: (UpcomingAlarmListModel) -> Unit,
+  onSelectedDateChange: (LocalDate?) -> Unit,
+  onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit,
 ) {
   val alarmPermissionGranted = isPostNotificationPermissionGranted()
   val windowSizeClass = calculateWindowSizeClass()
@@ -231,8 +231,8 @@ private fun WeeklyMonthlyCalendar(
   initialState: UpcomingAlarmsCalendarState,
   modifier: Modifier = Modifier,
   alarmCounts: Map<LocalDate, Int> = emptyMap(),
-  onSelectedDateChange: (LocalDate?) -> Unit = {},
-  onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit = {},
+  onSelectedDateChange: (LocalDate?) -> Unit,
+  onMonthlyDateRangeChange: (ClosedRange<LocalDate>) -> Unit,
 ) {
   val today = LocalDate.now()
   val scope = rememberCoroutineScope()

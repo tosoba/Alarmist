@@ -29,9 +29,9 @@ fun WeekArrowsRow(
   rowDates: List<LocalDate>,
   modifier: Modifier = Modifier,
   prevWeekEnabled: Boolean = false,
-  onPrevWeekClick: () -> Unit = {},
+  onPrevWeekClick: () -> Unit,
   nextWeekEnabled: Boolean = false,
-  onNextWeekClick: () -> Unit = {},
+  onNextWeekClick: () -> Unit,
 ) {
   Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
     Text(

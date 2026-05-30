@@ -93,7 +93,7 @@ class AlarmFiredActivity : ComponentActivity() {
 private fun AlarmFiredView(
   settings: AlarmFireSettings,
   modifier: Modifier = Modifier,
-  onDismissClick: () -> Unit = {},
+  onDismissClick: () -> Unit,
   stringResource: @Composable (StringResource) -> String = { stringResource(resource = it) },
 ) {
   val windowSizeClass = calculateWindowSizeClass()

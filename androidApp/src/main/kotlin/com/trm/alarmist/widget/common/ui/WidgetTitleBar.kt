@@ -21,7 +21,7 @@ fun WidgetTitleBar(
   startIcon: ImageProvider? = null,
   iconColor: ColorProvider? = GlanceTheme.colors.onSurface,
   modifier: GlanceModifier = GlanceModifier,
-  actions: @Composable RowScope.() -> Unit = {},
+  actions: @Composable RowScope.() -> Unit,
   content: @Composable RowScope.() -> Unit,
 ) {
   Row(

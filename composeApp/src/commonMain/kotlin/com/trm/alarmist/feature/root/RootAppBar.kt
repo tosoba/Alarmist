@@ -18,7 +18,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RootAppBar(activeChild: RootComponent.Child, onMenuClick: () -> Unit = {}) {
+fun RootAppBar(activeChild: RootComponent.Child, onMenuClick: () -> Unit) {
   CenterAlignedTopAppBar(
     title = {
       Text(

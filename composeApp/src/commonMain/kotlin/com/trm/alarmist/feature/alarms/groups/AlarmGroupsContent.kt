@@ -20,12 +20,12 @@ import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
 fun AlarmGroupsContent(
   modifier: Modifier = Modifier,
   state: AlarmGroupsState = AlarmGroupsState(),
-  onExpandGroup: (AlarmGroupModel) -> Unit = {},
-  onCollapseGroup: () -> Unit = {},
-  onAlarmItemClick: (AlarmListModel) -> Unit = {},
-  onEditGroupClick: (AlarmGroupModel) -> Unit = {},
-  onToggleAlarmOnOff: (AlarmListModel) -> Unit = {},
-  onToggleGroupOnOff: (AlarmGroupModel) -> Unit = {},
+  onExpandGroup: (AlarmGroupModel) -> Unit,
+  onCollapseGroup: () -> Unit,
+  onAlarmItemClick: (AlarmListModel) -> Unit,
+  onEditGroupClick: (AlarmGroupModel) -> Unit,
+  onToggleAlarmOnOff: (AlarmListModel) -> Unit,
+  onToggleGroupOnOff: (AlarmGroupModel) -> Unit,
 ) {
   val alarmPermissionGranted = isPostNotificationPermissionGranted()
 

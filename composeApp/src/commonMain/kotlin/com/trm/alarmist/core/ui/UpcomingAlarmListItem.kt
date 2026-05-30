@@ -41,10 +41,10 @@ fun UpcomingAlarmListItem(
   modifier: Modifier = Modifier,
   group: AlarmGroupModel? = null,
   shape: Shape = CardDefaults.shape,
-  onItemClick: (UpcomingAlarmListModel) -> Unit = {},
-  onOffButtonClick: (UpcomingAlarmListModel) -> Unit = {},
-  onOffOnDateButtonClick: (UpcomingAlarmListModel) -> Unit = {},
-  onOnButtonClick: (UpcomingAlarmListModel) -> Unit = {},
+  onItemClick: (UpcomingAlarmListModel) -> Unit,
+  onOffButtonClick: (UpcomingAlarmListModel) -> Unit,
+  onOffOnDateButtonClick: (UpcomingAlarmListModel) -> Unit,
+  onOnButtonClick: (UpcomingAlarmListModel) -> Unit,
 ) {
   val isOn = item.status == UpcomingAlarmListStatus.ON
 

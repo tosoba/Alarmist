@@ -33,7 +33,7 @@ fun AlarmGroupHeaderCard(
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
   shape: Shape = ShapeDefaults.Medium,
-  trailing: @Composable () -> Unit = {},
+  trailing: @Composable () -> Unit,
 ) {
   Card(
     modifier = modifier,

@@ -124,13 +124,13 @@ fun GroupContent(
   modifier: Modifier = Modifier,
   mode: GroupComponent.Mode = GroupComponent.Mode.Add,
   state: GroupState = GroupState(),
-  onBackClick: () -> Unit = {},
+  onBackClick: () -> Unit,
   onCallScrollBackwardChange: (Boolean) -> Unit,
-  onNameChange: (String) -> Unit = {},
+  onNameChange: (String) -> Unit,
   onDeleteClick: (() -> Unit)? = null,
-  onColorChange: (Color) -> Unit = {},
-  onToggleAlarmSelection: (AlarmListModel) -> Unit = {},
-  onConfirmClick: () -> Unit = {},
+  onColorChange: (Color) -> Unit,
+  onToggleAlarmSelection: (AlarmListModel) -> Unit,
+  onConfirmClick: () -> Unit,
 ) {
   Box(modifier = modifier) {
     val groupsExpandedState =
@@ -400,7 +400,7 @@ private fun GroupedAlarmCard(
 private fun GroupColors(
   modifier: Modifier = Modifier,
   selectedColor: Color? = null,
-  onColorClick: (Color) -> Unit = {},
+  onColorClick: (Color) -> Unit,
 ) {
   val boxColors = remember {
     listOf(

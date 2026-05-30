@@ -77,7 +77,7 @@ private fun TimePickerDialog(
   title: String,
   onDismiss: () -> Unit,
   onConfirm: () -> Unit,
-  toggle: @Composable () -> Unit = {},
+  toggle: @Composable () -> Unit,
   content: @Composable () -> Unit,
 ) {
   Dialog(

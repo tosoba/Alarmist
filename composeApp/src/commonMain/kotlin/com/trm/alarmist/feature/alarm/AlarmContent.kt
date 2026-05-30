@@ -193,25 +193,25 @@ private fun AlarmContent(
   dialog: ChildSlot<*, AlarmDialogChild>,
   state: AlarmState = AlarmState(),
   groups: List<AlarmGroupModel> = emptyList(),
-  onBackClick: () -> Unit = {},
-  onCallScrollBackwardChange: (Boolean) -> Unit = {},
+  onBackClick: () -> Unit,
+  onCallScrollBackwardChange: (Boolean) -> Unit,
   onDeleteClick: (() -> Unit)? = null,
-  onNameChange: (String) -> Unit = {},
-  onFireAtClick: () -> Unit = {},
-  onToggleIsOnChange: () -> Unit = {},
-  onDayOfWeekClick: (DayOfWeek) -> Unit = {},
+  onNameChange: (String) -> Unit,
+  onFireAtClick: () -> Unit,
+  onToggleIsOnChange: () -> Unit,
+  onDayOfWeekClick: (DayOfWeek) -> Unit,
   onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
-  onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
-  onDeleteOnDateClick: (LocalDate) -> Unit = {},
-  onScheduleOnDateClick: (LocalDate) -> Unit = {},
-  onAlarmDurationChange: (Long) -> Unit = {},
-  onSoundClick: () -> Unit = {},
-  onToggleSoundEnabled: () -> Unit = {},
-  onToggleVibrationEnabled: () -> Unit = {},
-  onToggleReminderEnabled: () -> Unit = {},
-  onReminderOffsetChange: (AlarmReminderOffset) -> Unit = {},
-  onGroupClick: (AlarmGroupModel) -> Unit = {},
-  onConfirmClick: () -> Unit = {},
+  onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit,
+  onDeleteOnDateClick: (LocalDate) -> Unit,
+  onScheduleOnDateClick: (LocalDate) -> Unit,
+  onAlarmDurationChange: (Long) -> Unit,
+  onSoundClick: () -> Unit,
+  onToggleSoundEnabled: () -> Unit,
+  onToggleVibrationEnabled: () -> Unit,
+  onToggleReminderEnabled: () -> Unit,
+  onReminderOffsetChange: (AlarmReminderOffset) -> Unit,
+  onGroupClick: (AlarmGroupModel) -> Unit,
+  onConfirmClick: () -> Unit,
 ) {
   Box(modifier = modifier) {
     val scrollState = rememberScrollState()
@@ -618,9 +618,9 @@ private fun ColumnScope.ExpandableCalendar(
   scheduledOnDates: Set<LocalDate> = emptySet(),
   offOnDates: Set<LocalDate> = emptySet(),
   onDateOnOffSwitchCheckedChange: (Boolean, LocalDate) -> Unit = { _, _ -> },
-  onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit = {},
-  onDeleteOnDateClick: (LocalDate) -> Unit = {},
-  onScheduleOnDateClick: (LocalDate) -> Unit = {},
+  onDeleteOnAllDaysWeekClick: (DayOfWeek) -> Unit,
+  onDeleteOnDateClick: (LocalDate) -> Unit,
+  onScheduleOnDateClick: (LocalDate) -> Unit,
 ) {
   AnimatedVisibility(modifier = calendarModifier, visible = isExpanded) {
     Column {
@@ -769,7 +769,7 @@ private fun ColumnScope.ExpandableCalendar(
 private fun CalendarDateAlarmOnOffSwitch(
   modifier: Modifier = Modifier,
   isOn: Boolean = false,
-  onCheckedChange: (Boolean) -> Unit = {},
+  onCheckedChange: (Boolean) -> Unit,
 ) {
   Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
     Text(
@@ -789,7 +789,7 @@ private fun CalendarDateAlarmOnOffSwitch(
 private fun DaysOfWeekRow(
   modifier: Modifier = Modifier,
   selectedDaysOfWeek: Collection<DayOfWeek> = emptyList(),
-  onDayOfWeekClick: (DayOfWeek) -> Unit = {},
+  onDayOfWeekClick: (DayOfWeek) -> Unit,
 ) {
   Row(modifier = modifier) {
     DayOfWeek.entries.forEach { dayOfWeek ->

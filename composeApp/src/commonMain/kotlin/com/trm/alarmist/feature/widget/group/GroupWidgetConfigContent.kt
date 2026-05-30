@@ -16,10 +16,10 @@ import com.trm.alarmist.core.ui.ExpandableIcon
 fun GroupWidgetConfigContent(
   modifier: Modifier = Modifier,
   state: GroupWidgetConfigState = GroupWidgetConfigState(),
-  onExpandGroup: (AlarmGroupModel) -> Unit = {},
-  onCollapseGroup: () -> Unit = {},
-  onEditGroupClick: (AlarmGroupModel) -> Unit = {},
-  onChooseGroup: (AlarmGroupModel) -> Unit = {},
+  onExpandGroup: (AlarmGroupModel) -> Unit,
+  onCollapseGroup: () -> Unit,
+  onEditGroupClick: (AlarmGroupModel) -> Unit,
+  onChooseGroup: (AlarmGroupModel) -> Unit,
 ) {
   AlarmGroupsList(
     groups = state.groups,
