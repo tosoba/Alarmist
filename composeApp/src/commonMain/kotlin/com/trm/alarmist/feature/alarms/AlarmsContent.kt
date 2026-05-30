@@ -15,8 +15,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -24,7 +22,6 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.arkivanov.decompose.extensions.compose.pages.ChildPages
@@ -42,13 +39,10 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AlarmsContent(modifier: Modifier = Modifier, component: AlarmsComponent) {
   val windowSizeClass = calculateWindowSizeClass()
-
   val pagesState = component.pages.subscribeAsState()
-  val snackbarHostState = remember(::SnackbarHostState)
 
   Scaffold(
     modifier = modifier,
-    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     floatingActionButton = {
       FloatingActionButton(onClick = component::onAddClick) {
         Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(Res.string.add))
