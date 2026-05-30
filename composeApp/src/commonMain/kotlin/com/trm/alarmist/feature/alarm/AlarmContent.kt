@@ -71,7 +71,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -479,52 +478,44 @@ private fun AlarmContent(
         )
 
         groups.forEachIndexed { index, group ->
-          val shape =
-            when (index) {
-              0 -> {
-                if (groups.size > 1) {
-                  ShapeDefaults.Medium.copy(
-                    bottomStart = CornerSize(0.dp),
-                    bottomEnd = CornerSize(0.dp),
-                  )
-                } else {
-                  ShapeDefaults.Medium
+          AlarmGroupHeaderCard(
+            group = group,
+            onClick = { onGroupClick(group) },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+            shape =
+              when (index) {
+                0 -> {
+                  if (groups.size > 1) {
+                    ShapeDefaults.Medium.copy(
+                      bottomStart = CornerSize(0.dp),
+                      bottomEnd = CornerSize(0.dp),
+                    )
+                  } else {
+                    ShapeDefaults.Medium
+                  }
                 }
-              }
-              groups.lastIndex -> {
-                if (groups.size > 1) {
-                  ShapeDefaults.Medium.copy(topStart = CornerSize(0.dp), topEnd = CornerSize(0.dp))
-                } else {
-                  ShapeDefaults.Medium
+                groups.lastIndex -> {
+                  if (groups.size > 1) {
+                    ShapeDefaults.Medium.copy(
+                      topStart = CornerSize(0.dp),
+                      topEnd = CornerSize(0.dp),
+                    )
+                  } else {
+                    ShapeDefaults.Medium
+                  }
                 }
-              }
-              else -> {
-                RectangleShape
-              }
-            }
-
-          Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
-            AlarmGroupHeaderCard(
-              group = group,
-              onClick = { onGroupClick(group) },
-              modifier = Modifier.fillMaxWidth(),
-              shape = shape,
-              trailing = {
-                Checkbox(
-                  checked = state.groupId == group.id,
-                  onCheckedChange = { onGroupClick(group) },
-                  modifier = Modifier.padding(end = 16.dp),
-                )
+                else -> {
+                  RectangleShape
+                }
               },
-            )
-
-            if (index != 0) {
-              HorizontalDivider(
-                modifier =
-                  Modifier.fillMaxWidth().padding(horizontal = 24.dp).align(Alignment.TopCenter)
+            trailing = {
+              Checkbox(
+                checked = state.groupId == group.id,
+                onCheckedChange = { onGroupClick(group) },
+                modifier = Modifier.padding(end = 16.dp),
               )
-            }
-          }
+            },
+          )
 
           Spacer(modifier = Modifier.height(16.dp))
         }

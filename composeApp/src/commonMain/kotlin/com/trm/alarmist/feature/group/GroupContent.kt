@@ -50,7 +50,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -178,7 +177,7 @@ fun GroupContent(
               },
             trailing = {
               Box(modifier = Modifier.padding(end = 16.dp)) {
-                ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}Header")
+                ExpandableIcon(isExpanded = isExpanded, transitionLabel = "${group.name}-header")
               }
             },
           )
@@ -186,38 +185,28 @@ fun GroupContent(
 
         if (isExpanded) {
           val alarms = state.alarmsInGroup(group.id)
-
           val fullSpan =
             maxOf(
               ((maxWidth - contentPaddingHorizontal - contentPaddingHorizontal) / cellMinSize)
                 .toInt(),
               1,
             )
-          val firstInLastRowAlarmIndex = alarms.indices.lastOrNull { it % fullSpan == 0 }
-          val lastInLastRowAlarmIndex = alarms.indices.lastOrNull { it % fullSpan == fullSpan - 1 }
 
           itemsIndexed(alarms) { index, alarm ->
-            Box(modifier = Modifier.fillMaxWidth()) {
-              GroupedAlarmCard(
-                alarm = alarm,
-                modifier = Modifier.fillMaxWidth(),
-                shape =
-                  groupedAlarmItemShape(
-                    index = index,
-                    firstInLastRowAlarmIndex = firstInLastRowAlarmIndex,
-                    lastInLastRowAlarmIndex = lastInLastRowAlarmIndex,
-                    fullSpan = fullSpan,
-                    groupAlarmsCount = alarms.size,
-                  ),
-                isSelected = alarm.id in state.selectedAlarmIds,
-                onToggleAlarmSelection = remember(alarm) { { onToggleAlarmSelection(alarm) } },
-              )
-
-              HorizontalDivider(
-                modifier =
-                  Modifier.fillMaxWidth().padding(horizontal = 16.dp).align(Alignment.TopCenter)
-              )
-            }
+            GroupedAlarmCard(
+              alarm = alarm,
+              modifier = Modifier.fillMaxWidth(),
+              shape =
+                groupedAlarmItemShape(
+                  index = index,
+                  firstInLastRowAlarmIndex = alarms.indices.lastOrNull { it % fullSpan == 0 },
+                  lastInLastRowAlarmIndex =
+                    alarms.indices.lastOrNull { it % fullSpan == fullSpan - 1 },
+                  groupAlarmsLastIndex = alarms.size,
+                ),
+              isSelected = alarm.id in state.selectedAlarmIds,
+              onToggleAlarmSelection = { onToggleAlarmSelection(alarm) },
+            )
           }
         }
       }
@@ -306,6 +295,7 @@ fun GroupContent(
         state.groups.forEach { (id, group) ->
           if (id == AlarmGroupModel.UNGROUPED_ID) return@forEach
           if (mode is GroupComponent.Mode.Edit && id == mode.group.id) return@forEach
+
           expandableAlarmsGroupItems(
             group = group,
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
@@ -315,8 +305,6 @@ fun GroupContent(
         floatingActionButtonSpacerItem()
       }
 
-      val interactionSource = remember(::MutableInteractionSource)
-      val noRippleInteractionSource = remember(::NoRippleInteractionSource)
       ExtendedFloatingActionButton(
         modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
         expanded = state.blankNameError,
@@ -334,7 +322,8 @@ fun GroupContent(
           )
         },
         interactionSource =
-          if (state.blankNameError) noRippleInteractionSource else interactionSource,
+          if (state.blankNameError) remember(::NoRippleInteractionSource)
+          else remember(::MutableInteractionSource),
         text = {
           AnimatedVisibility(state.blankNameError) {
             Text(stringResource(Res.string.invalid_input))

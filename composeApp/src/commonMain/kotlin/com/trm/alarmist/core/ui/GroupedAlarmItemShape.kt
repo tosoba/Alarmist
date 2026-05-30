@@ -9,20 +9,19 @@ fun groupedAlarmItemShape(
   index: Int,
   firstInLastRowAlarmIndex: Int?,
   lastInLastRowAlarmIndex: Int?,
-  fullSpan: Int,
-  groupAlarmsCount: Int,
+  groupAlarmsLastIndex: Int,
 ): CornerBasedShape =
   ShapeDefaults.Medium.copy(
     topStart = CornerSize(0.dp),
     topEnd = CornerSize(0.dp),
     bottomStart =
-      if (index == firstInLastRowAlarmIndex && groupAlarmsCount % fullSpan != 0) {
+      if (index == firstInLastRowAlarmIndex) {
         ShapeDefaults.Medium.bottomStart
       } else {
         CornerSize(0.dp)
       },
     bottomEnd =
-      if ((index == lastInLastRowAlarmIndex || index == groupAlarmsCount - 1) && fullSpan != 1) {
+      if (index == lastInLastRowAlarmIndex || index == groupAlarmsLastIndex) {
         ShapeDefaults.Medium.bottomEnd
       } else {
         CornerSize(0.dp)

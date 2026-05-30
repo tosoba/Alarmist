@@ -20,15 +20,10 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CreateNewFolder
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -114,80 +109,35 @@ fun AlarmGroupsList(
                 1,
               )
             if (isExpanded && expandedGroupAlarms.isNotEmpty()) {
-              val firstInLastRowAlarmIndex =
-                expandedGroupAlarms.indices.lastOrNull { it % fullSpan == 0 }
-              val lastInLastRowAlarmIndex =
-                expandedGroupAlarms.indices.lastOrNull { it % fullSpan == fullSpan - 1 }
-
               itemsIndexed(
                 items = expandedGroupAlarms,
                 key = { _, alarm -> "alarm-${alarm.id}" },
               ) { index, alarm ->
-                Box(modifier = Modifier.fillMaxWidth()) {
-                  AlarmListItem(
-                    item = alarm,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape =
-                      groupedAlarmItemShape(
-                        index = index,
-                        firstInLastRowAlarmIndex = firstInLastRowAlarmIndex,
-                        lastInLastRowAlarmIndex = lastInLastRowAlarmIndex,
-                        fullSpan = fullSpan,
-                        groupAlarmsCount = expandedGroupAlarms.size,
-                      ),
-                    onItemClick = onAlarmItemClick,
-                    onToggleOnOff = remember(alarm) { { onToggleAlarmOnOff(alarm) } },
-                  )
-
-                  HorizontalDivider(
-                    modifier =
-                      Modifier.fillMaxWidth().padding(horizontal = 16.dp).align(Alignment.TopCenter)
-                  )
-                }
+                AlarmListItem(
+                  item = alarm,
+                  modifier = Modifier.fillMaxWidth(),
+                  shape =
+                    groupedAlarmItemShape(
+                      index = index,
+                      firstInLastRowAlarmIndex =
+                        expandedGroupAlarms.indices.lastOrNull { it % fullSpan == 0 },
+                      lastInLastRowAlarmIndex =
+                        expandedGroupAlarms.indices.lastOrNull { it % fullSpan == fullSpan - 1 },
+                      groupAlarmsLastIndex = expandedGroupAlarms.lastIndex,
+                    ),
+                  onItemClick = onAlarmItemClick,
+                  onToggleOnOff = { onToggleAlarmOnOff(alarm) },
+                )
               }
             }
 
             if (isExpanded && group.alarmsCount > 0L) {
-              item {
-                Card(
-                  modifier = Modifier.fillMaxWidth(),
-                  colors =
-                    if (group.isOn) {
-                      CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                      )
-                    } else {
-                      CardDefaults.cardColors()
-                    },
-                  shape =
-                    if (group.alarmsCount.toInt() % fullSpan == 0) {
-                      ShapeDefaults.Medium.copy(
-                        topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp),
-                      )
-                    } else {
-                      ShapeDefaults.Medium.copy(
-                        topStart = CornerSize(0.dp),
-                        topEnd = CornerSize(0.dp),
-                        bottomStart = CornerSize(0.dp),
-                      )
-                    },
+              item(key = "group-${group.id}-edit", span = { GridItemSpan(maxLineSpan) }) {
+                TextButton(
+                  onClick = { onEditGroupClick(group) },
+                  modifier = Modifier.fillMaxWidth().align(Alignment.Center),
                 ) {
-                  Box(modifier = Modifier.fillMaxWidth()) {
-                    HorizontalDivider(
-                      modifier =
-                        Modifier.fillMaxWidth()
-                          .padding(horizontal = 16.dp)
-                          .align(Alignment.TopCenter)
-                    )
-
-                    TextButton(
-                      onClick = remember(group) { { onEditGroupClick(group) } },
-                      modifier = Modifier.fillMaxWidth().align(Alignment.Center),
-                    ) {
-                      Text(stringResource(Res.string.edit_group))
-                    }
-                  }
+                  Text(stringResource(Res.string.edit_group))
                 }
               }
             }
