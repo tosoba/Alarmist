@@ -343,12 +343,12 @@ private fun GroupedAlarmCard(
   modifier: Modifier = Modifier,
   shape: Shape = RectangleShape,
   isSelected: Boolean = false,
-  onToggleAlarmSelection: () -> Unit = {},
+  onToggleAlarmSelection: () -> Unit,
 ) {
   Card(
     modifier = modifier,
     colors = CardDefaults.onOffCardColors(alarm.isOn),
-    border = CardDefaults.onOffCardBorder(isSelected),
+    border = CardDefaults.onOffCardBorder(alarm.isOn),
     shape = shape,
     onClick = onToggleAlarmSelection,
   ) {
