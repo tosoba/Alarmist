@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -195,7 +196,7 @@ fun GroupContent(
           itemsIndexed(alarms) { index, alarm ->
             GroupedAlarmCard(
               alarm = alarm,
-              modifier = Modifier.fillMaxWidth(),
+              modifier = Modifier.fillMaxWidth().offset(y = (-1).dp),
               shape =
                 groupedAlarmItemShape(
                   index = index,
