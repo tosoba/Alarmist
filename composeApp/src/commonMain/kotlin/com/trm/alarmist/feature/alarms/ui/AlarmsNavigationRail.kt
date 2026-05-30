@@ -4,6 +4,7 @@ import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.all
 import alarmist.composeapp.generated.resources.groups
 import alarmist.composeapp.generated.resources.upcoming
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Menu
@@ -22,7 +23,7 @@ fun AlarmsNavigationRail(
   onPageSelected: (Int) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  NavigationRail(modifier = modifier) {
+  NavigationRail(modifier = modifier, windowInsets = WindowInsets()) {
     NavigationRailItem(
       selected = selectedIndex == 0,
       onClick = { onPageSelected(0) },
