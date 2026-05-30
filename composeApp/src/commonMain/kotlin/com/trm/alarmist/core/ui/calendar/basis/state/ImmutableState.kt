@@ -22,7 +22,7 @@ class ImmutableBasisEpicCalendarState(
 @Stable
 @Composable
 fun rememberBasisEpicCalendarState(
-  currentMonth: EpicMonth = LocalBasisEpicCalendarState.current?.currentMonth ?: EpicMonth.now(),
+  currentMonth: EpicMonth = LocalBasisEpicCalendarState.current.currentMonth,
   config: BasisEpicCalendarConfig = LocalBasisEpicCalendarConfig.current,
 ): BasisEpicCalendarState =
   remember(currentMonth, config) {
