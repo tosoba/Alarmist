@@ -47,7 +47,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -73,7 +72,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
@@ -92,7 +90,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.Role
@@ -470,37 +467,11 @@ private fun AlarmContent(
           modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
         )
 
-        groups.forEachIndexed { index, group ->
+        groups.forEach { group ->
           AlarmGroupHeaderCard(
             group = group,
             onClick = { onGroupClick(group) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-            shape =
-              when (index) {
-                0 -> {
-                  if (groups.size > 1) {
-                    ShapeDefaults.Medium.copy(
-                      bottomStart = CornerSize(0.dp),
-                      bottomEnd = CornerSize(0.dp),
-                    )
-                  } else {
-                    ShapeDefaults.Medium
-                  }
-                }
-                groups.lastIndex -> {
-                  if (groups.size > 1) {
-                    ShapeDefaults.Medium.copy(
-                      topStart = CornerSize(0.dp),
-                      topEnd = CornerSize(0.dp),
-                    )
-                  } else {
-                    ShapeDefaults.Medium
-                  }
-                }
-                else -> {
-                  RectangleShape
-                }
-              },
             trailing = {
               Checkbox(
                 checked = state.groupId == group.id,
