@@ -18,4 +18,5 @@ interface EpicCalendarPagerState {
   suspend fun scrollMonths(amount: Int)
 }
 
-val LocalEpicCalendarPagerState = compositionLocalOf<EpicCalendarPagerState?> { null }
+val LocalEpicCalendarPagerState =
+  compositionLocalOf<EpicCalendarPagerState> { error("No calendar pager state provided.") }

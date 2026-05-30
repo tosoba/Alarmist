@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpcomingAlarmsCalendarState(
-  val selectedDate: LocalDate?,
+  val selectedDate: LocalDate,
   val currentMonth: Month,
   val currentYear: Int,
 )

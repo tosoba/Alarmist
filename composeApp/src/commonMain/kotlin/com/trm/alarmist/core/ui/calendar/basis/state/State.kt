@@ -10,4 +10,5 @@ interface BasisEpicCalendarState {
   val dateGridInfo: EpicCalendarGridInfo
 }
 
-val LocalBasisEpicCalendarState = compositionLocalOf<BasisEpicCalendarState?> { null }
+val LocalBasisEpicCalendarState =
+  compositionLocalOf<BasisEpicCalendarState> { error("No calendar state provided.") }

@@ -12,7 +12,7 @@ import com.trm.alarmist.core.ui.calendar.basis.state.LocalBasisEpicCalendarState
 import kotlinx.datetime.LocalDate
 
 fun Modifier.drawEpicRanges(ranges: List<ClosedRange<LocalDate>>, color: Color) = composed {
-  val basisState = LocalBasisEpicCalendarState.current!!
+  val basisState = LocalBasisEpicCalendarState.current
   val basisConfig = LocalBasisEpicCalendarConfig.current
   val gridInfo = basisState.dateGridInfo
   val displayDaysOfAdjacentMonths = basisConfig.displayDaysOfAdjacentMonths

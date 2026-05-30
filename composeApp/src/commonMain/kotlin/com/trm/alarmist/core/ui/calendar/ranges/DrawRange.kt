@@ -44,7 +44,6 @@ internal fun DrawScope.drawEpicRange(
 
   val itemShapeOutline = dayOfMonthShape.createOutline(itemSize, layoutDirection, Density(density))
 
-  // Draw the first row background
   drawRect(
     color = color,
     topLeft = Offset(startX, startY),

@@ -16,7 +16,6 @@ import com.trm.alarmist.core.ui.calendar.basis.state.rememberBasisEpicCalendarSt
 import com.trm.alarmist.core.ui.calendar.pager.config.LocalEpicCalendarPagerConfig
 import com.trm.alarmist.core.ui.calendar.pager.state.EpicCalendarPagerState
 import com.trm.alarmist.core.ui.calendar.pager.state.LocalEpicCalendarPagerState
-import com.trm.alarmist.core.ui.calendar.pager.state.rememberEpicCalendarPagerState
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 
@@ -24,8 +23,7 @@ import kotlinx.datetime.LocalDate
 fun EpicCalendarPager(
   modifier: Modifier = Modifier,
   pageModifier: (page: Int) -> Modifier = { Modifier },
-  state: EpicCalendarPagerState =
-    LocalEpicCalendarPagerState.current ?: rememberEpicCalendarPagerState(),
+  state: EpicCalendarPagerState = LocalEpicCalendarPagerState.current,
   onDayOfMonthClick: ((LocalDate) -> Unit)? = null,
   onDayOfWeekClick: ((DayOfWeek) -> Unit)? = null,
   dayOfWeekContent: BasisDayOfWeekContent = DefaultDayOfWeekContent,

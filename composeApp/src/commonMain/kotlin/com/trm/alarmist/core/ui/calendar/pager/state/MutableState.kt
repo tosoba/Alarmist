@@ -47,7 +47,6 @@ fun rememberEpicCalendarPagerState(
       initialPageOffsetFraction = 0f,
       pageCount = monthRange::size,
     )
-
   return remember(config, monthRange, initialMonth, pagerState) {
     DefaultEpicCalendarPagerState(config = config, pagerState = pagerState, monthRange = monthRange)
   }

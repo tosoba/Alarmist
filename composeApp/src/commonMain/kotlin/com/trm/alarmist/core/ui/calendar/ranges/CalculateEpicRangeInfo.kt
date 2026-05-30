@@ -37,17 +37,14 @@ internal fun calculateEpicRangeInfo(
           gridInfo.currentMonth -> {
             gridInfo.currentMonth.atStartDay().dayOfWeek.index() + startDate.day - 1
           }
-
           gridInfo.previousMonth -> {
             startDate.dayOfWeek.index()
           }
-
           gridInfo.nextMonth -> {
             gridInfo.currentMonth.atStartDay().dayOfWeek.index() +
               gridInfo.currentMonth.numberOfDays +
               startDate.day - 1
           }
-
           else -> {
             0
           }
@@ -66,17 +63,14 @@ internal fun calculateEpicRangeInfo(
           gridInfo.currentMonth -> {
             gridInfo.currentMonth.atStartDay().dayOfWeek.index() + endDate.day - 1
           }
-
           gridInfo.previousMonth -> {
             endDate.dayOfWeek.index()
           }
-
           gridInfo.nextMonth -> {
             gridInfo.currentMonth.atStartDay().dayOfWeek.index() +
               gridInfo.currentMonth.numberOfDays +
               endDate.day - 1
           }
-
           else -> {
             EpicCalendarConstants.GridCellAmount - 1
           }
@@ -94,13 +88,11 @@ internal fun calculateEpicRangeInfo(
       x = startGridItemOffset % EpicCalendarConstants.DayOfWeekAmount,
       y = startGridItemOffset / EpicCalendarConstants.DayOfWeekAmount,
     )
-
   val endCoordinates =
     IntOffset(
       x = endGridItemOffset % EpicCalendarConstants.DayOfWeekAmount,
       y = endGridItemOffset / EpicCalendarConstants.DayOfWeekAmount,
     )
-
   return EpicRangeInfo(
     gridCoordinates = startCoordinates to endCoordinates,
     isStartInGrid = isStartInGrid,

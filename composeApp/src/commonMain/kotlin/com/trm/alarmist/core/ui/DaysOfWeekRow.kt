@@ -28,9 +28,9 @@ import kotlinx.datetime.LocalDate
 
 @Composable
 fun DaysOfWeekRow(
+  selectedDate: LocalDate,
   rowDates: List<LocalDate>,
   modifier: Modifier = Modifier,
-  selectedDates: List<LocalDate> = emptyList(),
   alarmCounts: Map<LocalDate, Int> = emptyMap(),
   onDayOfMonthClick: ((LocalDate) -> Unit)? = null,
   dayOfMonthContent: BasisDayOfMonthContent = { date ->
@@ -42,8 +42,8 @@ fun DaysOfWeekRow(
           text = date.day.toString(),
           textAlign = TextAlign.Center,
           color =
-            LocalEpicDatePickerState.current!!.config.run {
-              if (date in selectedDates) selectionContentColor
+            LocalEpicDatePickerState.current.config.run {
+              if (date == selectedDate) selectionContentColor
               else pagerConfig.basisConfig.contentColor
             },
         )
@@ -72,7 +72,7 @@ fun DaysOfWeekRow(
               .height(DefaultBasisEpicCalendarConfig.dayOfMonthViewHeight)
               .width(DefaultBasisEpicCalendarConfig.columnWidth)
               .let {
-                if (date in selectedDates) {
+                if (date == selectedDate) {
                   it.background(LocalEpicDatePickerConfig.current.selectionContainerColor)
                 } else {
                   it

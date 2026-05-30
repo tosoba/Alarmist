@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -60,12 +60,11 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
 
   val selectedDateAlarmsFlow: StateFlow<List<UpcomingAlarmListModel>> =
     selectedDateFlow
+      .filterNotNull()
       .onEach { calendarState = calendarState.copy(selectedDate = it) }
       .onStart { emit(calendarState.selectedDate) }
       .distinctUntilChanged()
-      .flatMapLatest {
-        if (it == null) flowOf(emptyList()) else getAlarmsScheduledOnDateFlowUseCase(it)
-      }
+      .flatMapLatest { getAlarmsScheduledOnDateFlowUseCase(it) }
       .stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5_000L),
@@ -105,15 +104,11 @@ class UpcomingAlarmsFeature(savedStateContainer: SerializableContainer?) :
   }
 
   fun onTurnAlarmOffOnSelectedDate(alarm: UpcomingAlarmListModel) {
-    calendarState.selectedDate?.let {
-      coroutineScope.launch { turnAlarmOffOnDateUseCase(alarm.id, it) }
-    }
+    coroutineScope.launch { turnAlarmOffOnDateUseCase(alarm.id, calendarState.selectedDate) }
   }
 
   fun onTurnAlarmOnOnSelectedDate(alarm: UpcomingAlarmListModel) {
-    calendarState.selectedDate?.let {
-      coroutineScope.launch { turnAlarmOnOnDateUseCase(alarm.id, it) }
-    }
+    coroutineScope.launch { turnAlarmOnOnDateUseCase(alarm.id, calendarState.selectedDate) }
   }
 
   fun saveState(): SerializableContainer =

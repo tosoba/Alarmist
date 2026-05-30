@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextAlign
 import com.trm.alarmist.core.ui.calendar.basis.config.LocalBasisEpicCalendarConfig
 import com.trm.alarmist.core.ui.calendar.basis.state.BasisEpicCalendarState
 import com.trm.alarmist.core.ui.calendar.basis.state.LocalBasisEpicCalendarState
-import com.trm.alarmist.core.ui.calendar.basis.state.rememberBasisEpicCalendarState
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 
@@ -31,7 +30,7 @@ typealias BasisDayOfMonthContent = @Composable BoxScope.(LocalDate) -> Unit
 typealias BasisDayOfWeekContent = @Composable BoxScope.(DayOfWeek) -> Unit
 
 val DefaultDayOfMonthContent: BasisDayOfMonthContent = { date ->
-  val state = LocalBasisEpicCalendarState.current!!
+  val state = LocalBasisEpicCalendarState.current
   val config = LocalBasisEpicCalendarConfig.current
   Text(
     modifier =
@@ -53,8 +52,7 @@ val DefaultDayOfWeekContent: BasisDayOfWeekContent = { dayOfWeek ->
 @Composable
 fun BasisEpicCalendar(
   modifier: Modifier = Modifier,
-  state: BasisEpicCalendarState =
-    LocalBasisEpicCalendarState.current ?: rememberBasisEpicCalendarState(),
+  state: BasisEpicCalendarState = LocalBasisEpicCalendarState.current,
   onDayOfMonthClick: ((LocalDate) -> Unit)? = null,
   onDayOfWeekClick: ((DayOfWeek) -> Unit)? = null,
   dayOfWeekContent: BasisDayOfWeekContent = DefaultDayOfWeekContent,

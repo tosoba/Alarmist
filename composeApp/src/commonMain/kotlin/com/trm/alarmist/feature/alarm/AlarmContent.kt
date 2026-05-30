@@ -44,8 +44,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
@@ -94,12 +92,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -108,7 +102,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.trm.alarmist.core.common.util.nextFullHour
@@ -626,6 +619,7 @@ private fun ColumnScope.ExpandableCalendar(
     Column {
       val state =
         rememberEpicDatePickerState(
+          selectedDate = LocalDate.now(),
           config =
             rememberEpicDatePickerConfig(
               pagerConfig =
@@ -644,11 +638,9 @@ private fun ColumnScope.ExpandableCalendar(
         state = state,
         dayOfWeekContent = DayOfWeekEllipsizedContent,
         dayOfMonthContent = { date ->
-          val basisState = LocalBasisEpicCalendarState.current!!
-          val pickerState = LocalEpicDatePickerState.current!!
-
-          val selectedDays = pickerState.selectedDates
-          val isSelected = remember(selectedDays, date) { date in selectedDays }
+          val basisState = LocalBasisEpicCalendarState.current
+          val pickerState = LocalEpicDatePickerState.current
+          val selectedDate = pickerState.selectedDate
 
           Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -663,7 +655,7 @@ private fun ColumnScope.ExpandableCalendar(
               text = date.day.toString(),
               textAlign = TextAlign.Center,
               color =
-                if (isSelected) pickerState.config.selectionContentColor
+                if (date == selectedDate) pickerState.config.selectionContentColor
                 else pickerState.config.pagerConfig.basisConfig.contentColor,
             )
 
@@ -688,15 +680,6 @@ private fun ColumnScope.ExpandableCalendar(
         },
       )
 
-      val bringIntoViewRequester = remember(::BringIntoViewRequester)
-      var layoutRect: Rect? by remember { mutableStateOf(null) }
-
-      LaunchedEffect(state.selectedDates) {
-        if (state.selectedDates.isNotEmpty()) {
-          bringIntoViewRequester.bringIntoView(layoutRect)
-        }
-      }
-
       @Composable
       fun DateOnOffSwitch(date: LocalDate) {
         CalendarDateAlarmOnOffSwitch(
@@ -706,26 +689,13 @@ private fun ColumnScope.ExpandableCalendar(
         )
       }
 
-      state.selectedDates
-        .firstOrNull()
-        ?.takeIf { selectedDate ->
+      state.selectedDate
+        .takeIf { selectedDate ->
           selectedDate > LocalDate.now() ||
             (selectedDate == LocalDate.now() && fireAtTime > LocalTime.now())
         }
         ?.let { selectedDate ->
-          val selectedDateAlarmsLayoutExtraHeightPx = with(LocalDensity.current) { 72.dp.toPx() }
-          Column(
-            modifier =
-              Modifier.padding(horizontal = 24.dp)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onGloballyPositioned {
-                  layoutRect =
-                    it.size
-                      .toSize()
-                      .run { copy(height = height + selectedDateAlarmsLayoutExtraHeightPx) }
-                      .toRect()
-                }
-          ) {
+          Column(modifier = Modifier.padding(horizontal = 24.dp)) {
             when {
               selectedDate.dayOfWeek in scheduledOnDaysOfWeek -> {
                 DateOnOffSwitch(selectedDate)

@@ -44,7 +44,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -82,14 +81,13 @@ import com.trm.alarmist.core.ui.calendar.basis.localized
 import com.trm.alarmist.core.ui.calendar.basis.next
 import com.trm.alarmist.core.ui.calendar.basis.previous
 import com.trm.alarmist.core.ui.calendar.basis.state.LocalBasisEpicCalendarState
+import com.trm.alarmist.core.ui.calendar.datepicker.EpicDatePicker
 import com.trm.alarmist.core.ui.calendar.datepicker.config.LocalEpicDatePickerConfig
 import com.trm.alarmist.core.ui.calendar.datepicker.config.rememberEpicDatePickerConfig
-import com.trm.alarmist.core.ui.calendar.datepicker.state.EpicDatePickerState
+import com.trm.alarmist.core.ui.calendar.datepicker.state.DefaultEpicDatePickerState
 import com.trm.alarmist.core.ui.calendar.datepicker.state.LocalEpicDatePickerState
 import com.trm.alarmist.core.ui.calendar.datepicker.state.rememberEpicDatePickerState
-import com.trm.alarmist.core.ui.calendar.pager.EpicCalendarPager
 import com.trm.alarmist.core.ui.calendar.pager.config.rememberEpicCalendarPagerConfig
-import com.trm.alarmist.core.ui.calendar.ranges.drawEpicRanges
 import com.trm.alarmist.core.ui.floatingActionButtonSpacerItem
 import com.trm.alarmist.feature.alarm.AlarmPermissionStatusCard
 import kotlinx.coroutines.launch
@@ -212,7 +210,7 @@ private fun NoUpcomingAlarmsCard(modifier: Modifier = Modifier) {
 @Composable
 private fun rememberMonthlyCalendarState(
   initialState: UpcomingAlarmsCalendarState
-): EpicDatePickerState =
+): DefaultEpicDatePickerState =
   rememberEpicDatePickerState(
     config =
       rememberEpicDatePickerConfig(
@@ -223,7 +221,7 @@ private fun rememberMonthlyCalendarState(
       ),
     monthRange = EpicMonth.now()..EpicMonth(2100, Month.DECEMBER),
     initialMonth = EpicMonth(initialState.currentYear, initialState.currentMonth),
-    selectedDates = listOfNotNull(initialState.selectedDate),
+    selectedDate = initialState.selectedDate,
   )
 
 @Composable
@@ -266,7 +264,7 @@ private fun WeeklyMonthlyCalendar(
       monthlyCalendarState.pagerState.scrollToMonth(
         weeklyCalendarRowDates(today, weeklyCalendarState.currentPage)
           .run {
-            monthlyCalendarState.selectedDates.firstOrNull()?.takeIf { it in this } ?: first()
+            monthlyCalendarState.selectedDate.takeIf { it in this } ?: first()
           }
           .run { EpicMonth(year, month) }
       )
@@ -276,7 +274,7 @@ private fun WeeklyMonthlyCalendar(
   LaunchedEffect(monthlyCalendarState.pagerState.currentMonth) {
     if (calendarMode == CalendarMode.MONTHLY) {
       weeklyCalendarState.scrollToDate(
-        monthlyCalendarState.selectedDates.firstOrNull()?.takeIf {
+        monthlyCalendarState.selectedDate.takeIf {
           it.month == monthlyCalendarState.pagerState.currentMonth.month
         } ?: with(monthlyCalendarState.pagerState.currentMonth) { LocalDate(year, month, 1) }
       )
@@ -290,8 +288,8 @@ private fun WeeklyMonthlyCalendar(
     )
   }
 
-  LaunchedEffect(monthlyCalendarState.selectedDates) {
-    onSelectedDateChange(monthlyCalendarState.selectedDates.firstOrNull())
+  LaunchedEffect(monthlyCalendarState.selectedDate) {
+    onSelectedDateChange(monthlyCalendarState.selectedDate)
   }
 
   Crossfade(targetState = calendarMode, modifier = modifier) { mode ->
@@ -312,7 +310,7 @@ private fun WeeklyMonthlyCalendar(
               if (calendarMode == CalendarMode.WEEKLY) CalendarMode.MONTHLY else CalendarMode.WEEKLY
           },
       ) {
-        monthlyCalendarState.selectedDates.firstOrNull()?.let {
+        monthlyCalendarState.selectedDate.let {
           Text(
             text =
               "${it.dayOfWeek.localized()}, ${it.month.name.take(3).lowercase().capitalize(Locale.current)} ${it.day}",
@@ -333,9 +331,7 @@ private fun WeeklyMonthlyCalendar(
       }
 
       fun onDayOfMonthClick(date: LocalDate) {
-        if (date !in monthlyCalendarState.selectedDates) {
-          monthlyCalendarState.toggleDateSelection(date)
-        }
+        monthlyCalendarState.selectedDate = date
       }
 
       when (mode) {
@@ -369,7 +365,7 @@ private fun WeeklyMonthlyCalendar(
                 DaysOfWeekRow(
                   rowDates = weeklyCalendarRowDates(today, pageIndex),
                   modifier = Modifier.fillMaxWidth(),
-                  selectedDates = monthlyCalendarState.selectedDates,
+                  selectedDate = monthlyCalendarState.selectedDate,
                   alarmCounts = alarmCounts,
                   onDayOfMonthClick = ::onDayOfMonthClick,
                 )
@@ -383,80 +379,52 @@ private fun WeeklyMonthlyCalendar(
             modifier = Modifier.fillMaxWidth(),
           )
 
-          CompositionLocalProvider(
-            LocalEpicDatePickerConfig provides monthlyCalendarState.config,
-            LocalEpicDatePickerState provides monthlyCalendarState,
-          ) {
-            val selectionMode = monthlyCalendarState.selectionMode
-            val selectedDays = monthlyCalendarState.selectedDates
-            val ranges =
-              remember(selectionMode, selectedDays) {
-                when (selectionMode) {
-                  is EpicDatePickerState.SelectionMode.Range -> {
-                    if (selectedDays.isEmpty()) emptyList()
-                    else listOf(selectedDays.min()..selectedDays.max())
-                  }
-                  is EpicDatePickerState.SelectionMode.Single -> {
-                    selectedDays.map { it..it }
-                  }
-                }
-              }
+          EpicDatePicker(
+            state = monthlyCalendarState,
+            dayOfWeekContent = DayOfWeekEllipsizedContent,
+            dayOfMonthContent = { date ->
+              val basisState = LocalBasisEpicCalendarState.current
+              val pickerState = LocalEpicDatePickerState.current
 
-            EpicCalendarPager(
-              modifier = modifier,
-              pageModifier = {
-                Modifier.drawEpicRanges(
-                  ranges = ranges,
-                  color = monthlyCalendarState.config.selectionContainerColor,
-                )
-              },
-              state = monthlyCalendarState.pagerState,
-              onDayOfMonthClick = ::onDayOfMonthClick,
-              dayOfWeekContent = DayOfWeekEllipsizedContent,
-              dayOfMonthContent = { date ->
-                val basisState = LocalBasisEpicCalendarState.current!!
-                val pickerState = LocalEpicDatePickerState.current!!
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                  @Composable
-                  fun DayText() {
-                    Text(
-                      modifier =
-                        Modifier.alpha(
-                          when {
-                            date < LocalDate.now() -> 0.5f
-                            date in basisState.currentMonth -> 1.0f
-                            else -> 0.5f
-                          }
-                        ),
-                      text = date.day.toString(),
-                      textAlign = TextAlign.Center,
-                      color =
-                        if (date in pickerState.selectedDates) {
-                          pickerState.config.selectionContentColor
-                        } else {
-                          pickerState.config.pagerConfig.basisConfig.contentColor
-                        },
-                    )
-                  }
-
-                  alarmCounts[date]
-                    ?.takeIf { it > 0 }
-                    ?.let {
-                      BadgedBox(
-                        badge = {
-                          Badge(modifier = Modifier.offset(y = (-4).dp, x = 4.dp)) {
-                            Text(it.toString())
-                          }
+              Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                @Composable
+                fun DayText() {
+                  Text(
+                    modifier =
+                      Modifier.alpha(
+                        when {
+                          date < LocalDate.now() -> 0.5f
+                          date in basisState.currentMonth -> 1.0f
+                          else -> 0.5f
                         }
-                      ) {
-                        DayText()
-                      }
-                    } ?: DayText()
+                      ),
+                    text = date.day.toString(),
+                    textAlign = TextAlign.Center,
+                    color =
+                      if (date == pickerState.selectedDate) {
+                        pickerState.config.selectionContentColor
+                      } else {
+                        pickerState.config.pagerConfig.basisConfig.contentColor
+                      },
+                  )
                 }
-              },
-            )
-          }
+
+                alarmCounts[date]
+                  ?.takeIf { it > 0 }
+                  ?.let {
+                    BadgedBox(
+                      badge = {
+                        Badge(modifier = Modifier.offset(y = (-4).dp, x = 4.dp)) {
+                          Text(it.toString())
+                        }
+                      }
+                    ) {
+                      DayText()
+                    }
+                  } ?: DayText()
+              }
+            },
+          )
         }
       }
     }

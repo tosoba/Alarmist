@@ -17,83 +17,31 @@ import kotlinx.datetime.LocalDate
 @Stable
 class DefaultEpicDatePickerState(
   config: EpicDatePickerConfig,
-  selectedDates: List<LocalDate>,
-  selectionMode: EpicDatePickerState.SelectionMode,
-  override val pagerState: EpicCalendarPagerState,
-) : EpicDatePickerState {
-  override var config by mutableStateOf(config)
-  override var selectedDates by mutableStateOf(selectedDates)
-  private var _selectionMode by mutableStateOf(selectionMode)
-  override var selectionMode
-    get() = _selectionMode
-    set(mode) {
-      _selectionMode = mode
-      val dates = selectedDates
-      selectedDates =
-        if (dates.isEmpty()) {
-          emptyList()
-        } else {
-          when (mode) {
-            is EpicDatePickerState.SelectionMode.Range -> {
-              if (dates.size == 1) listOf(dates.first()) else listOf(dates.min(), dates.max())
-            }
-
-            is EpicDatePickerState.SelectionMode.Single -> {
-              dates.takeLast(mode.maxSize)
-            }
-          }
-        }
-    }
-
-  override fun toggleDateSelection(date: LocalDate) {
-    val dates = selectedDates.toMutableList()
-    val isRemoved = dates.remove(date)
-    if (isRemoved) {
-      selectedDates = dates
-      return
-    }
-
-    when (val mode = selectionMode) {
-      is EpicDatePickerState.SelectionMode.Single -> {
-        if (dates.size == mode.maxSize) {
-          dates.removeFirst()
-        }
-        dates.add(date)
-      }
-
-      is EpicDatePickerState.SelectionMode.Range -> {
-        if (dates.size == 2) {
-          dates.clear()
-        }
-        dates.add(date)
-      }
-    }
-
-    selectedDates = dates
-  }
+  selectedDate: LocalDate,
+  val pagerState: EpicCalendarPagerState,
+) {
+  var config by mutableStateOf(config)
+  var selectedDate by mutableStateOf(selectedDate)
 }
 
 @Stable
 @Composable
 fun rememberEpicDatePickerState(
+  selectedDate: LocalDate,
   config: EpicDatePickerConfig = LocalEpicDatePickerConfig.current,
   monthRange: ClosedRange<EpicMonth> = defaultEpicCalendarPagerMonthRange(),
   initialMonth: EpicMonth = EpicMonth.now(),
-  selectedDates: List<LocalDate> = emptyList(),
-  selectionMode: EpicDatePickerState.SelectionMode = EpicDatePickerState.SelectionMode.Single(),
-): EpicDatePickerState {
+): DefaultEpicDatePickerState {
   val pagerState =
     rememberEpicCalendarPagerState(
       config = config.pagerConfig,
       monthRange = monthRange,
       initialMonth = initialMonth,
     )
-
-  return remember(config, selectedDates, selectionMode, pagerState) {
+  return remember(config, selectedDate, pagerState) {
     DefaultEpicDatePickerState(
       config = config,
-      selectedDates = selectedDates,
-      selectionMode = selectionMode,
+      selectedDate = selectedDate,
       pagerState = pagerState,
     )
   }
