@@ -11,7 +11,7 @@ class AlarmistApp : Application() {
   override fun onCreate() {
     super.onCreate()
     initNapierDebug()
-    PlatformKoinInitializer(this).invoke(listOf(appSystemModule))
+    PlatformKoinInitializer(this)(listOf(appSystemModule))
     createAlarmNotificationChannels()
     get<AlarmScheduler>().scheduleNextWidgetUpdate()
   }
