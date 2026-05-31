@@ -1,5 +1,6 @@
 package com.trm.alarmist
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -39,6 +40,11 @@ class MainActivity : ComponentActivity() {
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
     component.onStartModeChanged(intent.rootStartMode())
+  }
+
+  companion object {
+    fun intent(context: Context, startMode: RootStartMode): Intent =
+      Intent(context, MainActivity::class.java).putExtra(RootStartMode.EXTRA_KEY, startMode)
   }
 }
 

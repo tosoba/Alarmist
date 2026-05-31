@@ -3,6 +3,7 @@ package com.trm.alarmist
 import alarmist.composeapp.generated.resources.Res
 import alarmist.composeapp.generated.resources.alarm
 import alarmist.composeapp.generated.resources.dismiss
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Window
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
+import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.now
 import com.trm.alarmist.core.common.util.requireAlarmFireSettings
@@ -85,6 +87,13 @@ class AlarmFiredActivity : ComponentActivity() {
   override fun onDestroy() {
     super.onDestroy()
     turnScreenOffAndKeyguardOn()
+  }
+
+  companion object {
+    fun intent(context: Context, settings: AlarmFireSettings): Intent =
+      Intent(context, AlarmFiredActivity::class.java)
+        .putExtra(EXTRA_ALARM_FIRE_SETTINGS, settings)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION)
   }
 }
 

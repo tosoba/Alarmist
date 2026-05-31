@@ -18,8 +18,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
+import com.trm.alarmist.MainActivity
 import com.trm.alarmist.app.R
-import com.trm.alarmist.core.common.util.createMainActivityIntent
 import com.trm.alarmist.core.common.util.getSerializable
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.common.util.toNotificationFormat
@@ -130,7 +130,8 @@ class StopwatchService : Service() {
   private fun startForeground() {
     startForeground(
       NOTIFICATION_ID,
-      if (state == StopwatchState.RUNNING) buildRunningNotification() else buildPausedNotification(),
+      if (state == StopwatchState.RUNNING) buildRunningNotification()
+      else buildPausedNotification(),
     )
   }
 
@@ -186,7 +187,7 @@ class StopwatchService : Service() {
     PendingIntent.getActivity(
       context,
       CLICK_REQUEST_CODE,
-      createMainActivityIntent(context).putExtra(RootStartMode.EXTRA_KEY, RootStartMode.Stopwatch),
+      MainActivity.intent(context = context, startMode = RootStartMode.Stopwatch),
       PendingIntent.FLAG_MUTABLE,
     )
 

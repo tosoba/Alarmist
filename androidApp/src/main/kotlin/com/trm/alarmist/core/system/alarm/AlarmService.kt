@@ -21,10 +21,10 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.trm.alarmist.AlarmFiredActivity
 import com.trm.alarmist.app.R
 import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
-import com.trm.alarmist.core.common.util.createAlarmFiredActivityIntent
 import com.trm.alarmist.core.common.util.getSerializable
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.common.util.requireAlarmFireSettings
@@ -132,9 +132,7 @@ class AlarmService : LifecycleService(), KoinComponent {
         PendingIntent.getActivity(
           this,
           ALARM_FIRED_ACTIVITY_REQUEST_CODE,
-          createAlarmFiredActivityIntent(this)
-            .putExtra(EXTRA_ALARM_FIRE_SETTINGS, settings)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION),
+          AlarmFiredActivity.intent(this, settings),
           PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         ),
         true,

@@ -17,9 +17,9 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.state.updateAppWidgetState
+import com.trm.alarmist.GroupWidgetConfigActivity
+import com.trm.alarmist.MainActivity
 import com.trm.alarmist.app.R
-import com.trm.alarmist.core.common.util.createGroupWidgetActionIntent
-import com.trm.alarmist.core.common.util.createMainActivityIntent
 import com.trm.alarmist.core.domain.model.AlarmGroupModel
 import com.trm.alarmist.core.domain.model.AlarmListModel
 import com.trm.alarmist.core.domain.model.WidgetAlarmListModel
@@ -111,13 +111,16 @@ fun Context.showWidgetPinnedToast() {
 
 @Composable
 internal fun actionStartGroupWidgetConfigActivity(widgetId: Int): Action =
-  actionStartActivity(createGroupWidgetActionIntent(LocalContext.current, widgetId))
+  actionStartActivity(
+    GroupWidgetConfigActivity.widgetActionIntent(
+      context = LocalContext.current,
+      widgetId = widgetId,
+    )
+  )
 
 @Composable
 internal fun actionStartMainActivity(startMode: RootStartMode): Action =
-  actionStartActivity(
-    createMainActivityIntent(LocalContext.current).putExtra(RootStartMode.EXTRA_KEY, startMode)
-  )
+  actionStartActivity(MainActivity.intent(context = LocalContext.current, startMode = startMode))
 
 @Composable
 internal fun emptyActionIfPreviewOrElse(action: @Composable () -> Action): Action =

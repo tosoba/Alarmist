@@ -53,7 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.glance.appwidget.compose
-import com.trm.alarmist.core.common.util.createGroupWidgetPinIntent
+import com.trm.alarmist.GroupWidgetConfigActivity
 import com.trm.alarmist.core.common.util.glanceAppWidgetPreview
 import com.trm.alarmist.core.common.util.pinWidget
 import com.trm.alarmist.core.common.util.widgetReceiverComponentName
@@ -96,12 +96,13 @@ private fun PinGroupWidgetReceiverEffect() {
       object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
           context.startActivity(
-            createGroupWidgetPinIntent(
-              context,
-              intent.getIntExtra(
-                AppWidgetManager.EXTRA_APPWIDGET_ID,
-                AppWidgetManager.INVALID_APPWIDGET_ID,
-              ),
+            GroupWidgetConfigActivity.pinWidgetIntent(
+              context = context,
+              widgetId =
+                intent.getIntExtra(
+                  AppWidgetManager.EXTRA_APPWIDGET_ID,
+                  AppWidgetManager.INVALID_APPWIDGET_ID,
+                ),
             )
           )
         }
