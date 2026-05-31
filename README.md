@@ -1,14 +1,39 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+<div style="text-align: center;">
+  <img src="screenshots/combined/top_banner.png">
+</div>
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+## About
+**_Alarmist_** is a Material 3 themed Compose Multiplatform app for creating and managing **alarms** using **groups** and home screen **widgets**.
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+<details>
+    <summary>Table of Contents</summary>
+    <ol>
+        <li><a href="#screenshots">Screenshots</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#used-technologies">Used technologies</a></li>
+    </ol>
+</details>
 
+## Screenshots
+<p style="text-align: center; width: 100%; line-height: 0; font-size: 0;">
+<img src="screenshots/combined/alarms.png" width="50%" style="vertical-align: bottom;"><img src="screenshots/combined/alarm.png" width="50%" style="vertical-align: bottom;"><img src="screenshots/combined/groups.png" width="50%" style="vertical-align: bottom;"><img src="screenshots/combined/widgets.png" width="50%" style="vertical-align: bottom;"><img src="screenshots/combined/stopwatch_timer.png" width="50%" style="vertical-align: bottom;"><img src="screenshots/combined/light_dark_mode.png" width="50%" style="vertical-align: bottom;">
+</p>
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## Features
+- **Calendar** for alarm planning/management
+- **Groups** for alarm organization
+- Home screen **widgets**
+- Stopwatch
+- Timer
+
+## Used technologies
+- [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) - shared declarative UI framework
+- [Decompose](https://github.com/arkivanov/Decompose) - screen flows definition and backstack management
+- [SQLDelight](https://cashapp.github.io/sqldelight/) - database for local data persistence
+- [Koin](https://insert-koin.io/) - dependency injection
+- [Coroutines](https://kotlinlang.org/docs/coroutines-guide.html) - asynchronous/concurrent programming
+- [Glance](https://developer.android.com/develop/ui/compose/glance) - compose-based home screen widgets
+- [WorkManager](https://developer.android.com/jetpack/androidx/releases/work) - periodic widget updates
+- [kotlinx-datetime](https://github.com/Kotlin/kotlinx-datetime) - date and time handling
+- [Kotlinx Serialization](https://github.com/Kotlin/kotlinx-serialization) - JSON serialization/deserialization
+- [Napier](https://github.com/aakira/Napier) - multiplatform logging library
