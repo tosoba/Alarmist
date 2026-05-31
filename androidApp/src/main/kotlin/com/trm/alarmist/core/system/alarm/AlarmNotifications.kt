@@ -16,9 +16,9 @@ import android.content.pm.PackageManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.trm.alarmist.app.R
-import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.formatted
 import com.trm.alarmist.core.common.util.getStringBlocking
+import com.trm.alarmist.core.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.system.alarm.receiver.AlarmDismissedBroadcastReceiver
 import kotlinx.datetime.LocalDateTime
 

@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
-import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.common.util.amPmString
 import com.trm.alarmist.core.common.util.now
@@ -44,6 +43,7 @@ import com.trm.alarmist.core.common.util.requireAlarmFireSettings
 import com.trm.alarmist.core.common.util.toFormattedString
 import com.trm.alarmist.core.common.util.turnScreenOffAndKeyguardOn
 import com.trm.alarmist.core.common.util.turnScreenOnAndKeyguardOff
+import com.trm.alarmist.core.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.system.alarm.AlarmService
 import com.trm.alarmist.core.ui.AutoSizeText

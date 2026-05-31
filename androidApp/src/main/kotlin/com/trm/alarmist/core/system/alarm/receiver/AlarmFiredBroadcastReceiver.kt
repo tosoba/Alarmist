@@ -8,10 +8,10 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.trm.alarmist.app.R
-import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.common.util.launch
 import com.trm.alarmist.core.common.util.requireAlarmFireSettings
+import com.trm.alarmist.core.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.IsAlarmScheduledToFireAtDateTimeUseCase
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import com.trm.alarmist.core.system.alarm.AlarmService

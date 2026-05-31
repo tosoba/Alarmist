@@ -3,7 +3,7 @@ package com.trm.alarmist.core.common.util
 import android.content.Intent
 import android.os.Parcelable
 import androidx.core.content.IntentCompat
-import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
+import com.trm.alarmist.core.domain.model.AlarmFireSettings
 import java.io.Serializable
 
 inline fun <reified T : Serializable> Intent.getSerializable(key: String): T? =

@@ -3,8 +3,8 @@ package com.trm.alarmist.core.system.alarm
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
-import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.now
+import com.trm.alarmist.core.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.system.AlarmScheduler
 import com.trm.alarmist.core.system.alarm.receiver.AlarmFiredBroadcastReceiver
 import com.trm.alarmist.core.system.alarm.receiver.AlarmUpcomingBroadcastReceiver

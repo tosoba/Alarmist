@@ -23,11 +23,11 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.trm.alarmist.AlarmFiredActivity
 import com.trm.alarmist.app.R
-import com.trm.alarmist.core.common.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.common.util.getSerializable
 import com.trm.alarmist.core.common.util.getStringBlocking
 import com.trm.alarmist.core.common.util.requireAlarmFireSettings
+import com.trm.alarmist.core.domain.model.AlarmFireSettings
 import com.trm.alarmist.core.domain.usecase.UpdateAlarmOnDismissUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
