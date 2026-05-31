@@ -5,7 +5,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,8 +24,7 @@ fun BottomSheetContent(
   onConfirmCompletion: () -> Unit,
 ) {
   slot.child?.instance?.let { child ->
-    var sheetGesturesEnabled by remember { mutableStateOf(true) }
-    LaunchedEffect(child) { sheetGesturesEnabled = true }
+    var sheetGesturesEnabled by remember(child) { mutableStateOf(true) }
 
     ModalBottomSheet(
       onDismissRequest = onDismissRequest,
