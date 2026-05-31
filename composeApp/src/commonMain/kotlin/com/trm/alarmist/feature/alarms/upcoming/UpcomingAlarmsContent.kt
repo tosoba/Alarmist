@@ -470,10 +470,10 @@ private fun monthlyCalendarDateRange(
         else previousMonthLastDayOfWeek.isoDayNumber + 1
       }
       else -> error("Unexpected firstDayOfWeek: $firstDayOfWeek")
-    } % EpicCalendarConstants.DayOfWeekAmount
+    } % EpicCalendarConstants.DAY_OF_WEEK_AMOUNT
   val daysAmountInCurrentMonth = month.numberOfDays
   val firstDaysAmountInNextMonth =
-    EpicCalendarConstants.GridCellAmount - lastDaysAmountInPreviousMonth - daysAmountInCurrentMonth
+    EpicCalendarConstants.GRID_CELL_AMOUNT - lastDaysAmountInPreviousMonth - daysAmountInCurrentMonth
 
   val startDate =
     if (lastDaysAmountInPreviousMonth > 0) {

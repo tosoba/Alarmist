@@ -72,26 +72,26 @@ internal fun calculateEpicRangeInfo(
               endDate.day - 1
           }
           else -> {
-            EpicCalendarConstants.GridCellAmount - 1
+            EpicCalendarConstants.GRID_CELL_AMOUNT - 1
           }
         }
       } else {
         startGridOffset + endDate.day - 1
       }
     } else {
-      if (displayDaysOfAdjacentMonths) EpicCalendarConstants.GridCellAmount - 1
+      if (displayDaysOfAdjacentMonths) EpicCalendarConstants.GRID_CELL_AMOUNT - 1
       else startGridOffset + gridInfo.currentMonth.numberOfDays - 1
     }
 
   val startCoordinates =
     IntOffset(
-      x = startGridItemOffset % EpicCalendarConstants.DayOfWeekAmount,
-      y = startGridItemOffset / EpicCalendarConstants.DayOfWeekAmount,
+      x = startGridItemOffset % EpicCalendarConstants.DAY_OF_WEEK_AMOUNT,
+      y = startGridItemOffset / EpicCalendarConstants.DAY_OF_WEEK_AMOUNT,
     )
   val endCoordinates =
     IntOffset(
-      x = endGridItemOffset % EpicCalendarConstants.DayOfWeekAmount,
-      y = endGridItemOffset / EpicCalendarConstants.DayOfWeekAmount,
+      x = endGridItemOffset % EpicCalendarConstants.DAY_OF_WEEK_AMOUNT,
+      y = endGridItemOffset / EpicCalendarConstants.DAY_OF_WEEK_AMOUNT,
     )
   return EpicRangeInfo(
     gridCoordinates = startCoordinates to endCoordinates,

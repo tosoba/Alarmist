@@ -1,5 +1,6 @@
 package com.trm.alarmist.widget.clock
 
+import android.annotation.SuppressLint
 import android.text.format.DateFormat
 import android.util.TypedValue
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ import com.trm.alarmist.widget.common.util.stringResource
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+@SuppressLint("RestrictedApi")
 @Composable
 internal fun ClockWidgetContent(
   alarm: AlarmListModel?,
@@ -132,14 +134,12 @@ internal fun ClockWidgetContent(
                   colorFilter = ColorFilter.tint(ColorProvider(Color.Black)),
                 )
               }
-
               WidgetTextShadowMode.Light -> {
                 AlarmIcon(
                   modifier = shadowModifier,
                   colorFilter = ColorFilter.tint(ColorProvider(Color.White)),
                 )
               }
-
               else -> {}
             }
 
@@ -174,6 +174,7 @@ internal fun ClockWidgetContent(
   }
 }
 
+@SuppressLint("RestrictedApi")
 @Suppress("unused")
 @ClockWidgetPreview
 @Composable
@@ -187,6 +188,7 @@ private fun ClockWidgetContentLightPreview() {
   }
 }
 
+@SuppressLint("RestrictedApi")
 @Suppress("unused")
 @ClockWidgetPreview
 @Composable
