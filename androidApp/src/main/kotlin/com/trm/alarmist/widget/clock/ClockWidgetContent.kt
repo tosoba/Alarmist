@@ -47,25 +47,15 @@ import com.trm.alarmist.widget.common.util.clockWidgetPreviewAlarm
 import com.trm.alarmist.widget.common.util.emptyActionIfPreviewOrElse
 import com.trm.alarmist.widget.common.util.spToDp
 import com.trm.alarmist.widget.common.util.stringResource
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 @SuppressLint("RestrictedApi")
 @Composable
 internal fun ClockWidgetContent(
   alarm: AlarmListModel?,
-  textColorProvider: ColorProvider = GlanceTheme.colors.widgetBackground,
+  textColor: Color = Color.White,
   backgroundColor: Color = Color.Transparent,
 ) {
   GlanceTheme(colors = ColorProviders(light = lightScheme, dark = darkScheme)) {
-    val textColor = textColorProvider.getColor(LocalContext.current)
-    val shadowMode =
-      if (colorDistance(textColor, Color.Black) > colorDistance(textColor, Color.White)) {
-        WidgetTextShadowMode.Dark
-      } else {
-        WidgetTextShadowMode.Light
-      }
-
     Column(
       modifier =
         GlanceModifier.fillMaxSize()
@@ -80,12 +70,12 @@ internal fun ClockWidgetContent(
         WidgetTextClock(
           format12Hour = stringResource(R.string.time_format_12_h_full),
           format24Hour = stringResource(R.string.time_format_24_h_full),
-          shadowMode = shadowMode,
+          shadowMode = WidgetTextShadowMode.Dark,
         ) {
           setInt(
             R.id.widget_text_clock,
             "setTextColor",
-            textColorProvider.getColor(LocalContext.current).toArgb(),
+            textColor.toArgb(),
           )
           setTextViewTextSize(
             R.id.widget_text_clock,
@@ -103,12 +93,12 @@ internal fun ClockWidgetContent(
         WidgetTextClock(
           format12Hour = stringResource(R.string.time_format_am_pm_date_short),
           format24Hour = stringResource(R.string.time_format_am_pm_date_short),
-          shadowMode = shadowMode,
+          shadowMode = WidgetTextShadowMode.Dark,
         ) {
           setInt(
             R.id.widget_text_clock,
             "setTextColor",
-            textColorProvider.getColor(LocalContext.current).toArgb(),
+            textColor.toArgb(),
           )
           setTextViewTextSize(
             R.id.widget_text_clock,
@@ -125,26 +115,13 @@ internal fun ClockWidgetContent(
       if (alarm != null) {
         Row(verticalAlignment = Alignment.CenterVertically) {
           Box(contentAlignment = Alignment.Center) {
-            val shadowModifier =
-              GlanceModifier.size(16f.spToDp()).padding(top = 0.5.dp, start = 0.5.dp)
-            when (shadowMode) {
-              WidgetTextShadowMode.Dark -> {
-                AlarmIcon(
-                  modifier = shadowModifier,
-                  colorFilter = ColorFilter.tint(ColorProvider(Color.Black)),
-                )
-              }
-              WidgetTextShadowMode.Light -> {
-                AlarmIcon(
-                  modifier = shadowModifier,
-                  colorFilter = ColorFilter.tint(ColorProvider(Color.White)),
-                )
-              }
-              else -> {}
-            }
+            AlarmIcon(
+              modifier = GlanceModifier.size(16f.spToDp()).padding(top = 0.5.dp, start = 0.5.dp),
+              colorFilter = ColorFilter.tint(ColorProvider(Color.Black)),
+            )
 
             AlarmIcon(
-              colorFilter = ColorFilter.tint(textColorProvider),
+              colorFilter = ColorFilter.tint(ColorProvider(textColor)),
               modifier = GlanceModifier.size(16f.spToDp()),
             )
           }
@@ -155,7 +132,7 @@ internal fun ClockWidgetContent(
             fireAtTime = alarm.fireAtTime,
             is24HourFormat = DateFormat.is24HourFormat(LocalContext.current),
             useFullFormat = true,
-            shadowMode = shadowMode,
+            shadowMode = WidgetTextShadowMode.Dark,
             style =
               TextStyle(
                 fontWeight = FontWeight.Medium,
@@ -165,7 +142,7 @@ internal fun ClockWidgetContent(
                     is WidgetLayoutType.Medium -> 18
                     is WidgetLayoutType.Large -> 22
                   }.sp,
-                color = textColorProvider,
+                color = ColorProvider(textColor),
               ),
           )
         }
@@ -178,26 +155,11 @@ internal fun ClockWidgetContent(
 @Suppress("unused")
 @ClockWidgetPreview
 @Composable
-private fun ClockWidgetContentLightPreview() {
+private fun ClockWidgetContentPreview() {
   WidgetPreviewCompositionLocalProvider {
     ClockWidgetContent(
       alarm = clockWidgetPreviewAlarm(),
-      textColorProvider = ColorProvider(Color.Black),
-      backgroundColor = lightScheme.background,
-    )
-  }
-}
-
-@SuppressLint("RestrictedApi")
-@Suppress("unused")
-@ClockWidgetPreview
-@Composable
-private fun ClockWidgetContentDarkPreview() {
-  WidgetPreviewCompositionLocalProvider {
-    ClockWidgetContent(
-      alarm = clockWidgetPreviewAlarm(),
-      textColorProvider = ColorProvider(Color.White),
-      backgroundColor = darkScheme.background,
+      backgroundColor = GlanceTheme.colors.primary.getColor(LocalContext.current),
     )
   }
 }
@@ -211,6 +173,3 @@ private fun AlarmIcon(colorFilter: ColorFilter, modifier: GlanceModifier = Glanc
     colorFilter = colorFilter,
   )
 }
-
-private fun colorDistance(c1: Color, c2: Color): Float =
-  sqrt((c1.red - c2.red).pow(2) + (c1.green - c2.green).pow(2) + (c1.blue - c2.blue).pow(2))
