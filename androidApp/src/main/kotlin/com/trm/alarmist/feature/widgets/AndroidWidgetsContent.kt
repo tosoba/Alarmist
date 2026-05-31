@@ -275,7 +275,7 @@ private fun AppWidgetProviderInfo.pinCallback(context: Context): PendingIntent =
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
     )
   } else {
-    WidgetPinnedReceiver.Companion.pendingIntent(context)
+    WidgetPinnedReceiver.pendingIntent(context)
   }
 
 private fun AppWidgetProviderInfo.getMinSize(): IntSize =

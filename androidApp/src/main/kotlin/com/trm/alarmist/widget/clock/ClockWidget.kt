@@ -38,7 +38,7 @@ class ClockWidget : GlanceAppWidget(), KoinComponent {
       WidgetTheme {
         CompositionLocalProvider(
           LocalWidgetMode provides WidgetMode.NON_PREVIEW,
-          LocalWidgetLayoutType provides WidgetLayoutType.Companion.fromWidgetSize(),
+          LocalWidgetLayoutType provides WidgetLayoutType.fromWidgetSize(),
         ) {
           ClockWidgetContent(alarm = alarm)
         }
