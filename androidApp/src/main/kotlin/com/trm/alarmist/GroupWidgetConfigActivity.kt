@@ -26,10 +26,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.collectAsState
@@ -77,103 +75,101 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
 
     setContent {
       AppTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-          Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-              CenterAlignedTopAppBar(
-                title = {
-                  Text(
-                    text =
-                      stringResource(
-                        if (widgetAction) Res.string.edit_group_widget
-                        else Res.string.new_group_widget
-                      )
-                  )
-                },
-                navigationIcon = {
-                  IconButton(onClick = { finish() }) {
-                    Icon(
-                      imageVector = Icons.Default.Close,
-                      contentDescription = stringResource(Res.string.cancel),
+        Scaffold(
+          modifier = Modifier.fillMaxSize(),
+          topBar = {
+            CenterAlignedTopAppBar(
+              title = {
+                Text(
+                  text =
+                    stringResource(
+                      if (widgetAction) Res.string.edit_group_widget
+                      else Res.string.new_group_widget
                     )
-                  }
-                },
-              )
-            },
-            bottomBar = {
-              BottomAppBar {
-                if (!isPinned) {
-                  Spacer(modifier = Modifier.width(16.dp))
-
-                  OutlinedButton(onClick = { finish() }, modifier = Modifier.weight(1f)) {
-                    Text(text = stringResource(Res.string.cancel))
-                  }
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Button(
-                  onClick = {
-                    component.feature.onConfirmClick(widgetId)
-                    showWidgetPinnedToast()
-                    setResult(
-                      RESULT_OK,
-                      Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId),
-                    )
-                    finish()
-                  },
-                  modifier = Modifier.weight(1f),
-                ) {
-                  Text(text = stringResource(Res.string.ok))
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-              }
-            },
-            floatingActionButton = {
-              FloatingActionButton(onClick = component::onAddGroupClick) {
-                Icon(
-                  imageVector = Icons.Default.Add,
-                  contentDescription = stringResource(Res.string.add),
                 )
+              },
+              navigationIcon = {
+                IconButton(onClick = { finish() }) {
+                  Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(Res.string.cancel),
+                  )
+                }
+              },
+            )
+          },
+          bottomBar = {
+            BottomAppBar {
+              if (!isPinned) {
+                Spacer(modifier = Modifier.width(16.dp))
+
+                OutlinedButton(onClick = { finish() }, modifier = Modifier.weight(1f)) {
+                  Text(text = stringResource(Res.string.cancel))
+                }
               }
-            },
-          ) {
-            val state by component.feature.state.collectAsState()
 
-            GroupWidgetConfigContent(
-              state = state,
-              modifier = Modifier.fillMaxSize().padding(it),
-              onExpandGroup = component.feature::onExpandGroup,
-              onCollapseGroup = component.feature::onCollapseGroup,
-              onChooseGroup = component.feature::onChooseGroup,
-              onEditGroupClick = component::onEditGroupClick,
-            )
+              Spacer(modifier = Modifier.width(16.dp))
 
-            val bottomSheet by component.bottomSheet.subscribeAsState()
-            val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            val scope = rememberCoroutineScope()
+              Button(
+                onClick = {
+                  component.feature.onConfirmClick(widgetId)
+                  showWidgetPinnedToast()
+                  setResult(
+                    RESULT_OK,
+                    Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId),
+                  )
+                  finish()
+                },
+                modifier = Modifier.weight(1f),
+              ) {
+                Text(text = stringResource(Res.string.ok))
+              }
 
-            fun hideBottomSheet() {
-              scope
-                .launch { bottomSheetState.hide() }
-                .invokeOnCompletion { component.onBottomSheetDismissRequest() }
+              Spacer(modifier = Modifier.width(16.dp))
             }
-
-            BottomSheetContent(
-              state = bottomSheetState,
-              slot = bottomSheet,
-              onDismissRequest = component::onBottomSheetDismissRequest,
-              onDeleteActionClick = component.deleteDialog::onDelete,
-              onBackClick = ::hideBottomSheet,
-              onConfirmCompletion = ::hideBottomSheet,
-            )
-
-            val dialog by component.deleteDialog.component.subscribeAsState()
-            dialog.child?.instance?.let { dialogComponent ->
-              DialogContent(component = dialogComponent, onConfirmClick = ::hideBottomSheet)
+          },
+          floatingActionButton = {
+            FloatingActionButton(onClick = component::onAddGroupClick) {
+              Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(Res.string.add),
+              )
             }
+          },
+        ) {
+          val state by component.feature.state.collectAsState()
+
+          GroupWidgetConfigContent(
+            state = state,
+            modifier = Modifier.fillMaxSize().padding(it),
+            onExpandGroup = component.feature::onExpandGroup,
+            onCollapseGroup = component.feature::onCollapseGroup,
+            onChooseGroup = component.feature::onChooseGroup,
+            onEditGroupClick = component::onEditGroupClick,
+          )
+
+          val bottomSheet by component.bottomSheet.subscribeAsState()
+          val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+          val scope = rememberCoroutineScope()
+
+          fun hideBottomSheet() {
+            scope
+              .launch { bottomSheetState.hide() }
+              .invokeOnCompletion { component.onBottomSheetDismissRequest() }
+          }
+
+          BottomSheetContent(
+            state = bottomSheetState,
+            slot = bottomSheet,
+            onDismissRequest = component::onBottomSheetDismissRequest,
+            onDeleteActionClick = component.deleteDialog::onDelete,
+            onBackClick = ::hideBottomSheet,
+            onConfirmCompletion = ::hideBottomSheet,
+          )
+
+          val dialog by component.deleteDialog.component.subscribeAsState()
+          dialog.child?.instance?.let { dialogComponent ->
+            DialogContent(component = dialogComponent, onConfirmClick = ::hideBottomSheet)
           }
         }
       }

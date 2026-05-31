@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -35,6 +34,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.appwidget.components.Scaffold
 import androidx.lifecycle.lifecycleScope
 import com.trm.alarmist.core.common.util.EXTRA_ALARM_FIRE_SETTINGS
 import com.trm.alarmist.core.common.util.amPmString
@@ -65,21 +65,19 @@ class AlarmFiredActivity : ComponentActivity() {
 
     setContent {
       AppTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-          val settings = intent.requireAlarmFireSettings()
-          AlarmFiredView(
-            settings = settings,
-            modifier = Modifier.fillMaxSize().padding(16.dp),
-            onDismissClick = {
-              lifecycleScope
-                .launch { updateAlarmOnDismissUseCase(settings.id, settings.fireOnDateTime) }
-                .invokeOnCompletion {
-                  stopService(Intent(this@AlarmFiredActivity, AlarmService::class.java))
-                  finish()
-                }
-            },
-          )
-        }
+        val settings = intent.requireAlarmFireSettings()
+        AlarmFiredContent(
+          settings = settings,
+          modifier = Modifier.fillMaxSize().padding(16.dp),
+          onDismissClick = {
+            lifecycleScope
+              .launch { updateAlarmOnDismissUseCase(settings.id, settings.fireOnDateTime) }
+              .invokeOnCompletion {
+                stopService(Intent(this@AlarmFiredActivity, AlarmService::class.java))
+                finish()
+              }
+          },
+        )
       }
     }
   }
@@ -99,30 +97,32 @@ class AlarmFiredActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-private fun AlarmFiredView(
+private fun AlarmFiredContent(
   settings: AlarmFireSettings,
   modifier: Modifier = Modifier,
   onDismissClick: () -> Unit,
   stringResource: @Composable (StringResource) -> String = { stringResource(resource = it) },
 ) {
-  val windowSizeClass = calculateWindowSizeClass()
-  if (
-    windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
-      windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
-  ) {
-    AlarmFiredRowView(
-      settings = settings,
-      modifier = modifier,
-      stringResource = stringResource,
-      onDismissClick = onDismissClick,
-    )
-  } else {
-    AlarmFiredColumnView(
-      settings = settings,
-      modifier = modifier,
-      stringResource = stringResource,
-      onDismissClick = onDismissClick,
-    )
+  Scaffold {
+    val windowSizeClass = calculateWindowSizeClass()
+    if (
+      windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact ||
+        windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded
+    ) {
+      AlarmFiredRowView(
+        settings = settings,
+        modifier = modifier,
+        stringResource = stringResource,
+        onDismissClick = onDismissClick,
+      )
+    } else {
+      AlarmFiredColumnView(
+        settings = settings,
+        modifier = modifier,
+        stringResource = stringResource,
+        onDismissClick = onDismissClick,
+      )
+    }
   }
 }
 

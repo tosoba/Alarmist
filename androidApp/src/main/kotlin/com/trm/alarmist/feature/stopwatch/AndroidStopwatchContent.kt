@@ -5,10 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -84,10 +82,7 @@ fun AndroidStopwatchContent(modifier: Modifier, component: StopwatchComponent) {
 
   Scaffold(modifier = modifier) {
     StopwatchDuration(
-      modifier =
-        Modifier.fillMaxSize()
-          .background(MaterialTheme.colorScheme.background)
-          .padding(bottom = it.calculateBottomPadding()),
+      modifier = Modifier.fillMaxSize().padding(it),
       duration = duration,
       state = state,
       laps = laps,
