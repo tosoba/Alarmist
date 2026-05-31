@@ -5,6 +5,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.trm.alarmist.feature.alarm.AlarmContent
 import com.trm.alarmist.feature.group.GroupContent
@@ -17,13 +22,16 @@ fun BottomSheetContent(
   onDismissRequest: () -> Unit,
   onDeleteActionClick: () -> Unit,
   onBackClick: () -> Unit,
-  onCallScrollBackwardChange: (Boolean) -> Unit,
   onConfirmCompletion: () -> Unit,
 ) {
   slot.child?.instance?.let { child ->
+    var sheetGesturesEnabled by remember { mutableStateOf(true) }
+    LaunchedEffect(child) { sheetGesturesEnabled = true }
+
     ModalBottomSheet(
       onDismissRequest = onDismissRequest,
       sheetState = state,
+      sheetGesturesEnabled = sheetGesturesEnabled,
       scrimColor = BottomSheetDefaults.ContainerColor,
     ) {
       when (child) {
@@ -32,7 +40,7 @@ fun BottomSheetContent(
             component = child.component,
             onDeleteActionClick = onDeleteActionClick,
             onBackClick = onBackClick,
-            onCallScrollBackwardChange = onCallScrollBackwardChange,
+            onCallScrollBackwardChange = { sheetGesturesEnabled = !it },
             onConfirmClick = {
               child.component.feature.onConfirmClick().invokeOnCompletion { onConfirmCompletion() }
             },
@@ -43,7 +51,7 @@ fun BottomSheetContent(
             component = child.component,
             onDeleteActionClick = onDeleteActionClick,
             onBackClick = onBackClick,
-            onCallScrollBackwardChange = onCallScrollBackwardChange,
+            onCallScrollBackwardChange = { sheetGesturesEnabled = !it },
             onConfirmClick = {
               child.component.feature.onConfirmClick()?.invokeOnCompletion { onConfirmCompletion() }
             },

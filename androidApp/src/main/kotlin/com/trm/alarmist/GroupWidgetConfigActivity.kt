@@ -29,16 +29,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.DefaultComponentContext
@@ -90,11 +86,8 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
                   Text(
                     text =
                       stringResource(
-                        if (widgetAction) {
-                          Res.string.edit_group_widget
-                        } else {
-                          Res.string.new_group_widget
-                        }
+                        if (widgetAction) Res.string.edit_group_widget
+                        else Res.string.new_group_widget
                       )
                   )
                 },
@@ -159,14 +152,7 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
             )
 
             val bottomSheet by component.bottomSheet.subscribeAsState()
-            var confirmValueChangeToHidden by remember { mutableStateOf(true) }
-            val bottomSheetState =
-              rememberModalBottomSheetState(
-                skipPartiallyExpanded = true,
-                confirmValueChange = { sheetValue ->
-                  confirmValueChangeToHidden || sheetValue != SheetValue.Hidden
-                },
-              )
+            val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             val scope = rememberCoroutineScope()
 
             fun hideBottomSheet() {
@@ -181,9 +167,6 @@ class GroupWidgetConfigActivity : ComponentActivity(), KoinComponent {
               onDismissRequest = component::onBottomSheetDismissRequest,
               onDeleteActionClick = component.deleteDialog::onDelete,
               onBackClick = ::hideBottomSheet,
-              onCallScrollBackwardChange = { canScrollBackward ->
-                confirmValueChangeToHidden = !canScrollBackward
-              },
               onConfirmCompletion = ::hideBottomSheet,
             )
 
