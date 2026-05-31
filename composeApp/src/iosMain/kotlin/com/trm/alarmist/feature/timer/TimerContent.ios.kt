@@ -1,5 +1,6 @@
 package com.trm.alarmist.feature.timer
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -77,20 +78,23 @@ private fun TimerScaffold(
   modifier: Modifier = Modifier,
 ) {
   Scaffold(modifier = modifier) {
-    if (state == TimerState.IDLE) {
-      TimerInput(onStartClick = onStartClick, modifier = Modifier.fillMaxSize().padding(it))
-    } else {
-      TimerDuration(
-        modifier = Modifier.fillMaxSize().padding(it),
-        duration = duration,
-        initialDuration = initialDuration,
-        state = state,
-        onToggleRunningClick = onToggleRunningClick,
-        onCancelClick = onCancelClick,
-        onResetClick = onResetClick,
-        onAddMinuteClick = onAddMinuteClick,
-        onSubtractMinuteClick = onSubtractMinuteClick,
-      )
+    AnimatedContent(state == TimerState.IDLE, modifier = Modifier.fillMaxSize().padding(it)) {
+      isIdle ->
+      if (isIdle) {
+        TimerInput(onStartClick = onStartClick, modifier = Modifier.fillMaxSize())
+      } else {
+        TimerDuration(
+          modifier = Modifier.fillMaxSize(),
+          duration = duration,
+          initialDuration = initialDuration,
+          state = state,
+          onToggleRunningClick = onToggleRunningClick,
+          onCancelClick = onCancelClick,
+          onResetClick = onResetClick,
+          onAddMinuteClick = onAddMinuteClick,
+          onSubtractMinuteClick = onSubtractMinuteClick,
+        )
+      }
     }
   }
 }
