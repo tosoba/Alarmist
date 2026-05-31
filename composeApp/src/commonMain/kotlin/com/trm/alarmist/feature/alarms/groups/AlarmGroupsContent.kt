@@ -42,7 +42,9 @@ fun AlarmGroupsContent(
     headerItems = {
       if (!alarmPermissionGranted && state.groups.any { it.alarmsCount > 0L }) {
         item {
-          AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
+          AlarmPermissionStatusCard(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItem()
+          )
         }
       }
     },

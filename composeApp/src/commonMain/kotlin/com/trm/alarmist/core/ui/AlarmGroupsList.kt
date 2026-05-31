@@ -89,7 +89,9 @@ fun AlarmGroupsList(
                   }
                 },
                 modifier =
-                  Modifier.fillMaxWidth().padding(top = if (groupIndex > 0) 16.dp else 0.dp),
+                  Modifier.fillMaxWidth()
+                    .padding(top = if (groupIndex > 0) 16.dp else 0.dp)
+                    .animateItem(),
                 shape =
                   if (isExpanded) {
                     ShapeDefaults.Medium.copy(
@@ -136,7 +138,7 @@ fun AlarmGroupsList(
               item(key = "group-${group.id}-edit", span = { GridItemSpan(maxLineSpan) }) {
                 TextButton(
                   onClick = { onEditGroupClick(group) },
-                  modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+                  modifier = Modifier.fillMaxWidth().align(Alignment.Center).animateItem(),
                 ) {
                   Text(stringResource(Res.string.edit_group))
                 }

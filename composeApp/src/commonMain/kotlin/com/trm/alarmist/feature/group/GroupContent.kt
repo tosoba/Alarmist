@@ -162,11 +162,12 @@ fun GroupContent(
         if (group.alarmsCount == 0L) return
 
         val isExpanded = groupsExpandedState[group.id] == true
+
         item(span = { GridItemSpan(maxLineSpan) }) {
           AlarmGroupHeaderCard(
             group = group,
             onClick = { toggleGroupExpanded(group.id) },
-            modifier = modifier,
+            modifier = modifier.animateItem(),
             shape =
               if (isExpanded) {
                 ShapeDefaults.Medium.copy(
@@ -232,7 +233,10 @@ fun GroupContent(
           val focusManager = LocalFocusManager.current
           LaunchedEffect(isKeyboardOpen) { if (!isKeyboardOpen) focusManager.clearFocus() }
 
-          Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+          Row(
+            modifier = Modifier.fillMaxWidth().animateItem(),
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
             IconButton(onClick = onBackClick, modifier = Modifier.padding(bottom = 8.dp)) {
               Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -267,14 +271,16 @@ fun GroupContent(
 
         item(span = { GridItemSpan(maxLineSpan) }) {
           GroupColors(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).animateItem(),
             selectedColor = Color(state.color),
             onColorClick = onColorChange,
           )
         }
 
         if (state.groups.values.all { it.alarmsCount == 0L }) {
-          item { NoAlarmsCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) }
+          item {
+            NoAlarmsCard(modifier = Modifier.fillMaxWidth().padding(top = 16.dp).animateItem())
+          }
         }
 
         if (mode is GroupComponent.Mode.Edit) {

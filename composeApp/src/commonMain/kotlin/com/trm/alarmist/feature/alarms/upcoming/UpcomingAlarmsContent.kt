@@ -155,7 +155,9 @@ fun UpcomingAlarmsContent(
         }
       } else if (!alarmPermissionGranted) {
         item {
-          AlarmPermissionStatusCard(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp))
+          AlarmPermissionStatusCard(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).animateItem()
+          )
         }
       }
 

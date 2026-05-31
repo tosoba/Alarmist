@@ -139,12 +139,14 @@ private fun WidgetsGrid(
           ),
       ) {
         if (!isRequestPinAppWidgetSupported) {
-          item { WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(8.dp)) }
+          item {
+            WidgetPinUnavailableCard(modifier = Modifier.fillMaxWidth().padding(8.dp).animateItem())
+          }
         } else {
           itemsIndexed(providers) { index, provider ->
             WidgetInfoCard(
               provider = provider,
-              modifier = Modifier.fillMaxWidth().animateContentSize().padding(8.dp),
+              modifier = Modifier.fillMaxWidth().animateContentSize().padding(8.dp).animateItem(),
               widgetRemoteViews = widgetRemoteViews[index],
             )
           }
@@ -203,7 +205,7 @@ private fun WidgetPinUnavailableCard(modifier: Modifier) {
       Text(
         text = stringResource(Res.string.widget_pin_unavailable_title),
         style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.Medium,
       )
 
       Spacer(modifier = Modifier.height(8.dp))
